@@ -6,6 +6,10 @@ on:
     - main
     - master
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   golangci:
     strategy:
@@ -23,3 +27,4 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.48
+          only-new-issues: true
