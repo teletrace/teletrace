@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
     - main
-    - master
 
 permissions:
   contents: read
@@ -15,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-    name: lint
+    name: Lint
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/setup-go@v3
