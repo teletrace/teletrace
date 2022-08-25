@@ -32,7 +32,7 @@ jobs:
       - name: Build with MkDocs
         uses: Tiryoh/actions-mkdocs@v0.16.0
         with:
-          c: ./website/mkdocs.yml
+          configfile: ./website/mkdocs.yml
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
 
