@@ -44,8 +44,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: /github/workspace/website/site
+      - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: /github/workspace/website/site
