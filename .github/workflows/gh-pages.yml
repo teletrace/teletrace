@@ -1,5 +1,5 @@
-# Sample workflow for building and deploying a MkDocs site to GitHub Pages
-name: Deploy MkDocs with GitHub Pages dependencies preinstalled
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Deploy Jekyll with GitHub Pages dependencies preinstalled
 
 on:
   # Runs on pushes targeting the default branch
@@ -29,11 +29,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v1
-      - name: Tangy Mkdocs Build Action
-        uses: Tangerine-Community/tangy-mkdocs-build-action@v1
+      - name: Build with MkDocs
+        uses: Tiryoh/actions-mkdocs@v0.16.0
         with:
-          source: ./website/docs
-          destination: ./_site
+          source: ./website/mkdocs.yml
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
 
