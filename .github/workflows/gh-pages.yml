@@ -33,7 +33,9 @@ jobs:
         uses: Tiryoh/actions-mkdocs@v0.16.0
         with:
           configfile: ./website/mkdocs.yml
-          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+
   # Deployment job
   deploy:
     environment:
