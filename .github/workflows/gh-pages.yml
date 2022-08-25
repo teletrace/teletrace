@@ -4,7 +4,7 @@ name: Deploy MkDocs with GitHub Pages dependencies preinstalled
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["16-create-a-docs-website"]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,6 +35,8 @@ jobs:
           configfile: ./website/mkdocs.yml
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
+        with:
+          path: /github/workspace/website/site
 
   # Deployment job
   deploy:
@@ -45,7 +47,5 @@ jobs:
     needs: build
     steps:
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: /github/workspace/website/site
+        id: deployment
+        uses: actions/deploy-pages@v1
