@@ -1,18 +1,50 @@
-name: ci 
+# Sample workflow for building and deploying a MkDocs site to GitHub Pages
+name: Deploy MkDocs with GitHub Pages dependencies preinstalled
+
 on:
+  # Runs on pushes targeting the default branch
   push:
-    branches:
-      - 16-create-a-docs-website
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
-  deploy:
+  # Build job
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v1
+      - name: Tangy Mkdocs Build Action
+        uses: Tangerine-Community/tangy-mkdocs-build-action@v1
         with:
-          python-version: 3.x
-      - name: Install mkdocs-material
-        run: pip install mkdocs-material mkdocs-awesome-pages-plugin
-      - name: Deploy to Github Pages
-        working-directory: ./website
-        run: mkdocs gh-deploy --force --clean --remote-branch automated/github-pages
+          source: ./website/docs
+          destination: ./_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
