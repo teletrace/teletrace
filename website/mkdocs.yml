@@ -1,7 +1,6 @@
 site_name: OSS tracing
 
 theme:
-  logo: assets/ursa-logo-white.png
   homepage: https://epsagon.github.io/oss-tracing-docs/
   font:
     text: Roboto Mono
@@ -25,7 +24,6 @@ theme:
         icon: material/weather-night
         name: Switch to light mode
     
-copyright: <a href="https://www.flaticon.com/free-icons/ursa-minor" title="ursa minor icons">Ursa minor icons created by Freepik - Flaticon</a>
 extra:
   generator: true
   social:

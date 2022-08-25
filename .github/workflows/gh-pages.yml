@@ -1,0 +1,18 @@
+name: ci 
+on:
+  push:
+    branches:
+      - 16-create-a-docs-website
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install mkdocs-material
+        run: pip install mkdocs-material mkdocs-awesome-pages-plugin
+      - name: Deploy to Github Pages
+        working-directory: ./website
+        run: mkdocs gh-deploy --force --clean --remote-branch automated/github-pages
