@@ -1,0 +1,36 @@
+name: Lint PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  inclusive-language:
+    name: Inclusive Language
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: fauguste/auto-cancellation-running-action@0.1.4
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v2
+
+      - id: changed-files
+        uses: tj-actions/changed-files@v18.3
+
+      - name: woke
+        uses: get-woke/woke-action@v0
+        with:
+          fail-on-error: false
+          woke-args: ${{ steps.changed-files.outputs.all_changed_files }}
+
+  pr-title:
+    name: Validate PR Title
+    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
