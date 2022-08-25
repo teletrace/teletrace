@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@ryansonshine/commitizen": "^4.2.8",
+    "@ryansonshine/cz-conventional-changelog": "^3.3.4",
+    "cz": "^1.8.2"
+  },
+    "config": {
+      "commitizen": {
+        "path": "./node_modules/@ryansonshine/cz-conventional-changelog"
+      }
+    }
+}

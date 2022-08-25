@@ -1,0 +1,75 @@
+defaults:
+  actions:
+    queue:
+      method: squash
+      commit_message_template: |
+        {{ title }} (#{{ number }})
+
+        {{ body }}
+
+queue_rules:
+  - name: default
+    conditions:
+      - base=master
+      - check-success=Wait PR CI
+    batch_size: 5
+    allow_inplace_checks: false
+
+pull_request_rules:
+  - name: automatic merge default priority PRs
+    conditions:
+      - base=master
+      - label=merge when ready
+    actions:
+      queue:
+        name: default
+        priority: medium
+
+  - name: warn on conflicts
+    conditions:
+      - conflict
+      - -closed
+    actions:
+      comment:
+        message: "@{{author}} This PR is now in conflict"
+      label:
+        add:
+          - conflict
+
+  - name: remove conflict label if not needed
+    conditions:
+      - -conflict
+    actions:
+      label:
+        remove:
+          - conflict
+
+  - name: warn on CI failure
+    conditions:
+      - label=merge when ready
+      - "#check-failure>0"
+    actions:
+      comment:
+        message: "@{{author}} Your PR is failing CI"
+
+  - name: merge instructions
+    conditions:
+      - base=master
+    actions:
+      comment:
+        message: |
+          ## Merge instructions
+          - Do NOT use the native GitHub merge button
+          - Add the `merge when ready` label to automatically merge the PR once it passes code-review and required checks
+          - Add the `urgent priority` label to move the PR up to the top of the merge queue (urgent PRs only)
+
+          ### Useful info
+          - Remove the `merge when ready` label to remove the PR from the queue
+          - Comment `@Mergifyio refresh` to reevaluate the merge conditions (useful for troubleshooting)
+          - Check rules evaluation status by clicking on the `Summary` check details
+
+  - name: delete head branch after merge
+    conditions:
+      - merged
+    actions:
+      delete_head_branch:

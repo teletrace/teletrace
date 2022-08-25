@@ -1,0 +1,22 @@
+name: Staging CI/CD
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  wait-pr-ci:
+    name: Wait PR CI
+    if: startsWith(github.head_ref, 'mergify/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait PR CI to finish
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          running-workflow-name: "Wait PR CI"
+          # Captures required CI job names, including dynamic matrix jobs
+          check-regexp: ^Inclusive Language$|^Validate PR Title$|^(Python|Scala|Java|Protobuf) CI.*$
+
