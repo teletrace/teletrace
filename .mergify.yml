@@ -10,7 +10,7 @@ defaults:
 queue_rules:
   - name: default
     conditions:
-      - base=master
+      - base=main
       - check-success=Wait PR CI
     batch_size: 5
     allow_inplace_checks: false
@@ -18,7 +18,7 @@ queue_rules:
 pull_request_rules:
   - name: automatic merge default priority PRs
     conditions:
-      - base=master
+      - base=main
       - label=merge when ready
     actions:
       queue:
@@ -54,7 +54,7 @@ pull_request_rules:
 
   - name: merge instructions
     conditions:
-      - base=master
+      - base=main
     actions:
       comment:
         message: |
