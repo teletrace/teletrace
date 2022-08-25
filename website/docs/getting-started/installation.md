@@ -1,6 +1,6 @@
 # Installation
 
-## with <bold>go<bold>
+## with go
 
 ```
 go get github.com/epsagon/oss-tracing
