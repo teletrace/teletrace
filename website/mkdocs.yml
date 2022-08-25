@@ -11,18 +11,19 @@ theme:
 
   name: material
   palette:
-    - scheme: default
-      primary: indigo
-      accent: teal
-      toggle:         
-        icon: material/weather-sunny
-        name: Switch to dark mode
     - scheme: slate
       primary: deep purple
       accent: teal
       toggle:
         icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: default
+      primary: indigo
+      accent: teal
+      toggle:         
+        icon: material/weather-sunny
         name: Switch to light mode
+
     
 extra:
   generator: true
