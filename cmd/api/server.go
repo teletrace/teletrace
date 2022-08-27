@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,7 @@ import (
 
 func main() {
 	r := setupRouter()
-	r.Run(":8080")
+	log.Fatal(r.Run(":8080"))
 }
 
 func setupRouter() *gin.Engine {
