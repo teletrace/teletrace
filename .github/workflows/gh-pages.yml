@@ -1,5 +1,5 @@
 # Sample workflow for building and deploying a MkDocs site to GitHub Pages
-name: Deploy MkDocs with GitHub Pages dependencies preinstalled
+name: gh-pages
 
 on:
   # Runs on pushes targeting the default branch

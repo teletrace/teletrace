@@ -1,7 +1,7 @@
 site_name: OSS tracing
 
 theme:
-  homepage: https://epsagon.github.io/oss-tracing-docs/
+  homepage: https://epsagon.github.io/oss-tracing/
   font:
     text: Roboto Mono
   
