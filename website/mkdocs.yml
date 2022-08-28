@@ -1,0 +1,36 @@
+site_name: OSS tracing
+
+theme:
+  homepage: https://epsagon.github.io/oss-tracing/
+  font:
+    text: Roboto Mono
+  
+  theme:
+  features:
+    - navigation.tabs
+
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: default
+      primary: indigo
+      accent: teal
+      toggle:         
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+    
+extra:
+  generator: true
+  social:
+    - icon: fontawesome/brands/github 
+      link: https://github.com/epsagon/oss-tracing
+      name: OSS tracing on github
+
+repo_name: epsagon/oss-tracing
+repo_url: https://github.com/epsagon/oss-tracing
