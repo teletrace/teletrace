@@ -7,7 +7,7 @@ on:
 
 jobs:
   wait-pr-ci:
-    name: Wait PR CI
+    name: Wait for CI
     if: startsWith(github.head_ref, 'mergify/')
     runs-on: ubuntu-latest
     steps:
@@ -19,4 +19,3 @@ jobs:
           running-workflow-name: "Wait PR CI"
           # Captures required CI job names, including dynamic matrix jobs
           check-regexp: ^Validate PR Title$|^Lint$
-
