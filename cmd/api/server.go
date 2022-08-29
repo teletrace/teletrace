@@ -11,7 +11,7 @@ import (
 func main() {
 	c, err := createConfig()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	setGinMode(c)
