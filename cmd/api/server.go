@@ -9,14 +9,14 @@ import (
 )
 
 func main() {
-	c, err := createConfig()
+	config, err := createConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	setGinMode(c)
+	setGinMode(config)
 	r := setupRouter()
-	log.Fatal(r.Run(fmt.Sprintf(":%d", c.Port)))
+	log.Fatal(r.Run(fmt.Sprintf(":%d", config.Port)))
 }
 
 func setGinMode(config ApiConfig) {
