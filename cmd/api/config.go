@@ -35,7 +35,7 @@ func createConfig() (ApiConfig, error) {
 	err := v.ReadInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Println("Config file not found. Skipping")
+			log.Println("Optional config file not found. Skipping")
 		} else {
 			return c, fmt.Errorf("error loading config file %s: %w", configPath, err)
 		}
