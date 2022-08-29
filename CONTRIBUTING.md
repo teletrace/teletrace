@@ -9,6 +9,7 @@ there are a few different ways you can contribute to the community:
 - Contribute to the source code
 - Find and report bugs
 - Help other users by answering questions
+- Participate in product [discussions](https://github.com/epsagon/oss-tracing/discussions)
 
 ### Reporting bugs
 
