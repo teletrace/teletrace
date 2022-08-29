@@ -69,3 +69,30 @@ This project is following the [standard go project layout](https://github.com/go
 Use descriptive commit messages. Here are [some recommendations](https://cbea.ms/git-commit/) on how to write good commit messages. When creating PRs GitHub will automatically copy commit messages into the PR description, so it is a useful habit to write good commit messages before the PR is created. Also, unless you actually want to tell a story with multiple commits make sure to squash into a single commit before creating the PR.
 
 When maintainers merge PRs with multiple commits, they will be squashed and GitHub will concatenate all commit messages right before you hit the "Confirm squash and merge" button. Maintainers must make sure to edit this concatenated message to make it right before merging. In some cases, if the commit messages are lacking the easiest approach to have at least something useful is copy/pasting the PR description into the commit message box before merging (but see above paragraph about writing good commit messages in the first place).
+
+Each commit message header must conform to the Commit Message Header format.
+
+##### Commit Message Header
+
+    <type>: <short summary>
+
+###### Type
+
+Must be one of the following:
+
+- **build**: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+- **ci**: Changes to our CI configuration files and scripts (example scopes: Travis CI, GitHub Actions, CircleCI)
+- **docs**: Documentation only changes
+- **feat**: A new feature
+- **fix**: A bug fix
+- **perf**: A code change that improves performance
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **test**: Adding missing tests or correcting existing tests
+
+###### Short summary
+
+Use the summary field to provide a succinct description of the change:
+
+- use the imperative, present tense: "change" not "changed" nor "changes"
+- don't capitalize the first letter
+- no dot (.) at the end
