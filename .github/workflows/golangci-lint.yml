@@ -1,9 +1,9 @@
-name: golangci-lint
+name: CI
 
 on:
   pull_request:
     branches:
-    - main
+      - main
 
 permissions:
   contents: read
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   golangci:
-    name: Lint
+    name: Golang Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v3
