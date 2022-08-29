@@ -11,7 +11,7 @@ queue_rules:
   - name: default
     conditions:
       - base=main
-      - check-success=Wait PR CI
+      - check-success=Wait for CI
     batch_size: 5
     allow_inplace_checks: false
 
