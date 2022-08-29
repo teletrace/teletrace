@@ -9,15 +9,15 @@ import (
 
 const (
 	configFilename = "api"
-	configType     = "env"
+	configFileExt  = "env"
 	configPath     = "."
 	defaultPort    = 8080
 	defaultDebug   = true
 )
 
 type ApiConfig struct {
-	Port  uint16 `mapstructure:"port"`
-	Debug bool   `mapstructure:"debug"`
+	Port  int  `mapstructure:"port"`
+	Debug bool `mapstructure:"debug"`
 }
 
 // Creates ApiConfig based on prioritized sources
@@ -29,7 +29,7 @@ func createConfig() (ApiConfig, error) {
 	setDefaults(v)
 
 	v.SetConfigName(configFilename)
-	v.SetConfigType(configType)
+	v.SetConfigType(configFileExt)
 	v.AddConfigPath(configPath)
 
 	err := v.ReadInConfig()
