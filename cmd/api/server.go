@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -8,8 +9,22 @@ import (
 )
 
 func main() {
+	config, err := createConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	setGinMode(config)
 	r := setupRouter()
-	log.Fatal(r.Run(":8080"))
+	log.Fatal(r.Run(fmt.Sprintf(":%d", config.Port)))
+}
+
+func setGinMode(config ApiConfig) {
+	mode := gin.DebugMode
+	if !config.Debug {
+		mode = gin.ReleaseMode
+	}
+	gin.SetMode(mode)
 }
 
 func setupRouter() *gin.Engine {
