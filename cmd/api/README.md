@@ -16,7 +16,7 @@ curl localhost:8080/v1/ping
 ## Configuration
 
 - Changing the default API config is possible by using environment variables.
-- Environment variables can also be defined in a file named `api.env` which should be placed inside the `cmd/api` directory.
+- Environment variables can also be defined in a file named `api.yaml` which should be placed inside the `cmd/api` directory.
 - Env variable sources are prioritized: default values (lowest priority) < config env file < env variables (highest priority).
 
 Supported environment variables:

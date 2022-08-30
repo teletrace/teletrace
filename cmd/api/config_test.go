@@ -23,7 +23,7 @@ func TestEnvFileConfig(t *testing.T) {
 	expectedPort := 1234
 	expectedDebug := false
 
-	content := []byte(fmt.Sprintf("PORT=%d\nDEBUG=%t", expectedPort, expectedDebug))
+	content := []byte(fmt.Sprintf("PORT: %d\nDEBUG: %t", expectedPort, expectedDebug))
 	writeEnvFile(t, content)
 
 	actualConfig, err := createConfig()
@@ -55,7 +55,7 @@ func TestEnvSourceOverride(t *testing.T) {
 
 	t.Setenv("PORT", strconv.Itoa(envPort))
 
-	content := []byte(fmt.Sprintf("PORT=%d", filePort))
+	content := []byte(fmt.Sprintf("PORT: %d", filePort))
 	writeEnvFile(t, content)
 
 	actualConfig, err := createConfig()

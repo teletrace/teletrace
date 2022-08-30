@@ -9,7 +9,7 @@ import (
 
 const (
 	configFilename = "api"
-	configFileExt  = "env"
+	configFileExt  = "yaml"
 	configPath     = "."
 	defaultPort    = 8080
 	defaultDebug   = true
