@@ -16,7 +16,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize logger: %v", err)
 	}
-	defer logger.Sync()
+	defer func() {
+		if err := logger.Sync(); err != nil {
+			log.Printf("Error flushing buffered logs: %v", err)
+		}
+	}()
 
 	config, err := createConfig(logger)
 	if err != nil {
