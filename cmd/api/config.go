@@ -2,17 +2,21 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 const (
 	configFilename = "api"
 	configFileExt  = "yaml"
 	configPath     = "."
-	defaultPort    = 8080
-	defaultDebug   = true
+
+	portEnvName = "PORT"
+	defaultPort = 8080
+
+	debugEnvName = "DEBUG"
+	defaultDebug = true
 )
 
 type ApiConfig struct {
@@ -22,7 +26,7 @@ type ApiConfig struct {
 
 // Creates ApiConfig based on prioritized sources
 // defaults (lowest priority) < config env file < env variables (highest priority)
-func createConfig() (ApiConfig, error) {
+func createConfig(logger *zap.Logger) (ApiConfig, error) {
 	c := ApiConfig{}
 	v := viper.New()
 
@@ -35,7 +39,7 @@ func createConfig() (ApiConfig, error) {
 	err := v.ReadInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			log.Println("Optional config file not found. Skipping")
+			logger.Info("Optional config file not found. Skipping")
 		} else {
 			return c, fmt.Errorf("error loading config file %s: %w", configPath, err)
 		}
@@ -53,6 +57,6 @@ func createConfig() (ApiConfig, error) {
 }
 
 func setDefaults(v *viper.Viper) {
-	v.SetDefault("port", defaultPort)
-	v.SetDefault("debug", defaultDebug)
+	v.SetDefault(portEnvName, defaultPort)
+	v.SetDefault(debugEnvName, defaultDebug)
 }

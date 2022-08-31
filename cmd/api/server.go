@@ -4,19 +4,41 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func main() {
-	config, err := createConfig()
+	logger, err := newLogger()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to initialize logger: %v", err)
+	}
+	defer logger.Sync()
+
+	config, err := createConfig(logger)
+	if err != nil {
+		logger.Fatal("Failed to create API config", zap.Error(err))
 	}
 
 	setGinMode(config)
-	r := setupRouter()
-	log.Fatal(r.Run(fmt.Sprintf(":%d", config.Port)))
+	router := setupRouter()
+
+	err = router.Run(fmt.Sprintf(":%d", config.Port))
+	logger.Fatal("API server crashed", zap.Error(err))
+}
+
+func newLogger() (*zap.Logger, error) {
+	debug, err := strconv.ParseBool(os.Getenv(debugEnvName))
+	if err != nil {
+		debug = defaultDebug
+	}
+	if debug {
+		return zap.NewDevelopment()
+	}
+	return zap.NewProduction()
 }
 
 func setGinMode(config ApiConfig) {
