@@ -10,8 +10,8 @@ permissions:
   pull-requests: read
 
 jobs:
-  golangci:
-    name: Golang CI
+  golangci-lint:
+    name: Golang Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v3
@@ -23,6 +23,11 @@ jobs:
         with:
           version: v1.49
           only-new-issues: true
+
+  golangci-test:
+    name: Golang Test
+    runs-on: ubuntu-latest
+    steps:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
