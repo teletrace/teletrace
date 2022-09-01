@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine as builder
+FROM golang:1.19-alpine3.16 as builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN go mod download
 COPY . .
 RUN go build -o /app/build/bin ./cmd/api
 
-FROM alpine:latest
+FROM alpine:3.16
 COPY --from=builder /app/build/bin /app/build/bin
 
 # Inform that the image created by this Dockerfile
