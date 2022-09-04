@@ -26,8 +26,8 @@ type Config struct {
 
 // Creates Config based on prioritized sources
 // defaults (lowest priority) < config env file < env variables (highest priority)
-func NewConfig(logger *zap.Logger) (*Config, error) {
-	c := &Config{}
+func NewConfig(logger *zap.Logger) (Config, error) {
+	c := Config{}
 	v := viper.New()
 
 	setDefaults(v)
@@ -48,7 +48,7 @@ func NewConfig(logger *zap.Logger) (*Config, error) {
 	// overrides config file with env variables
 	v.AutomaticEnv()
 
-	err = v.Unmarshal(c)
+	err = v.Unmarshal(&c)
 	if err != nil {
 		return c, fmt.Errorf("error unmarshaling config to struct: %w", err)
 	}
