@@ -82,5 +82,5 @@ func runNewConfig(t *testing.T) (Config, *observer.ObservedLogs) {
 	actualConfig, err := NewConfig(fakeLogger)
 	assert.NoError(t, err)
 
-	return actualConfig, observedLogs
+	return *actualConfig, observedLogs
 }
