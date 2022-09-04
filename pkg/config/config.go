@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"fmt"
@@ -8,26 +8,26 @@ import (
 )
 
 const (
-	configFilename = "api"
+	configFilename = "config"
 	configFileExt  = "yaml"
 	configPath     = "."
 
-	portEnvName = "PORT"
-	defaultPort = 8080
-
 	debugEnvName = "DEBUG"
-	defaultDebug = true
+	debugDefault = true
+
+	apiPortEnvName = "API_PORT"
+	apiPortDefault = 8080
 )
 
-type ApiConfig struct {
-	Port  int  `mapstructure:"port"`
-	Debug bool `mapstructure:"debug"`
+type Config struct {
+	Debug   bool `mapstructure:"debug"`
+	APIPort int  `mapstructure:"api_port"`
 }
 
-// Creates ApiConfig based on prioritized sources
+// Creates Config based on prioritized sources
 // defaults (lowest priority) < config env file < env variables (highest priority)
-func createConfig(logger *zap.Logger) (ApiConfig, error) {
-	c := ApiConfig{}
+func NewConfig(logger *zap.Logger) (Config, error) {
+	c := Config{}
 	v := viper.New()
 
 	setDefaults(v)
@@ -57,6 +57,6 @@ func createConfig(logger *zap.Logger) (ApiConfig, error) {
 }
 
 func setDefaults(v *viper.Viper) {
-	v.SetDefault(portEnvName, defaultPort)
-	v.SetDefault(debugEnvName, defaultDebug)
+	v.SetDefault(debugEnvName, debugDefault)
+	v.SetDefault(apiPortEnvName, apiPortDefault)
 }

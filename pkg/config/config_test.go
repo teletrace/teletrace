@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"fmt"
@@ -13,8 +13,8 @@ import (
 )
 
 func TestDefaultConfig(t *testing.T) {
-	actualConfig, logs := runCreateConfig(t)
-	expectedConfig := ApiConfig{Port: defaultPort, Debug: defaultDebug}
+	actualConfig, logs := runNewConfig(t)
+	expectedConfig := Config{Debug: debugDefault, APIPort: apiPortDefault}
 
 	fileNotFoundLog := logs.FilterMessage("Optional config file not found. Skipping")
 	assert.Equal(t, 1, fileNotFoundLog.Len())
@@ -23,44 +23,44 @@ func TestDefaultConfig(t *testing.T) {
 }
 
 func TestEnvFileConfig(t *testing.T) {
-	expectedPort := 1234
 	expectedDebug := false
+	expectedAPIPort := 1234
 
-	content := []byte(fmt.Sprintf("PORT: %d\nDEBUG: %t", expectedPort, expectedDebug))
+	content := []byte(fmt.Sprintf("DEBUG: %t\nAPI_PORT: %d", expectedDebug, expectedAPIPort))
 	writeEnvFile(t, content)
 
-	actualConfig, _ := runCreateConfig(t)
-	expectedConfig := ApiConfig{Port: expectedPort, Debug: expectedDebug}
+	actualConfig, _ := runNewConfig(t)
+	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
 
 	assert.Equal(t, expectedConfig, actualConfig)
 }
 
 func TestEnvVarConfig(t *testing.T) {
-	expectedPort := 1234
 	expectedDebug := false
+	expectedAPIPort := 1234
 
-	t.Setenv("PORT", strconv.Itoa(expectedPort))
 	t.Setenv("DEBUG", strconv.FormatBool(expectedDebug))
+	t.Setenv("API_PORT", strconv.Itoa(expectedAPIPort))
 
-	actualConfig, _ := runCreateConfig(t)
-	expectedConfig := ApiConfig{Port: expectedPort, Debug: expectedDebug}
+	actualConfig, _ := runNewConfig(t)
+	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
 
 	assert.Equal(t, expectedConfig, actualConfig)
 }
 
 func TestEnvSourceOverride(t *testing.T) {
-	filePort := 1234
-	envPort := 5678
+	envAPIPort := 1234
+	fileAPIPort := 5678
 
-	t.Setenv("PORT", strconv.Itoa(envPort))
+	t.Setenv("API_PORT", strconv.Itoa(envAPIPort))
 
-	content := []byte(fmt.Sprintf("PORT: %d", filePort))
+	content := []byte(fmt.Sprintf("API_PORT: %d", fileAPIPort))
 	writeEnvFile(t, content)
 
-	actualConfig, _ := runCreateConfig(t)
-	expectedConfig := ApiConfig{Port: envPort, Debug: defaultDebug}
+	actualConfig, _ := runNewConfig(t)
+	expectedConfig := Config{APIPort: envAPIPort}
 
-	assert.Equal(t, expectedConfig, actualConfig)
+	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
 }
 
 func writeEnvFile(t *testing.T, content []byte) {
@@ -75,11 +75,11 @@ func writeEnvFile(t *testing.T, content []byte) {
 	})
 }
 
-func runCreateConfig(t *testing.T) (ApiConfig, *observer.ObservedLogs) {
+func runNewConfig(t *testing.T) (Config, *observer.ObservedLogs) {
 	zapCore, observedLogs := observer.New(zap.InfoLevel)
 	fakeLogger := zap.New(zapCore)
 
-	actualConfig, err := createConfig(fakeLogger)
+	actualConfig, err := NewConfig(fakeLogger)
 	assert.NoError(t, err)
 
 	return actualConfig, observedLogs
