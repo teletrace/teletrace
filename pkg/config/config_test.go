@@ -22,7 +22,7 @@ func TestDefaultConfig(t *testing.T) {
 	assert.Equal(t, expectedConfig, actualConfig)
 }
 
-func TestEnvFileConfig(t *testing.T) {
+func TestConfigFile(t *testing.T) {
 	expectedDebug := false
 	expectedAPIPort := 1234
 
@@ -48,7 +48,7 @@ func TestEnvVarConfig(t *testing.T) {
 	assert.Equal(t, expectedConfig, actualConfig)
 }
 
-func TestEnvSourceOverride(t *testing.T) {
+func TestConfigSourceOverride(t *testing.T) {
 	envAPIPort := 1234
 	fileAPIPort := 5678
 
