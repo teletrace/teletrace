@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -28,7 +30,7 @@ func main() {
 	}
 
 	setGinMode(config)
-	router := setupRouter()
+	router := setupRouter(logger)
 
 	err = router.Run(fmt.Sprintf(":%d", config.Port))
 	logger.Fatal("API server crashed", zap.Error(err))
@@ -53,8 +55,17 @@ func setGinMode(config ApiConfig) {
 	gin.SetMode(mode)
 }
 
-func setupRouter() *gin.Engine {
-	router := gin.Default()
+func setupRouter(logger *zap.Logger) *gin.Engine {
+	router := gin.New()
+
+	// Zap logger middleware
+	router.Use(ginzap.GinzapWithConfig(logger, &ginzap.Config{
+		TimeFormat: time.RFC3339,
+		UTC:        true,
+	}))
+
+	// Zap recovery logger middleware
+	router.Use(ginzap.RecoveryWithZap(logger, false))
 
 	v1 := router.Group("/v1")
 	v1.GET("/ping", getPing)
