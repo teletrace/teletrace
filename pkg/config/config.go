@@ -12,8 +12,8 @@ const (
 	configFileExt  = "yaml"
 	configPath     = "."
 
-	debugEnvName = "DEBUG"
-	debugDefault = true
+	DebugEnvName = "DEBUG"
+	DebugDefault = true
 
 	apiPortEnvName = "API_PORT"
 	apiPortDefault = 8080
@@ -57,6 +57,6 @@ func NewConfig(logger *zap.Logger) (Config, error) {
 }
 
 func setDefaults(v *viper.Viper) {
-	v.SetDefault(debugEnvName, debugDefault)
+	v.SetDefault(DebugEnvName, DebugDefault)
 	v.SetDefault(apiPortEnvName, apiPortDefault)
 }

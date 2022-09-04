@@ -14,7 +14,7 @@ import (
 
 func TestDefaultConfig(t *testing.T) {
 	actualConfig, logs := runNewConfig(t)
-	expectedConfig := Config{Debug: debugDefault, APIPort: apiPortDefault}
+	expectedConfig := Config{Debug: DebugDefault, APIPort: apiPortDefault}
 
 	fileNotFoundLog := logs.FilterMessage("Optional config file not found. Skipping")
 	assert.Equal(t, 1, fileNotFoundLog.Len())
