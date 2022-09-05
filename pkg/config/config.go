@@ -19,13 +19,13 @@ const (
 	apiPortDefault = 8080
 )
 
-// Config defines global configurations used throughout the application
+// Config defines global configurations used throughout the application.
 type Config struct {
 	Debug   bool `mapstructure:"debug"`
 	APIPort int  `mapstructure:"api_port"`
 }
 
-// NewConfig creates a Config based on prioritized sources
+// NewConfig creates and returns a Config based on prioritized sources.
 // default values (lowest priority) < config file < env variables (highest priority)
 func NewConfig(logger *zap.Logger) (Config, error) {
 	c := Config{}

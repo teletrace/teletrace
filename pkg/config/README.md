@@ -1,6 +1,6 @@
 # config
 
-The config package handles config related operations for the entire application.  
+The `config` package handles config related operations for the entire application.  
 Its main purpose is loading config options from multiple sources (default values/config file/env variables).
 
 ## Supported Options
