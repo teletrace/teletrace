@@ -13,5 +13,5 @@ jobs:
         
       - uses: ./.github/actions/change-issue-status
         with:
-          target-status: "In Progress"
+          target-status: "In progress"
           github-token: ${{ secrets.CUSTOM_AUTOMATION_TOKEN }}
