@@ -14,7 +14,7 @@ curl localhost:8080/v1/ping
 
 ## Configuration
 
-This package reads [config options](../../pkg/config/README.md) from `pkg/config`.
+This package is using [config options](../../pkg/config/README.md) provided by `pkg/config`.
 
 ## Run With Docker
 
