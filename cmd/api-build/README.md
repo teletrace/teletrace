@@ -27,7 +27,7 @@ Download and install docker in your machine from [here](https://docs.docker.com/
 The examples assumes that you are in the root folder
 
 ```sh
-docker build -f cmd/api/Dockerfile -t oss-tracing:latest .
+docker build -f cmd/api-build/Dockerfile -t oss-tracing:latest .
 docker run -p 8080:8080 oss-tracing:latest
 ```
 
