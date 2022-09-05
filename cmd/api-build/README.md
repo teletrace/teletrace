@@ -34,5 +34,5 @@ docker run -p 8080:8080 oss-tracing:latest
 In case you want to run docker file with environment variables
 
 ```sh
-docker run -p 9090:9090 -e PORT=9090 -e DEBUG=false oss-tracing:latest
+docker run -p 9090:9090 -e API_PORT=9090 -e DEBUG=false oss-tracing:latest
 ```
