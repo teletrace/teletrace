@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap/zaptest/observer"
 )
 
-func TestDefaultConfig(t *testing.T) {
+func TestDefaultValuesSource(t *testing.T) {
 	actualConfig, logs := runNewConfig(t)
 	expectedConfig := Config{Debug: DebugDefault, APIPort: apiPortDefault}
 
@@ -22,7 +22,7 @@ func TestDefaultConfig(t *testing.T) {
 	assert.Equal(t, expectedConfig, actualConfig)
 }
 
-func TestConfigFile(t *testing.T) {
+func TestConfigFileSource(t *testing.T) {
 	expectedDebug := false
 	expectedAPIPort := 1234
 
@@ -35,7 +35,7 @@ func TestConfigFile(t *testing.T) {
 	assert.Equal(t, expectedConfig, actualConfig)
 }
 
-func TestEnvVarConfig(t *testing.T) {
+func TestEnvVarSource(t *testing.T) {
 	expectedDebug := false
 	expectedAPIPort := 1234
 
@@ -48,7 +48,7 @@ func TestEnvVarConfig(t *testing.T) {
 	assert.Equal(t, expectedConfig, actualConfig)
 }
 
-func TestConfigSourceOverride(t *testing.T) {
+func TestSourceOverrides(t *testing.T) {
 	envAPIPort := 1234
 	fileAPIPort := 5678
 
