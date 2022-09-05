@@ -29,12 +29,6 @@ func main() {
 	}
 }
 
-func flushBufferedLogs(logger *zap.Logger) {
-	if err := logger.Sync(); err != nil {
-		log.Printf("Error flushing buffered logs: %v", err)
-	}
-}
-
 func newLogger() (*zap.Logger, error) {
 	debug, err := strconv.ParseBool(os.Getenv(config.DebugEnvName))
 	if err != nil {
@@ -44,4 +38,10 @@ func newLogger() (*zap.Logger, error) {
 		return zap.NewDevelopment()
 	}
 	return zap.NewProduction()
+}
+
+func flushBufferedLogs(logger *zap.Logger) {
+	if err := logger.Sync(); err != nil {
+		log.Printf("Error flushing buffered logs: %v", err)
+	}
 }
