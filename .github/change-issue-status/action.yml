@@ -1,0 +1,79 @@
+name: Move issue to desired status
+description: Moves an issue to desired status
+
+inputs:
+  target-status:
+    required: true
+    description: target issue status
+
+  github-token:
+    required: true
+    description: Github token with permissions to write to projects
+
+runs:
+  using: composite
+  steps:
+    - name: Get project data
+      id: get-project-data
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        ORGANIZATION: epsagon
+        TARGET_STATUS: ${{ inputs.target-status }}
+        PROJECT_NUMBER: 3 # oss-tracing project number
+      shell: bash
+      run: |
+        gh api graphql -f query='
+          query($org: String!, $number: Int!) {
+            organization(login: $org){
+              projectV2(number: $number) {
+                id
+                fields(first:100) {
+                  nodes {
+                    ... on ProjectV2SingleSelectField {
+                      id
+                      name                        
+                      options {
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }' -f org=$ORGANIZATION -F number=$PROJECT_NUMBER > project_data.json
+
+        echo 'PROJECT_ID='$(jq '.data.organization.projectV2.id' project_data.json) | tr -d '"' >> $GITHUB_ENV
+        echo 'STATUS_FIELD_ID='$(jq '.data.organization.projectV2.fields.nodes[] | select(.name== "Status") | .id' project_data.json) | tr -d '"' >> $GITHUB_ENV
+        echo 'OPTION_ID='$(jq -r --arg TARGET_STATUS "$TARGET_STATUS" '.data.organization.projectV2.fields.nodes[] | select(.name== "Status") | .options[] | select(.name==$TARGET_STATUS) | .id' project_data.json) | tr -d '"' >> $GITHUB_ENV
+
+    - uses: monry/actions-get-project-item-id@v2
+      id: get-project-item-id
+      with:
+        github-token: ${{ inputs.github-token }}
+        project-id: ${{ env.PROJECT_ID }}
+        issue-id: ${{ github.event.issue.node_id }}
+
+    - name: Update issue status
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        ISSUE_ITEM_ID: ${{ steps.get-project-item-id.outputs.project-item-id }}
+      shell: bash
+      run: |
+        gh api graphql -f query='
+          mutation($project_id: ID!, $item_id: ID!, $status_field_id: ID!, $option_id: String!) {
+            updateProjectV2ItemFieldValue(
+              input: {
+                projectId: $project_id
+                itemId: $item_id
+                fieldId: $status_field_id
+                value: {
+                  singleSelectOptionId: $option_id
+                }
+              }
+            ) {
+              projectV2Item {
+                id
+              }
+            }
+          }' -f project_id=$PROJECT_ID -f item_id=$ISSUE_ITEM_ID -f status_field_id=$STATUS_FIELD_ID -f option_id=$OPTION_ID
