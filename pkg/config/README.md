@@ -12,7 +12,7 @@ API_PORT - (default: 8080) Port on which the API server shout run
 
 ## Config Sources
 
-Config data can be loaded from multiple sources:
+Config options can be loaded from multiple sources:
 
 - Environment variables
 - `config.yaml` - Should be placed inside the working directory (e.g. `cmd/api-build`).
