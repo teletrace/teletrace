@@ -15,6 +15,6 @@ jobs:
         with:
           target-status: "Ready"
           github-token: ${{ secrets.CUSTOM_AUTOMATION_TOKEN }}
-          organization: "epsagon"
-          project-number: 3 # oss-tracing project number
+          organization: ${{ secrets.ORGANIZATION_NAME }}
+          project-number: ${{ secrets.OSS_PROJECT_NUMBER }}
 
