@@ -8,7 +8,7 @@ RUN go mod download
 
 # COPY All things inside the project and build
 COPY . .
-RUN go build -o /app/build/bin ./cmd/api
+RUN go build -o /app/build/bin ./cmd/oss-tracing
 
 FROM alpine:3.16
 COPY --from=builder /app/build/bin /app/build/bin
