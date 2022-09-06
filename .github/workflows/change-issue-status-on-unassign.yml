@@ -11,7 +11,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v3
         
-      - uses: ./.github/actions/change-issue-status
+      - uses: ./.github/change-issue-status
         with:
           target-status: "Ready"
           github-token: ${{ secrets.CUSTOM_AUTOMATION_TOKEN }}
