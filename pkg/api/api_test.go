@@ -1,8 +1,9 @@
-package main
+package api
 
 import (
 	"net/http"
 	"net/http/httptest"
+	"oss-tracing/pkg/config"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -11,26 +12,15 @@ import (
 	"go.uber.org/zap/zaptest/observer"
 )
 
-func TestPingRoute(t *testing.T) {
-	fakeLogger, _ := getLoggerObserver()
-	req, _ := http.NewRequest(http.MethodGet, "/v1/ping", nil)
-	resRecorder := httptest.NewRecorder()
-
-	router := setupRouter(fakeLogger)
-	router.ServeHTTP(resRecorder, req)
-
-	assert.Equal(t, http.StatusOK, resRecorder.Code)
-	assert.Equal(t, "pong", resRecorder.Body.String())
-}
-
 func TestLoggerMiddleware(t *testing.T) {
 	pingRoute := "/v1/ping"
 	fakeLogger, observedLogs := getLoggerObserver()
+	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, pingRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
-	router := setupRouter(fakeLogger)
-	router.ServeHTTP(resRecorder, req)
+	api := NewAPI(fakeLogger, cfg)
+	api.router.ServeHTTP(resRecorder, req)
 
 	logs := observedLogs.All()
 	assert.Equal(t, 1, len(logs))
@@ -43,14 +33,15 @@ func TestRecoveryLoggerMiddleware(t *testing.T) {
 	panicRoute := "/panic-test-route"
 	panicMsg := "this is a test panic"
 	fakeLogger, observedLogs := getLoggerObserver()
+	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, panicRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
-	router := setupRouter(fakeLogger)
-	router.GET(panicRoute, func(c *gin.Context) {
+	api := NewAPI(fakeLogger, cfg)
+	api.router.GET(panicRoute, func(c *gin.Context) {
 		panic(panicMsg)
 	})
-	router.ServeHTTP(resRecorder, req)
+	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, 2, observedLogs.Len())
 
@@ -64,6 +55,19 @@ func TestRecoveryLoggerMiddleware(t *testing.T) {
 	routeLogFields := routeLog.All()[0].ContextMap()
 	assert.Equal(t, panicRoute, routeLogFields["path"])
 	assert.Equal(t, int64(500), routeLogFields["status"])
+}
+
+func TestPingRoute(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	req, _ := http.NewRequest(http.MethodGet, "/v1/ping", nil)
+	resRecorder := httptest.NewRecorder()
+
+	api := NewAPI(fakeLogger, cfg)
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+	assert.Equal(t, "pong", resRecorder.Body.String())
 }
 
 func getLoggerObserver() (*zap.Logger, *observer.ObservedLogs) {
