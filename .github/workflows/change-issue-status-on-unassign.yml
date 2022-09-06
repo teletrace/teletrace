@@ -15,4 +15,6 @@ jobs:
         with:
           target-status: "Backlog"
           github-token: ${{ secrets.CUSTOM_AUTOMATION_TOKEN }}
+          organization: "epsagon"
+          project-number: 3 # oss-tracing project number
 

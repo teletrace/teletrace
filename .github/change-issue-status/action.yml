@@ -10,6 +10,14 @@ inputs:
     required: true
     description: Github token with permissions to write to projects
 
+  project-number:
+    required: true
+    description: The github project number 
+
+  organization:
+    required: true
+    description: The github organization
+
 runs:
   using: composite
   steps:
@@ -17,9 +25,9 @@ runs:
       id: get-project-data
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
-        ORGANIZATION: epsagon
+        ORGANIZATION: ${{ inputs.organization }}
         TARGET_STATUS: ${{ inputs.target-status }}
-        PROJECT_NUMBER: 3 # oss-tracing project number
+        PROJECT_NUMBER: ${{ inputs.project-number }} # oss-tracing project number
       shell: bash
       run: |
         gh api graphql -f query='
