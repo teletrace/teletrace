@@ -13,7 +13,7 @@ jobs:
         
       - uses: ./.github/actions/change-issue-status
         with:
-          target-status: "Backlog"
+          target-status: "Ready"
           github-token: ${{ secrets.CUSTOM_AUTOMATION_TOKEN }}
           organization: "epsagon"
           project-number: 3 # oss-tracing project number
