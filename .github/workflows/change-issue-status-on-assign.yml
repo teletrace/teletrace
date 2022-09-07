@@ -13,7 +13,7 @@ jobs:
         
       - uses: ./.github/change-issue-status
         with:
-          target-status: "In progress"
+          target-status: "🔖 Ready"
           github-token: ${{ secrets.CUSTOM_AUTOMATION_TOKEN }}
           organization: ${{ secrets.ORGANIZATION_NAME }}
           project-number: ${{ secrets.OSS_PROJECT_NUMBER }}
