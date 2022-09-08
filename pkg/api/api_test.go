@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
+	"path"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -74,11 +75,11 @@ func TestPingRoute(t *testing.T) {
 
 func TestStaticRoute(t *testing.T) {
 	testRoot, _ := os.Getwd()
-	err := os.MkdirAll(testRoot+staticFilesPath, os.ModePerm)
+	err := os.MkdirAll(path.Join(testRoot, staticFilesPath), os.ModePerm)
 	assert.NoError(t, err)
 	f, err := os.Create(fmt.Sprintf("%s%s/index.html", testRoot, staticFilesPath))
 	assert.NoError(t, err)
-	defer os.RemoveAll(testRoot + "/web")
+	defer os.RemoveAll(path.Join(testRoot, "/web"))
 	_, err = f.WriteString("Body Content")
 	assert.NoError(t, err)
 	f.Close()

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path"
 	"time"
 
 	"github.com/gin-contrib/static"
@@ -67,7 +68,7 @@ func (api *API) registerRoutes() {
 	if err != nil {
 		api.logger.Fatal("Failed to find current root path failed", zap.Error(err))
 	} else {
-		api.router.Use(static.Serve("/", static.LocalFile(currentRootPath+staticFilesPath, false)))
+		api.router.Use(static.Serve("/", static.LocalFile(path.Join(currentRootPath, staticFilesPath), false)))
 	}
 	v1 := api.router.Group("/v1")
 	v1.GET("/ping", api.getPing)
