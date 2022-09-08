@@ -79,7 +79,10 @@ func TestStaticRoute(t *testing.T) {
 	assert.NoError(t, err)
 	f, err := os.Create(fmt.Sprintf("%s%s/index.html", testRoot, staticFilesPath))
 	assert.NoError(t, err)
-	defer os.RemoveAll(path.Join(testRoot, "/web"))
+	defer func() {
+		err := os.RemoveAll(path.Join(testRoot, "/web"))
+		assert.NoError(t, err)
+	}()
 	_, err = f.WriteString("Body Content")
 	assert.NoError(t, err)
 	f.Close()

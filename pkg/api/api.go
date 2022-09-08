@@ -15,7 +15,6 @@ import (
 	"oss-tracing/pkg/config"
 )
 
-// Consts
 const staticFilesPath = "/web/build"
 
 // API holds the config used for running the API as well as
@@ -66,7 +65,7 @@ func setGinMode(config config.Config) {
 func (api *API) registerRoutes() {
 	currentRootPath, err := os.Getwd()
 	if err != nil {
-		api.logger.Fatal("Failed to find current root path failed", zap.Error(err))
+		api.logger.Fatal("Failed to find current root path", zap.Error(err))
 	} else {
 		api.router.Use(static.Serve("/", static.LocalFile(path.Join(currentRootPath, staticFilesPath), false)))
 	}
