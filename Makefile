@@ -28,6 +28,7 @@ backend-test:
 backend-lint:
 	golangci-lint run --color always --sort-results ./...
 
+.PHONY: backend-build
 backend-build:
 	go build -o $(BIN_DIR)/oss-tracing ./cmd/oss-tracing/main.go
 
@@ -48,6 +49,7 @@ frontend-lint: frontend-install
 frontend-test: frontend-install
 	cd ./web; npm test -- --watchAll=false --passWithNoTests
 
+.PHONY: frontend-build
 frontend-build: frontend-install
 	 cd ./web; BUILD_PATH=../$(BIN_DIR)/web npm run build
 
@@ -56,5 +58,6 @@ frontend-all: frontend-install frontend-lint frontend-test frontend-build
 
 # docker
 
+.PHONY: docker-build-image
 docker-build-image: 
 	docker build -t "epsagon/oss-tracing" cmd/oss-tracing
