@@ -3,14 +3,20 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path"
 	"time"
 
+	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
 )
+
+// Consts
+const staticFilesPath = "/web/build"
 
 // API holds the config used for running the API as well as
 // the endpoint handlers and resources used by them (e.g. logger).
@@ -58,6 +64,12 @@ func setGinMode(config config.Config) {
 }
 
 func (api *API) registerRoutes() {
+	currentRootPath, err := os.Getwd()
+	if err != nil {
+		api.logger.Fatal("Failed to find current root path failed", zap.Error(err))
+	} else {
+		api.router.Use(static.Serve("/", static.LocalFile(path.Join(currentRootPath, staticFilesPath), false)))
+	}
 	v1 := api.router.Group("/v1")
 	v1.GET("/ping", api.getPing)
 }
