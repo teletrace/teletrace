@@ -38,3 +38,5 @@ yarn-error.log*
 
 # Idea directories
 .vscode
+
+out/
