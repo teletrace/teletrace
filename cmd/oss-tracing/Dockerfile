@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine3.16 as builder
+FROM golang:1.19-alpine3.16 as backend-builder
 
 WORKDIR /app
 
@@ -10,10 +10,31 @@ RUN go mod download
 COPY . .
 RUN go build -o /app/build/bin ./cmd/oss-tracing
 
+
+FROM node:18-alpine3.16 AS ui-builder
+ENV NODE_ENV production
+
+WORKDIR /app
+
+# Cache and Install dependencies
+COPY web/package.json .
+COPY web/yarn.lock .
+RUN yarn install --production
+
+# Copy app files
+COPY web/ .
+
+# Build the app
+RUN yarn build
+
+
 FROM alpine:3.16
-COPY --from=builder /app/build/bin /app/build/bin
+WORKDIR /app
+
+COPY --from=backend-builder /app/build/bin /app/api/bin
+COPY --from=ui-builder /app/build /app/web/build
 
 # Inform that the image created by this Dockerfile
 # will listen on this port 
 EXPOSE 8080
-ENTRYPOINT [ "/app/build/bin" ]
+ENTRYPOINT [ "/app/api/bin" ]
