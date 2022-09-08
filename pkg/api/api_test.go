@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"oss-tracing/pkg/config"
 	"testing"
 
@@ -68,6 +70,29 @@ func TestPingRoute(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
 	assert.Equal(t, "pong", resRecorder.Body.String())
+}
+
+func TestStaticRoute(t *testing.T) {
+	testRoot, _ := os.Getwd()
+	err := os.MkdirAll(testRoot+staticFilesPath, os.ModePerm)
+	assert.NoError(t, err)
+	f, err := os.Create(fmt.Sprintf("%s%s/index.html", testRoot, staticFilesPath))
+	assert.NoError(t, err)
+	defer os.RemoveAll(testRoot + "/web")
+	_, err = f.WriteString("Body Content")
+	assert.NoError(t, err)
+	f.Close()
+
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
+	resRecorder := httptest.NewRecorder()
+
+	api := NewAPI(fakeLogger, cfg)
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+	assert.Equal(t, "Body Content", resRecorder.Body.String())
 }
 
 func getLoggerObserver() (*zap.Logger, *observer.ObservedLogs) {
