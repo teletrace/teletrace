@@ -11,6 +11,7 @@ all: print-vars \
 	backend-build backend-test backend-lint backend-all \
 	frontend-install frontend-build frontend-test frontend-lint frontend-all \
 	docker-build-image
+test: backend-test frontend-test
 
 .PHONY: print-vars
 print-vars:
