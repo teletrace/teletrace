@@ -57,6 +57,7 @@ Make sure you have the following tools installed:
 - [Go](https://golang.org/dl/) 1.19 or above
 - [Make](https://www.gnu.org/software/make/)
 - [pre-commit](https://pre-commit.com/)
+- [Docker](https://www.docker.com/)
 
 *make sure to install pre-commit hooks by running `pre-commit install` from the root of the project after cloning*
 
@@ -64,7 +65,20 @@ Make sure you have the following tools installed:
 
 This project is following the [standard go project layout](https://github.com/golang-standards/project-layout), please read though their docs to make sure you know where each file should go.
 
-#### Commit Messages
+### Coding Standards
+#### Testing
+We try to ensure that most functionality of OSS-tracing is well tested.ß
+- At the package level, we write unit tests that tests the functionality of the code in isolation.
+  These can be found within each package/module as `*_test.go` files.
+- Next, a good practice is to use the common tools like `docker-compose`, & `docker` 
+  to set up a local deployment and test the newly added functionality.
+
+Make sure to run
+```
+make test
+```
+before submitting your PR to catch any failed tests.
+### Commit Messages
 
 Use descriptive commit messages. Here are [some recommendations](https://cbea.ms/git-commit/) on how to write good commit messages. When creating PRs GitHub will automatically copy commit messages into the PR description, so it is a useful habit to write good commit messages before the PR is created. Also, unless you actually want to tell a story with multiple commits make sure to squash into a single commit before creating the PR.
 
@@ -76,7 +90,7 @@ Each commit message header must conform to the Commit Message Header format.
 
     <type>: <short summary>
 
-###### Type
+##### Type
 
 Must be one of the following:
 
@@ -89,7 +103,7 @@ Must be one of the following:
 - **refactor**: A code change that neither fixes a bug nor adds a feature
 - **test**: Adding missing tests or correcting existing tests
 
-###### Short summary
+##### Short summary
 
 Use the summary field to provide a succinct description of the change:
 
