@@ -40,19 +40,19 @@ backend-all: backend-lint backend-test backend-build
 .PHONY: frontend-install
 # install dependencies
 frontend-install:
-	cd ./web; npm install
+	cd ./web; yarn install
 
 .PHONY: frontend-lint
 frontend-lint: frontend-install
-	cd ./web; npm run lint
+	cd ./web; yarn lint
 
 .PHONY: frontend-test
 frontend-test: frontend-install
-	cd ./web; npm test -- --watchAll=false --passWithNoTests
+	cd ./web; yarn test -- --watchAll=false --passWithNoTests
 
 .PHONY: frontend-build
 frontend-build: frontend-install
-	 cd ./web; BUILD_PATH=../$(BIN_DIR)/web npm run build
+	 cd ./web; BUILD_PATH=../$(BIN_DIR)/web yarn build
 
 .PHONY: fronted-all
 frontend-all: frontend-install frontend-lint frontend-test frontend-build
