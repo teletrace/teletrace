@@ -12,7 +12,7 @@ inputs:
 
   project-number:
     required: true
-    description: The github project number 
+    description: The github project number
 
   organization:
     required: true
@@ -39,7 +39,7 @@ runs:
                   nodes {
                     ... on ProjectV2SingleSelectField {
                       id
-                      name                        
+                      name
                       options {
                         id
                         name

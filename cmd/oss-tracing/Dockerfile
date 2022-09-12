@@ -35,6 +35,6 @@ COPY --from=backend-builder /app/build/bin /app/api/bin
 COPY --from=ui-builder /app/build /app/web/build
 
 # Inform that the image created by this Dockerfile
-# will listen on this port 
+# will listen on this port
 EXPOSE 8080
 ENTRYPOINT [ "/app/api/bin" ]

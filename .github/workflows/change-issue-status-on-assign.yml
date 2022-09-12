@@ -1,7 +1,7 @@
 name: Change issue status on assign
-on: 
+on:
   issues:
-    types: 
+    types:
       - assigned
 
 jobs:
@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
-        
+
       - uses: ./.github/change-issue-status
         with:
           target-status: "🔖 Ready"
