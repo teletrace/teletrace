@@ -1,7 +1,7 @@
 name: Change issue status on unassign
-on: 
+on:
   issues:
-    types: 
+    types:
       - unassigned
 
 jobs:
@@ -10,11 +10,10 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v3
-        
+
       - uses: ./.github/change-issue-status
         with:
           target-status: "📋 Backlog"
           github-token: ${{ secrets.CUSTOM_AUTOMATION_TOKEN }}
           organization: ${{ secrets.ORGANIZATION_NAME }}
           project-number: ${{ secrets.OSS_PROJECT_NUMBER }}
-

@@ -24,7 +24,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src/**/*.{ts,tsx}"
+    "lint": "yarn run eslint && yarn run prettier",
+    "eslint": "eslint src/**/*.{ts,tsx}",
+    "prettier": "prettier --check ."
   },
   "browserslist": {
     "production": [

@@ -1,7 +1,7 @@
 name: Change PR assignee on open
-on: 
+on:
   pull_request:
-    types: 
+    types:
       - opened
 
 jobs:
