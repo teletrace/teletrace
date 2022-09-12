@@ -18,3 +18,10 @@ jobs:
       - uses: actionsx/prettier@v2
         with:
           args: --check .
+
+  eslint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: make frontend-eslint

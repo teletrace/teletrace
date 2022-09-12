@@ -46,6 +46,10 @@ frontend-install:
 frontend-lint: frontend-install
 	cd ./web; yarn lint
 
+.PHONY: frontend-eslint
+frontend-eslint: frontend-install
+	cd ./web; yarn run eslint
+
 .PHONY: frontend-test
 frontend-test: frontend-install
 	cd ./web; yarn test -- --watchAll=false --passWithNoTests
