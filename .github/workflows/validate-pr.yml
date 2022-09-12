@@ -14,3 +14,36 @@ jobs:
       - uses: amannn/action-semantic-pull-request@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pre-commit:
+    name: PreCommit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - uses: actions/setup-python@v3
+
+      - run: python -m pip install pre-commit
+        shell: bash
+
+      - run: python -m pip freeze --local
+        shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - run: pre-commit run --show-diff-on-failure --color=always ${{ inputs.extra_args }}
+        shell: bash
+
+      - uses: endbug/add-and-commit@v9
+        with:
+          message: "refactor: fixing pre-commit issues"
+          default_author: github_actions
+          committer_name: GitHub Actions
+          committer_email: actions@github.com
+          add: .
