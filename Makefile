@@ -60,5 +60,5 @@ frontend-all: frontend-install frontend-lint frontend-test frontend-build
 # docker
 
 .PHONY: docker-build-image
-docker-build-image: 
+docker-build-image:
 	docker build -t "epsagon/oss-tracing" cmd/oss-tracing

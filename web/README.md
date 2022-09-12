@@ -41,7 +41,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ### `yarn lint`
 
-Identify and report lint issues as configured by ```.eslintrc.js```.
+Identify and report lint issues as configured by `.eslintrc.js`.
 
 ## Learn More
 
