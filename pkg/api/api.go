@@ -60,11 +60,11 @@ func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	if err != nil {
 		logger.Fatal("Failed to find current root path", zap.Error(err))
 	}
-	staticPath := path.Join(currentRootPath, staticFilesPath)
-	router.Use(static.Serve("/", static.LocalFile(staticPath, false)))
+	fullStaticFilesPath := path.Join(currentRootPath, staticFilesPath)
+	router.Use(static.Serve("/", static.LocalFile(fullStaticFilesPath, false)))
 	router.NoRoute(func(c *gin.Context) {
 		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
-			c.File(staticPath)
+			c.File(fullStaticFilesPath)
 		}
 	})
 
