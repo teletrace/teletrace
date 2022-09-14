@@ -2,14 +2,7 @@ FROM golang:1.19-alpine3.16 as backend-builder
 
 WORKDIR /app
 
-# COPY go.mod, go.sum and download the dependencies
-COPY go.* ./
-RUN go mod download
-
-# COPY All things inside the project and build
-COPY . .
-RUN go build -o /app/build/bin ./cmd/oss-tracing
-
+COPY all-in-one /app/build/bin
 
 FROM node:18-alpine3.16 AS ui-builder
 ENV NODE_ENV production

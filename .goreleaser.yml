@@ -18,8 +18,8 @@ builds:
       - 6
       - 7
     main: ./cmd/oss-tracing/main.go
-    binary: server
-    id: server
+    binary: all-in-one
+    id: all-in-one
 
 
 dockers:
