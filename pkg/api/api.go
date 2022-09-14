@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/static"
@@ -67,7 +68,13 @@ func (api *API) registerRoutes() {
 	if err != nil {
 		api.logger.Fatal("Failed to find current root path", zap.Error(err))
 	}
-	api.router.Use(static.Serve("/", static.LocalFile(path.Join(currentRootPath, staticFilesPath), false)))
+	absoluteStaticFilesPath := path.Join(currentRootPath, staticFilesPath)
+	api.router.Use(static.Serve("/", static.LocalFile(absoluteStaticFilesPath, true)))
+	api.router.NoRoute(func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.RequestURI, "/v1") {
+			c.File(path.Join(absoluteStaticFilesPath, "index.html"))
+		}
+	})
 	v1 := api.router.Group("/v1")
 	v1.GET("/ping", api.getPing)
 }
