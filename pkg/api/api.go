@@ -55,6 +55,19 @@ func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	// zap recovery logger middleware
 	router.Use(ginzap.RecoveryWithZap(logger, false))
 
+	// static files middleware (for serving frontend files)
+	currentRootPath, err := os.Getwd()
+	if err != nil {
+		logger.Fatal("Failed to find current root path", zap.Error(err))
+	}
+	absoluteStaticFilesPath := path.Join(currentRootPath, staticFilesPath)
+	router.Use(static.Serve("/", static.LocalFile(absoluteStaticFilesPath, false)))
+	router.NoRoute(func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
+			c.File(path.Join(absoluteStaticFilesPath, "index.html"))
+		}
+	})
+
 	return router
 }
 
@@ -67,17 +80,6 @@ func setGinMode(config config.Config) {
 }
 
 func (api *API) registerRoutes() {
-	currentRootPath, err := os.Getwd()
-	if err != nil {
-		api.logger.Fatal("Failed to find current root path", zap.Error(err))
-	}
-	absoluteStaticFilesPath := path.Join(currentRootPath, staticFilesPath)
-	api.router.Use(static.Serve("/", static.LocalFile(absoluteStaticFilesPath, false)))
-	api.router.NoRoute(func(c *gin.Context) {
-		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
-			c.File(path.Join(absoluteStaticFilesPath, "index.html"))
-		}
-	})
 	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
 }
