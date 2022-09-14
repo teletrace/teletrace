@@ -69,7 +69,7 @@ func (api *API) registerRoutes() {
 		api.logger.Fatal("Failed to find current root path", zap.Error(err))
 	}
 	absoluteStaticFilesPath := path.Join(currentRootPath, staticFilesPath)
-	api.router.Use(static.Serve("/", static.LocalFile(absoluteStaticFilesPath, true)))
+	api.router.Use(static.Serve("/", static.LocalFile(absoluteStaticFilesPath, false)))
 	api.router.NoRoute(func(c *gin.Context) {
 		if !strings.HasPrefix(c.Request.RequestURI, "/v1") {
 			c.File(path.Join(absoluteStaticFilesPath, "index.html"))
