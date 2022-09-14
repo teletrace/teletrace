@@ -17,11 +17,22 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint", "no-relative-import-paths"],
   settings: {
     react: {
       version: "detect",
     },
   },
-  rules: {},
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: ["@/features/*/*"], // validate import style, forces us to mindfully export stuff from a feature
+      },
+    ],
+    "no-relative-import-paths/no-relative-import-paths": [
+      "error",
+      { allowSameFolder: true },
+    ],
+  },
 };
