@@ -3,7 +3,6 @@ before:
   hooks:
     - go mod tidy
     - go generate ./...
-
 builds:
   - env:
       - CGO_ENABLED=0
@@ -21,7 +20,6 @@ builds:
     main: ./cmd/oss-tracing/main.go
     binary: all-in-one
     id: all-in-one
-
 dockers:
   - image_templates:
     - "epsagon/all-in-one:{{ .Tag }}-amd64"
@@ -97,7 +95,6 @@ docker_manifests:
        - "epsagon/all-in-one:latest-arm64v8"
        - "epsagon/all-in-one:latest-armv6"
        - "epsagon/all-in-one:latest-armv7"
-    
 archives:
   - replacements:
       darwin: Darwin
