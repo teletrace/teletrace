@@ -15,7 +15,7 @@ API_PORT - (default: 8080) Port on which the API server should run
 Config options can be loaded from multiple sources:
 
 - Default values
-- `config.yaml` - Should be placed inside the working directory (e.g. `cmd/oss-tracing`).
+- `config.yaml` - Should be placed inside the working directory (e.g. `cmd/all-in-one`).
 - Environment variables
 
 Config sources are prioritized:
