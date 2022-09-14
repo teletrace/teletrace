@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/static"
@@ -15,7 +16,10 @@ import (
 	"oss-tracing/pkg/config"
 )
 
-const staticFilesPath = "/web/build"
+const (
+	apiPrefix       = "/v1"
+	staticFilesPath = "/web/build"
+)
 
 // API holds the config used for running the API as well as
 // the endpoint handlers and resources used by them (e.g. logger).
@@ -67,8 +71,14 @@ func (api *API) registerRoutes() {
 	if err != nil {
 		api.logger.Fatal("Failed to find current root path", zap.Error(err))
 	}
-	api.router.Use(static.Serve("/", static.LocalFile(path.Join(currentRootPath, staticFilesPath), false)))
-	v1 := api.router.Group("/v1")
+	absoluteStaticFilesPath := path.Join(currentRootPath, staticFilesPath)
+	api.router.Use(static.Serve("/", static.LocalFile(absoluteStaticFilesPath, false)))
+	api.router.NoRoute(func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
+			c.File(path.Join(absoluteStaticFilesPath, "index.html"))
+		}
+	})
+	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
 }
 
