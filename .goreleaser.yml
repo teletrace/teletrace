@@ -47,7 +47,7 @@ dockers:
   - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-armv6"
       - "epsagon/all-in-one:v{{ .Major }}-armv6"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-v6"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv6"
       - "epsagon/all-in-one:latest-armv6"
     dockerfile: ./cmd/oss-tracing/Dockerfile
     use: buildx
