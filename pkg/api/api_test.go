@@ -16,7 +16,7 @@ import (
 )
 
 func TestLoggerMiddleware(t *testing.T) {
-	pingRoute := "/v1/ping"
+	pingRoute := path.Join(apiPrefix, "/ping")
 	fakeLogger, observedLogs := getLoggerObserver()
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, pingRoute, nil)
@@ -63,7 +63,7 @@ func TestRecoveryLoggerMiddleware(t *testing.T) {
 func TestPingRoute(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
-	req, _ := http.NewRequest(http.MethodGet, "/v1/ping", nil)
+	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, "/ping"), nil)
 	resRecorder := httptest.NewRecorder()
 
 	api := NewAPI(fakeLogger, cfg)
