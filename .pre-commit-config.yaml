@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: eslint
         types_or: [javascript, jsx, ts, tsx]
-        entry: make frontend-lint
+        entry: make frontend-eslint
         additional_dependencies:
           - eslint@8.23.1
           - eslint-plugin-react@7.31.7
