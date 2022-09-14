@@ -23,10 +23,10 @@ builds:
 
 dockers:
   - image_templates:
-    - "epsagon/all-in-one:{{ .Tag }}-amd64"
-    - "epsagon/all-in-one:v{{ .Major }}-amd64"
-    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
-    - "epsagon/all-in-one:latest-amd64"
+      - "epsagon/all-in-one:{{ .Tag }}-amd64"
+      - "epsagon/all-in-one:v{{ .Major }}-amd64"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "epsagon/all-in-one:latest-amd64"
     dockerfile: ./cmd/oss-tracing/Dockerfile
     use: buildx
     build_flag_templates:
@@ -34,22 +34,21 @@ dockers:
     goarch: amd64
     goos: linux
   - image_templates:
-    - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
-    - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
-    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
-    - "epsagon/all-in-one:latest-arm64v8"
+      - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
+      - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "epsagon/all-in-one:latest-arm64v8"
     dockerfile: ./cmd/oss-tracing/Dockerfile
     use: buildx
     build_flag_templates:
       - --platform=linux/arm64/v8
     goarch: arm64
     goos: linux
-  - 
-    image_templates:
-    - "epsagon/all-in-one:{{ .Tag }}-armv6"
-    - "epsagon/all-in-one:v{{ .Major }}-armv6"
-    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-v6"
-    - "epsagon/all-in-one:latest-armv6"
+  - image_templates:
+      - "epsagon/all-in-one:{{ .Tag }}-armv6"
+      - "epsagon/all-in-one:v{{ .Major }}-armv6"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-v6"
+      - "epsagon/all-in-one:latest-armv6"
     dockerfile: ./cmd/oss-tracing/Dockerfile
     use: buildx
     build_flag_templates:
@@ -57,12 +56,11 @@ dockers:
     goarch: arm
     goarm: 6
     goos: linux
-  - 
-    image_templates:
-    - "epsagon/all-in-one:{{ .Tag }}-armv7"
-    - "epsagon/all-in-one:v{{ .Major }}-armv7"
-    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
-    - "epsagon/all-in-one:latest-armv7"
+  - image_templates:
+      - "epsagon/all-in-one:{{ .Tag }}-armv7"
+      - "epsagon/all-in-one:v{{ .Major }}-armv7"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
+      - "epsagon/all-in-one:latest-armv7"
     dockerfile: ./cmd/oss-tracing/Dockerfile
     use: buildx
     build_flag_templates:
@@ -72,30 +70,30 @@ dockers:
     goos: linux
 
 docker_manifests:
-   - name_template: "epsagon/all-in-one:{{ .Tag }}"
-     image_templates:
-       - "epsagon/all-in-one:{{ .Tag }}-amd64"
-       - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
-       - "epsagon/all-in-one:{{ .Tag }}-armv6"
-       - "epsagon/all-in-one:{{ .Tag }}-armv7"
-   - name_template: "epsagon/all-in-one:v{{ .Major }}"
-     image_templates:
-       - "epsagon/all-in-one:v{{ .Major }}-amd64"
-       - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
-       - "epsagon/all-in-one:v{{ .Major }}-armv6"
-       - "epsagon/all-in-one:v{{ .Major }}-armv7"
-   - name_template: "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}"
-     image_templates:
-       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
-       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
-       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv6"
-       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
-   - name_template: "epsagon/all-in-one:latest"
-     image_templates:
-       - "epsagon/all-in-one:latest-amd64"
-       - "epsagon/all-in-one:latest-arm64v8"
-       - "epsagon/all-in-one:latest-armv6"
-       - "epsagon/all-in-one:latest-armv7"
+  - name_template: "epsagon/all-in-one:{{ .Tag }}"
+    image_templates:
+      - "epsagon/all-in-one:{{ .Tag }}-amd64"
+      - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
+      - "epsagon/all-in-one:{{ .Tag }}-armv6"
+      - "epsagon/all-in-one:{{ .Tag }}-armv7"
+  - name_template: "epsagon/all-in-one:v{{ .Major }}"
+    image_templates:
+      - "epsagon/all-in-one:v{{ .Major }}-amd64"
+      - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
+      - "epsagon/all-in-one:v{{ .Major }}-armv6"
+      - "epsagon/all-in-one:v{{ .Major }}-armv7"
+  - name_template: "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}"
+    image_templates:
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv6"
+      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
+  - name_template: "epsagon/all-in-one:latest"
+    image_templates:
+      - "epsagon/all-in-one:latest-amd64"
+      - "epsagon/all-in-one:latest-arm64v8"
+      - "epsagon/all-in-one:latest-armv6"
+      - "epsagon/all-in-one:latest-armv7"
 
 archives:
   - replacements:
@@ -105,12 +103,12 @@ archives:
       386: i386
       amd64: x86_64
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"
