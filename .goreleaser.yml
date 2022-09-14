@@ -1,0 +1,117 @@
+project_name: lupa
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    main: ./cmd/oss-tracing/main.go
+    binary: server
+    id: server
+
+
+dockers:
+  - image_templates:
+    - "epsagon/all-in-one:{{ .Tag }}-amd64"
+    - "epsagon/all-in-one:v{{ .Major }}-amd64"
+    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
+    - "epsagon/all-in-one:latest-amd64"
+    dockerfile: ./cmd/oss-tracing/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/amd64
+    goarch: amd64
+    goos: linux
+  - image_templates:
+    - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
+    - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
+    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
+    - "epsagon/all-in-one:latest-arm64v8"
+    dockerfile: ./cmd/oss-tracing/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm64/v8
+    goarch: arm64
+    goos: linux
+  - 
+    image_templates:
+    - "epsagon/all-in-one:{{ .Tag }}-armv6"
+    - "epsagon/all-in-one:v{{ .Major }}-armv6"
+    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-v6"
+    - "epsagon/all-in-one:latest-armv6"
+    dockerfile: ./cmd/oss-tracing/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm/v6
+    goarch: arm
+    goarm: 6
+    goos: linux
+  - 
+    image_templates:
+    - "epsagon/all-in-one:{{ .Tag }}-armv7"
+    - "epsagon/all-in-one:v{{ .Major }}-armv7"
+    - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
+    - "epsagon/all-in-one:latest-armv7"
+    dockerfile: ./cmd/oss-tracing/Dockerfile
+    use: buildx
+    build_flag_templates:
+      - --platform=linux/arm/v7
+    goarch: arm
+    goarm: 7
+    goos: linux
+
+docker_manifests:
+   - name_template: "epsagon/all-in-one:{{ .Tag }}"
+     image_templates:
+       - "epsagon/all-in-one:{{ .Tag }}-amd64"
+       - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
+       - "epsagon/all-in-one:{{ .Tag }}-armv6"
+       - "epsagon/all-in-one:{{ .Tag }}-armv7"
+   - name_template: "epsagon/all-in-one:v{{ .Major }}"
+     image_templates:
+       - "epsagon/all-in-one:v{{ .Major }}-amd64"
+       - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
+       - "epsagon/all-in-one:v{{ .Major }}-armv6"
+       - "epsagon/all-in-one:v{{ .Major }}-armv7"
+   - name_template: "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}"
+     image_templates:
+       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
+       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
+       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv6"
+       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
+   - name_template: "epsagon/all-in-one:latest"
+     image_templates:
+       - "epsagon/all-in-one:latest-amd64"
+       - "epsagon/all-in-one:latest-arm64v8"
+       - "epsagon/all-in-one:latest-armv6"
+       - "epsagon/all-in-one:latest-armv7"
+    
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      386: i386
+      amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
