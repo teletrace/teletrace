@@ -1,6 +1,6 @@
-# oss-tracing
+# all-in-one
 
-The `oss-tracing` package responsible for building the application as executable.
+The `all-in-one` package is responsible for building the application as executable.
 Currently it only builds the REST API for communicating between the traces frontend and backend.
 
 ## Development
@@ -28,7 +28,7 @@ Download and install docker in your machine from [here](https://docs.docker.com/
 The examples assumes that you are in the root folder
 
 ```sh
-docker build -f cmd/oss-tracing/Dockerfile -t oss-tracing:latest .
+docker build -f cmd/all-in-one/Dockerfile -t oss-tracing:latest .
 docker run -p 8080:8080 oss-tracing:latest
 ```
 
