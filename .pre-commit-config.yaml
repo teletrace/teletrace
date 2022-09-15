@@ -30,5 +30,5 @@ repos:
       - id: codespell
         name: codespell
         description: Check for typos or spelling errors before commit.
-        entry: codespell --ignore-words=ignore-spelling-words.txt --skip="*.sum,*.sum,*.lock,.vscode,node_modules"
+        entry: codespell --ignore-words=ignore-spelling-words.txt --skip="*.sum,*.mod,*.lock,.vscode,node_modules"
         types: [text]
