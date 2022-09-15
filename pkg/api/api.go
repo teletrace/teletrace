@@ -3,8 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -16,10 +15,9 @@ import (
 	"oss-tracing/pkg/config"
 )
 
-const (
-	apiPrefix       = "/v1"
-	staticFilesPath = "/web/build"
-)
+const apiPrefix = "/v1"
+
+var staticFilesPath = filepath.Join("web", "build")
 
 // API holds the config used for running the API as well as
 // the endpoint handlers and resources used by them (e.g. logger).
@@ -56,15 +54,14 @@ func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	router.Use(ginzap.RecoveryWithZap(logger, false))
 
 	// static files middleware (for serving frontend files)
-	currentRootPath, err := os.Getwd()
+	absStaticFilesPath, err := filepath.Abs(staticFilesPath)
 	if err != nil {
-		logger.Fatal("Failed to find current root path", zap.Error(err))
+		logger.Fatal("Failed to determine static files absolute path", zap.Error(err))
 	}
-	absoluteStaticFilesPath := path.Join(currentRootPath, staticFilesPath)
-	router.Use(static.Serve("/", static.LocalFile(absoluteStaticFilesPath, false)))
+	router.Use(static.Serve("/", static.LocalFile(absStaticFilesPath, false)))
 	router.NoRoute(func(c *gin.Context) {
 		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
-			c.File(path.Join(absoluteStaticFilesPath, "index.html"))
+			c.File(filepath.Join(absStaticFilesPath, "index.html"))
 		}
 	})
 
