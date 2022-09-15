@@ -8,7 +8,7 @@ RUN go mod download
 
 # COPY All things inside the project and build
 COPY . .
-RUN go build -o /app/build/bin ./cmd/oss-tracing
+RUN go build -o /app/build/bin ./cmd/all-in-one
 
 
 FROM node:18-alpine3.16 AS ui-builder
