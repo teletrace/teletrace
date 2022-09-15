@@ -31,7 +31,7 @@ backend-lint:
 
 .PHONY: backend-build
 backend-build:
-	go build -o $(BIN_DIR)/oss-tracing ./cmd/oss-tracing/main.go
+	go build -o $(BIN_DIR)/oss-tracing ./cmd/all-in-one/main.go
 
 backend-all: backend-lint backend-test backend-build
 
@@ -65,4 +65,4 @@ frontend-all: frontend-install frontend-lint frontend-test frontend-build
 
 .PHONY: docker-build-image
 docker-build-image:
-	docker build -t "epsagon/oss-tracing" cmd/oss-tracing
+	docker build -t "epsagon/oss-tracing" cmd/all-in-one
