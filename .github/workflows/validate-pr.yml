@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: codespell-project/actions-codespell@master
+      - uses: ./
         with:
           check_filenames: true
           skip: "*.sum,*.sum,*.lock"
