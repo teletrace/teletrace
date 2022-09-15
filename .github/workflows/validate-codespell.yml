@@ -1,0 +1,15 @@
+name: codespell
+
+on: [push, pull_request]
+
+jobs:
+  codespell:
+    name: Check for spelling errors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: codespell-project/actions-codespell@master
+        with:
+          check_filenames: true
+          skip: "*.sum,*.sum,*.lock"
+          ignore_words_file: ignore-spelling-words.txt
