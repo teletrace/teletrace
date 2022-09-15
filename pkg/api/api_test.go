@@ -1,12 +1,12 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
 	"path"
+	"path/filepath"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -74,18 +74,8 @@ func TestPingRoute(t *testing.T) {
 }
 
 func TestStaticRoute(t *testing.T) {
-	testRoot, _ := os.Getwd()
-	err := os.MkdirAll(path.Join(testRoot, staticFilesPath), os.ModePerm)
-	assert.NoError(t, err)
-	f, err := os.Create(fmt.Sprintf("%s%s/index.html", testRoot, staticFilesPath))
-	assert.NoError(t, err)
-	defer func() {
-		err := os.RemoveAll(path.Join(testRoot, "/web"))
-		assert.NoError(t, err)
-	}()
-	_, err = f.WriteString("Body Content")
-	assert.NoError(t, err)
-	f.Close()
+	expectedContent := "Some content"
+	createStaticFile(t, expectedContent)
 
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
@@ -96,7 +86,36 @@ func TestStaticRoute(t *testing.T) {
 	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
-	assert.Equal(t, "Body Content", resRecorder.Body.String())
+	assert.Equal(t, expectedContent, resRecorder.Body.String())
+}
+
+func TestStaticFilesOnNonAPIRoutes(t *testing.T) {
+	expectedContent := "Some content"
+	createStaticFile(t, expectedContent)
+
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	req, _ := http.NewRequest(http.MethodGet, "/non-existing-path", nil)
+	resRecorder := httptest.NewRecorder()
+
+	api := NewAPI(fakeLogger, cfg)
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+	assert.Equal(t, expectedContent, resRecorder.Body.String())
+}
+
+func createStaticFile(t *testing.T, content string) {
+	absStaticFilesPath, err := filepath.Abs(staticFilesPath)
+	assert.NoError(t, err)
+	err = os.MkdirAll(absStaticFilesPath, os.ModePerm)
+	assert.NoError(t, err)
+	t.Cleanup(func() {
+		err := os.RemoveAll(filepath.Dir(absStaticFilesPath))
+		assert.NoError(t, err)
+	})
+	err = os.WriteFile(filepath.Join(absStaticFilesPath, "index.html"), []byte(content), os.ModePerm)
+	assert.NoError(t, err)
 }
 
 func getLoggerObserver() (*zap.Logger, *observer.ObservedLogs) {
