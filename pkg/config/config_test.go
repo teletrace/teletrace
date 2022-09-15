@@ -8,16 +8,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zaptest/observer"
 )
 
 func TestDefaultValuesSource(t *testing.T) {
-	actualConfig, logs := runNewConfig(t)
-	expectedConfig := Config{Debug: DebugDefault, APIPort: apiPortDefault}
-
-	fileNotFoundLog := logs.FilterMessage("Optional config file not found. Skipping")
-	assert.Equal(t, 1, fileNotFoundLog.Len())
+	actualConfig, err := NewConfig()
+	assert.NoError(t, err)
+	expectedConfig := Config{Debug: debugDefault, APIPort: apiPortDefault}
 
 	assert.Equal(t, expectedConfig, actualConfig)
 }
@@ -29,7 +25,8 @@ func TestConfigFileSource(t *testing.T) {
 	content := []byte(fmt.Sprintf("DEBUG: %t\nAPI_PORT: %d", expectedDebug, expectedAPIPort))
 	writeEnvFile(t, content)
 
-	actualConfig, _ := runNewConfig(t)
+	actualConfig, err := NewConfig()
+	assert.NoError(t, err)
 	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
 
 	assert.Equal(t, expectedConfig, actualConfig)
@@ -42,7 +39,8 @@ func TestEnvVarSource(t *testing.T) {
 	t.Setenv("DEBUG", strconv.FormatBool(expectedDebug))
 	t.Setenv("API_PORT", strconv.Itoa(expectedAPIPort))
 
-	actualConfig, _ := runNewConfig(t)
+	actualConfig, err := NewConfig()
+	assert.NoError(t, err)
 	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
 
 	assert.Equal(t, expectedConfig, actualConfig)
@@ -57,7 +55,8 @@ func TestSourceOverrides(t *testing.T) {
 	content := []byte(fmt.Sprintf("API_PORT: %d", fileAPIPort))
 	writeEnvFile(t, content)
 
-	actualConfig, _ := runNewConfig(t)
+	actualConfig, err := NewConfig()
+	assert.NoError(t, err)
 	expectedConfig := Config{APIPort: envAPIPort}
 
 	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
@@ -73,14 +72,4 @@ func writeEnvFile(t *testing.T, content []byte) {
 		err := os.Remove(path)
 		assert.NoError(t, err)
 	})
-}
-
-func runNewConfig(t *testing.T) (Config, *observer.ObservedLogs) {
-	zapCore, observedLogs := observer.New(zap.InfoLevel)
-	fakeLogger := zap.New(zapCore)
-
-	actualConfig, err := NewConfig(fakeLogger)
-	assert.NoError(t, err)
-
-	return actualConfig, observedLogs
 }
