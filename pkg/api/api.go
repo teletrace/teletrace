@@ -65,7 +65,7 @@ func setGinMode(config config.Config) {
 func (api *API) registerRoutes() {
 	currentRootPath, err := os.Getwd()
 	if err != nil {
-		api.logger.Fatal("Failed to find current root pathh", zap.Error(err))
+		api.logger.Fatal("Failed to find current root path", zap.Error(err))
 	}
 	api.router.Use(static.Serve("/", static.LocalFile(path.Join(currentRootPath, staticFilesPath), false)))
 	v1 := api.router.Group("/v1")
