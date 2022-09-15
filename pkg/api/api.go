@@ -35,36 +35,14 @@ func NewAPI(logger *zap.Logger, config config.Config) *API {
 		config: config,
 		router: router,
 	}
+	api.registerMiddlewares()
 	api.registerRoutes()
-
 	return api
 }
 
 func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	setGinMode(config)
 	router := gin.New()
-
-	// zap logger middleware
-	router.Use(ginzap.GinzapWithConfig(logger, &ginzap.Config{
-		TimeFormat: time.RFC3339,
-		UTC:        true,
-	}))
-
-	// zap recovery logger middleware
-	router.Use(ginzap.RecoveryWithZap(logger, false))
-
-	// static files middleware (for serving frontend files)
-	absStaticFilesPath, err := filepath.Abs(staticFilesPath)
-	if err != nil {
-		logger.Fatal("Failed to determine static files absolute path", zap.Error(err))
-	}
-	router.Use(static.Serve("/", static.LocalFile(absStaticFilesPath, false)))
-	router.NoRoute(func(c *gin.Context) {
-		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
-			c.File(filepath.Join(absStaticFilesPath, "index.html"))
-		}
-	})
-
 	return router
 }
 
@@ -74,6 +52,33 @@ func setGinMode(config config.Config) {
 		mode = gin.ReleaseMode
 	}
 	gin.SetMode(mode)
+}
+
+func (api *API) registerMiddlewares() {
+	// zap logger middleware
+	api.router.Use(ginzap.GinzapWithConfig(api.logger, &ginzap.Config{
+		TimeFormat: time.RFC3339,
+		UTC:        true,
+	}))
+
+	// zap recovery logger middleware
+	api.router.Use(ginzap.RecoveryWithZap(api.logger, false))
+
+	// static files middleware, for serving frontend files
+	api.registerStaticFilesMiddleware()
+}
+
+func (api *API) registerStaticFilesMiddleware() {
+	absStaticFilesPath, err := filepath.Abs(staticFilesPath)
+	if err != nil {
+		api.logger.Fatal("Failed to determine static files absolute path", zap.Error(err))
+	}
+	api.router.Use(static.Serve("/", static.LocalFile(absStaticFilesPath, false)))
+	api.router.NoRoute(func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
+			c.File(filepath.Join(absStaticFilesPath, "index.html"))
+		}
+	})
 }
 
 func (api *API) registerRoutes() {
