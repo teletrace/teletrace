@@ -73,29 +73,21 @@ func TestPingRoute(t *testing.T) {
 	assert.Equal(t, "pong", resRecorder.Body.String())
 }
 
-func TestStaticRoute(t *testing.T) {
-	expectedContent := "Some content"
-	createStaticFile(t, expectedContent)
-
-	fakeLogger, _ := getLoggerObserver()
-	cfg := config.Config{Debug: false}
-	req, _ := http.NewRequest(http.MethodGet, "/", nil)
-	resRecorder := httptest.NewRecorder()
-
-	api := NewAPI(fakeLogger, cfg)
-	api.router.ServeHTTP(resRecorder, req)
-
-	assert.Equal(t, http.StatusOK, resRecorder.Code)
-	assert.Equal(t, expectedContent, resRecorder.Body.String())
+func TestRootStaticRoute(t *testing.T) {
+	runStaticFilesRouteTest(t, "/")
 }
 
-func TestStaticFilesOnNonAPIRoutes(t *testing.T) {
+func TestNonAPIRouteStaticResponse(t *testing.T) {
+	runStaticFilesRouteTest(t, "/non-existing-path")
+}
+
+func runStaticFilesRouteTest(t *testing.T, testedRoute string) {
 	expectedContent := "Some content"
 	createStaticFile(t, expectedContent)
 
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
-	req, _ := http.NewRequest(http.MethodGet, "/non-existing-path", nil)
+	req, _ := http.NewRequest(http.MethodGet, testedRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
 	api := NewAPI(fakeLogger, cfg)
