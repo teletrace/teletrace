@@ -30,6 +30,5 @@ repos:
       - id: codespell
         name: codespell
         description: Check for typos or spelling errors before commit.
-        entry: codespell --ignore-words ignore-spelling-words.txt *.go *.md
-        language: python
+        entry: codespell --ignore-words=ignore-spelling-words.txt --skip="*.sum,*.sum,*.lock"
         types: [text]

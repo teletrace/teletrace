@@ -13,9 +13,9 @@ there are a few different ways you can contribute to the community:
 
 ### Reporting bugs
 
-Before openning a bug report, please make sure that someone hasn't already reported the issue, and looks through the [existing issues](https://github.com/epsagon/oss-tracing/issues?q=is%3Aopen+is%3Aissue+label%3Abug) for simillar issues.
+Before opening a bug report, please make sure that someone hasn't already reported the issue, and looks through the [existing issues](https://github.com/epsagon/oss-tracing/issues?q=is%3Aopen+is%3Aissue+label%3Abug) for similar issues.
 
-Report a bug by issueing a [bug report](https://github.com/epsagon/oss-tracing/issues/new?assignees=&labels=&template=bug_report.md&title=), when reporting a bug please try to:
+Report a bug by issuing a [bug report](https://github.com/epsagon/oss-tracing/issues/new?assignees=&labels=&template=bug_report.md&title=), when reporting a bug please try to:
 
 - Describe the problematic behavior (expected vs actual) in as much details as possible
 - Steps to reproduce the issue
@@ -25,10 +25,10 @@ Report a bug by issueing a [bug report](https://github.com/epsagon/oss-tracing/i
 
 Before requesting a feature, please make sure that the requested feature is not [already requested](https://github.com/epsagon/oss-tracing/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement), or is not already on our [roadmap](https://github.com/orgs/epsagon/projects/3).
 
-Request a feature by issueing a [feature request](https://github.com/epsagon/oss-tracing/issues/new?assignees=&labels=&template=feature_request.md&title=), when requesting a feature try to:
+Request a feature by issuing a [feature request](https://github.com/epsagon/oss-tracing/issues/new?assignees=&labels=&template=feature_request.md&title=), when requesting a feature try to:
 
 - Outline the issues you are trying to solve
-- Provide a detailed description of the solution you whould like to see implemented
+- Provide a detailed description of the solution you would like to see implemented
 - Some alternatives if applicable
 - Any additional context that would help the maintainers prioritize the request
 
