@@ -14,3 +14,12 @@ jobs:
       - uses: amannn/action-semantic-pull-request@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  codespell:
+    name: Check for spelling errors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: codespell-project/actions-codespell@master
+        with:
+          check_filenames: true
+          skip: "*.sum,*.sum,*.lock"
+          ignore_words_file: ignore-spelling-words.txt
