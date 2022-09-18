@@ -18,6 +18,8 @@
     "@typescript-eslint/eslint-plugin": "^5.36.2",
     "@typescript-eslint/parser": "^5.36.2",
     "eslint": "^8.23.0",
+    "eslint-import-resolver-typescript": "^3.5.1",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-no-relative-import-paths": "^1.4.0",
     "eslint-plugin-react": "^7.31.7",
     "react-scripts": "5.0.1",
@@ -30,7 +32,7 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "yarn run eslint",
-    "eslint": "eslint src/**/*.{ts,tsx}"
+    "eslint": "eslint 'src/**/*.{ts,tsx}'"
   },
   "browserslist": {
     "production": [
