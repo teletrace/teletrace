@@ -24,3 +24,11 @@ repos:
           - eslint-plugin-react@7.31.7
           - "@typescript-eslint/eslint-plugin@5.36.2"
           - "@typescript-eslint/parser@5.36.2"
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.2.1"
+    hooks:
+      - id: codespell
+        name: codespell
+        description: Check for typos or spelling errors before commit.
+        entry: codespell --ignore-words=ignore-spelling-words.txt --skip="*.sum,*.mod,*.lock,.vscode,node_modules"
+        types: [text]
