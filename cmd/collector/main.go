@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"os/signal"
@@ -10,6 +11,7 @@ import (
 	"oss-tracing/pkg/logs"
 	"oss-tracing/pkg/receiver"
 
+	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 )
 
@@ -25,7 +27,7 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	receiver, err := receiver.NewReceiver(cfg, logger)
+	receiver, err := receiver.NewReceiver(cfg, logger, exampleTracesProcessor)
 	if err != nil {
 		logger.Fatal("Failed to initialize receiver", zap.Error(err))
 	}
@@ -44,4 +46,11 @@ func main() {
 	if err := receiver.Shutdown(); err != nil {
 		logger.Fatal("Failed to gracefully shut down receiver", zap.Error(err))
 	}
+}
+
+// This is an example traces processor function.
+// It should be replaces with the actual implementation once it's ready.
+func exampleTracesProcessor(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
+	logger.Info("Received spans", zap.Int("span_count", td.SpanCount()))
+	return nil
 }
