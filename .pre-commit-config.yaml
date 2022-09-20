@@ -17,13 +17,17 @@ repos:
     rev: "v8.23.1"
     hooks:
       - id: eslint
-        types_or: [javascript, jsx, ts, tsx]
-        entry: make frontend-eslint
+        files: \.[jt]sx?$
+        types: [file]
+        entry: make frontend-eslint-fix
         additional_dependencies:
           - eslint@8.23.1
           - eslint-plugin-react@7.31.7
           - "@typescript-eslint/eslint-plugin@5.36.2"
           - "@typescript-eslint/parser@5.36.2"
+          - "eslint-plugin-import@2.26.0"
+          - "eslint-plugin-no-relative-import-paths@1.4.0"
+          - "eslint-import-resolver-typescript@3.5.1"
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.2.1"
     hooks:
