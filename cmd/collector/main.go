@@ -40,7 +40,8 @@ func main() {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
 		break
 	}
+
 	if err := receiver.Shutdown(); err != nil {
-		logger.Fatal("Failed to shut down receiver gracefully", zap.Error(err))
+		logger.Fatal("Failed to gracefully shut down receiver", zap.Error(err))
 	}
 }
