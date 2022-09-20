@@ -63,7 +63,7 @@ _make sure to install pre-commit hooks by running `pre-commit install` from the 
 
 #### Project Layout
 
-This project is following the [standard go project layout](https://github.com/golang-standards/project-layout), please read through their docs to make sure you know where each file should go.
+This project is following the [standard go project layout](https://github.com/golang-standards/project-layout) in the backend and [bulletproof react](https://github.com/alan2207/bulletproof-react/) in the frontend, please read through their docs to make sure you know where each file should go.
 
 ### Coding Standards
 
