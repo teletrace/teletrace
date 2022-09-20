@@ -32,7 +32,7 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "yarn run eslint",
-    "eslint": "eslint 'src/**/*.{ts,tsx}'"
+    "eslint": "eslint 'src/**/*.{ts,tsx}' --max-warnings=0"
   },
   "browserslist": {
     "production": [

@@ -17,7 +17,8 @@ repos:
     rev: "v8.23.1"
     hooks:
       - id: eslint
-        types_or: [javascript, jsx, ts, tsx]
+        files: \.[jt]sx?$
+        types: [file]
         entry: make frontend-eslint-fix
         additional_dependencies:
           - eslint@8.23.1
