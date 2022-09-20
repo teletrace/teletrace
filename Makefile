@@ -47,7 +47,7 @@ frontend-lint: frontend-install
 	cd ./web; yarn lint
 
 .PHONY: frontend-eslint-fix
-frontend-eslint-fix: frontend-install
+frontend-eslint-fix:
 	cd ./web; yarn run eslint --fix
 
 .PHONY: frontend-test
