@@ -14,3 +14,24 @@ jobs:
       - uses: amannn/action-semantic-pull-request@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pre-commit:
+    name: Validate pre-commit hooks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      # we have a hook that requires golang,
+      # install it before running hooks
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "1.19"
+
+      # this action is deprecated,
+      # using it only until we open-source the project,
+      # then we should migrate to using pre-commit.ci
+      # which can also fix issues and push those changes back to the PR
+      - uses: pre-commit/action@v3.0.0
