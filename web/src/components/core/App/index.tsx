@@ -1,15 +1,19 @@
+import { ThemeProvider } from "@mui/material";
 import { Routes, Route } from "react-router-dom";
+import NavConfig, { NavigationConfig } from "../../../layouts/NavConfig";
+import DashboardLayout from "../../../layouts/DashboardLayout";
+import theme from "../../../styles/theme";
 
-import { Layout } from "../Layout";
-
-export function App() {
+export default function App() {
   return (
-    <Routes>
-      <Route path="*" element={<h1>404 Page not found</h1>} />
-      <Route path="/" element={<Layout />}>
-        <Route index element={<h1>Homepage</h1>} />
-        <Route path="traces" element={<h1>Traces</h1>} />
-      </Route>
-    </Routes>
+    <ThemeProvider theme={theme}>
+      <DashboardLayout />
+
+      <Routes>
+        {NavConfig.map((route: NavigationConfig) => (
+          <Route path={route.path} key={route.path} element={route.mycomp} />
+        ))}
+      </Routes>
+    </ThemeProvider>
   );
 }
