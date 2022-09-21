@@ -27,7 +27,7 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	receiver, err := receiver.NewReceiver(cfg, logger, exampleTracesProcessor)
+	receiver, err := receiver.NewReceiver(cfg, logger, fakeTracesProcessor)
 	if err != nil {
 		logger.Fatal("Failed to initialize receiver", zap.Error(err))
 	}
@@ -50,7 +50,7 @@ func main() {
 
 // This is an example traces processor function.
 // It should be replaces with the actual implementation once it's ready.
-func exampleTracesProcessor(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
+func fakeTracesProcessor(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
 	logger.Info("Received spans", zap.Int("span_count", td.SpanCount()))
 	return nil
 }
