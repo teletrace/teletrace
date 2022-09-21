@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
-	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
@@ -52,7 +52,7 @@ func getOtlpReceiverSettings(logger *zap.Logger) component.ReceiverCreateSetting
 	otlpReceiverSettings := component.ReceiverCreateSettings{
 		TelemetrySettings: component.TelemetrySettings{
 			Logger:         logger,
-			TracerProvider: otel.GetTracerProvider(),
+			TracerProvider: trace.NewNoopTracerProvider(),
 		},
 	}
 	return otlpReceiverSettings
