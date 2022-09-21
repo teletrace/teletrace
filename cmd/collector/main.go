@@ -32,12 +32,13 @@ func main() {
 		logger.Fatal("Failed to initialize receiver", zap.Error(err))
 	}
 
+	signalsChan := make(chan os.Signal, 1)
+	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
+
 	if err := receiver.Start(); err != nil {
 		logger.Fatal("Could not start receiver", zap.Error(err))
 	}
 
-	signalsChan := make(chan os.Signal, 1)
-	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
 	for sig := range signalsChan {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
 		break
