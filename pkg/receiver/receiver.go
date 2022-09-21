@@ -3,7 +3,6 @@ package receiver
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"oss-tracing/pkg/config"
@@ -13,68 +12,75 @@ import (
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
-
+	"go.opentelemetry.io/otel"
 	"go.uber.org/zap"
 )
 
+// Receiver handles incoming OTLP traces and registers consumers
 type Receiver struct {
 	logger   *zap.Logger
 	receiver component.TracesReceiver
 }
 
-// TODO: should receive spanProcessor (not sure what interface)
-func NewReceiver(cfg config.Config, logger *zap.Logger) (*Receiver, error) {
-	otlpFactory := otlpreceiver.NewFactory()
-	otlpReceiverConfig := getOtlpReceiverConfig(otlpFactory, cfg)
-	otlpReceiverSettings := getOtlpReceiverSettings(logger)
+// TracesProcessor consumes the received OTLP traces
+type TracesProcessor func(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error
 
-	consumer, err := consumer.NewTraces(consume)
+func NewReceiver(cfg config.Config, logger *zap.Logger, tracesProcessor TracesProcessor) (*Receiver, error) {
+	otlpFactory := otlpreceiver.NewFactory()
+	otlpSettings := getOtlpReceiverSettings(logger)
+	otlpConfig := getOtlpReceiverConfig(otlpFactory, cfg)
+
+	otlpConsumer, err := consumer.NewTraces(wrapWithLogger(tracesProcessor, logger))
 	if err != nil {
 		return nil, fmt.Errorf("could not create OTLP consumer: %w", err)
 	}
 
-	otlpReceiver, err := otlpFactory.CreateTracesReceiver(context.Background(), otlpReceiverSettings, otlpReceiverConfig, consumer)
+	otlpReceiver, err := otlpFactory.CreateTracesReceiver(
+		context.Background(), otlpSettings, otlpConfig, otlpConsumer,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("could not create OTLP receiver: %w", err)
 	}
 
-	r := &Receiver{
+	return &Receiver{
 		logger:   logger,
 		receiver: otlpReceiver,
-	}
-	return r, nil
-}
-
-func getOtlpReceiverConfig(otlpFactory component.ReceiverFactory, cfg config.Config) *otlpreceiver.Config {
-	otlpReceiverConfig := otlpFactory.CreateDefaultConfig().(*otlpreceiver.Config)
-	otlpReceiverConfig.GRPC.NetAddr.Endpoint = cfg.GRPCEndpoint
-	otlpReceiverConfig.HTTP.Endpoint = cfg.HTTPEndpoint
-	return otlpReceiverConfig
+	}, nil
 }
 
 func getOtlpReceiverSettings(logger *zap.Logger) component.ReceiverCreateSettings {
-	receiverSettings := component.ReceiverCreateSettings{
+	otlpReceiverSettings := component.ReceiverCreateSettings{
 		TelemetrySettings: component.TelemetrySettings{
-			Logger: logger,
+			Logger:         logger,
+			TracerProvider: otel.GetTracerProvider(),
 		},
 	}
-	return receiverSettings
+	return otlpReceiverSettings
 }
 
-func consume(ctx context.Context, ld ptrace.Traces) error {
-	log.Fatal(("asdf"))
-	fmt.Println(ld)
-	return nil
+func getOtlpReceiverConfig(otlpFactory component.ReceiverFactory, cfg config.Config) *otlpreceiver.Config {
+	otlpReceiverCfg := otlpFactory.CreateDefaultConfig().(*otlpreceiver.Config)
+	otlpReceiverCfg.GRPC.NetAddr.Endpoint = cfg.GRPCEndpoint
+	otlpReceiverCfg.HTTP.Endpoint = cfg.HTTPEndpoint
+	return otlpReceiverCfg
 }
 
+func wrapWithLogger(tracesProcessor TracesProcessor, logger *zap.Logger) func(ctx context.Context, td ptrace.Traces) error {
+	return func(ctx context.Context, td ptrace.Traces) error {
+		return tracesProcessor(ctx, logger, td)
+	}
+}
+
+// Start runs the receiver in the background
 func (r *Receiver) Start() error {
 	err := r.receiver.Start(context.Background(), &otelHost{logger: r.logger})
 	if err != nil {
-		return fmt.Errorf("could not start the OTLP receiver: %w", err)
+		return fmt.Errorf("could not start OTLP receiver: %w", err)
 	}
 	return nil
 }
 
+// no-op implementation of OTEL collector component.Host
 type otelHost struct {
 	logger *zap.Logger
 }
@@ -95,6 +101,7 @@ func (*otelHost) GetExporters() map[otelcfg.DataType]map[otelcfg.ComponentID]com
 	return nil
 }
 
+// Shutdown stops and gracefully shuts down the receiver
 func (r *Receiver) Shutdown() error {
 	timeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
