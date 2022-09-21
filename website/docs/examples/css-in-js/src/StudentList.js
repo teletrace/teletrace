@@ -1,28 +1,25 @@
-import { createUseStyles } from "react-jss";
+import { ThemeProvider } from "react-jss";
+import { createTheme } from "@mui/material/styles";
+import { List, ListItem, ListItemText, ListItemIcon } from "@mui/material";
+import BackpackIcon from "@mui/icons-material/Backpack";
 
-const styles = createUseStyles({
-  student: {
-    border: "2px solid green",
-    width: "40%",
-    listStyleType: "none",
-  },
-
-  studentDetails: {
-    color: "blue",
-    fontSize: "23px",
-  },
-});
+const theme = createTheme();
 
 const StudentList = (props) => {
-  const classes = styles();
-  const { name, classNo, roll, addr } = props;
   return (
-    <ul className={classes.student}>
-      <li className={classes.studentDetails}>Name : {name}</li>
-      <li className={classes.studentDetails}>Class: {classNo}</li>
-      <li className={classes.studentDetails}>Roll: {roll}</li>
-      <li className={classes.studentDetails}>Address : {addr}</li>
-    </ul>
+    <ThemeProvider theme={theme}>
+      <List
+        dense
+        sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+      >
+        <ListItem>
+          <ListItemIcon>
+            <BackpackIcon />
+          </ListItemIcon>
+          <ListItemText primary={props.name} secondary={props.addr} />
+        </ListItem>
+      </List>
+    </ThemeProvider>
   );
 };
 

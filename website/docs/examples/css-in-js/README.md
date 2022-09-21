@@ -1,12 +1,12 @@
 # Getting Started with css-in-js
 
 This folder was created to saw an example of how to use css-in-js.
-The example is using `react-jss`.
+The example is using `Material UI`.
 
-# react-jss
+# Material UI
 
-The’react-jss’ integrates JSS with react app to style components. It helps to write CSS with Javascript and allows us to describe styles in a more descriptive way. It uses javascript objects to describe styles in a declarative way using ‘createUseStyles’ method of react-jss and incorporate those styles in functional components using className attribute.
-
+Material UI is an open-source React component library that implements Google's Material Design.
+It includes a comprehensive collection of prebuilt components that are ready for use in production right out of the box.
 ### `npm start`
 
 Runs the app in the development mode.\
