@@ -12,9 +12,9 @@ import {
   ListItem,
 } from "@mui/material";
 import React, { ElementType, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Route, Routes } from "react-router-dom";
 import { Menu, ChevronLeft } from "@mui/icons-material";
-import NavConfig from "./NavConfig";
+import NavConfig, { NavigationConfig } from "./NavConfig";
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { StyledAppBar } from "../components/StyledAppBar";
@@ -104,7 +104,10 @@ const DashboardLayout = (props: any) => {
                 <ListItemButton>
                   <ListItem selected={activeRoute(prop.path)}>
                     <ListItemIcon>{prop.icon}</ListItemIcon>
-                    <ListItemText primary={prop.sidebarName} />
+                    <ListItemText
+                      sx={{ color: "white" }}
+                      primary={prop.sidebarName}
+                    />
                   </ListItem>
                 </ListItemButton>
               </NavLink>
@@ -112,6 +115,12 @@ const DashboardLayout = (props: any) => {
           })}
         </List>
       </StyledDrawer>
+
+      <Routes>
+        {NavConfig.map((route: NavigationConfig) => (
+          <Route path={route.path} key={route.path} element={route.mycomp} />
+        ))}
+      </Routes>
     </Box>
   );
 };
