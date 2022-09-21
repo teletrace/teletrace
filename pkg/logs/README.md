@@ -1,6 +1,6 @@
 # logs
 
-The `logs` package provides logging related capabilities.
+The `logs` package provides logging related capabilities.\
 [Zap](https://github.com/uber-go/zap) is used as the project logger.
 
 ## Configuration
