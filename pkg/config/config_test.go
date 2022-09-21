@@ -15,7 +15,8 @@ func TestDefaultValuesSource(t *testing.T) {
 	assert.NoError(t, err)
 	expectedConfig := Config{Debug: debugDefault, APIPort: apiPortDefault}
 
-	assert.Equal(t, expectedConfig, actualConfig)
+	assert.Equal(t, expectedConfig.Debug, actualConfig.Debug)
+	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
 }
 
 func TestConfigFileSource(t *testing.T) {
@@ -29,7 +30,8 @@ func TestConfigFileSource(t *testing.T) {
 	assert.NoError(t, err)
 	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
 
-	assert.Equal(t, expectedConfig, actualConfig)
+	assert.Equal(t, expectedConfig.Debug, actualConfig.Debug)
+	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
 }
 
 func TestEnvVarSource(t *testing.T) {
@@ -43,7 +45,8 @@ func TestEnvVarSource(t *testing.T) {
 	assert.NoError(t, err)
 	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
 
-	assert.Equal(t, expectedConfig, actualConfig)
+	assert.Equal(t, expectedConfig.Debug, actualConfig.Debug)
+	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
 }
 
 func TestSourceOverrides(t *testing.T) {

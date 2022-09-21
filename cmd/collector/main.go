@@ -7,7 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/pkg/receiver"
@@ -28,7 +27,6 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	api := api.NewAPI(logger, cfg)
 	receiver, err := receiver.NewReceiver(cfg, logger, fakeTracesProcessor)
 	if err != nil {
 		logger.Fatal("Failed to initialize receiver", zap.Error(err))
@@ -37,15 +35,18 @@ func main() {
 	signalsChan := make(chan os.Signal, 1)
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
 
-	go startAPI(logger, api)
-	go startReceiver(logger, receiver)
+	if err := receiver.Start(); err != nil {
+		logger.Fatal("Could not start receiver", zap.Error(err))
+	}
 
 	for sig := range signalsChan {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
 		break
 	}
 
-	stopReceiver(logger, receiver)
+	if err := receiver.Shutdown(); err != nil {
+		logger.Fatal("Failed to gracefully shut down receiver", zap.Error(err))
+	}
 }
 
 // This is an example traces processor function.
@@ -53,22 +54,4 @@ func main() {
 func fakeTracesProcessor(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
 	logger.Info("Received spans", zap.Int("span_count", td.SpanCount()))
 	return nil
-}
-
-func startAPI(logger *zap.Logger, api *api.API) {
-	if err := api.Start(); err != nil {
-		logger.Fatal("API server crashed", zap.Error(err))
-	}
-}
-
-func startReceiver(logger *zap.Logger, receiver *receiver.Receiver) {
-	if err := receiver.Start(); err != nil {
-		logger.Fatal("Could not start receiver", zap.Error(err))
-	}
-}
-
-func stopReceiver(logger *zap.Logger, receiver *receiver.Receiver) {
-	if err := receiver.Shutdown(); err != nil {
-		logger.Fatal("Failed to gracefully shut down receiver", zap.Error(err))
-	}
 }
