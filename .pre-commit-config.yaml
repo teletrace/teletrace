@@ -13,17 +13,6 @@ repos:
     rev: v2.7.1
     hooks:
       - id: prettier
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: "v8.23.1"
-    hooks:
-      - id: eslint
-        types_or: [javascript, jsx, ts, tsx]
-        entry: make frontend-eslint
-        additional_dependencies:
-          - eslint@8.23.1
-          - eslint-plugin-react@7.31.7
-          - "@typescript-eslint/eslint-plugin@5.36.2"
-          - "@typescript-eslint/parser@5.36.2"
   - repo: https://github.com/codespell-project/codespell
     rev: "v2.2.1"
     hooks:
