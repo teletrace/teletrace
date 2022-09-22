@@ -1,12 +1,12 @@
-import Axios from "axios";
+import axios from "axios";
 
 import { API_URL } from "@/config";
 
-export const axios = Axios.create({
+export const axiosClient = axios.create({
   baseURL: API_URL,
 });
 
-axios.interceptors.response.use(
+axiosClient.interceptors.response.use(
   (response) => {
     return response.data;
   },
