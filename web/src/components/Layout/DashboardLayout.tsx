@@ -1,24 +1,31 @@
+import { ChevronLeft, Menu } from "@mui/icons-material";
 import {
   Box,
-  Toolbar,
-  Typography,
-  IconButton,
-  ListItemText,
-  ListItemIcon,
   CssBaseline,
   Divider,
+  IconButton,
   List,
-  ListItemButton,
   ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import React, { ElementType, useState } from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
-import { Menu, ChevronLeft } from "@mui/icons-material";
-import NavConfig, { NavigationConfig } from "./NavConfig";
+import {
+  NavLink,
+  Route,
+  RouterProps,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { StyledAppBar } from "../components/StyledAppBar";
-import { StyledDrawer } from "../components/StyledDrawer";
+import { StyledAppBar } from "@/components/StyledAppBar";
+import { StyledDrawer } from "@/components/StyledDrawer";
+import navConfigMap, { NavigationConfig } from "@/routes/Navigation";
 
 function withRouter(Component: ElementType) {
   function ComponentWithRouterProp(props: any) {
@@ -31,7 +38,11 @@ function withRouter(Component: ElementType) {
   return ComponentWithRouterProp;
 }
 
-const DashboardLayout = (props: any) => {
+type DashboardProps = {
+  router: RouterProps;
+};
+
+const DashboardLayout = (props: DashboardProps) => {
   const [open, setOpen] = useState(false);
 
   const toggleDrawer =
@@ -48,7 +59,10 @@ const DashboardLayout = (props: any) => {
     };
 
   const activeRoute = (routeName: string) => {
-    return props.router.location.pathname === routeName ? true : false;
+    const { location } = props.router;
+    return typeof location === "string"
+      ? location === routeName
+      : location.pathname === routeName;
   };
 
   return (
@@ -69,7 +83,7 @@ const DashboardLayout = (props: any) => {
             <Menu />
           </IconButton>
 
-          <Typography variant="h5">OSS Tracing</Typography>
+          <Typography variant="h5">Lupa</Typography>
         </Toolbar>
       </StyledAppBar>
 
@@ -94,7 +108,7 @@ const DashboardLayout = (props: any) => {
         <Divider />
 
         <List component="nav">
-          {NavConfig.map((prop, key) => {
+          {navConfigMap.map((prop, key) => {
             return (
               <NavLink
                 to={prop.path}
@@ -117,7 +131,7 @@ const DashboardLayout = (props: any) => {
       </StyledDrawer>
 
       <Routes>
-        {NavConfig.map((route: NavigationConfig) => (
+        {navConfigMap.map((route: NavigationConfig) => (
           <Route path={route.path} key={route.path} element={route.mycomp} />
         ))}
       </Routes>

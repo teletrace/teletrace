@@ -1,15 +1,13 @@
-import { Link, Outlet } from "react-router-dom";
+import { ThemeProvider } from "@mui/material";
 
-export function Layout() {
+import theme from "@/styles/theme";
+
+import DashboardLayout from "./DashboardLayout";
+
+export default function Layout() {
   return (
-    <div>
-      <h1>OSS Tracing</h1>
-      <nav>
-        <Link to="/">Homepage</Link> | <Link to="traces">Traces</Link>
-      </nav>
-      <div className="content">
-        <Outlet />
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <DashboardLayout />
+    </ThemeProvider>
   );
 }

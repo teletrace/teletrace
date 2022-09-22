@@ -1,7 +1,8 @@
 import { Home, ManageSearch } from "@mui/icons-material";
 import { ReactElement } from "react";
-import { Homepage } from "../pages/Homepage";
-import { Traces } from "../pages/Traces";
+
+import { Homepage } from "@/pages/Homepage";
+import { Traces } from "@/pages/Traces";
 
 export interface NavigationConfig {
   sidebarName: string;
@@ -10,7 +11,7 @@ export interface NavigationConfig {
   mycomp: ReactElement;
 }
 
-const NavConfig: NavigationConfig[] = [
+const navConfigMap: NavigationConfig[] = [
   {
     sidebarName: "Homepage",
     path: "/",
@@ -25,4 +26,4 @@ const NavConfig: NavigationConfig[] = [
   },
 ];
 
-export default NavConfig;
+export default navConfigMap;

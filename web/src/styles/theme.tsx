@@ -17,6 +17,9 @@ const theme = createTheme({
     error: {
       main: errorLight,
     },
+    warning: {
+      main: warning,
+    },
     mode: "dark" as PaletteMode,
     primary: {
       contrastText: "#0B0B0D",
