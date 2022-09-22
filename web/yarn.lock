@@ -1769,7 +1769,7 @@
 
 "@tanstack/match-sorter-utils@^8.1.1":
   version "8.1.1"
-  resolved "https://fso.jfrog.io/artifactory/api/npm/fso-npm/@tanstack/match-sorter-utils/-/match-sorter-utils-8.1.1.tgz#895f407813254a46082a6bbafad9b39b943dc834"
+  resolved "https://registry.npmjs.org/@tanstack/match-sorter-utils/-/match-sorter-utils-8.1.1.tgz#895f407813254a46082a6bbafad9b39b943dc834"
   integrity sha512-IdmEekEYxQsoLOR0XQyw3jD1GujBpRRYaGJYQUw1eOT1eUugWxdc7jomh1VQ1EKHcdwDLpLaCz/8y4KraU4T9A==
   dependencies:
     remove-accents "0.4.2"
@@ -1781,7 +1781,7 @@
 
 "@tanstack/react-query-devtools@^4.3.9":
   version "4.3.9"
-  resolved "https://fso.jfrog.io/artifactory/api/npm/fso-npm/@tanstack/react-query-devtools/-/react-query-devtools-4.3.9.tgz#3897d30f49b1b86f473fe4dbac8f634fc33b6e80"
+  resolved "https://registry.npmjs.org/@tanstack/react-query-devtools/-/react-query-devtools-4.3.9.tgz#3897d30f49b1b86f473fe4dbac8f634fc33b6e80"
   integrity sha512-N+nMBwrxAYsC5oEmexCuo4OZqBpR97pfy8r8tuvekFNYlA0pYlCnsxiqkZoZzF6ewk7w8KPkkDhClx0kSlW3qw==
   dependencies:
     "@tanstack/match-sorter-utils" "^8.1.1"
@@ -2639,7 +2639,7 @@ axe-core@^4.4.3:
 
 axios@^0.27.2:
   version "0.27.2"
-  resolved "https://fso.jfrog.io/artifactory/api/npm/fso-npm/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
+  resolved "https://registry.npmjs.org/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
   integrity sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==
   dependencies:
     follow-redirects "^1.14.9"
@@ -3490,7 +3490,7 @@ data-urls@^2.0.0:
 
 date-fns@^2.29.3:
   version "2.29.3"
-  resolved "https://fso.jfrog.io/artifactory/api/npm/fso-npm/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
+  resolved "https://registry.npmjs.org/date-fns/-/date-fns-2.29.3.tgz#27402d2fc67eb442b511b70bbdf98e6411cd68a8"
   integrity sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==
 
 debug@2.6.9, debug@^2.6.0, debug@^2.6.9:
@@ -4444,7 +4444,7 @@ form-data@^3.0.0:
 
 form-data@^4.0.0:
   version "4.0.0"
-  resolved "https://fso.jfrog.io/artifactory/api/npm/fso-npm/form-data/-/form-data-4.0.0.tgz#93919daeaf361ee529584b9b31664dc12c9fa452"
+  resolved "https://registry.npmjs.org/form-data/-/form-data-4.0.0.tgz#93919daeaf361ee529584b9b31664dc12c9fa452"
   integrity sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==
   dependencies:
     asynckit "^0.4.0"
@@ -7528,7 +7528,7 @@ relateurl@^0.2.7:
 
 remove-accents@0.4.2:
   version "0.4.2"
-  resolved "https://fso.jfrog.io/artifactory/api/npm/fso-npm/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  resolved "https://registry.npmjs.org/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
   integrity sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==
 
 renderkid@^3.0.0:

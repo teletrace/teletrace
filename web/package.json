@@ -30,10 +30,9 @@
     "typescript": "^4.4.2"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "ESLINT_NO_DEV_ERRORS=true craco start",
     "build": "craco build",
     "test": "craco test",
-    "dev": "ESLINT_NO_DEV_ERRORS=true craco start",
     "eject": "react-scripts eject",
     "lint": "yarn run eslint",
     "eslint": "eslint 'src/**/*.{ts,tsx}' --max-warnings=0"
