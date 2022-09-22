@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "@tanstack/react-query": "^4.3.7",
-    "@tanstack/react-query-devtools": "^4.3.7",
+    "axios": "^0.27.2",
+    "date-fns": "^2.29.3",
+    "dayjs": "^1.11.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4",
@@ -13,6 +15,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^6.4.5",
+    "@tanstack/react-query-devtools": "^4.3.9",
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -31,6 +34,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
+    "dev": "ESLINT_NO_DEV_ERRORS=true craco start",
     "eject": "react-scripts eject",
     "lint": "yarn run eslint",
     "eslint": "eslint 'src/**/*.{ts,tsx}' --max-warnings=0"
