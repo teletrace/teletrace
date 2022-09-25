@@ -17,7 +17,7 @@ builds:
     goarm:
       - 6
       - 7
-    main: ./cmd/oss-tracing/main.go
+    main: ./cmd/all-in-one/main.go
     binary: all-in-one
     id: all-in-one
 
@@ -27,47 +27,71 @@ dockers:
       - "epsagon/all-in-one:v{{ .Major }}-amd64"
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
       - "epsagon/all-in-one:latest-amd64"
-    dockerfile: ./cmd/oss-tracing/Dockerfile
+    dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
     goarch: amd64
     goos: linux
+    extra_files:
+      - go.mod
+      - go.sum
+      - cmd
+      - web
+      - pkg
   - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
       - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
       - "epsagon/all-in-one:latest-arm64v8"
-    dockerfile: ./cmd/oss-tracing/Dockerfile
+    dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
       - --platform=linux/arm64/v8
     goarch: arm64
     goos: linux
+    extra_files:
+      - go.mod
+      - go.sum
+      - cmd
+      - web
+      - pkg
   - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-armv6"
       - "epsagon/all-in-one:v{{ .Major }}-armv6"
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv6"
       - "epsagon/all-in-one:latest-armv6"
-    dockerfile: ./cmd/oss-tracing/Dockerfile
+    dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
       - --platform=linux/arm/v6
     goarch: arm
     goarm: 6
     goos: linux
+    extra_files:
+      - go.mod
+      - go.sum
+      - cmd
+      - web
+      - pkg
   - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-armv7"
       - "epsagon/all-in-one:v{{ .Major }}-armv7"
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
       - "epsagon/all-in-one:latest-armv7"
-    dockerfile: ./cmd/oss-tracing/Dockerfile
+    dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
       - --platform=linux/arm/v7
     goarch: arm
     goarm: 7
     goos: linux
+    extra_files:
+      - go.mod
+      - go.sum
+      - cmd
+      - web
+      - pkg
 
 docker_manifests:
   - name_template: "epsagon/all-in-one:{{ .Tag }}"
