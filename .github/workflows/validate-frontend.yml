@@ -10,18 +10,11 @@ permissions:
   pull-requests: read
 
 jobs:
-  prettier:
-    name: Prettier
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actionsx/prettier@v2
-        with:
-          args: --check .
-
   eslint:
-    name: ESLint
+    name: Lint
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v3
       - uses: actions/checkout@v3
-      - run: make frontend-eslint
+      - name: lint
+        run: make frontend-lint

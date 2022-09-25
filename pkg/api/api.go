@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"path"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/static"
@@ -15,7 +15,9 @@ import (
 	"oss-tracing/pkg/config"
 )
 
-const staticFilesPath = "/web/build"
+const apiPrefix = "/v1"
+
+var staticFilesPath = filepath.Join("web", "build")
 
 // API holds the config used for running the API as well as
 // the endpoint handlers and resources used by them (e.g. logger).
@@ -33,24 +35,14 @@ func NewAPI(logger *zap.Logger, config config.Config) *API {
 		config: config,
 		router: router,
 	}
+	api.registerMiddlewares()
 	api.registerRoutes()
-
 	return api
 }
 
 func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	setGinMode(config)
 	router := gin.New()
-
-	// zap logger middleware
-	router.Use(ginzap.GinzapWithConfig(logger, &ginzap.Config{
-		TimeFormat: time.RFC3339,
-		UTC:        true,
-	}))
-
-	// zap recovery logger middleware
-	router.Use(ginzap.RecoveryWithZap(logger, false))
-
 	return router
 }
 
@@ -62,13 +54,35 @@ func setGinMode(config config.Config) {
 	gin.SetMode(mode)
 }
 
-func (api *API) registerRoutes() {
-	currentRootPath, err := os.Getwd()
+func (api *API) registerMiddlewares() {
+	// zap logger middleware
+	api.router.Use(ginzap.GinzapWithConfig(api.logger, &ginzap.Config{
+		TimeFormat: time.RFC3339,
+		UTC:        true,
+	}))
+
+	// zap recovery logger middleware
+	api.router.Use(ginzap.RecoveryWithZap(api.logger, false))
+
+	// static files middleware, for serving frontend files
+	api.registerStaticFilesMiddleware()
+}
+
+func (api *API) registerStaticFilesMiddleware() {
+	absStaticFilesPath, err := filepath.Abs(staticFilesPath)
 	if err != nil {
-		api.logger.Fatal("Failed to find current root path", zap.Error(err))
+		api.logger.Fatal("Failed to determine static files absolute path", zap.Error(err))
 	}
-	api.router.Use(static.Serve("/", static.LocalFile(path.Join(currentRootPath, staticFilesPath), false)))
-	v1 := api.router.Group("/v1")
+	api.router.Use(static.Serve("/", static.LocalFile(absStaticFilesPath, false)))
+	api.router.NoRoute(func(c *gin.Context) {
+		if !strings.HasPrefix(c.Request.RequestURI, apiPrefix) {
+			c.File(filepath.Join(absStaticFilesPath, "index.html"))
+		}
+	})
+}
+
+func (api *API) registerRoutes() {
+	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
 }
 

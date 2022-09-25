@@ -5,22 +5,19 @@ repos:
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
-  - repo: https://github.com/golangci/golangci-lint
-    rev: v1.48.0
+  - repo: https://github.com/Bahjat/pre-commit-golang
+    rev: v1.0.2
     hooks:
-      - id: golangci-lint
+      - id: go-fmt-import
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v2.7.1
     hooks:
       - id: prettier
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: "v8.23.1"
+  - repo: https://github.com/codespell-project/codespell
+    rev: "v2.2.1"
     hooks:
-      - id: eslint
-        types_or: [javascript, jsx, ts, tsx]
-        entry: make frontend-lint
-        additional_dependencies:
-          - eslint@8.23.1
-          - eslint-plugin-react@7.31.7
-          - "@typescript-eslint/eslint-plugin@5.36.2"
-          - "@typescript-eslint/parser@5.36.2"
+      - id: codespell
+        name: codespell
+        description: Check for typos or spelling errors before commit.
+        entry: codespell --ignore-words=ignore-spelling-words.txt --skip="*.sum,*.mod,*.lock,.vscode,node_modules"
+        types: [text]
