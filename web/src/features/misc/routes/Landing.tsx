@@ -1,10 +1,18 @@
 import { GitHub } from "@mui/icons-material";
-import { Box, Container, Link, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Link,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
 import { Head } from "@/components/Head";
+import { LUPA_REPOSITORY_URL } from "@/config";
 
 export const Landing = () => {
-  const url = "https://github.com/epsagon/lupa";
+  const theme = useTheme();
 
   return (
     <>
@@ -40,8 +48,15 @@ export const Landing = () => {
             spacing={2}
             justifyContent="center"
           >
-            <Link href={url} target="_blank">
-              <GitHub />
+            <Link
+              aria-label="Opening new tab to the repository"
+              href={LUPA_REPOSITORY_URL}
+              target="_blank"
+            >
+              <GitHub
+                fontSize="large"
+                sx={{ color: theme.palette.primary.light }}
+              />
             </Link>
           </Stack>
         </Container>
