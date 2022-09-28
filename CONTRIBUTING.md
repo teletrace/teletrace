@@ -55,7 +55,9 @@ Make sure you have the following tools installed:
 
 - [Git](https://git-scm.com/)
 - [Go](https://golang.org/dl/) 1.19 or above
+- [Node](https://nodejs.org/) 12.17 or above
 - [Make](https://www.gnu.org/software/make/)
+- [yarn](https://yarnpkg.com/)
 - [pre-commit](https://pre-commit.com/)
 - [Docker](https://www.docker.com/)
 

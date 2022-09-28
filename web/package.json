@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/icons-material": "^5.10.6",
+    "@mui/material": "^5.10.5",
     "@tanstack/react-query": "^4.3.7",
     "axios": "^0.27.2",
     "date-fns": "^2.29.3",
