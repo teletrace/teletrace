@@ -1,4 +1,4 @@
-package esclient
+package typedreqinteractor
 
 import (
 	"context"

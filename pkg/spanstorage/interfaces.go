@@ -10,11 +10,11 @@ type SpanWriter interface {
 	WriteSpan(ctx context.Context, span *v1.ExtractedSpan) error
 }
 
-type SpanWriterParams struct {
-	client esclient.Client
-	logger string // TODO
+type spanWriter struct {
+	index_template_controller     esclient.IndexTemplateController
+	component_template_controller esclient.ComponentTemplateController
 }
 
-func newSpanWriter() {
-
+type spanWriterParams struct {
+	logger string // TODO
 }
