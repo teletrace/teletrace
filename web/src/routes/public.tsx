@@ -1,6 +1,5 @@
+import { Typography } from "@mui/material";
 import { ReactElement } from "react";
-
-import { NotFound } from "@/features/misc";
 
 export interface PublicRouteProps {
   path: string;
@@ -9,7 +8,11 @@ export interface PublicRouteProps {
 
 export const publicRoutes: PublicRouteProps[] = [
   {
-    path: "/*",
-    element: <NotFound />,
+    path: "/trace-view",
+    element: <Typography variant="h2">Trace View</Typography>,
+  },
+  {
+    path: "/search",
+    element: <Typography variant="h2">Search</Typography>,
   },
 ];

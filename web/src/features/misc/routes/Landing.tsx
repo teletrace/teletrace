@@ -2,6 +2,7 @@ import { GitHub } from "@mui/icons-material";
 import {
   Box,
   Container,
+  Divider,
   Link,
   Stack,
   Typography,
@@ -18,11 +19,10 @@ export const Landing = () => {
     <>
       <Head description="Welcome to bulletproof react" />
       <Box
-        sx={{
-          bgcolor: "background.paper",
-          pt: 8,
-          pb: 6,
-        }}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
       >
         <Container maxWidth="sm">
           <Typography
@@ -40,8 +40,23 @@ export const Landing = () => {
             color="text.secondary"
             paragraph
           >
-            Lupa is an open source tool for track, analyze and view tracing.
+            Lupa is an open source tool to track, analyze and view tracing.
           </Typography>
+          <Stack
+            sx={{ pt: 4 }}
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+          >
+            <Link href="/search" underline="none">
+              <Typography color="text.secondary">Search</Typography>
+            </Link>
+            <Divider orientation="vertical" flexItem />
+            <Link href="/trace-view" underline="none">
+              <Typography color="text.secondary">Trace View</Typography>
+            </Link>
+          </Stack>
+
           <Stack
             sx={{ pt: 4 }}
             direction="row"

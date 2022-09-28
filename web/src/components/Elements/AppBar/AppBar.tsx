@@ -6,8 +6,5 @@ export const AppBar = styled(MuiAppBar, {
 })<AppBarProps>(() => ({
   ...{
     width: `100%`,
-    flexGrow: 1,
-    alignItems: "center",
-    position: "static",
   },
 }));
