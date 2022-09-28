@@ -17,6 +17,7 @@ ENV NODE_ENV production
 WORKDIR /app
 
 # Cache and Install dependencies
+RUN yarn add @craco/craco@^6.4.5 -g
 COPY web/package.json .
 COPY web/yarn.lock .
 RUN yarn install --production
