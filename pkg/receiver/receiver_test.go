@@ -32,7 +32,6 @@ func TestReceiverStartAndShutdown(t *testing.T) {
 	defer func() {
 		assert.NoError(t, receiver.Shutdown())
 	}()
-
 	grpcServerLog := observedLogs.FilterMessage(fmt.Sprintf("Starting GRPC server on endpoint %s", cfg.GRPCEndpoint))
 	assert.Equal(t, 1, grpcServerLog.Len())
 	httpServerLog := observedLogs.FilterMessage(fmt.Sprintf("Starting HTTP server on endpoint %s", cfg.HTTPEndpoint))
@@ -45,8 +44,8 @@ func TestReceiverTracesProcessor(t *testing.T) {
 		HTTPEndpoint: "0.0.0.0:4321",
 	}
 	logger, observedLogs := getLoggerObserver()
-	tracesProcessor := func(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
-		logger.Info("Received traces")
+	tracesProcessor := func(ctx context.Context, processorLogger *zap.Logger, td ptrace.Traces) error {
+		processorLogger.Info("Received traces")
 		receivedSpan := td.ResourceSpans().At(0).ScopeSpans().At(0).Spans().At(0)
 		assert.Equal(t, "fakeSpan", receivedSpan.Name())
 		return nil
@@ -60,24 +59,25 @@ func TestReceiverTracesProcessor(t *testing.T) {
 	}()
 
 	reqBody := strings.NewReader(`
-		{
-			"resource_spans": [
-				{
-				"scope_spans": [
-					{
-					"spans": [
-						{
-						"name": "fakeSpan"
-						}
-					]
-					}
+	{
+		"resource_spans": [
+		  {
+			"scope_spans": [
+			  {
+				"spans": [
+				  {
+					"name": "fakeSpan"
+				  }
 				]
-				}
+			  }
 			]
-		}
+		  }
+		]
+	  }
 	`)
 	resp, _ := http.Post(fmt.Sprintf("http://%s/v1/traces", cfg.HTTPEndpoint), "application/json", reqBody)
 	assert.Equal(t, 200, resp.StatusCode)
+	// Apart from ensuring processor invocation, it also validates the correct logger is used
 	processorLog := observedLogs.FilterMessage("Received traces")
 	assert.Equal(t, 1, processorLog.Len())
 }
