@@ -2,15 +2,30 @@ package receiver
 
 import (
 	"errors"
+	"oss-tracing/pkg/config"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/collector/component"
 	otelcfg "go.opentelemetry.io/collector/config"
+	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 )
+
+func TestReceiverConfig(t *testing.T) {
+	otlpFactory := otlpreceiver.NewFactory()
+	cfg := config.Config{
+		GRPCEndpoint: "0.0.0.0:1234",
+		HTTPEndpoint: "0.0.0.0:4321",
+	}
+
+	receiverCfg := getOtlpReceiverConfig(otlpFactory, cfg)
+
+	assert.Equal(t, cfg.GRPCEndpoint, receiverCfg.GRPC.NetAddr.Endpoint)
+	assert.Equal(t, cfg.HTTPEndpoint, receiverCfg.HTTP.Endpoint)
+}
 
 func TestOtelHostNoopMethods(t *testing.T) {
 	host := otelHost{}
@@ -20,7 +35,7 @@ func TestOtelHostNoopMethods(t *testing.T) {
 	assert.Nil(t, host.GetExporters())
 }
 
-func TestOtelHostErrorReporter(t *testing.T) {
+func TestOtelHostReportFatalError(t *testing.T) {
 	fakeLogger, observedLogs := getLoggerObserver()
 	host := otelHost{logger: fakeLogger}
 
