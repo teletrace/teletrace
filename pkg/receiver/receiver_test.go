@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap/zaptest/observer"
 )
 
-func TestOtelHostNoop(t *testing.T) {
+func TestOtelHostNoopMethods(t *testing.T) {
 	host := otelHost{}
 
 	assert.Nil(t, host.GetFactory(component.KindReceiver, otelcfg.TracesDataType))
@@ -20,7 +20,7 @@ func TestOtelHostNoop(t *testing.T) {
 	assert.Nil(t, host.GetExporters())
 }
 
-func TestOtelHostError(t *testing.T) {
+func TestOtelHostErrorReporter(t *testing.T) {
 	fakeLogger, observedLogs := getLoggerObserver()
 	host := otelHost{logger: fakeLogger}
 
