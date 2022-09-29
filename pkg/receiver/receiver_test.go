@@ -1,18 +1,86 @@
 package receiver
 
 import (
+	"context"
 	"errors"
+	"fmt"
+	"net/http"
 	"oss-tracing/pkg/config"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/collector/component"
 	otelcfg "go.opentelemetry.io/collector/config"
+	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 )
+
+func TestReceiverStartAndShutdown(t *testing.T) {
+	cfg := config.Config{
+		GRPCEndpoint: "0.0.0.0:1234",
+		HTTPEndpoint: "0.0.0.0:4321",
+	}
+	logger, observedLogs := getLoggerObserver()
+
+	receiver, err := NewReceiver(cfg, logger, nil)
+	assert.NoError(t, err)
+	assert.NoError(t, receiver.Start())
+	defer func() {
+		assert.NoError(t, receiver.Shutdown())
+	}()
+
+	grpcServerLog := observedLogs.FilterMessage(fmt.Sprintf("Starting GRPC server on endpoint %s", cfg.GRPCEndpoint))
+	assert.Equal(t, 1, grpcServerLog.Len())
+	httpServerLog := observedLogs.FilterMessage(fmt.Sprintf("Starting HTTP server on endpoint %s", cfg.HTTPEndpoint))
+	assert.Equal(t, 1, httpServerLog.Len())
+}
+
+func TestReceiverTracesProcessor(t *testing.T) {
+	cfg := config.Config{
+		GRPCEndpoint: "0.0.0.0:1234",
+		HTTPEndpoint: "0.0.0.0:4321",
+	}
+	logger, observedLogs := getLoggerObserver()
+	tracesProcessor := func(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
+		logger.Info("Received traces")
+		receivedSpan := td.ResourceSpans().At(0).ScopeSpans().At(0).Spans().At(0)
+		assert.Equal(t, "fakeSpan", receivedSpan.Name())
+		return nil
+	}
+
+	receiver, err := NewReceiver(cfg, logger, tracesProcessor)
+	assert.NoError(t, err)
+	assert.NoError(t, receiver.Start())
+	defer func() {
+		assert.NoError(t, receiver.Shutdown())
+	}()
+
+	reqBody := strings.NewReader(`
+		{
+			"resource_spans": [
+				{
+				"scope_spans": [
+					{
+					"spans": [
+						{
+						"name": "fakeSpan"
+						}
+					]
+					}
+				]
+				}
+			]
+		}
+	`)
+	resp, _ := http.Post(fmt.Sprintf("http://%s/v1/traces", cfg.HTTPEndpoint), "application/json", reqBody)
+	assert.Equal(t, 200, resp.StatusCode)
+	processorLog := observedLogs.FilterMessage("Received traces")
+	assert.Equal(t, 1, processorLog.Len())
+}
 
 func TestReceiverConfig(t *testing.T) {
 	otlpFactory := otlpreceiver.NewFactory()
@@ -37,9 +105,9 @@ func TestOtelHostNoopMethods(t *testing.T) {
 
 func TestOtelHostReportFatalError(t *testing.T) {
 	fakeLogger, observedLogs := getLoggerObserver()
-	host := otelHost{logger: fakeLogger}
 
-	// actually calls os.Exit(1), panic only used for recovery in tests
+	host := otelHost{logger: fakeLogger}
+	// ReportFatalError calls logger.Fatal, panic only used for recovery in tests
 	assert.Panics(t, func() { host.ReportFatalError(errors.New("Example error")) })
 
 	assert.Equal(t, 1, observedLogs.Len())
