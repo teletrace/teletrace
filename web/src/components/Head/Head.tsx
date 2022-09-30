@@ -1,7 +1,7 @@
 import { Toolbar, Typography } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 
-import { AppBar } from "@/components/Elements/AppBar";
+import { AppBar } from "@/components/AppBar";
 
 export type HeadProps = {
   title?: string;
