@@ -17,7 +17,7 @@ export const Landing = () => {
 
   return (
     <>
-      <Head description="Welcome to bulletproof react" />
+      <Head description="Lupa is an open source tool to track, analyze and view traces" />
       <Box
         display="flex"
         justifyContent="center"
@@ -40,7 +40,7 @@ export const Landing = () => {
             color="text.secondary"
             paragraph
           >
-            Lupa is an open source tool to track, analyze and view tracing.
+            Lupa is an open source tool to track, analyze and view traces.
           </Typography>
           <Stack
             sx={{ pt: 4 }}
