@@ -1,9 +1,5 @@
 package interactor
 
-import (
-	v1 "oss-tracing/pkg/model/extracted_span/generated/v1"
-)
-
 type ExistsResponse struct {
 	Exists bool
 }
@@ -14,7 +10,7 @@ type IndexTemplate struct {
 	NumberOfReplicas   int      `default:"1"`
 	ILMPolicyName      string   `default:"lupa_default_ilm_policy"`
 	ComponentTemplates []string `default:"[\"lupa_default_spans_component_template\"]"`
-	IndexPatterns      []string `default:"[\"lupa-spans-*\"]"`
+	IndexPatterns      []string `default:"[\"lupa-spans\"]"`
 }
 
 type IndexTemplateController interface {
@@ -41,7 +37,7 @@ type ComponentTemplateController interface {
 }
 
 type ILMPolicy struct {
-	Name        string `default:"kupa_default_ilm_policy"`
+	Name        string `default:"lupa_default_ilm_policy"`
 	Rollover    string `default:"30gb"` // TODO rollover after time
 	DeleteAfter string `default:"30d"`
 }
@@ -60,14 +56,8 @@ type DataStreamController interface {
 	CreateDataStream(d *DataStream) error
 }
 
-type Document struct {
-	Span  *v1.ExtractedSpan
-	Index string
-	// ExtractedSpan here?
-}
-
 type DocumentController interface {
-	Bulk(ds ...*Document) []error
+	Bulk(docs *[]map[string]any) []error
 }
 
 type Interactor struct {

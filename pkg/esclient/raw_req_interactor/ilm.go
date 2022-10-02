@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 	"io/ioutil"
-	"oss-tracing/pkg/interactor/interactor"
+	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/elastic/go-elasticsearch/v8/esutil"

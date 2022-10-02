@@ -6,6 +6,6 @@ import (
 )
 
 type SpanWriter interface {
-	WriteSpan(ctx context.Context, span *v1.ExtractedSpan) error
+	WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []error
 	WriteBulk(ctx context.Context, spans ...*v1.ExtractedSpan) []error
 }

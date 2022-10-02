@@ -6,6 +6,7 @@ import (
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
+	"oss-tracing/plugin/spanstorage/es"
 
 	"go.uber.org/zap"
 )
@@ -26,4 +27,6 @@ func main() {
 	if err := api.Start(); err != nil {
 		logger.Fatal("API server crashed", zap.Error(err))
 	}
+
+	span_writer, err := es.NewSpanWriter(logger, cfg)
 }

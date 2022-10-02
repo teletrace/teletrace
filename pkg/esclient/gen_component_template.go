@@ -1,13 +1,14 @@
-package configfactory
+package esclient
 
 import (
+	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/creasty/defaults"
 )
 
 // TODO get input from config pkg
-func NewComponentTemplate() (*interactor.ComponentTemplate, error) {
+func NewComponentTemplate(cfg config.Config) (*interactor.ComponentTemplate, error) {
 	comp_template := &interactor.ComponentTemplate{}
 
 	if err := defaults.Set(comp_template); err != nil {
