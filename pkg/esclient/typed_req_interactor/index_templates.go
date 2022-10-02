@@ -19,9 +19,9 @@ func NewIndexTemplateController(client Client) interactor.IndexTemplateControlle
 	return &indexTemplateController{client: client}
 }
 
-func (c *indexTemplateController) IndexTemplateExists(name string) (*interactor.ExistsResponse, error) {
+func (c *indexTemplateController) IndexTemplateExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {
 	var err error
-	exists, err := c.client.Client.API.Indices.ExistsIndexTemplate(name).IsSuccess(context.Background())
+	exists, err := c.client.Client.API.Indices.ExistsIndexTemplate(name).IsSuccess(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func (c *indexTemplateController) IndexTemplateExists(name string) (*interactor.
 
 }
 
-func (c *indexTemplateController) CreateIndexTemplate(t *interactor.IndexTemplate) error {
+func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *interactor.IndexTemplate) error {
 	var err error
 
 	template := putindextemplate.NewRequestBuilder().
@@ -45,7 +45,7 @@ func (c *indexTemplateController) CreateIndexTemplate(t *interactor.IndexTemplat
 			),
 		).Build()
 
-	res, err := c.client.Client.API.Indices.PutIndexTemplate(t.Name).Request(template).Do(context.Background())
+	res, err := c.client.Client.API.Indices.PutIndexTemplate(t.Name).Request(template).Do(ctx)
 
 	if err != nil {
 		return err

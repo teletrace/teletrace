@@ -18,16 +18,16 @@ func NewComponentTemplateController(client Client) interactor.ComponentTemplateC
 	return &componentTemplateController{client: client}
 }
 
-func (c *componentTemplateController) ComponentTemplateExists(name string) (*interactor.ExistsResponse, error) {
+func (c *componentTemplateController) ComponentTemplateExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {
 	var err error
-	exists, err := c.client.Client.API.Cluster.ExistsComponentTemplate(name).IsSuccess(context.Background())
+	exists, err := c.client.Client.API.Cluster.ExistsComponentTemplate(name).IsSuccess(ctx)
 	if err != nil {
 		return nil, err
 	}
 	return &interactor.ExistsResponse{Exists: exists}, nil
 }
 
-func (c *componentTemplateController) CreateComponentTemplate(t *interactor.ComponentTemplate) error {
+func (c *componentTemplateController) CreateComponentTemplate(ctx context.Context, t *interactor.ComponentTemplate) error {
 	var err error
 
 	template := putindextemplate.NewRequestBuilder().
@@ -65,7 +65,7 @@ func (c *componentTemplateController) CreateComponentTemplate(t *interactor.Comp
 			),
 		).Build()
 
-	res, err := c.client.Client.API.Indices.PutIndexTemplate(t.Name).Request(template).Do(context.Background())
+	res, err := c.client.Client.API.Indices.PutIndexTemplate(t.Name).Request(template).Do(ctx)
 
 	if err != nil {
 		return err

@@ -1,5 +1,7 @@
 package interactor
 
+import "context"
+
 type ExistsResponse struct {
 	Exists bool
 }
@@ -14,8 +16,8 @@ type IndexTemplate struct {
 }
 
 type IndexTemplateController interface {
-	CreateIndexTemplate(t *IndexTemplate) error
-	IndexTemplateExists(name string) (*ExistsResponse, error)
+	CreateIndexTemplate(ctx context.Context, t *IndexTemplate) error
+	IndexTemplateExists(ctx context.Context, name string) (*ExistsResponse, error)
 }
 
 type IndexSort struct {
@@ -32,8 +34,8 @@ type ComponentTemplate struct {
 }
 
 type ComponentTemplateController interface {
-	CreateComponentTemplate(t *ComponentTemplate) error
-	ComponentTemplateExists(name string) (*ExistsResponse, error)
+	CreateComponentTemplate(ctx context.Context, t *ComponentTemplate) error
+	ComponentTemplateExists(ctx context.Context, name string) (*ExistsResponse, error)
 }
 
 type ILMPolicy struct {
@@ -43,21 +45,12 @@ type ILMPolicy struct {
 }
 
 type ILMPolicyController interface {
-	CreateILMPolicy(p *ILMPolicy) error
-	ILMPolicyExists(name string) (*ExistsResponse, error)
-}
-
-type DataStream struct {
-	Name string
-}
-
-type DataStreamController interface {
-	DataStreamExists(name string) (*ExistsResponse, error)
-	CreateDataStream(d *DataStream) error
+	CreateILMPolicy(ctx context.Context, p *ILMPolicy) error
+	ILMPolicyExists(ctx context.Context, name string) (*ExistsResponse, error)
 }
 
 type DocumentController interface {
-	Bulk(docs *[]map[string]any) []error
+	Bulk(ctx context.Context, docs *[]map[string]any) []error
 }
 
 type Interactor struct {
@@ -65,5 +58,4 @@ type Interactor struct {
 	ComponentTemplateController ComponentTemplateController
 	ILMPolicyController         ILMPolicyController
 	DocumentController          DocumentController
-	IndexController             DataStreamController
 }

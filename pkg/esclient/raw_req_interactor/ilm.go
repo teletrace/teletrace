@@ -18,13 +18,13 @@ func NewILMPolicyController(client Client) interactor.ILMPolicyController {
 	return &ilmPolicyController{client}
 }
 
-func (c *ilmPolicyController) ILMPolicyExists(name string) (*interactor.ExistsResponse, error) {
+func (c *ilmPolicyController) ILMPolicyExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {
 	var err error
 
 	req := esapi.ILMGetLifecycleRequest{
 		Policy: name,
 	}
-	res, err := req.Do(context.Background(), &c.client.Client)
+	res, err := req.Do(ctx, &c.client.Client)
 
 	if err != nil {
 		return &interactor.ExistsResponse{Exists: false}, err
@@ -44,7 +44,7 @@ func (c *ilmPolicyController) ILMPolicyExists(name string) (*interactor.ExistsRe
 
 }
 
-func (c *ilmPolicyController) CreateILMPolicy(p *interactor.ILMPolicy) error {
+func (c *ilmPolicyController) CreateILMPolicy(ctx context.Context, p *interactor.ILMPolicy) error {
 	var err error
 
 	req := esapi.ILMPutLifecycleRequest{
@@ -52,7 +52,7 @@ func (c *ilmPolicyController) CreateILMPolicy(p *interactor.ILMPolicy) error {
 		Body:   esutil.NewJSONReader(p),
 	}
 
-	_, err = req.Do(context.Background(), &c.client.Client)
+	_, err = req.Do(ctx, &c.client.Client)
 
 	return err
 }

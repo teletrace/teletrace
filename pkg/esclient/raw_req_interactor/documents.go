@@ -19,7 +19,7 @@ func NewDocumentController(client Client) interactor.DocumentController {
 	return &documentController{client: client}
 }
 
-func (c *documentController) Bulk(docs *[]map[string]any) []error {
+func (c *documentController) Bulk(ctx context.Context, docs *[]map[string]any) []error {
 	// TODO get BulkIndexerConfig from pkg/config
 	var errs []error
 
@@ -37,9 +37,9 @@ func (c *documentController) Bulk(docs *[]map[string]any) []error {
 		return append(errs, fmt.Errorf("Error creating the indexer: %s", err))
 	}
 
-	errs = append(errs, bulk(bi, idx, docs)...)
+	errs = append(errs, bulk(ctx, bi, idx, docs)...)
 
-	errs = append(errs, bi.Close(context.Background()))
+	errs = append(errs, bi.Close(ctx))
 
 	if len(errs) > 0 {
 		return errs
@@ -48,7 +48,7 @@ func (c *documentController) Bulk(docs *[]map[string]any) []error {
 	return nil
 }
 
-func bulk(bi esutil.BulkIndexer, idx string, docs *[]map[string]any) []error {
+func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs *[]map[string]any) []error {
 	var errs []error
 
 	for doc := range *docs {
@@ -59,7 +59,7 @@ func bulk(bi esutil.BulkIndexer, idx string, docs *[]map[string]any) []error {
 		}
 
 		err = bi.Add(
-			context.Background(),
+			ctx,
 			esutil.BulkIndexerItem{
 				Action: "index",
 				Body:   bytes.NewReader(data),

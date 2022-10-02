@@ -23,12 +23,10 @@ func NewInteractor(logger *zap.Logger, cfg config.Config) (*interactor.Interacto
 	ilm_controller := rawreqinteractor.NewILMPolicyController(*raw_api_client)
 	index_template_controller := typedreqinteractor.NewIndexTemplateController(*typed_api_client)
 	component_template_controller := typedreqinteractor.NewComponentTemplateController(*typed_api_client)
-	index_controller := typedreqinteractor.NewIndexController(*typed_api_client)
 
 	return &interactor.Interactor{
 		ILMPolicyController:         ilm_controller,
 		IndexTemplateController:     index_template_controller,
 		ComponentTemplateController: component_template_controller,
-		IndexController:             index_controller,
 	}, nil
 }
