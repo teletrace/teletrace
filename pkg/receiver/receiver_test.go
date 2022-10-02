@@ -24,8 +24,8 @@ import (
 )
 
 func TestReceiverGRPCEndpoint(t *testing.T) {
-	fakeSpanName := "fakeSpan"
-	receivedSpanLog := "Received test span"
+	spanName := "fakeSpan"
+	receivedSpanLog := "Received span"
 	cfg := config.Config{GRPCEndpoint: "0.0.0.0:1234"}
 	logger, observedLogs := getLoggerObserver()
 	tracesProcessor := func(ctx context.Context, processorLogger *zap.Logger, td ptrace.Traces) error {
@@ -50,13 +50,13 @@ func TestReceiverGRPCEndpoint(t *testing.T) {
 	defer func() {
 		assert.NoError(t, grpcClient.Close())
 	}()
-	td := createTracesTestSpan(fakeSpanName)
+	td := createTracesTestSpan(spanName)
 	require.NoError(t, exportTraces(grpcClient, td))
 
 	processorLog := observedLogs.FilterMessage(receivedSpanLog)
 	assert.Equal(t, 1, processorLog.Len())
 	processorLogFields := processorLog.All()[0].ContextMap()
-	assert.Equal(t, fakeSpanName, processorLogFields["span_name"])
+	assert.Equal(t, spanName, processorLogFields["span_name"])
 }
 
 func getLoggerObserver() (*zap.Logger, *observer.ObservedLogs) {
@@ -81,8 +81,8 @@ func exportTraces(grpcClient *grpc.ClientConn, td ptrace.Traces) error {
 }
 
 func TestReceiverHTTPEndpoint(t *testing.T) {
-	fakeSpanName := "fakeSpan"
-	receivedSpanLog := "Received test span"
+	spanName := "fakeSpan"
+	receivedSpanLog := "Received span"
 	cfg := config.Config{HTTPEndpoint: "0.0.0.0:4321"}
 	logger, observedLogs := getLoggerObserver()
 	tracesProcessor := func(ctx context.Context, processorLogger *zap.Logger, td ptrace.Traces) error {
@@ -114,14 +114,14 @@ func TestReceiverHTTPEndpoint(t *testing.T) {
 		  }
 		]
 	  }
-	`, fakeSpanName))
+	`, spanName))
 	resp, _ := http.Post(fmt.Sprintf("http://%s/v1/traces", cfg.HTTPEndpoint), "application/json", reqBody)
 	assert.Equal(t, 200, resp.StatusCode)
 
 	processorLog := observedLogs.FilterMessage(receivedSpanLog)
 	assert.Equal(t, 1, processorLog.Len())
 	processorLogFields := processorLog.All()[0].ContextMap()
-	assert.Equal(t, fakeSpanName, processorLogFields["span_name"])
+	assert.Equal(t, spanName, processorLogFields["span_name"])
 }
 
 func TestReceiverConfig(t *testing.T) {
