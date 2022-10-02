@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 
 export const TraceTimeline = () => {
   return (
@@ -18,11 +18,8 @@ export const TraceTimeline = () => {
           left: 0,
         }}
       />
-      <Grid container>
-        <Grid item md={6}>
-          <Typography>Timeline goes here</Typography>
-        </Grid>
-      </Grid>
+
+      <Typography>Timeline goes here</Typography>
     </Paper>
   );
 };

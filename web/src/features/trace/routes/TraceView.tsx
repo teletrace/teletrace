@@ -9,7 +9,10 @@ import { TraceTimeline } from "../components/TraceTimeline";
 
 export const TraceView = () => {
   return (
-    <MainLayout title="Trace View">
+    <MainLayout
+      title="Trace View"
+      description="Designated page to view trace's flow graph and timeline"
+    >
       <Box
         component="main"
         sx={{

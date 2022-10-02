@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 
 export const TraceTags = () => {
   return (
@@ -18,11 +18,7 @@ export const TraceTags = () => {
           left: 0,
         }}
       />
-      <Grid container>
-        <Grid item md={6}>
-          <Typography>Tags go here</Typography>
-        </Grid>
-      </Grid>
+      <Typography>Tags go here</Typography>
     </Paper>
   );
 };
