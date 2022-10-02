@@ -7,7 +7,6 @@ import (
 
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/esclient"
 
 	"go.uber.org/zap"
 )
@@ -17,7 +16,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize logger: %v", err)
 	}
-	es_client := esclient.Client.IndicesService
 	defer flushBufferedLogs(logger)
 
 	cfg, err := config.NewConfig(logger)

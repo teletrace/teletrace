@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"oss-tracing/pkg/api"
@@ -28,5 +29,7 @@ func main() {
 		logger.Fatal("API server crashed", zap.Error(err))
 	}
 
-	span_writer, err := es.NewSpanWriter(logger, cfg)
+	ctx := context.Background()
+
+	span_writer, err := es.NewSpanWriter(ctx, logger, cfg)
 }

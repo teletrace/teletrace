@@ -1,6 +1,7 @@
 package es
 
 import (
+	"context"
 	"fmt"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient"
@@ -11,6 +12,7 @@ import (
 )
 
 func NewSpanWriter(
+	ctx context.Context,
 	logger *zap.Logger,
 	cfg config.Config,
 ) (storage.SpanWriter, error) {
@@ -28,20 +30,20 @@ func NewSpanWriter(
 
 	force_create := cfg.ESForceCreateConfig
 
-	if err = initILMPolicy(logger, es_interactor.ILMPolicyController, cfg, force_create); err != nil {
+	if err = initILMPolicy(ctx, logger, es_interactor.ILMPolicyController, cfg, force_create); err != nil {
 		return nil, err
 	}
-	if err = initIndexTemplate(logger, es_interactor.IndexTemplateController, cfg, force_create); err != nil {
+	if err = initIndexTemplate(ctx, logger, es_interactor.IndexTemplateController, cfg, force_create); err != nil {
 		return nil, err
 	}
-	if err = initComponentTemplate(logger, es_interactor.ComponentTemplateController, cfg, force_create); err != nil {
+	if err = initComponentTemplate(ctx, logger, es_interactor.ComponentTemplateController, cfg, force_create); err != nil {
 		return nil, err
 	}
 
 	return &spanWriter{documentController: es_interactor.DocumentController}, nil
 }
 
-func initILMPolicy(logger *zap.Logger, ctrl interactor.ILMPolicyController, cfg config.Config, force_create bool) error {
+func initILMPolicy(ctx context.Context, logger *zap.Logger, ctrl interactor.ILMPolicyController, cfg config.Config, force_create bool) error {
 	var err error
 
 	ilmPolicy, err := esclient.NewILMPolicy(cfg)
@@ -50,20 +52,20 @@ func initILMPolicy(logger *zap.Logger, ctrl interactor.ILMPolicyController, cfg 
 		return err
 	}
 
-	policy_exists, err := ctrl.ILMPolicyExists(ilmPolicy.Name)
+	policy_exists, err := ctrl.ILMPolicyExists(ctx, ilmPolicy.Name)
 
 	if err != nil {
 		return fmt.Errorf("Could not initialize ILM policy %+v", err)
 	}
 
 	if !policy_exists.Exists || force_create {
-		ctrl.CreateILMPolicy(ilmPolicy)
+		ctrl.CreateILMPolicy(ctx, ilmPolicy)
 	}
 
 	return nil
 }
 
-func initIndexTemplate(logger *zap.Logger, ctrl interactor.IndexTemplateController, cfg config.Config, force_create bool) error {
+func initIndexTemplate(ctx context.Context, logger *zap.Logger, ctrl interactor.IndexTemplateController, cfg config.Config, force_create bool) error {
 	var err error
 
 	indexTemplate, err := esclient.NewIndexTemplate(cfg)
@@ -72,20 +74,20 @@ func initIndexTemplate(logger *zap.Logger, ctrl interactor.IndexTemplateControll
 		return err
 	}
 
-	template_exists, err := ctrl.IndexTemplateExists(indexTemplate.Name)
+	template_exists, err := ctrl.IndexTemplateExists(ctx, indexTemplate.Name)
 
 	if err != nil {
 		return fmt.Errorf("Could not initialize index template %+v", err)
 	}
 
 	if !template_exists.Exists || force_create {
-		ctrl.CreateIndexTemplate(indexTemplate)
+		ctrl.CreateIndexTemplate(ctx, indexTemplate)
 	}
 
 	return nil
 }
 
-func initComponentTemplate(logger *zap.Logger, ctrl interactor.ComponentTemplateController, cfg config.Config, force_create bool) error {
+func initComponentTemplate(ctx context.Context, logger *zap.Logger, ctrl interactor.ComponentTemplateController, cfg config.Config, force_create bool) error {
 	var err error
 
 	componentTemplate, err := esclient.NewComponentTemplate(cfg)
@@ -94,7 +96,7 @@ func initComponentTemplate(logger *zap.Logger, ctrl interactor.ComponentTemplate
 		return err
 	}
 
-	template_exists, err := ctrl.ComponentTemplateExists(componentTemplate.Name)
+	template_exists, err := ctrl.ComponentTemplateExists(ctx, componentTemplate.Name)
 
 	if err != nil {
 		return fmt.Errorf("Could not initialize component template %+v", err)
