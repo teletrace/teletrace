@@ -10,6 +10,7 @@ require (
 	go.opentelemetry.io/collector v0.59.0
 	go.opentelemetry.io/collector/pdata v0.59.0
 	go.opentelemetry.io/otel/trace v1.9.0
+	go.opentelemetry.io/proto/otlp v0.7.0
 	go.uber.org/zap v1.23.0
 )
 
@@ -67,7 +68,7 @@ require (
 	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
 	golang.org/x/sys v0.0.0-20220808155132-1c4a2a72c664 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
+	google.golang.org/protobuf v1.28.1
 	gopkg.in/ini.v1 v1.66.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
