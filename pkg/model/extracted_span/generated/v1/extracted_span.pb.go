@@ -40,7 +40,7 @@ type ExtractedSpan struct {
 	Resource *v1.Resource `protobuf:"bytes,1,opt,name=resource,proto3" json:"resource,omitempty"`
 	// This schema_url applies to the data in the "resource" field.
 	// extracted from ExportTraceServiceRequest.ResourceSpans.schema_url
-	// should be use for compatability, see:
+	// should be use for compatibility, see:
 	// https://github.com/open-telemetry/oteps/blob/main/text/0152-telemetry-schemas.md
 	// Extracted from ExportTraceServiceRequest.resource_spans.schema_url
 	ResourceSchemaUrl string `protobuf:"bytes,2,opt,name=resource_schema_url,json=resourceSchemaUrl,proto3" json:"resource_schema_url,omitempty"`
@@ -63,7 +63,7 @@ type ExtractedSpan struct {
 	Span *v12.Span `protobuf:"bytes,4,opt,name=span,proto3" json:"span,omitempty"`
 	// This schema_url applies to the span event in the "span" field.
 	// extracted from ExportTraceServiceRequest.ResourceSpans.ScopeSpans.schema_url
-	// should be use for compatability, see:
+	// should be use for compatibility, see:
 	// https://github.com/open-telemetry/oteps/blob/main/text/0152-telemetry-schemas.md
 	// Extracted from ExportTraceServiceRequest.resource_spans.scope_spans.schema_url
 	SpanSchemaUrl string `protobuf:"bytes,5,opt,name=span_schema_url,json=spanSchemaUrl,proto3" json:"span_schema_url,omitempty"`

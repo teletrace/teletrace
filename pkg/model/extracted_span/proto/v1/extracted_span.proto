@@ -23,7 +23,7 @@ message ExtractedSpan {
 
   // This schema_url applies to the data in the "resource" field.
   // extracted from ExportTraceServiceRequest.ResourceSpans.schema_url
-  // should be use for compatability, see:
+  // should be use for compatibility, see:
   // https://github.com/open-telemetry/oteps/blob/main/text/0152-telemetry-schemas.md
   // Extracted from ExportTraceServiceRequest.resource_spans.schema_url
   string resource_schema_url = 2;
@@ -49,7 +49,7 @@ message ExtractedSpan {
 
   // This schema_url applies to the span event in the "span" field.
   // extracted from ExportTraceServiceRequest.ResourceSpans.ScopeSpans.schema_url
-  // should be use for compatability, see:
+  // should be use for compatibility, see:
   // https://github.com/open-telemetry/oteps/blob/main/text/0152-telemetry-schemas.md
   // Extracted from ExportTraceServiceRequest.resource_spans.scope_spans.schema_url
   string span_schema_url = 5;
