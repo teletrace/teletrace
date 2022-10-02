@@ -13,6 +13,8 @@ require (
 	go.uber.org/zap v1.23.0
 )
 
+require github.com/creasty/defaults v1.6.0 // indirect
+
 require (
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect

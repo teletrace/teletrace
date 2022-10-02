@@ -37,6 +37,9 @@ const (
 
 	esServiceTokenEnvName = "ES_SERVICE_TOKEN"
 	esServiceTokenDefault = ""
+
+	esForceCreateConfigEnvName = "ES_FORCE_CREATE_CONFIG"
+	esForceCreateConfigDefault = false
 )
 
 // Config defines global configurations used throughout the application.
@@ -47,11 +50,12 @@ type Config struct {
 	HTTPEndpoint string `mapstructure:"http_endpoint"`
 
 	// Elasticsearch configs
-	ESEndpoints    []string `mapstructure:"es_endpoint"`
-	ESUsername     string   `mapstructure:"es_username"`
-	ESPassword     string   `mapstructure:"es_password"`
-	ESAPIKey       string   `mapstructure:"es_api_key"`
-	ESServiceToken string   `mapstructure:"es_service_token"`
+	ESEndpoints         []string `mapstructure:"es_endpoint"`
+	ESUsername          string   `mapstructure:"es_username"`
+	ESPassword          string   `mapstructure:"es_password"`
+	ESAPIKey            string   `mapstructure:"es_api_key"`
+	ESServiceToken      string   `mapstructure:"es_service_token"`
+	ESForceCreateConfig bool     `mapstructure:"es_force_create_config"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -94,4 +98,5 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esPasswordEnvName, esPasswordDefault)
 	v.SetDefault(esApiKeyEnvName, esApiKeyDefault)
 	v.SetDefault(esServiceTokenEnvName, esServiceTokenDefault)
+	v.SetDefault(esForceCreateConfigEnvName, esForceCreateConfigDefault)
 }

@@ -3,6 +3,7 @@ package typedreqinteractor
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"oss-tracing/pkg/esclient/interactor"
 
@@ -32,12 +33,14 @@ func (c *indexTemplateController) CreateIndexTemplate(t *interactor.IndexTemplat
 	var err error
 
 	template := putindextemplate.NewRequestBuilder().
+		DataStream(types.NewDataStreamVisibilityBuilder().Hidden(false)).
+		IndexPatterns(types.NewIndicesBuilder().Indices(getIndexPatterns(t))).
 		Template(types.NewIndexTemplateMappingBuilder().
 			Settings(types.NewIndexSettingsBuilder().
-				NumberOfShards("1").
-				NumberOfReplicas("1").
+				NumberOfShards(strconv.Itoa(t.NumberOfShards)).
+				NumberOfReplicas(strconv.Itoa(t.NumberOfReplicas)).
 				Lifecycle(types.NewIndexSettingsLifecycleBuilder().
-					Name("ILM_POLICY"),
+					Name(types.Name(t.ILMPolicyName)),
 				),
 			),
 		).Build()
@@ -56,4 +59,14 @@ func (c *indexTemplateController) CreateIndexTemplate(t *interactor.IndexTemplat
 		return errors.New(res.Status)
 	}
 
+}
+
+func getIndexPatterns(t *interactor.IndexTemplate) []types.IndexName {
+	var res []types.IndexName
+
+	for i, _ := range t.IndexPatterns {
+		res = append(res, types.IndexName(i))
+	}
+
+	return res
 }

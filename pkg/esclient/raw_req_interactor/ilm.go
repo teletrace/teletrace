@@ -5,9 +5,9 @@ import (
 	"io"
 	"io/ioutil"
 	"oss-tracing/pkg/interactor/interactor"
-	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/elastic/go-elasticsearch/v8/esutil"
 )
 
 type ilmPolicyController struct {
@@ -49,7 +49,7 @@ func (c *ilmPolicyController) CreateILMPolicy(p *interactor.ILMPolicy) error {
 
 	req := esapi.ILMPutLifecycleRequest{
 		Policy: p.Name,
-		Body:   strings.NewReader(``),
+		Body:   esutil.NewJSONReader(p),
 	}
 
 	_, err = req.Do(context.Background(), &c.client.Client)

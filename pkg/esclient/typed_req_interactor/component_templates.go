@@ -46,7 +46,7 @@ func (c *componentTemplateController) CreateComponentTemplate(t *interactor.Comp
 					},
 				}).
 				Properties(map[types.PropertyName]*types.PropertyBuilder{
-					types.NewPropertyNameBuilder().PropertyName("@timestamp").Build(): types.NewPropertyBuilder().
+					types.NewPropertyNameBuilder().PropertyName(types.PropertyName(t.TimestampField)).Build(): types.NewPropertyBuilder().
 						DateProperty(types.NewDatePropertyBuilder().
 							Format(t.TimestampFormat).IgnoreMalformed(false),
 						),
@@ -56,19 +56,16 @@ func (c *componentTemplateController) CreateComponentTemplate(t *interactor.Comp
 				Index(types.NewIndexSettingsBuilder().
 					Mapping(types.NewMappingLimitSettingsBuilder().
 						TotalFields(types.NewMappingLimitSettingsTotalFieldsBuilder().
-							Limit(1000),
+							Limit(t.MaxTotalFields),
 						).
 						IgnoreMalformed(true),
 					).
-					Sort(types.NewIndexSegmentSortBuilder().
-						Order([]segmentsortorder.SegmentSortOrder{segmentsortorder.Desc}).
-						Field(types.NewFieldsBuilder().Fields([]types.Field{"@timestamp"})),
-					),
+					Sort(getIndexSort(t)),
 				),
 			),
 		).Build()
 
-	res, err := c.client.Client.API.Indices.PutIndexTemplate(name).Request(template).Do(context.Background())
+	res, err := c.client.Client.API.Indices.PutIndexTemplate(t.Name).Request(template).Do(context.Background())
 
 	if err != nil {
 		return err
@@ -79,6 +76,28 @@ func (c *componentTemplateController) CreateComponentTemplate(t *interactor.Comp
 	if res.StatusCode >= 200 && res.StatusCode < 400 {
 		return nil
 	} else {
-		return fmt.Errorf("Could not create index template, status code %s", res.StatusCode)
+		return fmt.Errorf("Could not create index template, status code %d", res.StatusCode)
 	}
+}
+
+func getIndexSort(t *interactor.ComponentTemplate) *types.IndexSegmentSortBuilder {
+	var fields []types.Field
+	var orders []segmentsortorder.SegmentSortOrder
+
+	for _, i := range t.IndexSort {
+		if i.Order == "asc" {
+			orders = append(orders, segmentsortorder.Asc)
+		} else if i.Order == "desc" {
+			orders = append(orders, segmentsortorder.Desc)
+		} else {
+			return nil
+		}
+		fields = append(fields, types.Field(i.Field))
+	}
+
+	return types.NewIndexSegmentSortBuilder().
+		Order(orders).
+		Field(types.NewFieldsBuilder().
+			Fields(fields),
+		)
 }
