@@ -9,7 +9,24 @@ export type HeadProps = {
 
 export const Head = ({ title = "", description = "" }: HeadProps = {}) => {
   return (
-    <AppBar>
+    <AppBar
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "12px 24px",
+        gap: "1389px",
+
+        position: "absolute",
+        width: "1512px",
+        height: "60px",
+        left: "0px",
+        top: "0px",
+
+        background: "#1B1C21",
+      }}
+    >
       <Toolbar>
         <Typography variant="h6" color="inherit" noWrap>
           Lupa
