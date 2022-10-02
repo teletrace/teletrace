@@ -8,6 +8,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 import { Head } from "@/components/Head";
 import { LUPA_REPOSITORY_URL } from "@/config";
@@ -17,7 +18,7 @@ export const Landing = () => {
 
   return (
     <>
-      <Head description="Welcome to bulletproof react" />
+      <Head description="Lupa is an open source tool to track, analyze and view traces" />
       <Box
         display="flex"
         justifyContent="center"
@@ -40,7 +41,7 @@ export const Landing = () => {
             color="text.secondary"
             paragraph
           >
-            Lupa is an open source tool to track, analyze and view tracing.
+            Lupa is an open source tool to track, analyze and view traces.
           </Typography>
           <Stack
             sx={{ pt: 4 }}
@@ -48,11 +49,11 @@ export const Landing = () => {
             spacing={2}
             justifyContent="center"
           >
-            <Link href="/search" underline="none">
+            <Link component={RouterLink} to="/search" underline="none">
               <Typography color="text.secondary">Search</Typography>
             </Link>
             <Divider orientation="vertical" flexItem />
-            <Link href="/trace-view" underline="none">
+            <Link component={RouterLink} to="/trace-view" underline="none">
               <Typography color="text.secondary">Trace View</Typography>
             </Link>
           </Stack>
