@@ -5,7 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter } from "react-router-dom";
 
-import { Loader } from "@/components/Loader";
+import { Loader } from "@/components/Elements/Loader";
 import { queryClient } from "@/libs/react-query";
 
 export type AppProvidersProps = {
