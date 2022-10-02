@@ -19,25 +19,6 @@ import (
 	"go.uber.org/zap/zaptest/observer"
 )
 
-func TestReceiverStartAndShutdown(t *testing.T) {
-	cfg := config.Config{
-		GRPCEndpoint: "0.0.0.0:1234",
-		HTTPEndpoint: "0.0.0.0:4321",
-	}
-	logger, observedLogs := getLoggerObserver()
-
-	receiver, err := NewReceiver(cfg, logger, nil)
-	assert.NoError(t, err)
-	assert.NoError(t, receiver.Start())
-	defer func() {
-		assert.NoError(t, receiver.Shutdown())
-	}()
-	grpcServerLog := observedLogs.FilterMessage(fmt.Sprintf("Starting GRPC server on endpoint %s", cfg.GRPCEndpoint))
-	assert.Equal(t, 1, grpcServerLog.Len())
-	httpServerLog := observedLogs.FilterMessage(fmt.Sprintf("Starting HTTP server on endpoint %s", cfg.HTTPEndpoint))
-	assert.Equal(t, 1, httpServerLog.Len())
-}
-
 func TestReceiverTracesProcessor(t *testing.T) {
 	cfg := config.Config{
 		GRPCEndpoint: "0.0.0.0:1234",
