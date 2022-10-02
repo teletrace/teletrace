@@ -8,6 +8,7 @@ import (
 	"oss-tracing/pkg/config"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -41,7 +42,10 @@ func TestReceiverGRPCEndpoint(t *testing.T) {
 		assert.NoError(t, receiver.Shutdown())
 	}()
 
-	grpcClient, err := grpc.Dial(
+	dialCtx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	grpcClient, err := grpc.DialContext(
+		dialCtx,
 		cfg.GRPCEndpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),
