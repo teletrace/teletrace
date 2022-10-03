@@ -59,7 +59,11 @@ func initILMPolicy(ctx context.Context, logger *zap.Logger, ctrl interactor.ILMP
 	}
 
 	if !policy_exists.Exists || force_create {
-		ctrl.CreateILMPolicy(ctx, ilmPolicy)
+		err = ctrl.CreateILMPolicy(ctx, ilmPolicy)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -81,7 +85,11 @@ func initIndexTemplate(ctx context.Context, logger *zap.Logger, ctrl interactor.
 	}
 
 	if !template_exists.Exists || force_create {
-		ctrl.CreateIndexTemplate(ctx, indexTemplate)
+		err = ctrl.CreateIndexTemplate(ctx, indexTemplate)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -103,7 +111,11 @@ func initComponentTemplate(ctx context.Context, logger *zap.Logger, ctrl interac
 	}
 
 	if !template_exists.Exists || force_create {
-		ctrl.CreateComponentTemplate(componentTemplate)
+		err = ctrl.CreateComponentTemplate(ctx, componentTemplate)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

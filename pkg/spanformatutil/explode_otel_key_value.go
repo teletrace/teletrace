@@ -32,7 +32,11 @@ func ExplodeSpans(s ...*lupa_v1.ExtractedSpan) (*[]map[string]any, error) {
 		i_attr := explodeOtelKeyValue(e_span.Scope.Attributes...)
 
 		data, _ := json.Marshal(e_span)
-		json.Unmarshal(data, &span)
+		err := json.Unmarshal(data, &span)
+
+		if err != nil {
+			return nil, err
+		}
 
 		if a, ok := span["span"].(map[string]any); ok {
 			if _, ok := a["attributes"].(map[string]any); ok {

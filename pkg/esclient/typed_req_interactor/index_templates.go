@@ -64,7 +64,7 @@ func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *in
 func getIndexPatterns(t *interactor.IndexTemplate) []types.IndexName {
 	var res []types.IndexName
 
-	for i, _ := range t.IndexPatterns {
+	for _, i := range t.IndexPatterns {
 		res = append(res, types.IndexName(i))
 	}
 
