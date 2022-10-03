@@ -11,6 +11,7 @@ require (
 	go.opentelemetry.io/collector/pdata v0.59.0
 	go.opentelemetry.io/otel/trace v1.9.0
 	go.uber.org/zap v1.23.0
+	google.golang.org/grpc v1.49.0
 )
 
 require (
@@ -32,7 +33,6 @@ require (
 	go.opentelemetry.io/otel v1.9.0 // indirect
 	go.opentelemetry.io/otel/metric v0.31.0 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
-	google.golang.org/grpc v1.49.0 // indirect
 )
 
 require (
