@@ -3,6 +3,7 @@ package typedreqinteractor
 import (
 	"context"
 	"fmt"
+	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/putindextemplate"
@@ -12,10 +13,11 @@ import (
 
 type componentTemplateController struct {
 	client Client
+	cfg    config.Config
 }
 
-func NewComponentTemplateController(client Client) interactor.ComponentTemplateController {
-	return &componentTemplateController{client: client}
+func NewComponentTemplateController(client Client, cfg config.Config) interactor.ComponentTemplateController {
+	return &componentTemplateController{client: client, cfg: cfg}
 }
 
 func (c *componentTemplateController) ComponentTemplateExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {

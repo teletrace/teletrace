@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient"
+	esconfig "oss-tracing/pkg/esclient/config"
 	"oss-tracing/pkg/esclient/interactor"
 	storage "oss-tracing/pkg/spanstorage"
 
@@ -46,7 +47,7 @@ func NewSpanWriter(
 func initILMPolicy(ctx context.Context, logger *zap.Logger, ctrl interactor.ILMPolicyController, cfg config.Config, force_create bool) error {
 	var err error
 
-	ilmPolicy, err := esclient.NewILMPolicy(cfg)
+	ilmPolicy, err := esconfig.NewILMPolicy(cfg)
 
 	if err != nil {
 		return err
@@ -72,7 +73,7 @@ func initILMPolicy(ctx context.Context, logger *zap.Logger, ctrl interactor.ILMP
 func initIndexTemplate(ctx context.Context, logger *zap.Logger, ctrl interactor.IndexTemplateController, cfg config.Config, force_create bool) error {
 	var err error
 
-	indexTemplate, err := esclient.NewIndexTemplate(cfg)
+	indexTemplate, err := esconfig.NewIndexTemplate(cfg)
 
 	if err != nil {
 		return err
@@ -98,7 +99,7 @@ func initIndexTemplate(ctx context.Context, logger *zap.Logger, ctrl interactor.
 func initComponentTemplate(ctx context.Context, logger *zap.Logger, ctrl interactor.ComponentTemplateController, cfg config.Config, force_create bool) error {
 	var err error
 
-	componentTemplate, err := esclient.NewComponentTemplate(cfg)
+	componentTemplate, err := esconfig.NewComponentTemplate(cfg)
 
 	if err != nil {
 		return err

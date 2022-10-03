@@ -1,4 +1,4 @@
-package esclient
+package config
 
 import (
 	"oss-tracing/pkg/config"

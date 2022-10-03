@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"io/ioutil"
+	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
@@ -12,10 +13,11 @@ import (
 
 type ilmPolicyController struct {
 	client Client
+	cfg    config.Config
 }
 
-func NewILMPolicyController(client Client) interactor.ILMPolicyController {
-	return &ilmPolicyController{client}
+func NewILMPolicyController(client Client, cfg config.Config) interactor.ILMPolicyController {
+	return &ilmPolicyController{client: client, cfg: cfg}
 }
 
 func (c *ilmPolicyController) ILMPolicyExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {

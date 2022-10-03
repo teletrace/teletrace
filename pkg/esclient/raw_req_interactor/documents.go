@@ -5,6 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"oss-tracing/pkg/config"
+	esconfig "oss-tracing/pkg/esclient/config"
 	"oss-tracing/pkg/esclient/interactor"
 	"time"
 
@@ -13,17 +15,18 @@ import (
 
 type documentController struct {
 	client Client
+	cfg    config.Config
 }
 
-func NewDocumentController(client Client) interactor.DocumentController {
-	return &documentController{client: client}
+func NewDocumentController(client Client, cfg config.Config) interactor.DocumentController {
+	return &documentController{client: client, cfg: cfg}
 }
 
 func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) []error {
 	// TODO get BulkIndexerConfig from pkg/config
 	var errs []error
 
-	idx := "lupa-spans"
+	idx := esconfig.GenIndexName(c.cfg)
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:         idx,              // The default index name

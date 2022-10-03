@@ -32,13 +32,13 @@ func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []er
 func (w *spanWriter) WriteBulk(ctx context.Context, spans ...*v1.ExtractedSpan) []error {
 	var errs []error
 
-	exploded_spans, e := spanformatutil.ExplodeSpans(spans...)
+	converted_spans, e := spanformatutil.FlattenSpans(spans...)
 
 	if e != nil {
 		errs = append(errs, e)
 	}
 
-	es := w.documentController.Bulk(ctx, exploded_spans)
+	es := w.documentController.Bulk(ctx, converted_spans)
 
 	if len(errs) > 0 {
 		errs = append(es)

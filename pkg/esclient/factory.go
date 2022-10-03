@@ -20,9 +20,9 @@ func NewInteractor(logger *zap.Logger, cfg config.Config) (*interactor.Interacto
 	}
 
 	//TODO allow choosing which api to use
-	ilm_controller := rawreqinteractor.NewILMPolicyController(*raw_api_client)
-	index_template_controller := typedreqinteractor.NewIndexTemplateController(*typed_api_client)
-	component_template_controller := typedreqinteractor.NewComponentTemplateController(*typed_api_client)
+	ilm_controller := rawreqinteractor.NewILMPolicyController(*raw_api_client, cfg)
+	index_template_controller := typedreqinteractor.NewIndexTemplateController(*typed_api_client, cfg)
+	component_template_controller := typedreqinteractor.NewComponentTemplateController(*typed_api_client, cfg)
 
 	return &interactor.Interactor{
 		ILMPolicyController:         ilm_controller,
