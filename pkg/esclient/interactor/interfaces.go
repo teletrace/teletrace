@@ -50,7 +50,7 @@ type ILMPolicyController interface {
 }
 
 type DocumentController interface {
-	Bulk(ctx context.Context, docs *[]map[string]any) []error
+	Bulk(ctx context.Context, docs []*map[string]any) []error
 }
 
 type Interactor struct {

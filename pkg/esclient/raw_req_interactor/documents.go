@@ -19,7 +19,7 @@ func NewDocumentController(client Client) interactor.DocumentController {
 	return &documentController{client: client}
 }
 
-func (c *documentController) Bulk(ctx context.Context, docs *[]map[string]any) []error {
+func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) []error {
 	// TODO get BulkIndexerConfig from pkg/config
 	var errs []error
 
@@ -48,10 +48,10 @@ func (c *documentController) Bulk(ctx context.Context, docs *[]map[string]any) [
 	return nil
 }
 
-func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs *[]map[string]any) []error {
+func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs []*map[string]any) []error {
 	var errs []error
 
-	for doc := range *docs {
+	for doc := range docs {
 		data, err := json.Marshal(doc)
 
 		if err != nil {

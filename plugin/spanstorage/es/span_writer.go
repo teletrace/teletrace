@@ -14,13 +14,13 @@ type spanWriter struct {
 func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []error {
 	var errs []error
 
-	exploded_spans, e := spanformatutil.ExplodeSpans(span)
+	converted_spans, err := spanformatutil.FlattenSpans(span)
 
-	if e != nil {
-		errs = append(errs, e)
+	if err != nil {
+		return append(errs, err)
 	}
 
-	es := w.documentController.Bulk(ctx, exploded_spans)
+	es := w.documentController.Bulk(ctx, converted_spans)
 
 	if len(errs) > 0 {
 		errs = append(es)
