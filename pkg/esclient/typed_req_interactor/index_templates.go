@@ -2,7 +2,8 @@ package typedreqinteractor
 
 import (
 	"context"
-	"errors"
+	"fmt"
+	"net/http/httputil"
 	"strconv"
 
 	"oss-tracing/pkg/config"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/putindextemplate"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"go.uber.org/zap"
 )
 
 type indexTemplateController struct {
@@ -58,7 +60,12 @@ func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *in
 	if res.StatusCode >= 200 && res.StatusCode < 400 {
 		return nil
 	} else {
-		return errors.New(res.Status)
+		respDump, err := httputil.DumpResponse(res, true)
+		if err != nil {
+			c.client.Logger.Fatal("Could not dump response: %+v ", zap.Error(err))
+		}
+
+		return fmt.Errorf("Could not create component template: %s, status code %d", string(respDump), res.StatusCode)
 	}
 
 }

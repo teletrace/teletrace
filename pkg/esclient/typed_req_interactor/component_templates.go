@@ -3,12 +3,14 @@ package typedreqinteractor
 import (
 	"context"
 	"fmt"
+	"net/http/httputil"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient/interactor"
 
-	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/putindextemplate"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/cluster/putcomponenttemplate"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/segmentsortorder"
+	"go.uber.org/zap"
 )
 
 type componentTemplateController struct {
@@ -18,6 +20,7 @@ type componentTemplateController struct {
 
 func NewComponentTemplateController(client Client, cfg config.Config) interactor.ComponentTemplateController {
 	return &componentTemplateController{client: client, cfg: cfg}
+
 }
 
 func (c *componentTemplateController) ComponentTemplateExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {
@@ -32,15 +35,15 @@ func (c *componentTemplateController) ComponentTemplateExists(ctx context.Contex
 func (c *componentTemplateController) CreateComponentTemplate(ctx context.Context, t *interactor.ComponentTemplate) error {
 	var err error
 
-	template := putindextemplate.NewRequestBuilder().
-		Template(types.NewIndexTemplateMappingBuilder().
+	template := putcomponenttemplate.NewRequestBuilder().
+		Template(types.NewIndexStateBuilder().
 			Mappings(types.NewTypeMappingBuilder().
 				DynamicTemplates([]map[string]types.DynamicTemplate{
-					map[string]types.DynamicTemplate{
+					{
 						"all_string_fields": types.NewDynamicTemplateBuilder().
 							PathMatch("*").
 							Mapping(types.NewPropertyBuilder().
-								NestedProperty(types.NewNestedPropertyBuilder().
+								KeywordProperty(types.NewKeywordPropertyBuilder().
 									IgnoreAbove(256),
 								),
 							).
@@ -67,18 +70,23 @@ func (c *componentTemplateController) CreateComponentTemplate(ctx context.Contex
 			),
 		).Build()
 
-	res, err := c.client.Client.API.Indices.PutIndexTemplate(t.Name).Request(template).Do(ctx)
+	res, err := c.client.Client.API.Cluster.PutComponentTemplate(t.Name).Request(template).Do(ctx)
 
 	if err != nil {
 		return err
 	}
 
-	res.Body.Close()
+	defer res.Body.Close()
 
 	if res.StatusCode >= 200 && res.StatusCode < 400 {
 		return nil
 	} else {
-		return fmt.Errorf("Could not create index template, status code %d", res.StatusCode)
+		respDump, err := httputil.DumpResponse(res, true)
+		if err != nil {
+			c.client.Logger.Fatal("Could not dump response: %+v ", zap.Error(err))
+		}
+
+		return fmt.Errorf("Could not create component template: %s, status code %d", string(respDump), res.StatusCode)
 	}
 }
 

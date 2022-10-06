@@ -29,7 +29,7 @@ type ComponentTemplate struct {
 	Name            string      `default:"lupa_default_spans_component_template"`
 	TimestampField  string      `default:"@timestamp"`
 	TimestampFormat string      `default:"yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd||yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss.SSSSSS||epoch_millis"`
-	IndexSort       []IndexSort `default:"[\"Order\":\"desc\",\"Field\":\"@timestamp\"]"`
+	IndexSort       []IndexSort `default:"[{\"Order\":\"desc\",\"Field\":\"@timestamp\"}]"`
 	MaxTotalFields  int         `default:"1000"`
 }
 

@@ -14,7 +14,7 @@ type Client struct {
 
 func NewClient(cfg config.Config, logger *zap.Logger) (*Client, error) {
 	es_config := elasticsearch.Config{
-		Addresses: cfg.ESEndpoints,
+		Addresses: []string{cfg.ESEndpoints},
 		Username:  cfg.ESUsername,
 		Password:  cfg.ESPassword,
 	}

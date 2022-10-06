@@ -24,7 +24,7 @@ const (
 	httpEndpointDefault = "0.0.0.0:4318"
 
 	esEndpointEnvName = "ES_ENDPOINT"
-	esEndpointDefault = "0.0.0.0:9200,"
+	esEndpointDefault = "0.0.0.0:9200"
 
 	esUsernameEnvName = "ES_USERNAME"
 	esUsernameDefault = "elastic"
@@ -50,12 +50,12 @@ type Config struct {
 	HTTPEndpoint string `mapstructure:"http_endpoint"`
 
 	// Elasticsearch configs
-	ESEndpoints         []string `mapstructure:"es_endpoint"`
-	ESUsername          string   `mapstructure:"es_username"`
-	ESPassword          string   `mapstructure:"es_password"`
-	ESAPIKey            string   `mapstructure:"es_api_key"`
-	ESServiceToken      string   `mapstructure:"es_service_token"`
-	ESForceCreateConfig bool     `mapstructure:"es_force_create_config"`
+	ESEndpoints         string `mapstructure:"es_endpoint"`
+	ESUsername          string `mapstructure:"es_username"`
+	ESPassword          string `mapstructure:"es_password"`
+	ESAPIKey            string `mapstructure:"es_api_key"`
+	ESServiceToken      string `mapstructure:"es_service_token"`
+	ESForceCreateConfig bool   `mapstructure:"es_force_create_config"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
