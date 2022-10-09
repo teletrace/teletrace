@@ -1,9 +1,0 @@
-version: v1
-deps:
-  - buf.build/opentelemetry/opentelemetry:6459e1aae1c22e273ac92be86016f0ae55a2430a
-breaking:
-  use:
-    - FILE
-lint:
-  use:
-    - DEFAULT
