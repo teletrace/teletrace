@@ -31,9 +31,6 @@ func NewSpanWriter(
 
 	force_create := cfg.ESForceCreateConfig
 
-	if err = initILMPolicy(ctx, logger, es_interactor.ILMPolicyController, cfg, force_create); err != nil {
-		return nil, fmt.Errorf("Could not init ILM Policy: %+v", err)
-	}
 	if err = initIndexTemplate(ctx, logger, es_interactor.IndexTemplateController, cfg, force_create); err != nil {
 		return nil, fmt.Errorf("Could not init Index Template: %+v", err)
 	}
@@ -42,32 +39,6 @@ func NewSpanWriter(
 	}
 
 	return &spanWriter{documentController: es_interactor.DocumentController}, nil
-}
-
-func initILMPolicy(ctx context.Context, logger *zap.Logger, ctrl interactor.ILMPolicyController, cfg config.Config, force_create bool) error {
-	var err error
-
-	ilmPolicy, err := esconfig.NewILMPolicy(cfg)
-
-	if err != nil {
-		return err
-	}
-
-	policy_exists, err := ctrl.ILMPolicyExists(ctx, ilmPolicy.Name)
-
-	if err != nil {
-		return fmt.Errorf("Could not check if ILM policy exists: %+v", err)
-	}
-
-	if !policy_exists.Exists || force_create {
-		err = ctrl.CreateILMPolicy(ctx, ilmPolicy)
-
-		if err != nil {
-			return fmt.Errorf("Could not create ILM policy: %+v", err)
-		}
-	}
-
-	return nil
 }
 
 func initIndexTemplate(ctx context.Context, logger *zap.Logger, ctrl interactor.IndexTemplateController, cfg config.Config, force_create bool) error {

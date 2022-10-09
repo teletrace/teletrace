@@ -40,7 +40,7 @@ func (w *spanWriter) WriteBulk(ctx context.Context, spans ...*v1.ExtractedSpan) 
 
 	es := w.documentController.Bulk(ctx, converted_spans)
 
-	if len(errs) > 0 {
+	if len(es) > 0 {
 		errs = append(es)
 	}
 

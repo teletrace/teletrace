@@ -32,7 +32,6 @@ func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) [
 		Index:         idx,              // The default index name
 		Client:        &c.client.Client, // The Elasticsearch client
 		NumWorkers:    1,                // The number of worker goroutines
-		FlushBytes:    int(5e+6),        // The flush threshold in bytes
 		FlushInterval: 30 * time.Second, // The periodic flush interval
 	})
 
@@ -40,9 +39,17 @@ func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) [
 		return append(errs, fmt.Errorf("Error creating the indexer: %s", err))
 	}
 
-	errs = append(errs, bulk(ctx, bi, idx, docs)...)
+	_errs := bulk(ctx, bi, idx, docs)
 
-	errs = append(errs, bi.Close(ctx))
+	if len(_errs) > 0 {
+		errs = append(errs, _errs...)
+	}
+
+	err = bi.Close(context.Background())
+
+	if err != nil {
+		errs = append(errs, fmt.Errorf("Could not close the Bulk Indexer: %+v", err))
+	}
 
 	if len(errs) > 0 {
 		return errs
@@ -54,27 +61,31 @@ func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) [
 func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs []*map[string]any) []error {
 	var errs []error
 
-	for doc := range docs {
+	for _, doc := range docs {
 		data, err := json.Marshal(doc)
 
 		if err != nil {
-			return append(errs, err)
+			return append(errs, fmt.Errorf("Could not json marshal doc %s: %+v", doc, err))
 		}
 
 		err = bi.Add(
 			ctx,
 			esutil.BulkIndexerItem{
-				Action: "index",
+				Action: "create",
 				Body:   bytes.NewReader(data),
 				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, res esutil.BulkIndexerResponseItem, err error) {
-					errs = append(errs, err)
+					errs = append(errs, fmt.Errorf("Adding doc %s to Bulk Indexer failed: %+v, %+v, %s ", doc, item, res, err))
 				},
 			},
 		)
 
 		if err != nil {
-			return append(errs, err)
+			return append(errs, fmt.Errorf("Could not add doc %s to bulk: %+v ", doc, err))
 		}
+	}
+
+	if len(errs) > 0 {
+		return errs
 	}
 
 	return nil

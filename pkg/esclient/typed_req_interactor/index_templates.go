@@ -39,13 +39,11 @@ func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *in
 	template := putindextemplate.NewRequestBuilder().
 		DataStream(types.NewDataStreamVisibilityBuilder().Hidden(false)).
 		IndexPatterns(types.NewIndicesBuilder().Indices(getIndexPatterns(t))).
+		ComposedOf(getComposedOf(t)...).
 		Template(types.NewIndexTemplateMappingBuilder().
 			Settings(types.NewIndexSettingsBuilder().
 				NumberOfShards(strconv.Itoa(t.NumberOfShards)).
-				NumberOfReplicas(strconv.Itoa(t.NumberOfReplicas)).
-				Lifecycle(types.NewIndexSettingsLifecycleBuilder().
-					Name(types.Name(t.ILMPolicyName)),
-				),
+				NumberOfReplicas(strconv.Itoa(t.NumberOfReplicas)),
 			),
 		).Build()
 
@@ -65,7 +63,7 @@ func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *in
 			c.client.Logger.Fatal("Could not dump response: %+v ", zap.Error(err))
 		}
 
-		return fmt.Errorf("Could not create component template: %s, status code %d", string(respDump), res.StatusCode)
+		return fmt.Errorf("Could not create index template: %s, status code %d", string(respDump), res.StatusCode)
 	}
 
 }
@@ -75,6 +73,16 @@ func getIndexPatterns(t *interactor.IndexTemplate) []types.IndexName {
 
 	for _, i := range t.IndexPatterns {
 		res = append(res, types.IndexName(i))
+	}
+
+	return res
+}
+
+func getComposedOf(t *interactor.IndexTemplate) []types.Name {
+	var res []types.Name
+
+	for _, c := range t.ComponentTemplates {
+		res = append(res, types.Name(c))
 	}
 
 	return res
