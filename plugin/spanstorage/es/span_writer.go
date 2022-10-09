@@ -3,8 +3,7 @@ package es
 import (
 	"context"
 	"oss-tracing/pkg/esclient/interactor"
-	v1 "oss-tracing/pkg/model/extracted_span/generated/v1"
-	"oss-tracing/pkg/spanformatutil"
+	v1 "oss-tracing/pkg/model/extracted_span/v1"
 )
 
 type spanWriter struct {
@@ -14,13 +13,7 @@ type spanWriter struct {
 func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []error {
 	var errs []error
 
-	converted_spans, err := spanformatutil.FlattenSpans(span)
-
-	if err != nil {
-		return append(errs, err)
-	}
-
-	es := w.documentController.Bulk(ctx, converted_spans)
+	es := w.documentController.Bulk(ctx, []*v1.ExtractedSpan{span})
 
 	if len(errs) > 0 {
 		errs = append(es)
@@ -32,13 +25,7 @@ func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []er
 func (w *spanWriter) WriteBulk(ctx context.Context, spans ...*v1.ExtractedSpan) []error {
 	var errs []error
 
-	converted_spans, e := spanformatutil.FlattenSpans(spans...)
-
-	if e != nil {
-		errs = append(errs, e)
-	}
-
-	es := w.documentController.Bulk(ctx, converted_spans)
+	es := w.documentController.Bulk(ctx, spans)
 
 	if len(es) > 0 {
 		errs = append(es)

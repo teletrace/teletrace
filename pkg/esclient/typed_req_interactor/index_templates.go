@@ -37,7 +37,6 @@ func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *in
 	var err error
 
 	template := putindextemplate.NewRequestBuilder().
-		DataStream(types.NewDataStreamVisibilityBuilder().Hidden(false)).
 		IndexPatterns(types.NewIndicesBuilder().Indices(getIndexPatterns(t))).
 		ComposedOf(getComposedOf(t)...).
 		Template(types.NewIndexTemplateMappingBuilder().
@@ -53,7 +52,7 @@ func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *in
 		return err
 	}
 
-	res.Body.Close()
+	defer res.Body.Close()
 
 	if res.StatusCode >= 200 && res.StatusCode < 400 {
 		return nil

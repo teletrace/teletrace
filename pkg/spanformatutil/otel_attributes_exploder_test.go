@@ -1,7 +1,7 @@
 package spanformatutil
 
 import (
-	v1 "oss-tracing/pkg/model/extracted_span/generated/v1"
+	v1 "oss-tracing/pkg/model/extracted_span/v1"
 	"oss-tracing/pkg/spanformatutil/spanformatutiltests"
 	"testing"
 

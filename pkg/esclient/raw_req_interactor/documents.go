@@ -8,6 +8,7 @@ import (
 	"oss-tracing/pkg/config"
 	esconfig "oss-tracing/pkg/esclient/config"
 	"oss-tracing/pkg/esclient/interactor"
+	v1 "oss-tracing/pkg/model/extracted_span/v1"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v8/esutil"
@@ -22,7 +23,7 @@ func NewDocumentController(client Client, cfg config.Config) interactor.Document
 	return &documentController{client: client, cfg: cfg}
 }
 
-func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) []error {
+func (c *documentController) Bulk(ctx context.Context, docs []*v1.ExtractedSpan) []error {
 	// TODO get BulkIndexerConfig from pkg/config
 	var errs []error
 
@@ -51,6 +52,9 @@ func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) [
 		errs = append(errs, fmt.Errorf("Could not close the Bulk Indexer: %+v", err))
 	}
 
+	biStats := bi.Stats()
+	c.client.Logger.Sugar().Debugf("BiStats: %+v", biStats)
+
 	if len(errs) > 0 {
 		return errs
 	}
@@ -58,14 +62,14 @@ func (c *documentController) Bulk(ctx context.Context, docs []*map[string]any) [
 	return nil
 }
 
-func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs []*map[string]any) []error {
+func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs []*v1.ExtractedSpan) []error {
 	var errs []error
 
 	for _, doc := range docs {
-		data, err := json.Marshal(doc)
+		data, err := json.Marshal(&doc)
 
 		if err != nil {
-			return append(errs, fmt.Errorf("Could not json marshal doc %s: %+v", doc, err))
+			return append(errs, fmt.Errorf("Could not json marshal doc %+v: %+v", doc, err))
 		}
 
 		err = bi.Add(
@@ -74,13 +78,13 @@ func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs []*map[st
 				Action: "create",
 				Body:   bytes.NewReader(data),
 				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, res esutil.BulkIndexerResponseItem, err error) {
-					errs = append(errs, fmt.Errorf("Adding doc %s to Bulk Indexer failed: %+v, %+v, %s ", doc, item, res, err))
+					errs = append(errs, fmt.Errorf("Adding doc %+v to Bulk Indexer failed: %+v, %+v, %s ", doc, item, res, err))
 				},
 			},
 		)
 
 		if err != nil {
-			return append(errs, fmt.Errorf("Could not add doc %s to bulk: %+v ", doc, err))
+			return append(errs, fmt.Errorf("Could not add doc %+v to bulk: %+v ", doc, err))
 		}
 	}
 

@@ -1,6 +1,9 @@
 package interactor
 
-import "context"
+import (
+	"context"
+	v1 "oss-tracing/pkg/model/extracted_span/v1"
+)
 
 type ExistsResponse struct {
 	Exists bool
@@ -38,7 +41,7 @@ type ComponentTemplateController interface {
 }
 
 type DocumentController interface {
-	Bulk(ctx context.Context, docs []*map[string]any) []error
+	Bulk(ctx context.Context, docs []*v1.ExtractedSpan) []error
 }
 
 type Interactor struct {

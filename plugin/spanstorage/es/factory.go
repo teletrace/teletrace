@@ -31,11 +31,11 @@ func NewSpanWriter(
 
 	force_create := cfg.ESForceCreateConfig
 
-	if err = initIndexTemplate(ctx, logger, es_interactor.IndexTemplateController, cfg, force_create); err != nil {
-		return nil, fmt.Errorf("Could not init Index Template: %+v", err)
-	}
 	if err = initComponentTemplate(ctx, logger, es_interactor.ComponentTemplateController, cfg, force_create); err != nil {
 		return nil, fmt.Errorf("Could not init Component Template: %+v", err)
+	}
+	if err = initIndexTemplate(ctx, logger, es_interactor.IndexTemplateController, cfg, force_create); err != nil {
+		return nil, fmt.Errorf("Could not init Index Template: %+v", err)
 	}
 
 	return &spanWriter{documentController: es_interactor.DocumentController}, nil
