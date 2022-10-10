@@ -10,10 +10,10 @@ type queueItem interface{}
 
 // BoundedQueue is an in-memory, buffered channel-based FIFO queue
 type BoundedQueue struct {
-	capacity int
-	items    chan queueItem
-	stopped  *atomic.Bool
-	stopWG   sync.WaitGroup
+	capacity       int
+	items          chan queueItem
+	stopped        *atomic.Bool
+	consumerStopWG sync.WaitGroup
 }
 
 // NewBoundedQueue returns a new BoundedQueue with a given maximum capacity
@@ -28,19 +28,19 @@ func NewBoundedQueue(capacity int) *BoundedQueue {
 // StartConsumers passes queued items to a consumer callback that runs on
 // a given number of goroutines. Blocks until all consumers are ready.
 func (q *BoundedQueue) StartConsumers(callback func(item queueItem), numWorkers int) {
-	var startWG sync.WaitGroup
+	var consumerStartWG sync.WaitGroup
 	for i := 0; i < numWorkers; i++ {
-		startWG.Add(1)
-		q.stopWG.Add(1)
+		consumerStartWG.Add(1)
+		q.consumerStopWG.Add(1)
 		go func() {
-			startWG.Done()
-			defer q.stopWG.Done()
+			consumerStartWG.Done()
+			defer q.consumerStopWG.Done()
 			for item := range q.items {
 				callback(item)
 			}
 		}()
 	}
-	startWG.Wait()
+	consumerStartWG.Wait()
 }
 
 // Produce adds new item to the queue. Returns boolean indicating a success/failure.
@@ -62,5 +62,5 @@ func (q *BoundedQueue) Produce(item queueItem) bool {
 func (q *BoundedQueue) Stop() {
 	q.stopped.Store(true)
 	close(q.items)
-	q.stopWG.Wait()
+	q.consumerStopWG.Wait()
 }
