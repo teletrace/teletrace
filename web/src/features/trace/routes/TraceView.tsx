@@ -1,4 +1,4 @@
-import { Box, Container, Divider, Toolbar } from "@mui/material";
+import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 
 import { MainLayout } from "@/components/Layout";
@@ -13,41 +13,34 @@ export const TraceView = () => {
       title="Trace View"
       description="Designated page to view trace's flow graph and timeline"
     >
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          height: "100vh",
-          overflow: "auto",
-        }}
-      >
-        <Toolbar />
-
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <>
+        <Stack
+          direction="column"
+          divider={<Divider orientation="horizontal" flexItem />}
+          spacing={2}
+          sx={{ height: "100%" }}
+        >
           <Stack
-            direction="column"
-            divider={<Divider orientation="horizontal" flexItem />}
+            direction="row"
+            divider={<Divider orientation="vertical" flexItem />}
             spacing={2}
+            justifyContent="space-between"
+            flex={1}
           >
-            <Stack
-              direction="row"
-              divider={<Divider orientation="vertical" flexItem />}
-              spacing={2}
-            >
-              <TraceGraph />
-              <TraceTags />
-            </Stack>
-
-            <Stack
-              direction="row"
-              divider={<Divider orientation="vertical" flexItem />}
-              spacing={2}
-            >
-              <TraceTimeline />
-            </Stack>
+            <TraceGraph />
+            <TraceTags />
           </Stack>
-        </Container>
-      </Box>
+
+          <Stack
+            direction="row"
+            divider={<Divider orientation="vertical" flexItem />}
+            spacing={2}
+            flex={1}
+          >
+            <TraceTimeline />
+          </Stack>
+        </Stack>
+      </>
     </MainLayout>
   );
 };

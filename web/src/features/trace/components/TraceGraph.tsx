@@ -1,7 +1,6 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Paper } from "@mui/material";
 import { useCallback } from "react";
 import ReactFlow, {
-  Background,
   Connection,
   Edge,
   Node,
@@ -57,22 +56,7 @@ export const TraceGraph = () => {
   );
 
   return (
-    <Paper
-      sx={{
-        position: "relative",
-        height: 500,
-        width: 550,
-      }}
-    >
-      <Box
-        sx={{
-          position: "relative",
-          top: 0,
-          bottom: 0,
-          right: 0,
-          left: 0,
-        }}
-      />
+    <Paper sx={{ width: "100%" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

@@ -1,24 +1,8 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Paper, Typography } from "@mui/material";
 
 export const TraceTimeline = () => {
   return (
-    <Paper
-      sx={{
-        position: "relative",
-        height: 300,
-        width: "100%",
-      }}
-    >
-      <Box
-        sx={{
-          position: "absolute",
-          top: 0,
-          bottom: 0,
-          right: 0,
-          left: 0,
-        }}
-      />
-
+    <Paper sx={{ width: "100%" }}>
       <Typography>Timeline goes here</Typography>
     </Paper>
   );
