@@ -8,7 +8,7 @@ import (
 )
 
 type Client struct {
-	Client elasticsearch.TypedClient
+	Client *elasticsearch.TypedClient
 	Logger *zap.Logger
 }
 
@@ -34,5 +34,5 @@ func NewClient(cfg config.Config, logger *zap.Logger) (*Client, error) {
 		return nil, err
 	}
 
-	return &Client{Client: *es, Logger: logger}, nil
+	return &Client{Client: es, Logger: logger}, nil
 }

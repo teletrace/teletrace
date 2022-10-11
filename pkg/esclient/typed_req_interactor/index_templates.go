@@ -19,8 +19,8 @@ type indexTemplateController struct {
 	cfg    config.Config
 }
 
-func NewIndexTemplateController(client Client, cfg config.Config) interactor.IndexTemplateController {
-	return &indexTemplateController{client: client, cfg: cfg}
+func NewIndexTemplateController(client *Client, cfg config.Config) interactor.IndexTemplateController {
+	return &indexTemplateController{client: *client, cfg: cfg}
 }
 
 func (c *indexTemplateController) IndexTemplateExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {

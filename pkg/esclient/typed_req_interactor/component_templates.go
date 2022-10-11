@@ -14,11 +14,11 @@ import (
 )
 
 type componentTemplateController struct {
-	client Client
+	client *Client
 	cfg    config.Config
 }
 
-func NewComponentTemplateController(client Client, cfg config.Config) interactor.ComponentTemplateController {
+func NewComponentTemplateController(client *Client, cfg config.Config) interactor.ComponentTemplateController {
 	return &componentTemplateController{client: client, cfg: cfg}
 
 }

@@ -15,11 +15,11 @@ import (
 )
 
 type documentController struct {
-	client Client
+	client *Client
 	cfg    config.Config
 }
 
-func NewDocumentController(client Client, cfg config.Config) interactor.DocumentController {
+func NewDocumentController(client *Client, cfg config.Config) interactor.DocumentController {
 	return &documentController{client: client, cfg: cfg}
 }
 
@@ -31,7 +31,7 @@ func (c *documentController) Bulk(ctx context.Context, docs []*v1.ExtractedSpan)
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:         idx,
-		Client:        &c.client.Client,
+		Client:        c.client.Client,
 		NumWorkers:    1,
 		FlushInterval: 30 * time.Second,
 	})
