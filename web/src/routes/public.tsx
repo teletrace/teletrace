@@ -1,6 +1,8 @@
 import { Typography } from "@mui/material";
 import { ReactElement } from "react";
 
+import { TraceView } from "@/features/trace";
+
 export interface PublicRouteProps {
   path: string;
   element: ReactElement;
@@ -9,7 +11,7 @@ export interface PublicRouteProps {
 export const publicRoutes: PublicRouteProps[] = [
   {
     path: "/trace-view",
-    element: <Typography variant="h2">Trace View</Typography>,
+    element: <TraceView />,
   },
   {
     path: "/search",
