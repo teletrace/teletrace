@@ -6,6 +6,7 @@ on:
 
 jobs:
   assign-pr-to-opener:
+    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
     runs-on: ubuntu-latest
     steps:
       - name: Migrate user id
