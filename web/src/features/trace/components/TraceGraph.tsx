@@ -3,12 +3,14 @@ import { useCallback } from "react";
 import ReactFlow, {
   Connection,
   Edge,
+  MarkerType,
   Node,
   addEdge,
   useEdgesState,
   useNodesState,
 } from "reactflow";
 
+import BasicEdge from "@/components/Graph/BasicEdge";
 import BasicNode from "@/components/Graph/BasicNode";
 
 import "reactflow/dist/style.css";
@@ -41,11 +43,35 @@ const initialNodes: Node[] = [
 ];
 
 const initialEdges: Edge[] = [
-  { id: "e1-2", source: "1", target: "2", animated: true },
-  { id: "e1-3", source: "1", target: "3", animated: true },
+  {
+    id: "e1-2",
+    source: "1",
+    target: "2",
+    animated: false,
+    label: "2",
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
+  {
+    id: "e1-3",
+    source: "1",
+    target: "3",
+    animated: false,
+    label: "3",
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
+  {
+    id: "e2-4",
+    source: "2",
+    target: "4",
+    animated: false,
+    label: "4",
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
 ];
 
 const nodeTypes = { basicNode: BasicNode };
+
+const edgeTypes = { basicEdge: BasicEdge };
 
 export const TraceGraph = () => {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
@@ -64,6 +90,7 @@ export const TraceGraph = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
       ></ReactFlow>
     </Paper>
   );

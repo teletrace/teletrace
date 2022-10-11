@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import { useCallback, useContext } from "react";
 import { Handle, Position } from "reactflow";
 
