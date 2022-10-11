@@ -42,10 +42,6 @@ module.exports = {
         patterns: ["@/features/*/*"], // validate import style, forces us to mindfully export stuff from a feature
       },
     ],
-    "no-relative-import-paths/no-relative-import-paths": [
-      "error",
-      { allowSameFolder: true },
-    ],
     "sort-imports": [
       "error",
       {
