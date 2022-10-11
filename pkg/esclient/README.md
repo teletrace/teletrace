@@ -1,4 +1,4 @@
-# api
+# ESClient
 
 The `pkg/esclient` package interacts with elasticsearch using go-elasticsearch library (with the extensible to other libraries), and exposes interfaces for various configurations/indices/documents CRUD operations.
 
