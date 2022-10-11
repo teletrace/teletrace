@@ -13,7 +13,9 @@ type spanWriter struct {
 func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []error {
 	var errs []error
 
-	es := w.documentController.Bulk(ctx, []*v1.ExtractedSpan{span})
+	doc := interactor.Doc(span)
+
+	es := w.documentController.Bulk(ctx, &doc)
 
 	if len(errs) > 0 {
 		errs = append(errs, es...)
@@ -25,7 +27,14 @@ func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []er
 func (w *spanWriter) WriteBulk(ctx context.Context, spans ...*v1.ExtractedSpan) []error {
 	var errs []error
 
-	es := w.documentController.Bulk(ctx, spans)
+	var docs []*interactor.Doc
+
+	for _, span := range spans {
+		doc := interactor.Doc(span)
+		docs = append(docs, &doc)
+	}
+
+	es := w.documentController.Bulk(ctx, docs...)
 
 	if len(es) > 0 {
 		errs = append(errs, es...)
