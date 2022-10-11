@@ -8,7 +8,6 @@ import (
 	"oss-tracing/pkg/config"
 	esconfig "oss-tracing/pkg/esclient/config"
 	"oss-tracing/pkg/esclient/interactor"
-	v1 "oss-tracing/pkg/model/extracted_span/v1"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v8/esutil"
@@ -23,7 +22,7 @@ func NewDocumentController(client *Client, cfg config.Config) interactor.Documen
 	return &documentController{client: client, cfg: cfg}
 }
 
-func (c *documentController) Bulk(ctx context.Context, docs []*v1.ExtractedSpan) []error {
+func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) []error {
 	// TODO get BulkIndexerConfig from pkg/config
 	var errs []error
 
@@ -40,7 +39,7 @@ func (c *documentController) Bulk(ctx context.Context, docs []*v1.ExtractedSpan)
 		return append(errs, fmt.Errorf("Error creating the indexer: %s", err))
 	}
 
-	_errs := bulk(ctx, bi, idx, docs)
+	_errs := bulk(ctx, bi, idx, docs...)
 
 	if len(_errs) > 0 {
 		errs = append(errs, _errs...)
@@ -62,7 +61,7 @@ func (c *documentController) Bulk(ctx context.Context, docs []*v1.ExtractedSpan)
 	return nil
 }
 
-func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs []*v1.ExtractedSpan) []error {
+func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs ...*interactor.Doc) []error {
 	var errs []error
 
 	for _, doc := range docs {
