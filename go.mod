@@ -14,6 +14,8 @@ require (
 	google.golang.org/grpc v1.49.0
 )
 
+require github.com/creasty/defaults v1.6.0
+
 require (
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
@@ -33,6 +35,11 @@ require (
 	go.opentelemetry.io/otel v1.9.0 // indirect
 	go.opentelemetry.io/otel/metric v0.31.0 // indirect
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
+)
+
+require (
+	github.com/elastic/elastic-transport-go/v8 v8.1.0 // indirect
+	github.com/elastic/go-elasticsearch/v8 v8.4.0
 )
 
 require (
