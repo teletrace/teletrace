@@ -32,4 +32,8 @@ func main() {
 	ctx := context.Background()
 
 	_, err = es.NewSpanWriter(ctx, logger, cfg)
+
+	if err != nil {
+		log.Fatalf("Failed to initialize span writer: %+v", err)
+	}
 }

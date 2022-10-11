@@ -16,7 +16,7 @@ func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []er
 	es := w.documentController.Bulk(ctx, []*v1.ExtractedSpan{span})
 
 	if len(errs) > 0 {
-		errs = append(es)
+		errs = append(errs, es...)
 	}
 
 	return errs
@@ -28,7 +28,7 @@ func (w *spanWriter) WriteBulk(ctx context.Context, spans ...*v1.ExtractedSpan) 
 	es := w.documentController.Bulk(ctx, spans)
 
 	if len(es) > 0 {
-		errs = append(es)
+		errs = append(errs, es...)
 	}
 
 	return errs

@@ -13,8 +13,11 @@ func NewInteractor(logger *zap.Logger, cfg config.Config) (*interactor.Interacto
 	var err error
 
 	typed_api_client, err := typedreqinteractor.NewClient(cfg, logger)
-	raw_api_client, err := rawreqinteractor.NewClient(cfg, logger)
+	if err != nil {
+		return nil, err
+	}
 
+	raw_api_client, err := rawreqinteractor.NewClient(cfg, logger)
 	if err != nil {
 		return nil, err
 	}
