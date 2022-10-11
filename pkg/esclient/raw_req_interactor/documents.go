@@ -30,10 +30,10 @@ func (c *documentController) Bulk(ctx context.Context, docs []*v1.ExtractedSpan)
 	idx := esconfig.GenIndexName(c.cfg)
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
-		Index:         idx,              // The default index name
-		Client:        &c.client.Client, // The Elasticsearch client
-		NumWorkers:    1,                // The number of worker goroutines
-		FlushInterval: 30 * time.Second, // The periodic flush interval
+		Index:         idx,
+		Client:        &c.client.Client,
+		NumWorkers:    1,
+		FlushInterval: 30 * time.Second,
 	})
 
 	if err != nil {

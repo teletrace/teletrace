@@ -31,5 +31,5 @@ func main() {
 
 	ctx := context.Background()
 
-	span_writer, err := es.NewSpanWriter(ctx, logger, cfg)
+	_, err = es.NewSpanWriter(ctx, logger, cfg)
 }

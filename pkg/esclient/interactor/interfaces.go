@@ -17,11 +17,6 @@ type IndexTemplate struct {
 	IndexPatterns      []string `default:"[\"lupa-spans\"]"`
 }
 
-type IndexTemplateController interface {
-	CreateIndexTemplate(ctx context.Context, t *IndexTemplate) error
-	IndexTemplateExists(ctx context.Context, name string) (*ExistsResponse, error)
-}
-
 type IndexSort struct {
 	Order string
 	Field string
@@ -33,6 +28,11 @@ type ComponentTemplate struct {
 	TimestampFormat string      `default:"yyyy-MM-dd HH:mm:ss.SSS||yyyy-MM-dd||yyyy-MM-dd'T'HH:mm:ss||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss.SSSSSS||epoch_millis"`
 	IndexSort       []IndexSort `default:"[{\"Order\":\"desc\",\"Field\":\"@timestamp\"}]"`
 	MaxTotalFields  int         `default:"1000"`
+}
+
+type IndexTemplateController interface {
+	CreateIndexTemplate(ctx context.Context, t *IndexTemplate) error
+	IndexTemplateExists(ctx context.Context, name string) (*ExistsResponse, error)
 }
 
 type ComponentTemplateController interface {
