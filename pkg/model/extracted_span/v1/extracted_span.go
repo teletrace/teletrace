@@ -61,4 +61,5 @@ type ExtractedSpan struct {
 	Scope          *InstrumentationScope
 	Span           *Span
 	ExternalFields *ExternalFields
+	TimestampNano  uint64
 }
