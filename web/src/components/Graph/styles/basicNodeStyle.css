@@ -1,0 +1,80 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap");
+
+.node-box {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.node-icon-box {
+  box-sizing: border-box;
+
+  /* Auto layout */
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 12px;
+  gap: 10px;
+
+  width: 56px;
+  height: 56px;
+
+  /* Grayscale/Black */
+
+  background: #0b0b0d;
+  /* Grayscale/Grayscale_600 */
+
+  border: 1px solid #5a5b61;
+  box-shadow: 0px 11px 15px rgba(0, 0, 0, 0.2), 0px 9px 46px rgba(0, 0, 0, 0.12),
+    0px 24px 38px rgba(0, 0, 0, 0.14);
+  border-radius: 32px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  margin-bottom: 5px;
+}
+
+.node-text {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.text-container {
+  /* /checkout */
+
+  width: 80px;
+  height: 24px;
+
+  /* Subtitle/Subtitle 1 - Semi Bold */
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.15px;
+  justify-content: center;
+
+  /* Grayscale/Grayscale_100 */
+
+  color: #e9eaf1;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  margin-bottom: 5px;
+}
