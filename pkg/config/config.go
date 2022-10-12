@@ -24,7 +24,7 @@ const (
 	httpEndpointDefault = "0.0.0.0:4318"
 
 	esEndpointEnvName = "ES_ENDPOINT"
-	esEndpointDefault = "0.0.0.0:9200"
+	esEndpointDefault = "http://0.0.0.0:9200"
 
 	esUsernameEnvName = "ES_USERNAME"
 	esUsernameDefault = "elastic"
