@@ -56,7 +56,7 @@ type ExternalFields struct {
 	DurationNano uint64
 }
 
-type ExtractedSpan struct {
+type InternalSpan struct {
 	Resource       *Resource
 	Scope          *InstrumentationScope
 	Span           *Span
