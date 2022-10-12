@@ -81,13 +81,12 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	}
 	`
 
-	
 	buffer := bytes.NewBufferString(responseContent)
 	body := make(map[string]any)
 	_ = json.NewDecoder(buffer).Decode(&body)
 
 	// Act
-	uut := rawTagsController {}
+	uut := rawTagsController{}
 	result, err := uut.parseGetTagsValuesResponseBody(body)
 	if err != nil {
 		t.Fatal(err)
@@ -99,12 +98,12 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	assert.Contains(t, result.Tags, "http.flavor.keyword")
 	assert.Contains(t, result.Tags, "http.status_code")
 
-	assertTag := func (tag string, expectedInfos []interactor.TagValueInfo) {
+	assertTag := func(tag string, expectedInfos []interactor.TagValueInfo) {
 		assert.Contains(t, result.Tags, tag)
 		assert.ElementsMatch(t, result.Tags[tag], expectedInfos)
 	}
 
-	assertTag("http.method.keyword", []interactor.TagValueInfo {{
+	assertTag("http.method.keyword", []interactor.TagValueInfo{{
 		Value: "GET",
 		Count: 4,
 	}, {
@@ -115,12 +114,12 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		Count: 1,
 	}})
 
-	assertTag("http.flavor.keyword", []interactor.TagValueInfo {{
+	assertTag("http.flavor.keyword", []interactor.TagValueInfo{{
 		Value: "1.0",
 		Count: 6,
 	}})
 
-	assertTag("http.status_code", []interactor.TagValueInfo {{
+	assertTag("http.status_code", []interactor.TagValueInfo{{
 		Value: float64(200),
 		Count: 3,
 	}, {

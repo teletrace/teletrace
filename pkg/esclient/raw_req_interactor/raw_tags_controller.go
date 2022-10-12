@@ -14,13 +14,13 @@ import (
 
 type rawTagsController struct {
 	client *Client
-	index string
+	index  string
 }
 
 func NewTagsController(client *Client, cfg config.Config) interactor.TagsController {
-	return &rawTagsController {
+	return &rawTagsController{
 		client: client,
-		index: esconfig.GenIndexName(cfg),
+		index:  esconfig.GenIndexName(cfg),
 	}
 }
 
@@ -54,7 +54,7 @@ func (r *rawTagsController) GetAvailableTags(
 	request interactor.GetAvailableTagsRequest,
 ) (interactor.GetAvailableTagsResult, error) {
 	client := r.client.Client
-	result := interactor.GetAvailableTagsResult {
+	result := interactor.GetAvailableTagsResult{
 		Tags: make([]interactor.TagInfo, 0),
 	}
 
@@ -111,10 +111,9 @@ func (r *rawTagsController) GetTagsValues(
 	if err != nil {
 		return interactor.NewGetTagsValueResult(), err
 	}
-	
+
 	return r.parseGetTagsValuesResponseBody(body)
 }
-
 
 // Perform search and return the response' body
 func (r *rawTagsController) performGetTagsValuesRequest(
@@ -164,7 +163,7 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 		return nil, fmt.Errorf("failed to encode body; %v: %v", requestBody, err)
 	}
 
-	searchOptions := []func(*esapi.SearchRequest) {
+	searchOptions := []func(*esapi.SearchRequest){
 		client.Search.WithIndex(r.index),
 		client.Search.WithBody(buffer),
 	}
@@ -201,8 +200,8 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 	result := interactor.NewGetTagsValueResult()
 	aggregations := body["aggregations"].(map[string]any)
 	tagValueInfos := make(map[string]map[any]interactor.TagValueInfo)
-	
-	// the aggregation key is the tag's name becuase that's how we defined the query.
+
+	// the aggregation key is the tag's name because that's how we defined the query.
 	// traverse the returned aggregations, bucket by bucket and update the value counts
 	for tag, v := range aggregations {
 		aggregation := v.(map[string]any)
@@ -210,7 +209,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 		if _, found := tagValueInfos[tag]; !found {
 			tagValueInfos[tag] = make(map[any]interactor.TagValueInfo)
 		}
-		
+
 		for _, v := range aggregation["buckets"].([]any) {
 			bucket := v.(map[string]any)
 			value := bucket["key"]
@@ -230,7 +229,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 
 	// populate the result
 	for tag, valueInfoMap := range tagValueInfos {
-		result.Tags[tag] = []interactor.TagValueInfo {}
+		result.Tags[tag] = []interactor.TagValueInfo{}
 		for value, info := range valueInfoMap {
 			result.Tags[tag] = append(result.Tags[tag], interactor.TagValueInfo{
 				Value: value,

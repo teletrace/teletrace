@@ -14,17 +14,17 @@ type GetAvailableTagsResult struct {
 
 type GetTagsValuesRequest struct {
 	// A list od tags to get the values of
-	Tags      []string
+	Tags []string
 
 	// An optional lucene query to filter spans according to.
 	// e.g: "span.attributes.http.status_code: 200"
-	Query     *string
+	Query *string
 
 	// The minimum time to search spans in
 	StartTime time.Time
 
 	// The maximum time to search span in
-	EndTime   time.Time
+	EndTime time.Time
 
 	AutoPrefixTags *bool
 }
@@ -49,7 +49,7 @@ type TagValueInfo struct {
 
 // A mapping between a tag to an array of TagValueInfo
 //
-// e.g 
+// e.g
 // ```json
 // {
 //   "tags": {
@@ -68,7 +68,7 @@ type GetTagsValuesResult struct {
 }
 
 func NewGetTagsValueResult() GetTagsValuesResult {
-	return GetTagsValuesResult {
+	return GetTagsValuesResult{
 		Tags: make(map[string][]TagValueInfo),
 	}
 }
