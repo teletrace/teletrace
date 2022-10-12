@@ -196,6 +196,8 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 	body map[string]any,
 ) (interactor.GetTagsValuesResult, error) {
 
+	// To get an idea of how the response looks like, check the unit test at raw_tags_controller_test.go
+
 	result := interactor.NewGetTagsValueResult()
 	aggregations := body["aggregations"].(map[string]any)
 	tagValueInfos := make(map[string]map[any]interactor.TagValueInfo)

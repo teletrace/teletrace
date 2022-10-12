@@ -10,6 +10,8 @@ import (
 )
 
 func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
+	// Arrange
+	// Elastic search response
 	responseContent := `
 	{
 		"_shards": {
@@ -84,17 +86,18 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	body := make(map[string]any)
 	json.NewDecoder(buffer).Decode(&body)
 
+	// Act
 	uut := rawTagsController {}
 	result, err := uut.parseGetTagsValuesResponseBody(body)
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	// Assert
 	assert.Len(t, result.Tags, 3)
 	assert.Contains(t, result.Tags, "http.method.keyword")
 	assert.Contains(t, result.Tags, "http.flavor.keyword")
 	assert.Contains(t, result.Tags, "http.status_code")
-
 
 	assertTag := func (tag string, expectedInfos []interactor.TagValueInfo) {
 		assert.Contains(t, result.Tags, tag)
