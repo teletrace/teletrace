@@ -17,8 +17,8 @@ func NewSpanWriter(
 	logger *zap.Logger,
 	cfg config.Config,
 ) (storage.SpanWriter, error) {
-	// This should create a span writer to ES instance
-	// and validate proper es settings and configs
+	// This creates a span writer to ES instance
+	// and validates proper es settings and configs.
 	// if settings or configs are not found, sets them.
 
 	var err error
