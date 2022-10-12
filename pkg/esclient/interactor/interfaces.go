@@ -6,6 +6,7 @@ import (
 )
 
 type Doc any
+type SearchRequest any
 
 type ElasticConfig struct {
 	Endpoint     string
@@ -54,6 +55,7 @@ type ComponentTemplateController interface {
 
 type DocumentController interface {
 	Bulk(ctx context.Context, docs ...*Doc) error
+	Search(ctx context.Context, r *SearchRequest) error
 }
 
 type TagsController interface {
