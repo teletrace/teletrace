@@ -14,12 +14,12 @@ func NewInteractor(logger *zap.Logger, cfg config.Config) (*interactor.Interacto
 
 	typed_api_client, err := typedreqinteractor.NewClient(cfg, logger)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create a typed client: %v", err)
 	}
 
 	raw_api_client, err := rawreqinteractor.NewClient(cfg, logger)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create a raw client: %v", err)
 	}
 
 	//TODO allow choosing which api to use
