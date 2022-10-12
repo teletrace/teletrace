@@ -121,13 +121,13 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	}})
 
 	assertTag("http.status_code", []interactor.TagValueInfo {{
-		Value: "200",
+		Value: float64(200),
 		Count: 3,
 	}, {
-		Value: "404",
+		Value: float64(404),
 		Count: 2,
 	}, {
-		Value: "500",
+		Value: float64(500),
 		Count: 1,
 	}})
 }
