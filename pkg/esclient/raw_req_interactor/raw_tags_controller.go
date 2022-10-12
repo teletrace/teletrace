@@ -9,6 +9,7 @@ import (
 	esconfig "oss-tracing/pkg/esclient/config"
 	"oss-tracing/pkg/esclient/errors"
 	"oss-tracing/pkg/esclient/interactor"
+	"oss-tracing/pkg/model"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
@@ -34,11 +35,11 @@ func (r *rawTagsController) prefixTag(tag string) string {
 // Use elastic's GetFieldMapping api
 func (r *rawTagsController) GetAvailableTags(
 	ctx context.Context,
-	request interactor.GetAvailableTagsRequest,
-) (interactor.GetAvailableTagsResult, error) {
+	request model.GetAvailableTagsRequest,
+) (model.GetAvailableTagsResult, error) {
 	client := r.client.Client
-	result := interactor.GetAvailableTagsResult{
-		Tags: make([]interactor.TagInfo, 0),
+	result := model.GetAvailableTagsResult{
+		Tags: make([]model.TagInfo, 0),
 	}
 
 	res, err := client.Indices.GetFieldMapping(
@@ -74,7 +75,7 @@ func (r *rawTagsController) GetAvailableTags(
 		}
 
 		for _, valueData := range mappingData {
-			result.Tags = append(result.Tags, interactor.TagInfo{
+			result.Tags = append(result.Tags, model.TagInfo{
 				Name: fieldMapping["full_name"].(string),
 				Type: valueData.(map[string]any)["type"].(string),
 			})
@@ -86,13 +87,13 @@ func (r *rawTagsController) GetAvailableTags(
 
 func (r *rawTagsController) GetTagsValues(
 	ctx context.Context,
-	request interactor.GetTagsValuesRequest,
-) (interactor.GetTagsValuesResult, error) {
+	request model.GetTagsValuesRequest,
+) (model.GetTagsValuesResult, error) {
 
 	body, err := r.performGetTagsValuesRequest(ctx, request)
 
 	if err != nil {
-		return interactor.NewGetTagsValueResult(), err
+		return model.NewGetTagsValueResult(), err
 	}
 
 	return r.parseGetTagsValuesResponseBody(body)
@@ -101,7 +102,7 @@ func (r *rawTagsController) GetTagsValues(
 // Perform search and return the response' body
 func (r *rawTagsController) performGetTagsValuesRequest(
 	ctx context.Context,
-	request interactor.GetTagsValuesRequest,
+	request model.GetTagsValuesRequest,
 ) (map[string]any, error) {
 
 	if request.AutoPrefixTags == nil {
@@ -176,13 +177,13 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 
 func (r *rawTagsController) parseGetTagsValuesResponseBody(
 	body map[string]any,
-) (interactor.GetTagsValuesResult, error) {
+) (model.GetTagsValuesResult, error) {
 
 	// To get an idea of how the response looks like, check the unit test at raw_tags_controller_test.go
 
-	result := interactor.NewGetTagsValueResult()
+	result := model.NewGetTagsValueResult()
 	aggregations := body["aggregations"].(map[string]any)
-	tagValueInfos := make(map[string]map[any]interactor.TagValueInfo)
+	tagValueInfos := make(map[string]map[any]model.TagValueInfo)
 
 	// the aggregation key is the tag's name because that's how we defined the query.
 	// traverse the returned aggregations, bucket by bucket and update the value counts
@@ -190,7 +191,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 		aggregation := v.(map[string]any)
 
 		if _, found := tagValueInfos[tag]; !found {
-			tagValueInfos[tag] = make(map[any]interactor.TagValueInfo)
+			tagValueInfos[tag] = make(map[any]model.TagValueInfo)
 		}
 
 		for _, v := range aggregation["buckets"].([]any) {
@@ -199,7 +200,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 			count := int(bucket["doc_count"].(float64))
 
 			if info, found := tagValueInfos[tag][value]; !found {
-				tagValueInfos[tag][value] = interactor.TagValueInfo{
+				tagValueInfos[tag][value] = model.TagValueInfo{
 					Value: value,
 					Count: count,
 				}
@@ -212,9 +213,9 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 
 	// populate the result
 	for tag, valueInfoMap := range tagValueInfos {
-		result.Tags[tag] = []interactor.TagValueInfo{}
+		result.Tags[tag] = []model.TagValueInfo{}
 		for value, info := range valueInfoMap {
-			result.Tags[tag] = append(result.Tags[tag], interactor.TagValueInfo{
+			result.Tags[tag] = append(result.Tags[tag], model.TagValueInfo{
 				Value: value,
 				Count: info.Count,
 			})

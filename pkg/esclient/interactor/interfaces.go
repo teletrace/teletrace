@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"oss-tracing/pkg/model"
 )
 
 type Doc any
@@ -43,6 +44,14 @@ type ComponentTemplateController interface {
 
 type DocumentController interface {
 	Bulk(ctx context.Context, docs ...*Doc) []error
+}
+
+type TagsController interface {
+	// Get all available tags
+	GetAvailableTags(ctx context.Context, request model.GetAvailableTagsRequest) (model.GetAvailableTagsResult, error)
+
+	// Get the values and appearance count of all tags as specified by request.Tags
+	GetTagsValues(ctx context.Context, request model.GetTagsValuesRequest) (model.GetTagsValuesResult, error)
 }
 
 type Interactor struct {
