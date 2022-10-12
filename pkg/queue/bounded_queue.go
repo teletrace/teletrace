@@ -6,12 +6,10 @@ import (
 	"go.uber.org/atomic"
 )
 
-type queueItem interface{}
-
 // BoundedQueue is an in-memory, buffered channel-based FIFO queue
 type BoundedQueue struct {
 	capacity       int
-	items          chan queueItem
+	items          chan interface{}
 	stopped        *atomic.Bool
 	consumerStopWG sync.WaitGroup
 }
@@ -20,14 +18,14 @@ type BoundedQueue struct {
 func NewBoundedQueue(capacity int) *BoundedQueue {
 	return &BoundedQueue{
 		capacity: capacity,
-		items:    make(chan queueItem, capacity),
+		items:    make(chan interface{}, capacity),
 		stopped:  atomic.NewBool(false),
 	}
 }
 
 // StartConsumers passes queued items to a consumer callback that runs on
 // a given number of goroutines. Blocks until all consumers are ready.
-func (q *BoundedQueue) StartConsumers(callback func(item queueItem), numWorkers int) {
+func (q *BoundedQueue) StartConsumers(callback func(item interface{}), numWorkers int) {
 	var consumerStartWG sync.WaitGroup
 	for i := 0; i < numWorkers; i++ {
 		consumerStartWG.Add(1)
@@ -43,9 +41,9 @@ func (q *BoundedQueue) StartConsumers(callback func(item queueItem), numWorkers 
 	consumerStartWG.Wait()
 }
 
-// Produce adds new item to the queue. Returns boolean indicating a success/failure.
+// Enqueue adds new item to the queue. Returns boolean indicating a success/failure.
 // Failure can happen in case the queue is stopped or full (at max capacity).
-func (q *BoundedQueue) Produce(item queueItem) bool {
+func (q *BoundedQueue) Enqueue(item interface{}) bool {
 	if q.stopped.Load() {
 		return false
 	}
