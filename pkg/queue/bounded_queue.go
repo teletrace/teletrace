@@ -6,7 +6,7 @@ import (
 	"go.uber.org/atomic"
 )
 
-// BoundedQueue is an in-memory, buffered channel-based FIFO queue
+// BoundedQueue is an in-memory, buffered-channel-based FIFO queue
 type BoundedQueue struct {
 	capacity       int
 	items          chan interface{}
