@@ -1,7 +1,7 @@
 package model
 
 import (
-	v1 "oss-tracing/pkg/model/extracted_span/v1"
+	v1 "oss-tracing/pkg/model/internal_span/v1"
 	"time"
 )
 
