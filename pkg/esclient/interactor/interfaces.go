@@ -49,4 +49,5 @@ type Interactor struct {
 	IndexTemplateController     IndexTemplateController
 	ComponentTemplateController ComponentTemplateController
 	DocumentController          DocumentController
+	TagsController              TagsController
 }

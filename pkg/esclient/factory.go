@@ -1,6 +1,7 @@
 package esclient
 
 import (
+	"fmt"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient/interactor"
 	rawreqinteractor "oss-tracing/pkg/esclient/raw_req_interactor"
@@ -26,10 +27,12 @@ func NewInteractor(logger *zap.Logger, cfg config.Config) (*interactor.Interacto
 	index_template_controller := typedreqinteractor.NewIndexTemplateController(typed_api_client, cfg)
 	component_template_controller := typedreqinteractor.NewComponentTemplateController(typed_api_client, cfg)
 	document_controller := rawreqinteractor.NewDocumentController(raw_api_client, cfg)
+	tags_controller := rawreqinteractor.NewTagsController(raw_api_client, cfg)
 
 	return &interactor.Interactor{
 		IndexTemplateController:     index_template_controller,
 		ComponentTemplateController: component_template_controller,
 		DocumentController:          document_controller,
+		TagsController:              tags_controller,
 	}, nil
 }
