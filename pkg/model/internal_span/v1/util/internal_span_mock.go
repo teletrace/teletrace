@@ -1,12 +1,12 @@
 package spanformatutiltests
 
 import (
-	v1 "oss-tracing/pkg/model/extracted_span/v1"
+	v1 "oss-tracing/pkg/model/internal_span/v1"
 	"time"
 )
 
-func GenExtractedSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[string]any) *v1.ExtractedSpan {
-	return &v1.ExtractedSpan{
+func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[string]any) *v1.InternalSpan {
+	return &v1.InternalSpan{
 		Resource: &v1.Resource{
 			Attributes: r_attr,
 		},
