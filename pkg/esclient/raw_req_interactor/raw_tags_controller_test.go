@@ -84,7 +84,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	
 	buffer := bytes.NewBufferString(responseContent)
 	body := make(map[string]any)
-	json.NewDecoder(buffer).Decode(&body)
+	_ = json.NewDecoder(buffer).Decode(&body)
 
 	// Act
 	uut := rawTagsController {}
