@@ -23,6 +23,7 @@ jobs:
         with:
           version: v1.49
           only-new-issues: true
+          args: --timeout=5m
 
   golangci-test:
     name: Golang Unit Tests
