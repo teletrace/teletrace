@@ -17,6 +17,7 @@ type GetTagsValuesRequest struct {
 	Tags      []string
 
 	// An optional lucene query to filter spans according to.
+	// e.g: "span.attributes.http.status_code: 200"
 	Query     *string
 
 	// The minimum time to search spans in
@@ -29,12 +30,20 @@ type GetTagsValuesRequest struct {
 }
 
 type TagInfo struct {
+	// The tag's name
+	// e.g "http.status_code"
 	Name string
+
+	// The tag's type
+	// e.g "string"
 	Type string
 }
 
 type TagValueInfo struct {
+	// The value, can be of any type
 	Value any
+
+	// The appearance count of this value
 	Count int
 }
 
@@ -65,6 +74,9 @@ func NewGetTagsValueResult() GetTagsValuesResult {
 }
 
 type TagsController interface {
+	// Get all available tags
 	GetAvailableTags(ctx context.Context, request GetAvailableTagsRequest) (GetAvailableTagsResult, error)
+
+	// Get the values and appearance count of all tags as specified by request.Tags
 	GetTagsValues(ctx context.Context, request GetTagsValuesRequest) (GetTagsValuesResult, error)
 }

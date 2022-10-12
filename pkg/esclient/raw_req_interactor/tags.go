@@ -28,6 +28,7 @@ func (r *tagsController) prefixTag(tag string) string {
 	return fmt.Sprint("span.attributes.", tag)
 }
 
+// If the response contains an error, this function returns an error that summarize it
 func (r *tagsController) getResponseError(res *esapi.Response) error {
 	if !res.IsError() {
 		return nil
@@ -45,6 +46,9 @@ func (r *tagsController) getResponseError(res *esapi.Response) error {
 	}
 }
 
+// Get available tags.
+//
+// Use elastic's GetFieldMapping api
 func (r *tagsController) GetAvailableTags(
 	ctx context.Context,
 	request interactor.GetAvailableTagsRequest,
@@ -97,10 +101,11 @@ func (r *tagsController) GetAvailableTags(
 	return result, nil
 }
 
-func (r *tagsController) GetTagsValues(
+// Perform search and return the response' body
+func (r *tagsController) performGetTagsValuesRequest(
 	ctx context.Context,
 	request interactor.GetTagsValuesRequest,
-) (interactor.GetTagsValuesResult, error) {
+) (map[string]any, error) {
 
 	if request.AutoPrefixTags == nil {
 		autoPrefixTags := true
@@ -108,7 +113,6 @@ func (r *tagsController) GetTagsValues(
 	}
 
 	client := r.client.Client
-	result := interactor.NewGetTagsValueResult()
 
 	aggs := make(map[string]any, len(request.Tags))
 	for _, field := range request.Tags {
@@ -142,7 +146,7 @@ func (r *tagsController) GetTagsValues(
 
 	buffer := new(bytes.Buffer)
 	if err := json.NewEncoder(buffer).Encode(requestBody); err != nil {
-		return result, fmt.Errorf("failed to encode body; %v: %v", requestBody, err)
+		return nil, fmt.Errorf("failed to encode body; %v: %v", requestBody, err)
 	}
 
 	searchOptions := []func(*esapi.SearchRequest) {
@@ -157,24 +161,39 @@ func (r *tagsController) GetTagsValues(
 	res, err := client.Search(searchOptions...)
 
 	if err != nil {
-		return result, fmt.Errorf("failed to perform search: %s", err)
+		return nil, fmt.Errorf("failed to perform search: %s", err)
 	}
 
 	defer res.Body.Close()
 	if err := r.getResponseError(res); err != nil {
-		return result, err
+		return nil, err
 	}
 
 	var body map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
-		return result, fmt.Errorf("failed parsing the response body: %s", err)
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
+	return body, err
+}
+
+func (r *tagsController) GetTagsValues(
+	ctx context.Context,
+	request interactor.GetTagsValuesRequest,
+) (interactor.GetTagsValuesResult, error) {
+
+	result := interactor.NewGetTagsValueResult()
+	body, err := r.performGetTagsValuesRequest(ctx, request)
+
+	if err != nil {
+		return result, err
+	}
 	
 	aggregations := body["aggregations"].(map[string]any)
 	tagValueInfos := make(map[string]map[any]interactor.TagValueInfo)
 	
-	// the aggregation key is the tag's name becuase that's how we defined the query
+	// the aggregation key is the tag's name becuase that's how we defined the query.
+	// traverse the returned aggregations, bucket by bucket and update the value counts
 	for tag, v := range aggregations {
 		aggregation := v.(map[string]any)
 
