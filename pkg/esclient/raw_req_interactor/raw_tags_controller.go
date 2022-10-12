@@ -12,24 +12,24 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
 
-type tagsController struct {
+type rawTagsController struct {
 	client *Client
 	index string
 }
 
 func NewTagsController(client *Client, cfg config.Config) interactor.TagsController {
-	return &tagsController {
+	return &rawTagsController {
 		client: client,
 		index: esconfig.GenIndexName(cfg),
 	}
 }
 
-func (r *tagsController) prefixTag(tag string) string {
+func (r *rawTagsController) prefixTag(tag string) string {
 	return fmt.Sprint("span.attributes.", tag)
 }
 
 // If the response contains an error, this function returns an error that summarize it
-func (r *tagsController) getResponseError(res *esapi.Response) error {
+func (r *rawTagsController) getResponseError(res *esapi.Response) error {
 	if !res.IsError() {
 		return nil
 	}
@@ -49,7 +49,7 @@ func (r *tagsController) getResponseError(res *esapi.Response) error {
 // Get available tags.
 //
 // Use elastic's GetFieldMapping api
-func (r *tagsController) GetAvailableTags(
+func (r *rawTagsController) GetAvailableTags(
 	ctx context.Context,
 	request interactor.GetAvailableTagsRequest,
 ) (interactor.GetAvailableTagsResult, error) {
@@ -101,8 +101,23 @@ func (r *tagsController) GetAvailableTags(
 	return result, nil
 }
 
+func (r *rawTagsController) GetTagsValues(
+	ctx context.Context,
+	request interactor.GetTagsValuesRequest,
+) (interactor.GetTagsValuesResult, error) {
+
+	body, err := r.performGetTagsValuesRequest(ctx, request)
+
+	if err != nil {
+		return interactor.NewGetTagsValueResult(), err
+	}
+	
+	return r.parseGetTagsValuesResponseBody(body)
+}
+
+
 // Perform search and return the response' body
-func (r *tagsController) performGetTagsValuesRequest(
+func (r *rawTagsController) performGetTagsValuesRequest(
 	ctx context.Context,
 	request interactor.GetTagsValuesRequest,
 ) (map[string]any, error) {
@@ -177,18 +192,11 @@ func (r *tagsController) performGetTagsValuesRequest(
 	return body, err
 }
 
-func (r *tagsController) GetTagsValues(
-	ctx context.Context,
-	request interactor.GetTagsValuesRequest,
+func (r *rawTagsController) parseGetTagsValuesResponseBody(
+	body map[string]any,
 ) (interactor.GetTagsValuesResult, error) {
 
 	result := interactor.NewGetTagsValueResult()
-	body, err := r.performGetTagsValuesRequest(ctx, request)
-
-	if err != nil {
-		return result, err
-	}
-	
 	aggregations := body["aggregations"].(map[string]any)
 	tagValueInfos := make(map[string]map[any]interactor.TagValueInfo)
 	
