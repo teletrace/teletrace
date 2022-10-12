@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"oss-tracing/pkg/config"
 	esconfig "oss-tracing/pkg/esclient/config"
-	"oss-tracing/pkg/esclient/errors"
 	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/model"
 
@@ -53,7 +52,7 @@ func (r *rawTagsController) GetAvailableTags(
 	}
 
 	defer res.Body.Close()
-	if err := errors.SummarizeResponseError(res); err != nil {
+	if err := SummarizeResponseError(res); err != nil {
 		return result, err
 	}
 
@@ -163,7 +162,7 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	}
 
 	defer res.Body.Close()
-	if err := errors.SummarizeResponseError(res); err != nil {
+	if err := SummarizeResponseError(res); err != nil {
 		return nil, err
 	}
 

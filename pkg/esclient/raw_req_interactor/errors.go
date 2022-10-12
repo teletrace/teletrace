@@ -1,4 +1,4 @@
-package errors
+package rawreqinteractor
 
 import (
 	"encoding/json"
