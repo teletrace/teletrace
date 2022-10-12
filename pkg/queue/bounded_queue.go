@@ -41,7 +41,7 @@ func (q *BoundedQueue) StartConsumers(callback func(item interface{}), numWorker
 	consumerStartWG.Wait()
 }
 
-// Enqueue adds new item to the queue. Returns boolean indicating a success/failure.
+// Enqueue adds a new item to the queue. Returns boolean indicating a success/failure.
 // Failure can happen in case the queue is stopped or full (at max capacity).
 func (q *BoundedQueue) Enqueue(item interface{}) bool {
 	if q.stopped.Load() {
