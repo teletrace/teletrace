@@ -5,39 +5,42 @@ import (
 	"time"
 )
 
+type SortField string
+type FilterOperator string
+type FilterKey string
+type FilterValue any
+type FilterQueryString string
+type ContinuationToken string
+
 type Timeframe struct {
 	StartTime time.Time
 	EndTime   time.Time
 }
 
-type SortField struct {
-	Field     string
-	Direction int
+type Sort struct {
+	Field     SortField
+	Ascending bool
 }
 
 type SearchFilter struct {
-	Key         string
-	Operator    string
-	Value       any
-	QueryString string
+	Key         FilterKey
+	Operator    FilterOperator
+	Value       FilterValue
+	QueryString ContinuationToken
 }
 
-type RequestMetadata struct {
-	NextToken string
+type Metadata struct {
+	NextToken ContinuationToken
 }
 
 type SearchRequest struct {
 	Timeframe       *Timeframe
-	SortField       *SortField
+	Sort            []*Sort
 	SearchFilter    []*SearchFilter
-	RequestMetadata *RequestMetadata
-}
-
-type ResponseMetadata struct {
-	NextToken string
+	RequestMetadata *Metadata
 }
 
 type SearchResponse struct {
-	ResponseMetadata *ResponseMetadata
+	ResponseMetadata *Metadata
 	Spans            []*v1.InternalSpan
 }
