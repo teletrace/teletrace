@@ -2,10 +2,10 @@ package storage
 
 import (
 	"context"
-	v1 "oss-tracing/pkg/model/extracted_span/v1"
+	v1 "oss-tracing/pkg/model/internal_span/v1"
 )
 
 type SpanWriter interface {
-	WriteSpan(ctx context.Context, span *v1.ExtractedSpan) []error
-	WriteBulk(ctx context.Context, spans ...*v1.ExtractedSpan) []error
+	WriteSpan(ctx context.Context, span *v1.InternalSpan) []error
+	WriteBulk(ctx context.Context, spans ...*v1.InternalSpan) []error
 }
