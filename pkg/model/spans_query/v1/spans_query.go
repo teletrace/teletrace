@@ -39,5 +39,5 @@ type ResponseMetadata struct {
 
 type SearchResponse struct {
 	ResponseMetadata *ResponseMetadata
-	Spans            []*v1.ExtractedSpan
+	Spans            []*v1.InternalSpan
 }
