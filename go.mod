@@ -34,6 +34,7 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.34.0 // indirect
 	go.opentelemetry.io/otel v1.9.0 // indirect
 	go.opentelemetry.io/otel/metric v0.31.0 // indirect
+	go.opentelemetry.io/proto/otlp v0.19.0
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 )
 
