@@ -5,8 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/config"
-	esconfig "oss-tracing/pkg/esclient/config"
 	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/model"
 
@@ -15,13 +13,13 @@ import (
 
 type rawTagsController struct {
 	client *Client
-	index  string
+	idx    string
 }
 
-func NewTagsController(client *Client, cfg config.Config) interactor.TagsController {
+func NewTagsController(client *Client, idx string) interactor.TagsController {
 	return &rawTagsController{
 		client: client,
-		index:  esconfig.GenIndexName(cfg),
+		idx:    idx,
 	}
 }
 
@@ -44,7 +42,7 @@ func (r *rawTagsController) GetAvailableTags(
 	res, err := client.Indices.GetFieldMapping(
 		[]string{r.prefixTag("*")},
 		client.Indices.GetFieldMapping.WithContext(ctx),
-		client.Indices.GetFieldMapping.WithIndex(r.index),
+		client.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
 
 	if err != nil {
@@ -62,7 +60,7 @@ func (r *rawTagsController) GetAvailableTags(
 	}
 
 	// { "lupa-index": { "mappings": { ... }}}
-	body = body[r.index].(map[string]any)["mappings"].(map[string]any)
+	body = body[r.idx].(map[string]any)["mappings"].(map[string]any)
 
 	for _, v := range body {
 		fieldMapping := v.(map[string]any)
@@ -147,7 +145,7 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	}
 
 	searchOptions := []func(*esapi.SearchRequest){
-		client.Search.WithIndex(r.index),
+		client.Search.WithIndex(r.idx),
 		client.Search.WithBody(buffer),
 	}
 

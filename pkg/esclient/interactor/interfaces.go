@@ -7,6 +7,16 @@ import (
 
 type Doc any
 
+type ElasticConfig struct {
+	Endpoint     string
+	Username     string
+	Password     string
+	ApiKey       string
+	ServiceToken string
+	ForceCreate  bool
+	Index        string
+}
+
 type ExistsResponse struct {
 	Exists bool
 }
@@ -33,17 +43,17 @@ type ComponentTemplate struct {
 }
 
 type IndexTemplateController interface {
-	CreateIndexTemplate(ctx context.Context, t *IndexTemplate) error
+	CreateIndexTemplate(ctx context.Context, t IndexTemplate) error
 	IndexTemplateExists(ctx context.Context, name string) (*ExistsResponse, error)
 }
 
 type ComponentTemplateController interface {
-	CreateComponentTemplate(ctx context.Context, t *ComponentTemplate) error
+	CreateComponentTemplate(ctx context.Context, t ComponentTemplate) error
 	ComponentTemplateExists(ctx context.Context, name string) (*ExistsResponse, error)
 }
 
 type DocumentController interface {
-	Bulk(ctx context.Context, docs ...*Doc) []error
+	Bulk(ctx context.Context, docs ...*Doc) error
 }
 
 type TagsController interface {
@@ -55,6 +65,7 @@ type TagsController interface {
 }
 
 type Interactor struct {
+	ElasticConfig               ElasticConfig
 	IndexTemplateController     IndexTemplateController
 	ComponentTemplateController ComponentTemplateController
 	DocumentController          DocumentController
