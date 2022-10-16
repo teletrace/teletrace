@@ -7,7 +7,7 @@ import (
 )
 
 //TODO change defaults with this functions input
-func NewIndexTemplate() (interactor.IndexTemplate, error) {
+func NewIndexTemplate() (*interactor.IndexTemplate, error) {
 	index_template := &interactor.IndexTemplate{}
 
 	if err := defaults.Set(index_template); err != nil {
