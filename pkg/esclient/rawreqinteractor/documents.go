@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v8/esutil"
+	"go.uber.org/zap"
 )
 
 type documentController struct {
@@ -20,8 +21,8 @@ func NewDocumentController(client *Client, idx string) interactor.DocumentContro
 	return &documentController{client: client, idx: idx}
 }
 
-func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) []error {
-	var errs []error
+func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) error {
+	var err error
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:         c.idx,
@@ -31,39 +32,36 @@ func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) 
 	})
 
 	if err != nil {
-		return append(errs, fmt.Errorf("Error creating the indexer: %s", err))
+		return fmt.Errorf("Error creating the indexer: %+v", err)
 	}
 
-	_errs := bulk(ctx, bi, c.idx, docs...)
+	err = bulk(ctx, c.client.Logger, bi, c.idx, docs...)
 
-	if len(_errs) > 0 {
-		errs = append(errs, _errs...)
+	if err != nil {
+		return fmt.Errorf("Error bulk-indexing documents: %+v", err)
 	}
 
 	err = bi.Close(context.Background())
 
 	if err != nil {
-		errs = append(errs, fmt.Errorf("Could not close the Bulk Indexer: %+v", err))
+		return fmt.Errorf("Could not close the Bulk Indexer: %+v", err)
 	}
 
 	biStats := bi.Stats()
 	c.client.Logger.Sugar().Debugf("BiStats: %+v", biStats)
 
-	if len(errs) > 0 {
-		return errs
-	}
-
 	return nil
 }
 
-func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs ...*interactor.Doc) []error {
-	var errs []error
-
+func bulk(ctx context.Context, logger *zap.Logger, bi esutil.BulkIndexer, idx string, docs ...*interactor.Doc) error {
 	for _, doc := range docs {
+		var err error
+		var failures []error // will not throw exception
+
 		data, err := json.Marshal(&doc)
 
 		if err != nil {
-			return append(errs, fmt.Errorf("Could not json marshal doc %+v: %+v", doc, err))
+			return fmt.Errorf("Could not json marshal doc %+v: %+v", doc, err)
 		}
 
 		err = bi.Add(
@@ -72,18 +70,19 @@ func bulk(ctx context.Context, bi esutil.BulkIndexer, idx string, docs ...*inter
 				Action: "create",
 				Body:   bytes.NewReader(data),
 				OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, res esutil.BulkIndexerResponseItem, err error) {
-					errs = append(errs, fmt.Errorf("Adding doc %+v to Bulk Indexer failed: %+v, %+v, %s ", doc, item, res, err))
+					failures = append(failures, fmt.Errorf("Adding doc %+v to Bulk Indexer failed: %+v, %+v, %s ", doc, item, res, err))
 				},
 			},
 		)
 
-		if err != nil {
-			return append(errs, fmt.Errorf("Could not add doc %+v to bulk: %+v ", doc, err))
+		if len(failures) > 0 {
+			logger.Sugar().Errorf("Failed to index items in Elasticsearch: %+v", failures)
 		}
-	}
 
-	if len(errs) > 0 {
-		return errs
+		if err != nil {
+			return fmt.Errorf("Could not add doc %+v to bulk: %+v ", doc, err)
+		}
+
 	}
 
 	return nil

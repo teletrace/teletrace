@@ -23,15 +23,15 @@ func NewInteractor(logger *zap.Logger, cfg interactor.ElasticConfig) (*interacto
 	}
 
 	//TODO allow choosing which api to use
-	index_template_controller := typedreqinteractor.NewIndexTemplateController(typedApiClient)
-	component_template_controller := typedreqinteractor.NewComponentTemplateController(typedApiClient)
-	document_controller := rawreqinteractor.NewDocumentController(rawApiClient, cfg.Index)
-	tags_controller := rawreqinteractor.NewTagsController(rawApiClient, cfg.Index)
+	indexTemplateController := typedreqinteractor.NewIndexTemplateController(typedApiClient)
+	componentTemplateController := typedreqinteractor.NewComponentTemplateController(typedApiClient)
+	documentController := rawreqinteractor.NewDocumentController(rawApiClient, cfg.Index)
+	tagsController := rawreqinteractor.NewTagsController(rawApiClient, cfg.Index)
 
 	return &interactor.Interactor{
-		IndexTemplateController:     index_template_controller,
-		ComponentTemplateController: component_template_controller,
-		DocumentController:          document_controller,
-		TagsController:              tags_controller,
+		IndexTemplateController:     indexTemplateController,
+		ComponentTemplateController: componentTemplateController,
+		DocumentController:          documentController,
+		TagsController:              tagsController,
 	}, nil
 }

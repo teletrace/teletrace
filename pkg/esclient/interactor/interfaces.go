@@ -53,7 +53,7 @@ type ComponentTemplateController interface {
 }
 
 type DocumentController interface {
-	Bulk(ctx context.Context, docs ...*Doc) []error
+	Bulk(ctx context.Context, docs ...*Doc) error
 }
 
 type TagsController interface {

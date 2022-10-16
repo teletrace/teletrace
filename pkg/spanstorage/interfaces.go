@@ -11,6 +11,6 @@ type Storage interface {
 }
 
 type SpanWriter interface {
-	WriteSpan(ctx context.Context, span *v1.InternalSpan) []error
-	WriteBulk(ctx context.Context, spans ...*v1.InternalSpan) []error
+	WriteSpan(ctx context.Context, span *v1.InternalSpan) error
+	WriteBulk(ctx context.Context, spans ...*v1.InternalSpan) error
 }
