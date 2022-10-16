@@ -39,6 +39,7 @@ func main() {
 		ApiKey:       cfg.ESAPIKey,
 		ServiceToken: cfg.ESServiceToken,
 		ForceCreate:  cfg.ESForceCreateConfig,
+		Index:        cfg.ESIndex,
 	}
 
 	_, err = es.NewStorage(ctx, logger, esConfig)

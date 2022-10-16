@@ -7,14 +7,14 @@ import (
 )
 
 //TODO change defaults with this functions input
-func NewIndexTemplate() (*interactor.IndexTemplate, error) {
-	index_template := &interactor.IndexTemplate{}
+func NewIndexTemplate(idx string) (*interactor.IndexTemplate, error) {
+	indexTemplate := &interactor.IndexTemplate{}
 
-	if err := defaults.Set(index_template); err != nil {
+	if err := defaults.Set(indexTemplate); err != nil {
 		return nil, err
 	}
 
-	index_template.IndexPatterns = append(index_template.IndexPatterns, GenIndexName())
+	indexTemplate.IndexPatterns = append(indexTemplate.IndexPatterns, idx)
 
-	return index_template, nil
+	return indexTemplate, nil
 }

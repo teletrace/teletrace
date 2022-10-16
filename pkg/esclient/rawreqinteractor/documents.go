@@ -5,8 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/config"
-	esconfig "oss-tracing/pkg/esclient/config"
 	"oss-tracing/pkg/esclient/interactor"
 	"time"
 
@@ -15,21 +13,18 @@ import (
 
 type documentController struct {
 	client *Client
-	cfg    config.Config
+	idx    string
 }
 
-func NewDocumentController(client *Client, cfg config.Config) interactor.DocumentController {
-	return &documentController{client: client, cfg: cfg}
+func NewDocumentController(client *Client, idx string) interactor.DocumentController {
+	return &documentController{client: client, idx: idx}
 }
 
 func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) []error {
-	// TODO get BulkIndexerConfig from pkg/config
 	var errs []error
 
-	idx := esconfig.GenIndexName(c.cfg)
-
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
-		Index:         idx,
+		Index:         c.idx,
 		Client:        c.client.Client,
 		NumWorkers:    1,
 		FlushInterval: 30 * time.Second,
@@ -39,7 +34,7 @@ func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) 
 		return append(errs, fmt.Errorf("Error creating the indexer: %s", err))
 	}
 
-	_errs := bulk(ctx, bi, idx, docs...)
+	_errs := bulk(ctx, bi, c.idx, docs...)
 
 	if len(_errs) > 0 {
 		errs = append(errs, _errs...)

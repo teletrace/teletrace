@@ -21,13 +21,13 @@ type storage struct {
 func NewStorage(ctx context.Context, logger *zap.Logger, cfg interactor.ElasticConfig) (spanstorage.Storage, error) {
 	var err error
 
-	es_interactor, err := esclient.NewInteractor(logger, cfg)
+	esInteractor, err := esclient.NewInteractor(logger, cfg)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not create ES interactor: %+v", err)
 	}
 
-	return &storage{interactor: es_interactor, ctx: ctx, logger: logger, cfg: cfg}, err
+	return &storage{interactor: esInteractor, ctx: ctx, logger: logger, cfg: cfg}, err
 }
 
 func (s *storage) Initialize() error {
@@ -35,7 +35,7 @@ func (s *storage) Initialize() error {
 
 	forceCreate := s.cfg.ForceCreate
 
-	it, err := config.NewIndexTemplate()
+	it, err := config.NewIndexTemplate(s.cfg.Index)
 
 	if err != nil {
 		return fmt.Errorf("Could not generate Index Template %+v", err)

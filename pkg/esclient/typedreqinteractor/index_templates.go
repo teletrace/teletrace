@@ -6,7 +6,6 @@ import (
 	"net/http/httputil"
 	"strconv"
 
-	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/putindextemplate"
@@ -15,12 +14,11 @@ import (
 )
 
 type indexTemplateController struct {
-	client Client
-	cfg    config.Config
+	client *Client
 }
 
-func NewIndexTemplateController(client *Client, cfg config.Config) interactor.IndexTemplateController {
-	return &indexTemplateController{client: *client, cfg: cfg}
+func NewIndexTemplateController(client *Client) interactor.IndexTemplateController {
+	return &indexTemplateController{client: client}
 }
 
 func (c *indexTemplateController) IndexTemplateExists(ctx context.Context, name string) (*interactor.ExistsResponse, error) {

@@ -14,6 +14,7 @@ type ElasticConfig struct {
 	ApiKey       string
 	ServiceToken string
 	ForceCreate  bool
+	Index        string
 }
 
 type ExistsResponse struct {

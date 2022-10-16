@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http/httputil"
-	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/cluster/putcomponenttemplate"
@@ -15,11 +14,10 @@ import (
 
 type componentTemplateController struct {
 	client *Client
-	cfg    config.Config
 }
 
-func NewComponentTemplateController(client *Client, cfg config.Config) interactor.ComponentTemplateController {
-	return &componentTemplateController{client: client, cfg: cfg}
+func NewComponentTemplateController(client *Client) interactor.ComponentTemplateController {
+	return &componentTemplateController{client: client}
 
 }
 

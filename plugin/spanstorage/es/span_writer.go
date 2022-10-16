@@ -3,7 +3,7 @@ package es
 import (
 	"context"
 	"oss-tracing/pkg/esclient/interactor"
-	v1 "oss-tracing/pkg/model/internal_span/v1"
+	v1 "oss-tracing/pkg/model/internalspan/v1"
 )
 
 type spanWriter struct {

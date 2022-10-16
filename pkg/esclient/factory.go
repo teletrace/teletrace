@@ -3,8 +3,8 @@ package esclient
 import (
 	"fmt"
 	"oss-tracing/pkg/esclient/interactor"
-	rawreqinteractor "oss-tracing/pkg/esclient/raw_req_interactor"
-	typedreqinteractor "oss-tracing/pkg/esclient/typed_req_interactor"
+	"oss-tracing/pkg/esclient/rawreqinteractor"
+	"oss-tracing/pkg/esclient/typedreqinteractor"
 
 	"go.uber.org/zap"
 )
@@ -12,21 +12,21 @@ import (
 func NewInteractor(logger *zap.Logger, cfg interactor.ElasticConfig) (*interactor.Interactor, error) {
 	var err error
 
-	typed_api_client, err := typedreqinteractor.NewClient(logger, cfg)
+	typedApiClient, err := typedreqinteractor.NewClient(logger, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a typed client: %v", err)
 	}
 
-	raw_api_client, err := rawreqinteractor.NewClient(cfg, logger)
+	rawApiClient, err := rawreqinteractor.NewClient(logger, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a raw client: %v", err)
 	}
 
 	//TODO allow choosing which api to use
-	index_template_controller := typedreqinteractor.NewIndexTemplateController(typed_api_client, cfg)
-	component_template_controller := typedreqinteractor.NewComponentTemplateController(typed_api_client, cfg)
-	document_controller := rawreqinteractor.NewDocumentController(raw_api_client, cfg)
-	tags_controller := rawreqinteractor.NewTagsController(raw_api_client, cfg)
+	index_template_controller := typedreqinteractor.NewIndexTemplateController(typedApiClient)
+	component_template_controller := typedreqinteractor.NewComponentTemplateController(typedApiClient)
+	document_controller := rawreqinteractor.NewDocumentController(rawApiClient, cfg.Index)
+	tags_controller := rawreqinteractor.NewTagsController(rawApiClient, cfg.Index)
 
 	return &interactor.Interactor{
 		IndexTemplateController:     index_template_controller,
