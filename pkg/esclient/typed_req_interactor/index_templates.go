@@ -33,7 +33,7 @@ func (c *indexTemplateController) IndexTemplateExists(ctx context.Context, name 
 
 }
 
-func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *interactor.IndexTemplate) error {
+func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t interactor.IndexTemplate) error {
 	var err error
 
 	template := putindextemplate.NewRequestBuilder().
@@ -67,7 +67,7 @@ func (c *indexTemplateController) CreateIndexTemplate(ctx context.Context, t *in
 
 }
 
-func getIndexPatterns(t *interactor.IndexTemplate) []types.IndexName {
+func getIndexPatterns(t interactor.IndexTemplate) []types.IndexName {
 	var res []types.IndexName
 
 	for _, i := range t.IndexPatterns {
@@ -77,7 +77,7 @@ func getIndexPatterns(t *interactor.IndexTemplate) []types.IndexName {
 	return res
 }
 
-func getComposedOf(t *interactor.IndexTemplate) []types.Name {
+func getComposedOf(t interactor.IndexTemplate) []types.Name {
 	var res []types.Name
 
 	for _, c := range t.ComponentTemplates {

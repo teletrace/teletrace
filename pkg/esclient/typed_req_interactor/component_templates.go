@@ -32,7 +32,7 @@ func (c *componentTemplateController) ComponentTemplateExists(ctx context.Contex
 	return &interactor.ExistsResponse{Exists: exists}, nil
 }
 
-func (c *componentTemplateController) CreateComponentTemplate(ctx context.Context, t *interactor.ComponentTemplate) error {
+func (c *componentTemplateController) CreateComponentTemplate(ctx context.Context, t interactor.ComponentTemplate) error {
 	var err error
 
 	template := putcomponenttemplate.NewRequestBuilder().
@@ -90,7 +90,7 @@ func (c *componentTemplateController) CreateComponentTemplate(ctx context.Contex
 	}
 }
 
-func getIndexSort(t *interactor.ComponentTemplate) *types.IndexSegmentSortBuilder {
+func getIndexSort(t interactor.ComponentTemplate) *types.IndexSegmentSortBuilder {
 	var fields []types.Field
 	var orders []segmentsortorder.SegmentSortOrder
 

@@ -1,7 +1,7 @@
 package typedreqinteractor
 
 import (
-	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"go.uber.org/zap"
@@ -12,19 +12,19 @@ type Client struct {
 	Logger *zap.Logger
 }
 
-func NewClient(cfg config.Config, logger *zap.Logger) (*Client, error) {
+func NewClient(logger *zap.Logger, cfg interactor.ElasticConfig) (*Client, error) {
 	es_config := elasticsearch.Config{
-		Addresses: []string{cfg.ESEndpoints},
-		Username:  cfg.ESUsername,
-		Password:  cfg.ESPassword,
+		Addresses: []string{cfg.Endpoint},
+		Username:  cfg.Username,
+		Password:  cfg.Password,
 	}
 
-	if cfg.ESAPIKey != "" {
-		es_config.APIKey = cfg.ESAPIKey
+	if cfg.ApiKey != "" {
+		es_config.APIKey = cfg.ApiKey
 	}
 
-	if cfg.ESServiceToken != "" {
-		es_config.ServiceToken = cfg.ESServiceToken
+	if cfg.ServiceToken != "" {
+		es_config.ServiceToken = cfg.ServiceToken
 	}
 
 	es, err := elasticsearch.NewTypedClient(es_config)

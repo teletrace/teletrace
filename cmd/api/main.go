@@ -6,6 +6,7 @@ import (
 
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/plugin/spanstorage/es"
 
@@ -31,7 +32,16 @@ func main() {
 
 	ctx := context.Background()
 
-	_, err = es.NewSpanWriter(ctx, logger, cfg)
+	esConfig := interactor.ElasticConfig{
+		Endpoint:     cfg.ESEndpoints,
+		Username:     cfg.ESUsername,
+		Password:     cfg.ESPassword,
+		ApiKey:       cfg.ESAPIKey,
+		ServiceToken: cfg.ESServiceToken,
+		ForceCreate:  cfg.ESForceCreateConfig,
+	}
+
+	_, err = es.NewStorage(ctx, logger, esConfig)
 
 	if err != nil {
 		log.Fatalf("Failed to initialize span writer: %+v", err)
