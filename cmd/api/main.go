@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
+	"oss-tracing/plugin/spanstorage/es"
 
 	"go.uber.org/zap"
 )
@@ -25,5 +28,23 @@ func main() {
 	api := api.NewAPI(logger, cfg)
 	if err := api.Start(); err != nil {
 		logger.Fatal("API server crashed", zap.Error(err))
+	}
+
+	ctx := context.Background()
+
+	esConfig := interactor.ElasticConfig{
+		Endpoint:     cfg.ESEndpoints,
+		Username:     cfg.ESUsername,
+		Password:     cfg.ESPassword,
+		ApiKey:       cfg.ESAPIKey,
+		ServiceToken: cfg.ESServiceToken,
+		ForceCreate:  cfg.ESForceCreateConfig,
+		Index:        cfg.ESIndex,
+	}
+
+	_, err = es.NewStorage(ctx, logger, esConfig)
+
+	if err != nil {
+		log.Fatalf("Failed to initialize span writer: %+v", err)
 	}
 }
