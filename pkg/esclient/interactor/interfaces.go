@@ -7,6 +7,12 @@ import (
 
 type Doc any
 type SearchRequest any
+type SearchFilter struct { // TEMP
+	Key         *string // Optional
+	Operator    *string // Optional
+	Value       *any    // Optional
+	QueryString *any    // Optional
+}
 
 type ElasticConfig struct {
 	Endpoint     string
