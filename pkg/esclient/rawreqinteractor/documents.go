@@ -88,7 +88,7 @@ func bulk(ctx context.Context, logger *zap.Logger, bi esutil.BulkIndexer, idx st
 	return nil
 }
 
-func Search(ctx context.Context, r *interactor.SearchRequest) error {
+func (c *documentController) Search(ctx context.Context, r *interactor.SearchRequest) error {
 	var err error
 
 	return nil
