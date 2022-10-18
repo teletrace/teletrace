@@ -94,12 +94,23 @@ func TestFullQueueEnqueue(t *testing.T) {
 
 func TestStoppedQueueEnqueue(t *testing.T) {
 	queue, _ := NewBoundedQueue(1)
+
+	recorder := newConsumersRecorder(t)
+	queue.StartConsumers(func(item interface{}) {
+		recorder.record(item.(string))
+	}, 1)
+
 	assert.True(t, queue.Enqueue("foo"))
-	queue.Stop()
+	recorder.assertRecordedValue("foo")
+	assert.Equal(t, 0, len(queue.items))
+
+	err := queue.Stop(3 * time.Second)
+	assert.NoError(t, err)
+
 	assert.False(t, queue.Enqueue("bar"))
 }
 
-func TestGracefulConsumersStop(t *testing.T) {
+func TestGracefulQueueStop(t *testing.T) {
 	queue, _ := NewBoundedQueue(3)
 
 	recorder := newConsumersRecorder(t)
@@ -112,8 +123,20 @@ func TestGracefulConsumersStop(t *testing.T) {
 	queue.Enqueue("bar")
 	queue.Enqueue("baz")
 
-	queue.Stop()
+	err := queue.Stop(5 * time.Second)
+	assert.NoError(t, err)
 
 	assert.ElementsMatch(t, []string{"foo", "bar", "baz"}, recorder.recorded)
 	assert.Equal(t, 0, len(queue.items))
+}
+
+func TestGracefulQueueStopTimeout(t *testing.T) {
+	queue, _ := NewBoundedQueue(1)
+	queue.StartConsumers(func(item interface{}) {
+		time.Sleep(1 * time.Second)
+	}, 1)
+
+	queue.Enqueue("foo")
+	err := queue.Stop(1 * time.Millisecond)
+	assert.ErrorIs(t, err, errGracefulStopTimeout)
 }
