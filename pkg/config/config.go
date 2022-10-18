@@ -22,6 +22,27 @@ const (
 
 	httpEndpointEnvName = "HTTP_ENDPOINT"
 	httpEndpointDefault = "0.0.0.0:4318"
+
+	esEndpointEnvName = "ES_ENDPOINT"
+	esEndpointDefault = "http://0.0.0.0:9200"
+
+	esUsernameEnvName = "ES_USERNAME"
+	esUsernameDefault = "elastic"
+
+	esPasswordEnvName = "ES_PASSWORD"
+	esPasswordDefault = ""
+
+	esApiKeyEnvName = "ES_API_KEY"
+	esApiKeyDefault = ""
+
+	esServiceTokenEnvName = "ES_SERVICE_TOKEN"
+	esServiceTokenDefault = ""
+
+	esForceCreateConfigEnvName = "ES_FORCE_CREATE_CONFIG"
+	esForceCreateConfigDefault = false
+
+	esIndexEnvName = "ES_INDEX"
+	esIndexDefault = "lupa-spans"
 )
 
 // Config defines global configurations used throughout the application.
@@ -30,6 +51,15 @@ type Config struct {
 	APIPort      int    `mapstructure:"api_port"`
 	GRPCEndpoint string `mapstructure:"grpc_endpoint"`
 	HTTPEndpoint string `mapstructure:"http_endpoint"`
+
+	// Elasticsearch configs
+	ESEndpoints         string `mapstructure:"es_endpoint"`
+	ESUsername          string `mapstructure:"es_username"`
+	ESPassword          string `mapstructure:"es_password"`
+	ESAPIKey            string `mapstructure:"es_api_key"`
+	ESServiceToken      string `mapstructure:"es_service_token"`
+	ESForceCreateConfig bool   `mapstructure:"es_force_create_config"`
+	ESIndex             string `mapstructure:"es_index"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -67,4 +97,11 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(apiPortEnvName, apiPortDefault)
 	v.SetDefault(grpcEndpointEnvName, grpcEndpointDefault)
 	v.SetDefault(httpEndpointEnvName, httpEndpointDefault)
+	v.SetDefault(esEndpointEnvName, esEndpointDefault)
+	v.SetDefault(esUsernameEnvName, esUsernameDefault)
+	v.SetDefault(esPasswordEnvName, esPasswordDefault)
+	v.SetDefault(esApiKeyEnvName, esApiKeyDefault)
+	v.SetDefault(esServiceTokenEnvName, esServiceTokenDefault)
+	v.SetDefault(esForceCreateConfigEnvName, esForceCreateConfigDefault)
+	v.SetDefault(esIndexEnvName, esIndexDefault)
 }

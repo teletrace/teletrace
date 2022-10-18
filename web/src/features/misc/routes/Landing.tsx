@@ -23,7 +23,7 @@ export const Landing = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="100vh"
+        height="100%"
       >
         <Container maxWidth="sm">
           <Typography
@@ -71,7 +71,7 @@ export const Landing = () => {
             >
               <GitHub
                 fontSize="large"
-                sx={{ color: theme.palette.primary.light }}
+                sx={{ color: theme.palette.common.white }}
               />
             </Link>
           </Stack>

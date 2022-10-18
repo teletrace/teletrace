@@ -1,4 +1,3 @@
-import { AppBar, Toolbar, Typography } from "@mui/material";
 import { Helmet } from "react-helmet-async";
 
 export type HeadProps = {
@@ -8,15 +7,8 @@ export type HeadProps = {
 
 export const Head = ({ title, description }: HeadProps) => {
   return (
-    <AppBar>
-      <Toolbar>
-        <Typography variant="h6" color="inherit" noWrap>
-          Lupa
-        </Typography>
-      </Toolbar>
-      <Helmet title={title && `${title} | Lupa`} defaultTitle="Lupa">
-        {description && <meta name="description" content={description} />}
-      </Helmet>
-    </AppBar>
+    <Helmet title={title && `${title} | Lupa`} defaultTitle="Lupa">
+      {description && <meta name="description" content={description} />}
+    </Helmet>
   );
 };

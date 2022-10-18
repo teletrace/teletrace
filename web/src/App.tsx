@@ -1,16 +1,13 @@
-import { CssBaseline, ThemeProvider } from "@mui/material";
-
+import { Layout } from "@/components/Layout";
 import { AppProviders } from "@/providers/app";
 import { AppRoutes } from "@/routes";
-import { theme } from "@/styles";
 
 export function App() {
   return (
     <AppProviders>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <Layout>
         <AppRoutes />
-      </ThemeProvider>
+      </Layout>
     </AppProviders>
   );
 }
