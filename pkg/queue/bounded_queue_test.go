@@ -9,7 +9,7 @@ import (
 )
 
 func TestBoundedQueue(t *testing.T) {
-	queue := NewBoundedQueue(1)
+	queue, _ := NewBoundedQueue(1)
 	assert.Equal(t, 0, len(queue.items))
 
 	recorder := newConsumersRecorder(t)
@@ -58,8 +58,20 @@ func (r *consumersRecorder) isValueRecorded(value string) bool {
 	return false
 }
 
+func TestInvalidQueueCapacity(t *testing.T) {
+	invalidCapacities := []int{0, -1}
+	for _, capacity := range invalidCapacities {
+		_, err := NewBoundedQueue(capacity)
+		assert.ErrorIs(t, err, errInvalidCapacity)
+	}
+
+	validCapacity := 1
+	_, err := NewBoundedQueue(validCapacity)
+	assert.NoError(t, err)
+}
+
 func TestFullQueueEnqueue(t *testing.T) {
-	queue := NewBoundedQueue(1)
+	queue, _ := NewBoundedQueue(1)
 
 	assert.True(t, queue.Enqueue("foo"))
 	assert.False(t, queue.Enqueue("bar"))
@@ -76,14 +88,14 @@ func TestFullQueueEnqueue(t *testing.T) {
 }
 
 func TestStoppedQueueEnqueue(t *testing.T) {
-	queue := NewBoundedQueue(1)
+	queue, _ := NewBoundedQueue(1)
 	assert.True(t, queue.Enqueue("foo"))
 	queue.Stop()
 	assert.False(t, queue.Enqueue("bar"))
 }
 
 func TestGracefulConsumersStop(t *testing.T) {
-	queue := NewBoundedQueue(3)
+	queue, _ := NewBoundedQueue(3)
 
 	recorder := newConsumersRecorder(t)
 	queue.StartConsumers(func(item interface{}) {

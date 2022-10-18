@@ -1,9 +1,14 @@
 package queue
 
 import (
+	"errors"
 	"sync"
 
 	"go.uber.org/atomic"
+)
+
+var (
+	errInvalidCapacity = errors.New("invalid queue capacity, must be greater than zero")
 )
 
 // BoundedQueue is an in-memory, buffered-channel-based FIFO queue
@@ -15,12 +20,15 @@ type BoundedQueue struct {
 }
 
 // NewBoundedQueue returns a new BoundedQueue with a given maximum capacity
-func NewBoundedQueue(capacity int) *BoundedQueue {
+func NewBoundedQueue(capacity int) (*BoundedQueue, error) {
+	if capacity < 1 {
+		return nil, errInvalidCapacity
+	}
 	return &BoundedQueue{
 		capacity: capacity,
 		items:    make(chan interface{}, capacity),
 		stopped:  atomic.NewBool(false),
-	}
+	}, nil
 }
 
 // StartConsumers passes queued items to a consumer callback that runs on
