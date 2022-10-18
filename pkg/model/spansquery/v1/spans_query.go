@@ -1,8 +1,23 @@
 package model
 
 import (
-	v1 "oss-tracing/pkg/model/internalspan/v1"
+	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	"time"
+)
+
+const (
+	OPERATOR_EQUALS       = "equals"
+	OPERATOR_NOT_EQUALS   = "not_equals"
+	OPERATOR_IN           = "in"
+	OPERATOR_NOT_IN       = "not_in"
+	OPERATOR_CONTAINS     = "contains"
+	OPERATOR_NOT_CONTAINS = "not_contains"
+	OPERATOR_EXISTS       = "exists"
+	OPERATOR_NOT_EXISTS   = "not_exists"
+	OPERATOR_GT           = "gt"
+	OPERATOR_GTE          = "gte"
+	OPERATOR_LT           = "lt"
+	OPERATOR_LTE          = "lte"
 )
 
 type SortField string
@@ -42,5 +57,5 @@ type SearchRequest struct {
 
 type SearchResponse struct {
 	ResponseMetadata Metadata
-	Spans            []*v1.InternalSpan
+	Spans            []*internalspan.InternalSpan
 }
