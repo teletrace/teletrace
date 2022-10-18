@@ -23,10 +23,10 @@ type Sort struct {
 }
 
 type SearchFilter struct {
-	Key         FilterKey
-	Operator    FilterOperator
-	Value       FilterValue
-	QueryString ContinuationToken
+	Key         *FilterKey         // Optional
+	Operator    *FilterOperator    // Optional
+	Value       *FilterValue       // Optional
+	QueryString *ContinuationToken // Optional
 }
 
 type Metadata struct {
@@ -34,13 +34,13 @@ type Metadata struct {
 }
 
 type SearchRequest struct {
-	Timeframe       *Timeframe
-	Sort            []*Sort
-	SearchFilter    []*SearchFilter
-	RequestMetadata *Metadata
+	Timeframe       Timeframe
+	Sort            []Sort
+	SearchFilter    []SearchFilter
+	RequestMetadata Metadata
 }
 
 type SearchResponse struct {
-	ResponseMetadata *Metadata
+	ResponseMetadata Metadata
 	Spans            []*v1.InternalSpan
 }
