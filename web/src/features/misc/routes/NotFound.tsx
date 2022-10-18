@@ -7,7 +7,7 @@ export const NotFound = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
+        height: "100%",
       }}
     >
       <Typography variant="h1">404</Typography>

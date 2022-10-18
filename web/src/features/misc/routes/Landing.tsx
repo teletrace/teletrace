@@ -23,7 +23,7 @@ export const Landing = () => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="100vh"
+        height="100%"
       >
         <Container maxWidth="sm">
           <Typography
