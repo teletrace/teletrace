@@ -83,8 +83,13 @@ func TestFullQueueEnqueue(t *testing.T) {
 	}, 1)
 
 	recorder.assertRecordedValue("foo")
-	assert.ElementsMatch(t, []string{"foo"}, recorder.recorded)
 	assert.Equal(t, 0, len(queue.items))
+
+	assert.True(t, queue.Enqueue("baz"))
+	recorder.assertRecordedValue("baz")
+	assert.Equal(t, 0, len(queue.items))
+
+	assert.ElementsMatch(t, []string{"foo", "baz"}, recorder.recorded)
 }
 
 func TestStoppedQueueEnqueue(t *testing.T) {
