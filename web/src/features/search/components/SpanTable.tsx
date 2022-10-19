@@ -1,9 +1,55 @@
-import { Paper, Typography } from "@mui/material";
+import Box from '@mui/material/Box';
+import { Stack } from '@mui/system';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+    useQuery
+} from '@tanstack/react-query'
+import { InternalSpan } from '../model/InternalSpan';
 
-export const SpanTable = () => {
-  return (
-    <Paper sx={{ width: "100%" }}>
-      <Typography>Span table goes here</Typography>
-    </Paper>
-  );
-};
+async function fetchSpans(): Promise<InternalSpan[]> {
+    const response = await fetch(`http://localhost:5000/span`);
+    return response.json() as Promise<InternalSpan[]>;
+}
+export function SpanTable() {
+    const { data, isLoading } = useQuery(['spans'], () => fetchSpans(), { staleTime: 10000 })
+    if (isLoading) return <div>Loading...</div>
+
+    const columns: GridColDef[] = [
+        { field: 'startTime', headerName: 'Start time', width: 200 },
+        { field: 'name', headerName: 'Name', width: 200 },
+        { field: 'statusCode', headerName: 'Status', width: 200 },
+        { field: 'serviceName', headerName: 'Service Name', width: 400 },
+        { field: 'duration', headerName: 'Duration', width: 400 }
+      ];
+    
+    const rows = data?.map(({ resource, span }) => {
+            return {
+                id: span.traceId,
+                traceId: span.traceId,
+                spanId: span.spanId,
+                startTime: (new Date(span.startTimeUnixNano).toString()),
+                duration: (span.endTimeUnixNano - span.startTimeUnixNano),
+                name: span.name,
+                statusCode: span.status.code,
+                serviceName: resource.attributes["service.name"]
+            };
+        }) ?? [];
+
+    return (
+        <Box sx={{ height: 400, width: '100%' }}>
+            <DataGrid
+                rows={rows}
+                columns={columns}            
+                loading={rows.length === 0}
+                rowHeight={50}
+                components={{
+                    NoRowsOverlay: () => (
+                      <Stack height="100%" alignItems="center" justifyContent="center">
+                        No rows in DataGrid
+                      </Stack>
+                    )
+                }}
+            />
+        </Box>
+    )
+}
