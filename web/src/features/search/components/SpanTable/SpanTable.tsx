@@ -1,20 +1,13 @@
 import Box from '@mui/material/Box';
 import { Stack } from '@mui/system';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {
-    useQuery
-} from '@tanstack/react-query'
-import { InternalSpan } from '../../model/InternalSpan';
+import { InternalSpan } from '../../../../model/InternalSpan';
 
-async function fetchSpans(): Promise<InternalSpan[]> {
-    const response = await fetch(`http://localhost:5000/span`); // Currently an external test API
-    return response.json() as Promise<InternalSpan[]>;
-}
+type SpanTableProps = {
+    spans: InternalSpan[];
+};
 
-export function SpanTable() {
-    const { data, isLoading } = useQuery<InternalSpan[]>(['spans'], () => fetchSpans(), { staleTime: 10000 })
-    if (isLoading) return <div>Loading...</div>
-
+export function SpanTable({ spans }: SpanTableProps) {
     const columns: GridColDef[] = [
         { field: 'startTime', headerName: 'Start time', width: 300, },
         { field: 'name', headerName: 'Name' },
@@ -23,7 +16,7 @@ export function SpanTable() {
         { field: 'duration', headerName: 'Duration' }
     ];
     
-    const rows = data?.map(({ resource, span }) => {
+    const rows = spans.map(({ resource, span }) => {
             return {
                 id: span.traceId,
                 traceId: span.traceId,

@@ -4,8 +4,17 @@ import { Stack } from "@mui/system";
 import { Head } from "@/components/Head";
 
 import { SpanTable } from "../components/SpanTable/SpanTable";
+import { InternalSpan } from "../../../model/InternalSpan";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAllSpans } from "@/fetchers/spans";
+
+const SPANS_QUERY_KEY: string = "spans";
+const FILTERS_QUERY_KEY: string = "filters";
 
 export const SpanSearch = () => {
+  const { data: spans, isLoading } = useQuery<InternalSpan[]>([SPANS_QUERY_KEY], () => fetchAllSpans(), { staleTime: 2000 });
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <>
       <Head
@@ -25,7 +34,7 @@ export const SpanSearch = () => {
           justifyContent="space-between"
           flex={1}
         >
-          <SpanTable />
+          { isLoading ? <div>Loading...</div> : <SpanTable spans={spans ?? []} /> }
         </Stack>
 
         <Stack
