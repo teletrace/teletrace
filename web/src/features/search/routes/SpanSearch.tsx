@@ -33,9 +33,7 @@ export const SpanSearch = () => {
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
           flex={1}
-        >
-
-        </Stack>
+        ></Stack>
       </Stack>
     </>
   );
