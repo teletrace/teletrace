@@ -78,3 +78,11 @@
   flex-grow: 0;
   margin-bottom: 5px;
 }
+
+.react-flow .react-flow__handle {
+  width: 0;
+  height: 0;
+  min-height: 0;
+  min-width: 0;
+  border-color: transparent;
+}
