@@ -16,10 +16,10 @@ export function SpanTable() {
     if (isLoading) return <div>Loading...</div>
 
     const columns: GridColDef[] = [
-        { field: 'startTime', headerName: 'Start time', width: 400, },
+        { field: 'startTime', headerName: 'Start time', width: 300, },
         { field: 'name', headerName: 'Name' },
         { field: 'statusCode', headerName: 'Status' },
-        { field: 'serviceName', headerName: 'Service Name' },
+        { field: 'serviceName', headerName: 'Service Name', width: 150, },
         { field: 'duration', headerName: 'Duration' }
     ];
     
@@ -38,7 +38,7 @@ export function SpanTable() {
 
     return (
         <Box sx={{ 
-            height: 400, 
+            height: 600, 
             width: '100%',
             "& .MuiDataGrid-columnHeaders": {
                 backgroundColor: "rgba(43, 45, 50, 1)",
