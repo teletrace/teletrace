@@ -1,6 +1,6 @@
-import { Typography } from "@mui/material";
 import { ReactElement } from "react";
 
+import { SpanSearch } from "@/features/search";
 import { TraceView } from "@/features/trace";
 
 export interface PublicRouteProps {
@@ -15,6 +15,6 @@ export const publicRoutes: PublicRouteProps[] = [
   },
   {
     path: "/search",
-    element: <Typography variant="h2">Search</Typography>,
+    element: <SpanSearch />,
   },
 ];
