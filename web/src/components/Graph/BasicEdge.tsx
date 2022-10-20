@@ -3,7 +3,7 @@ import { memo } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
 import EdgeLabelRender from "@/components/Graph/EdgeLabelRender";
-import "./styles/basicEdgeStyle.css";
+import styles from "./styles";
 
 const BasicEdge = ({
   id,
@@ -36,12 +36,14 @@ const BasicEdge = ({
       />
       <EdgeLabelRender>
         <Box
-          className="edge-label-container"
-          sx={{ transform: `translate(${labelX - 10}px,${labelY - 35}px)` }}
+          sx={{
+            ...styles.edgeStyle.edgeLabelContainer,
+            transform: `translate(${labelX - 10}px,${labelY - 35}px)`,
+          }}
         >
-          <Box className="time-container">{data?.time}</Box>
-          <Box className="counter-container">
-            <Box component="span">{data?.count}</Box>
+          <Box sx={styles.edgeStyle.timeContainer}>{data?.time}</Box>
+          <Box sx={styles.edgeStyle.counterContainer}>
+            <Box sx={{ margin: "0.313rem" }}>{data?.count}</Box>
           </Box>
         </Box>
       </EdgeLabelRender>
