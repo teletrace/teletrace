@@ -3,16 +3,14 @@ import { Stack } from "@mui/system";
 
 import { Head } from "@/components/Head";
 
-import { TraceGraph } from "../components/TraceGraph";
-import { TraceTags } from "../components/TraceTags";
-import { TraceTimeline } from "../components/TraceTimeline";
+import { SpanTable } from "../components/SpanTable";
 
-export const TraceView = () => {
+export const SpanSearch = () => {
   return (
     <>
       <Head
-        title="Trace View"
-        description="Designated page to view trace's flow graph and timeline"
+        title="Span Search"
+        description="Designated page to span search's flow graph and timeline"
       />
       <Stack
         direction="column"
@@ -27,8 +25,7 @@ export const TraceView = () => {
           justifyContent="space-between"
           flex={1}
         >
-          <TraceGraph />
-          <TraceTags />
+          <SpanTable />
         </Stack>
 
         <Stack
@@ -36,9 +33,7 @@ export const TraceView = () => {
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
           flex={1}
-        >
-          <TraceTimeline />
-        </Stack>
+        ></Stack>
       </Stack>
     </>
   );

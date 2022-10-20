@@ -9,7 +9,6 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           background: "#1B1C21",
-          height: "60px",
         },
       },
     },
