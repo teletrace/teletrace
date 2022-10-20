@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"path/filepath"
@@ -13,6 +14,7 @@ import (
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
+	spanstorage "oss-tracing/pkg/spanstorage"
 )
 
 const apiPrefix = "/v1"
@@ -22,18 +24,35 @@ var staticFilesPath = filepath.Join("web", "build")
 // API holds the config used for running the API as well as
 // the endpoint handlers and resources used by them (e.g. logger).
 type API struct {
-	logger *zap.Logger
-	config config.Config
-	router *gin.Engine
+	logger     *zap.Logger
+	config     config.Config
+	router     *gin.Engine
+	spanWriter *spanstorage.SpanWriter
+	spanReader *spanstorage.SpanReader
 }
 
 // NewAPI creates and returns a new API instance.
-func NewAPI(logger *zap.Logger, config config.Config) *API {
+func NewAPI(logger *zap.Logger, config config.Config, storage spanstorage.Storage) *API {
 	router := newRouter(logger, config)
+
+	spanWriter, err := storage.CreateSpanWriter()
+
+	if err != nil {
+		logger.Fatal("Failed to create spanWriter", zap.Error(err))
+	}
+
+	spanReader, err := storage.CreateSpanReader()
+
+	if err != nil {
+		logger.Fatal("Failed to create spanWriter", zap.Error(err))
+	}
+
 	api := &API{
-		logger: logger,
-		config: config,
-		router: router,
+		logger:     logger,
+		config:     config,
+		router:     router,
+		spanWriter: &spanWriter,
+		spanReader: &spanReader,
 	}
 	api.registerMiddlewares()
 	api.registerRoutes()
@@ -88,6 +107,14 @@ func (api *API) registerRoutes() {
 
 func (api *API) getPing(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
+}
+
+func (api *API) searchSpans(c *gin.Context) {
+	res, err := (*api.spanReader).Search(context.Background(), nil) // Create SearchRequest from body
+	if err != nil {
+		c.String(500, "Could not search spans")
+	}
+	c.JSON(200, res.Spans)
 }
 
 // Start runs the configured API instance.

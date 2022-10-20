@@ -42,7 +42,7 @@ func main() {
 		Index:        cfg.ESIndex,
 	}
 
-	_, err = es.NewStorage(ctx, logger, esConfig)
+	s, err = es.NewStorage(ctx, logger, esConfig)
 
 	if err != nil {
 		log.Fatalf("Failed to initialize span writer: %+v", err)
