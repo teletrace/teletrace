@@ -2,30 +2,22 @@ package typedreqinteractor
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
-	"oss-tracing/pkg/esclient/interactor"
+	"net/http"
 	"oss-tracing/pkg/esclient/typedreqinteractor/querybuilder"
+	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/sortorder"
+	"github.com/mitchellh/mapstructure"
 )
 
-type documentController struct {
-	client *Client
-}
-
-func NewDocumentController(client *Client) interactor.DocumentController {
-	return &documentController{client: client}
-}
-
-func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) error {
-	return nil
-}
-
-func (c *documentController) Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
 	var err error
 
 	builder := search.NewRequestBuilder()
@@ -44,8 +36,16 @@ func (c *documentController) Search(ctx context.Context, r *spansquery.SearchReq
 
 	req := builder.Build()
 
-	search := c.client.Client.API.Search()
-	res, err := search.Request(req).Do(ctx)
+	search := c.Client.API.Search()
+	_r := search.Request(req).Index(idx)
+
+	http_req, _ := _r.HttpRequest(ctx)
+
+	buf := new(strings.Builder)
+	_, err = io.Copy(buf, http_req.Body)
+	rawReq := buf.String()
+
+	res, err := _r.Do(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
@@ -53,7 +53,7 @@ func (c *documentController) Search(ctx context.Context, r *spansquery.SearchReq
 
 	defer res.Body.Close()
 
-	searchResp, err := parseSpansResponseBody(&res.Body)
+	searchResp, err := parseSpansResponse(res)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
@@ -66,7 +66,14 @@ func buildQuery(b *search.RequestBuilder, fs ...spansquery.SearchFilter) (*searc
 	var err error
 	query := types.NewQueryContainerBuilder()
 
-	query, err = querybuilder.BuildFilters(query, fs...)
+	var kvFilters []spansquery.KeyValueFilter
+
+	for _, f := range fs {
+		if f.KeyValueFilter != nil {
+			kvFilters = append(kvFilters, *f.KeyValueFilter)
+		}
+	}
+	query, err = querybuilder.BuildFilters(query, kvFilters...)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not build filters: %+v", err)
@@ -93,6 +100,29 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) (*search.RequestB
 
 }
 
-func parseSpansResponseBody(body *io.ReadCloser) (*spansquery.SearchResponse, error) {
+func parseSpansResponse(res *http.Response) (*spansquery.SearchResponse, error) {
+	// check errors
+	var body map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
+	}
 
+	rawBody, _ := json.Marshal(body)
+
+	if res.StatusCode >= 400 {
+		return nil, fmt.Errorf("Could not search spans, got status: %+v, raw body req: %+v", res.StatusCode, string(rawBody))
+	}
+
+	hits := body["hits"].(map[string]any)["hits"].([]any)
+
+	spans := []*internalspan.InternalSpan{}
+
+	for _, h := range hits {
+		hit := h.(map[string]any)["_source"].(map[string]any)
+		var s internalspan.InternalSpan
+		mapstructure.Decode(hit, &s)
+		spans = append(spans, &s)
+	}
+
+	return &spansquery.SearchResponse{Spans: spans}, nil
 }

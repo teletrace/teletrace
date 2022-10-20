@@ -12,21 +12,12 @@ import (
 	"go.uber.org/zap"
 )
 
-type documentController struct {
-	client *Client
-	idx    string
-}
-
-func NewDocumentController(client *Client, idx string) interactor.DocumentController {
-	return &documentController{client: client, idx: idx}
-}
-
-func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) error {
+func Bulk(ctx context.Context, c Client, idx string, docs ...*interactor.Doc) error {
 	var err error
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
-		Index:         c.idx,
-		Client:        c.client.Client,
+		Index:         idx,
+		Client:        c.Client,
 		NumWorkers:    1,
 		FlushInterval: 30 * time.Second,
 	})
@@ -35,7 +26,7 @@ func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) 
 		return fmt.Errorf("Error creating the indexer: %+v", err)
 	}
 
-	err = bulk(ctx, c.client.Logger, bi, c.idx, docs...)
+	err = bulk(ctx, c.Logger, bi, idx, docs...)
 
 	if err != nil {
 		return fmt.Errorf("Error bulk-indexing documents: %+v", err)
@@ -48,7 +39,7 @@ func (c *documentController) Bulk(ctx context.Context, docs ...*interactor.Doc) 
 	}
 
 	biStats := bi.Stats()
-	c.client.Logger.Sugar().Debugf("BiStats: %+v", biStats)
+	c.Logger.Sugar().Debugf("BiStats: %+v", biStats)
 
 	return nil
 }
@@ -84,12 +75,6 @@ func bulk(ctx context.Context, logger *zap.Logger, bi esutil.BulkIndexer, idx st
 		}
 
 	}
-
-	return nil
-}
-
-func (c *documentController) Search(ctx context.Context, r *interactor.SearchRequest) error {
-	var err error
 
 	return nil
 }

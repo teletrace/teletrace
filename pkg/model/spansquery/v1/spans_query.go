@@ -37,11 +37,15 @@ type Sort struct {
 	Ascending bool
 }
 
+type KeyValueFilter struct {
+	Key      FilterKey
+	Operator FilterOperator
+	Value    FilterValue
+}
+
 type SearchFilter struct {
-	Key         *FilterKey         // Optional
-	Operator    *FilterOperator    // Optional
-	Value       *FilterValue       // Optional
-	QueryString *ContinuationToken // Optional
+	KeyValueFilter *KeyValueFilter    // Optional
+	QueryString    *FilterQueryString // Optional
 }
 
 type Metadata struct {
@@ -58,4 +62,6 @@ type SearchRequest struct {
 type SearchResponse struct {
 	ResponseMetadata Metadata
 	Spans            []*internalspan.InternalSpan
+	RawResp          string
+	RawReq           string
 }

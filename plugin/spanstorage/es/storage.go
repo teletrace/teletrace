@@ -65,3 +65,7 @@ func (s *storage) CreateSpanWriter() (spanstorage.SpanWriter, error) {
 
 	return &spanWriter{documentController: s.interactor.DocumentController}, nil
 }
+
+func (s *storage) CreateSpanReader() (spanstorage.SpanReader, error) {
+	return &spanReader{documentController: s.interactor.DocumentController}, nil
+}
