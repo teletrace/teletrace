@@ -24,7 +24,7 @@ const (
 	httpEndpointDefault = "0.0.0.0:4318"
 
 	esEndpointEnvName = "ES_ENDPOINT"
-	esEndpointDefault = "0.0.0.0:9200"
+	esEndpointDefault = "http://0.0.0.0:9200"
 
 	esUsernameEnvName = "ES_USERNAME"
 	esUsernameDefault = "elastic"
@@ -40,6 +40,9 @@ const (
 
 	esForceCreateConfigEnvName = "ES_FORCE_CREATE_CONFIG"
 	esForceCreateConfigDefault = false
+
+	esIndexEnvName = "ES_INDEX"
+	esIndexDefault = "lupa-spans"
 )
 
 // Config defines global configurations used throughout the application.
@@ -56,6 +59,7 @@ type Config struct {
 	ESAPIKey            string `mapstructure:"es_api_key"`
 	ESServiceToken      string `mapstructure:"es_service_token"`
 	ESForceCreateConfig bool   `mapstructure:"es_force_create_config"`
+	ESIndex             string `mapstructure:"es_index"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -99,4 +103,5 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esApiKeyEnvName, esApiKeyDefault)
 	v.SetDefault(esServiceTokenEnvName, esServiceTokenDefault)
 	v.SetDefault(esForceCreateConfigEnvName, esForceCreateConfigDefault)
+	v.SetDefault(esIndexEnvName, esIndexDefault)
 }
