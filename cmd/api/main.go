@@ -39,10 +39,14 @@ func main() {
 
 	s, err := es.NewStorage(ctx, logger, esConfig)
 
-	s.Initialize()
+	if err != nil {
+		log.Fatalf("Failed to create storage instance: %+v", err)
+	}
+
+	err = s.Initialize()
 
 	if err != nil {
-		log.Fatalf("Failed to initialize span writer: %+v", err)
+		log.Fatalf("Failed to initialize storage instance: %+v", err)
 	}
 
 	api := api.NewAPI(logger, cfg, s)

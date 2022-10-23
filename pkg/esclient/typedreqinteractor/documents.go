@@ -92,6 +92,7 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) (*search.RequestB
 
 func parseSpansResponse(res *http.Response) (*spansquery.SearchResponse, error) {
 	// check errors
+	var err error
 	var body map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
@@ -108,7 +109,10 @@ func parseSpansResponse(res *http.Response) (*spansquery.SearchResponse, error) 
 	for _, h := range hits {
 		hit := h.(map[string]any)["_source"].(map[string]any)
 		var s internalspan.InternalSpan
-		mapstructure.Decode(hit, &s)
+		err = mapstructure.Decode(hit, &s)
+		if err != nil {
+			return nil, fmt.Errorf("Could not decode response hit from elasticsearch: %+v", err)
+		}
 		spans = append(spans, &s)
 	}
 

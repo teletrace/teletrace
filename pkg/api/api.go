@@ -105,6 +105,7 @@ func (api *API) registerStaticFilesMiddleware() {
 func (api *API) registerRoutes() {
 	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
+	v1.GET("/search", api.searchSpans)
 }
 
 func (api *API) getPing(c *gin.Context) {
