@@ -9,8 +9,10 @@ import (
 
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/pkg/receiver"
+	"oss-tracing/plugin/spanstorage/es"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
@@ -28,7 +30,28 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	api := api.NewAPI(logger, cfg)
+	ctx := context.Background()
+
+	esConfig := interactor.ElasticConfig{
+		Endpoint:     cfg.ESEndpoints,
+		Username:     cfg.ESUsername,
+		Password:     cfg.ESPassword,
+		ApiKey:       cfg.ESAPIKey,
+		ServiceToken: cfg.ESServiceToken,
+		ForceCreate:  cfg.ESForceCreateConfig,
+		Index:        cfg.ESIndex,
+	}
+
+	s, err := es.NewStorage(ctx, logger, esConfig)
+
+	s.Initialize()
+
+	if err != nil {
+		log.Fatalf("Failed to initialize span writer: %+v", err)
+	}
+
+	api := api.NewAPI(logger, cfg, s)
+
 	receiver, err := receiver.NewReceiver(cfg, logger, fakeTracesProcessor)
 	if err != nil {
 		logger.Fatal("Failed to initialize receiver", zap.Error(err))
