@@ -16,8 +16,8 @@ func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[st
 			Attributes: i_attr,
 		},
 		Span: &v1.Span{
-			TraceId:         []byte("UUID_RANDOM"),
-			SpanId:          []byte("UUID_RANDOM"),
+			TraceId:         [16]byte{1, 2, 3, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 3, 2, 1},
+			SpanId:          [8]byte{1, 2, 3, 4, 5, 6, 7, 8},
 			TraceState:      "state",
 			Name:            "span_name",
 			Kind:            1,
