@@ -5,7 +5,7 @@ import { Handle, Position } from "reactflow";
 import IconInterface from "./interface/IconInterface";
 import NodeIcon from "./NodeIcon";
 
-import "./styles/basicNodeStyle.css";
+import styles from "./styles";
 
 const my_icon: IconInterface = {
   name: "nodejs",
@@ -15,17 +15,38 @@ const my_icon: IconInterface = {
 const BasicNode = () => {
   return (
     <>
-      <Handle type="target" position={Position.Top} />
-      <Box className="node-box">
-        <Box className="node-icon-box">
+      <Handle
+        type="target"
+        position={Position.Top}
+        style={{
+          width: 0,
+          height: 0,
+          minHeight: 0,
+          minWidth: 0,
+          borderColor: "transparent",
+        }}
+      />
+      <Box sx={styles.nodeStyle.nodeBox}>
+        <Box sx={styles.nodeStyle.nodeIconBox}>
           <NodeIcon name={my_icon.name} path={my_icon.path} />
         </Box>
-        <Box className="node-text">
-          <Box className="text-container">/Checkout</Box>
-          <Box className="text-container">Http</Box>
+        <Box sx={styles.nodeStyle.nodeText}>
+          <Box sx={styles.nodeStyle.textContainer}>/Checkout</Box>
+          <Box sx={styles.nodeStyle.textContainer}>Http</Box>
         </Box>
       </Box>
-      <Handle type="source" position={Position.Bottom} id="a" />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="a"
+        style={{
+          width: 0,
+          height: 0,
+          minHeight: 0,
+          minWidth: 0,
+          borderColor: "transparent",
+        }}
+      />
     </>
   );
 };

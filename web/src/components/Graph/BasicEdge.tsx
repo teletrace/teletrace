@@ -3,6 +3,7 @@ import { memo } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
 import EdgeLabelRender from "@/components/Graph/EdgeLabelRender";
+
 import styles from "./styles";
 
 const BasicEdge = ({

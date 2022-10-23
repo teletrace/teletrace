@@ -22,7 +22,57 @@ const styles = {
   nodeStyle: {
     nodeBox: {
       display: "flex",
-      flexFlow: "c",
+      flexFlow: "column nowrap",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    nodeIconBox: {
+      boxSizing: "border-box",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      padding: "12px",
+      gap: "10px",
+      width: "56px",
+      height: "56px",
+
+      background: "#0b0b0d",
+
+      border: "1px solid #5a5b61",
+      boxShadow:
+        "0px 11px 15px rgba(0, 0, 0, 0.2), 0px 9px 46px rgba(0, 0, 0, 0.12),0px 24px 38px rgba(0, 0, 0, 0.14)",
+      borderRadius: "32px;",
+
+      flex: "none;",
+      order: "0;",
+      flexGrow: "0",
+      marginBottom: "5px;",
+    },
+    nodeText: {
+      display: "flex;",
+      flexDirection: "column;",
+      flexWrap: "nowrap;",
+      justifyContent: "center;",
+    },
+    textContainer: {
+      width: 80,
+      height: 24,
+      fontWeight: 600,
+      fontSize: 16,
+      lineHeight: 24,
+      display: "flex",
+      alignItems: "center",
+      letterSpacing: 0.15,
+      justifyContent: "center",
+      color: "#e9eaf1",
+    },
+  },
+  nodeIconStyle: {
+    nodeIcon: {
+      left: "4.17%",
+      right: "4.17%",
+      top: "4.17%",
+      bottom: "4.17%",
     },
   },
 };
