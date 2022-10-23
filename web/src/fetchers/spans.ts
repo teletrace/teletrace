@@ -1,9 +1,8 @@
 import { InternalSpan } from "@/model/InternalSpan";
 
 const HOST_AND_PORT = "http://localhost:5000" // TODO: Change to real API, this is a local test server for now
-const ALL_SPANS_URL = `${HOST_AND_PORT}/span`
 
-export const fetchAllSpans: () => Promise<InternalSpan[]> = async () => {
-    const response = await fetch(ALL_SPANS_URL);
+export const fetchSpans = async (amt: number, start: string, key: string, isAsc: boolean) => {
+    const response = await fetch(`${HOST_AND_PORT}/span?amt=${amt}&start=${start}&key=${key}&isAsc=${isAsc}`);
     return response.json() as Promise<InternalSpan[]>;
 }

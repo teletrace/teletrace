@@ -1,23 +1,23 @@
-export class SpanStatus {
-    constructor(public message: string, public code: number) {}
+export type SpanStatus = {
+    message: string; 
+    code: number;
 }
 
-export class Span {
-    constructor(
-        public traceId: string, 
-        public spanId: string, 
-        public startTimeUnixNano: number,
-        public endTimeUnixNano: number,
-        public name: string,
-        public status: SpanStatus
-    ) {}
+export type Span = {
+    traceId: string;
+    spanId: string;
+    startTimeUnixNano: number;
+    endTimeUnixNano: number;
+    name: string;
+    status: SpanStatus;
 }
    
-export class Resource {
-    constructor(public attributes: Record<string, any>) {}
+export type Resource = {
+    attributes: Record<string, any>;
 }
 
-export class InternalSpan {
-    constructor(public span: Span, public resource: Resource) {}
+export type InternalSpan = {
+    span: Span;
+    resource: Resource;
 }
    

@@ -1,54 +1,172 @@
-import Box from '@mui/material/Box';
-import { Stack } from '@mui/system';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { InternalSpan } from '../../../../model/InternalSpan';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { 
+    useCallback, 
+    useEffect, 
+    useMemo, 
+    useRef, 
+    useState,
+    UIEvent, } from 'react';
+import { 
+    SortingState, 
+    ColumnFiltersState
+} from '@tanstack/react-table'
+import MaterialReactTable, {
+    MRT_ColumnDef,
+    Virtualizer,
+    MRT_ShowHideColumnsButton,
+    MRT_ToggleDensePaddingButton
+  } from 'material-react-table';
+import { fetchSpans } from '@/fetchers/spans';
 
-type SpanTableProps = {
-    spans: InternalSpan[];
+const SPANS_QUERY_KEY = "spans";
+const FETCH_KEY = " spanId"
+const FETCH_BATCH_SIZE = 50
+const IS_ASCENDING = true
+
+export class TSpan {
+    constructor(
+        public id: string,
+        public traceId: string,
+        public spanId: string,
+        public startTime: string,
+        public duration: string,
+        public name: string,
+        public status: string,
+        public serviceName: string,
+    ) {}
 };
 
-export function SpanTable({ spans }: SpanTableProps) {
-    const columns: GridColDef[] = [
-        { field: 'startTime', headerName: 'Start time', width: 300, },
-        { field: 'name', headerName: 'Name' },
-        { field: 'statusCode', headerName: 'Status' },
-        { field: 'serviceName', headerName: 'Service Name', width: 150, },
-        { field: 'duration', headerName: 'Duration' }
+export function SpanTable() {
+    const tableContainerRef = useRef<HTMLDivElement>(null);
+    const virtualizerInstanceRef = useRef<Virtualizer>(null);
+
+    const [ columnFilters, setColumnFilters ] = useState<ColumnFiltersState>([]);
+    const [ globalFilter, setGlobalFilter ] = useState<string>();
+    const [ sorting, setSorting ] = useState<SortingState>([])
+
+    const columns: MRT_ColumnDef<TSpan>[] = [
+        {
+            accessorKey: "startTime",
+            header: "Start Time",
+        },
+        {
+            accessorKey: "duration",
+            header: "Duration",
+        },
+        {
+            accessorKey: "name",
+            header: "Resource name",
+        },
+        {
+            accessorKey: "status",
+            header: "Status",
+        },
+        {
+            accessorKey: "serviceName",
+            header: "Service Name",
+        }
     ];
     
-    const rows = spans.map(({ resource, span }) => {
-            return {
-                id: span.traceId,
-                traceId: span.traceId,
-                spanId: span.spanId,
-                startTime: (new Date(span.startTimeUnixNano).toString()),
-                duration: (span.endTimeUnixNano - span.startTimeUnixNano),
-                name: span.name,
-                statusCode: span.status.code,
-                serviceName: resource.attributes["service.name"]
-            };
-        }) ?? [];
+
+    const { data, fetchNextPage, isError, isFetching, isLoading } = useInfiniteQuery<TSpan[]>(
+        [ SPANS_QUERY_KEY, columnFilters, globalFilter, sorting ], 
+        ({ pageParam = null }) => {
+            return fetchSpans(FETCH_BATCH_SIZE, pageParam, FETCH_KEY, IS_ASCENDING).then(internalSpans => 
+                internalSpans.map(({ resource, span }) => {
+                    return new TSpan(
+                        span.spanId,
+                        span.traceId,
+                        span.spanId,
+                        (new Date(span.startTimeUnixNano).toLocaleTimeString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })),
+                        `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
+                        span.name,
+                        span.status.code === 0 ? 'Ok' : 'Error',
+                        resource.attributes["service.name"]
+                    );
+                })
+            )
+        },
+        { 
+            getNextPageParam: (lastPage) => lastPage.length ? lastPage[lastPage.length - 1] : undefined,
+            keepPreviousData: true,
+            refetchOnWindowFocus: false,
+        }
+    );
+
+    const flatData = useMemo(
+        () => data?.pages?.flatMap(page => page) ?? [],
+        [ data ]
+    );
+
+    const totalFetched = flatData.length
+
+    const fetchMoreOnBottomReached = useCallback(
+        (containerRefElement?: HTMLDivElement | null) => {
+            if (containerRefElement) {
+                const { scrollHeight, scrollTop, clientHeight } = containerRefElement
+                if (
+                    scrollHeight - scrollTop - clientHeight < 200 && !isFetching
+                ) { fetchNextPage() }
+            }
+        },
+        [ fetchNextPage, isFetching, totalFetched ]
+    );
+
+    useEffect(() => {
+        if (virtualizerInstanceRef.current) {
+        virtualizerInstanceRef.current.scrollToIndex(0);
+        }
+    }, [sorting, columnFilters, globalFilter]);
+
+    useEffect(() => {
+        fetchMoreOnBottomReached(tableContainerRef.current)
+    }, [ fetchMoreOnBottomReached ]);
 
     return (
-        <Box sx={{ 
-            height: 600, 
-            width: '100%',
-            "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "rgba(43, 45, 50, 1)",
+        <MaterialReactTable
+            columns={columns}
+            data={flatData}
+            enablePagination={false}
+            enableRowNumbers={false}
+            enableRowVirtualization
+            enableTopToolbar={false}
+            enableColumnActions={false}
+            enableBottomToolbar={false}
+            manualFiltering
+            manualSorting
+            enableColumnResizing
+            renderToolbarInternalActions={({ table }) => (
+                <>
+                <MRT_ToggleDensePaddingButton table={table} />
+                <MRT_ShowHideColumnsButton table={table} />
+                </>
+            )}
+            muiTableContainerProps={{
+                ref: tableContainerRef,
+                sx: { maxHeight: '100%' },
+                onScroll: (
+                event: UIEvent<HTMLDivElement>,
+                ) => fetchMoreOnBottomReached(event.target as HTMLDivElement),
+            }}
+            muiToolbarAlertBannerProps={
+                isError
+                ? {
+                    color: 'error',
+                    children: 'Error loading data',
+                } : undefined
             }
-        }}>
-            <DataGrid
-                rows={rows}
-                columns={columns}            
-                loading={rows.length === 0}
-                components={{
-                    NoRowsOverlay: () => (
-                      <Stack height="100%" alignItems="center" justifyContent="center">
-                        No rows in DataGrid
-                      </Stack>
-                    )
-                }}
-            />
-        </Box>
-    )
+            onColumnFiltersChange={setColumnFilters}
+            onGlobalFilterChange={setGlobalFilter}
+            onSortingChange={setSorting}
+            state={{
+                columnFilters,
+                globalFilter,
+                isLoading,
+                showAlertBanner: isError,
+                showProgressBars: isFetching,
+                sorting,
+            }}
+            virtualizerInstanceRef={virtualizerInstanceRef} //get access to the virtualizer instance
+        />
+      );
 }
