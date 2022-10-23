@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
+	spanstorageMock "oss-tracing/pkg/spanstorage/mock"
 	"path"
 	"path/filepath"
 	"testing"
@@ -18,11 +19,12 @@ import (
 func TestLoggerMiddleware(t *testing.T) {
 	pingRoute := path.Join(apiPrefix, "/ping")
 	fakeLogger, observedLogs := getLoggerObserver()
+	fakeStorage, _ := spanstorageMock.NewStorageMock()
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, pingRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
-	api := NewAPI(fakeLogger, cfg)
+	api := NewAPI(fakeLogger, cfg, fakeStorage)
 	api.router.ServeHTTP(resRecorder, req)
 
 	logs := observedLogs.All()
@@ -36,11 +38,12 @@ func TestRecoveryLoggerMiddleware(t *testing.T) {
 	panicRoute := "/panic-test-route"
 	panicMsg := "this is a test panic"
 	fakeLogger, observedLogs := getLoggerObserver()
+	fakeStorage, _ := spanstorageMock.NewStorageMock()
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, panicRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
-	api := NewAPI(fakeLogger, cfg)
+	api := NewAPI(fakeLogger, cfg, fakeStorage)
 	api.router.GET(panicRoute, func(c *gin.Context) {
 		panic(panicMsg)
 	})
@@ -62,11 +65,12 @@ func TestRecoveryLoggerMiddleware(t *testing.T) {
 
 func TestPingRoute(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
+	fakeStorage, _ := spanstorageMock.NewStorageMock()
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, "/ping"), nil)
 	resRecorder := httptest.NewRecorder()
 
-	api := NewAPI(fakeLogger, cfg)
+	api := NewAPI(fakeLogger, cfg, fakeStorage)
 	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
@@ -86,11 +90,12 @@ func runStaticFilesRouteTest(t *testing.T, testedRoute string) {
 	createStaticFile(t, expectedContent)
 
 	fakeLogger, _ := getLoggerObserver()
+	fakeStorage, _ := spanstorageMock.NewStorageMock()
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, testedRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
-	api := NewAPI(fakeLogger, cfg)
+	api := NewAPI(fakeLogger, cfg, fakeStorage)
 	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
