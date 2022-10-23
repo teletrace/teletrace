@@ -43,9 +43,11 @@ const BasicEdge = ({
           }}
         >
           <Box sx={styles.edgeStyle.timeContainer}>{data?.time}</Box>
-          <Box sx={styles.edgeStyle.counterContainer}>
-            <Box sx={{ margin: "0.313rem" }}>{data?.count}</Box>
-          </Box>
+          {data?.count && (
+            <Box sx={styles.edgeStyle.counterContainer}>
+              <Box sx={{ margin: "0.313rem" }}>{data?.count}</Box>
+            </Box>
+          )}
         </Box>
       </EdgeLabelRender>
     </>

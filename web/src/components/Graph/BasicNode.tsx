@@ -1,18 +1,11 @@
 import { Box } from "@mui/material";
 import { memo } from "react";
-import { Handle, Position } from "reactflow";
+import { Handle, NodeProps, Position } from "reactflow";
 
-import IconInterface from "./interface/IconInterface";
 import NodeIcon from "./NodeIcon";
-
 import styles from "./styles";
 
-const my_icon: IconInterface = {
-  name: "nodejs",
-  path: "./images/icons/icon-test.svg",
-};
-
-const BasicNode = () => {
+const BasicNode = ({ data }: NodeProps) => {
   return (
     <>
       <Handle
@@ -28,11 +21,11 @@ const BasicNode = () => {
       />
       <Box sx={styles.nodeStyle.nodeBox}>
         <Box sx={styles.nodeStyle.nodeIconBox}>
-          <NodeIcon name={my_icon.name} path={my_icon.path} />
+          <NodeIcon name={data.name} image={data.image} />
         </Box>
         <Box sx={styles.nodeStyle.nodeText}>
-          <Box sx={styles.nodeStyle.textContainer}>/Checkout</Box>
-          <Box sx={styles.nodeStyle.textContainer}>Http</Box>
+          <Box sx={styles.nodeStyle.textContainer}>{data.name} </Box>
+          <Box sx={styles.nodeStyle.textContainer}> {data.type} </Box>
         </Box>
       </Box>
       <Handle

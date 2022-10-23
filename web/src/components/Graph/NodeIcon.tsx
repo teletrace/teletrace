@@ -1,14 +1,19 @@
-import { Box } from "@mui/material";
 import React, { memo } from "react";
 
-import IconInterface from "./interface/IconInterface";
-import styles from "./styles";
+interface IconInterface {
+  name: string;
+  image: string;
+}
 
-const NodeIcon: React.FC<IconInterface> = (icon: IconInterface) => {
+export const NodeIcon = ({ name, image }: Readonly<IconInterface>) => {
   return (
-    <Box sx={styles.nodeIconStyle.nodeIcon}>
-      <img src={icon.path} alt={icon.name} width={27.48} height={27.48}></img>
-    </Box>
+    <img
+      style={{
+        inset: "4.17%",
+      }}
+      alt={name}
+      src={`data:image/svg+xml;utf8,${encodeURIComponent(image)}`}
+    />
   );
 };
 

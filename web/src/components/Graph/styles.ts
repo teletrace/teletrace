@@ -55,7 +55,6 @@ const styles = {
       justifyContent: "center;",
     },
     textContainer: {
-      width: 80,
       height: 24,
       fontWeight: 600,
       fontSize: 16,
@@ -65,14 +64,6 @@ const styles = {
       letterSpacing: 0.15,
       justifyContent: "center",
       color: "#e9eaf1",
-    },
-  },
-  nodeIconStyle: {
-    nodeIcon: {
-      left: "4.17%",
-      right: "4.17%",
-      top: "4.17%",
-      bottom: "4.17%",
     },
   },
 };

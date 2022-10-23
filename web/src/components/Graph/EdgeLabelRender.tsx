@@ -1,8 +1,12 @@
-import React, { useRef } from "react";
+import React, { ReactElement, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useStore } from "reactflow";
 
-const EdgeLabelRenderer = ({ children }: any) => {
+interface EdgeLabelProps {
+  children: ReactElement;
+}
+
+const EdgeLabelRenderer = ({ children }: EdgeLabelProps) => {
   const domNode: HTMLDivElement | null = useStore((s) => s.domNode);
   const renderer: React.MutableRefObject<any> = useRef(null);
 
