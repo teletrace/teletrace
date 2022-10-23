@@ -45,21 +45,42 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...spansquery.KeyValueFilte
 
 			mustNot = append(mustNot, (*qc).Build())
 		case spansquery.OPERATOR_CONTAINS:
-			b, err = createContainsFilter(f)
+			qc, err := createContainsFilter(f)
+			if err != nil {
+				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
+			}
+
+			must = append(must, (*qc).Build())
 		case spansquery.OPERATOR_NOT_CONTAINS:
-			b, err = createContainsFilter(f)
+			qc, err := createContainsFilter(f)
+			if err != nil {
+				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
+			}
+
+			mustNot = append(mustNot, (*qc).Build())
 		case spansquery.OPERATOR_EXISTS:
-			b, err = createExistsFilter(f)
+			qc, err := createExistsFilter(f)
+			if err != nil {
+				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
+			}
+
+			must = append(must, (*qc).Build())
 		case spansquery.OPERATOR_NOT_EXISTS:
-			b, err = createExistsFilter(f)
-		case spansquery.OPERATOR_GT:
-			b, err = createRangeFilter(f)
-		case spansquery.OPERATOR_GTE:
-			b, err = createRangeFilter(f)
-		case spansquery.OPERATOR_LT:
-			b, err = createRangeFilter(f)
-		case spansquery.OPERATOR_LTE:
-			b, err = createRangeFilter(f)
+			qc, err := createExistsFilter(f)
+			if err != nil {
+				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
+			}
+
+			mustNot = append(mustNot, (*qc).Build())
+		case spansquery.OPERATOR_GT, spansquery.OPERATOR_GTE, spansquery.OPERATOR_LTE, spansquery.OPERATOR_LT:
+			qc, err := createRangeFilter(f)
+			if err != nil {
+				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
+			}
+
+			must = append(must, (*qc).Build())
+		default:
+			return nil, fmt.Errorf("Could not parse operator: %s", f.Operator)
 		}
 
 		if err != nil {
@@ -71,10 +92,6 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...spansquery.KeyValueFilte
 		MustNot(mustNot).Must(must),
 	), nil
 
-}
-
-func createRangeFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) { // also handle GTE / GT / LTE / LT
-	return nil, nil
 }
 
 func createEqualsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
@@ -121,9 +138,50 @@ func createInFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, 
 }
 
 func createContainsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
-	return nil, nil
+	qc := types.NewQueryContainerBuilder()
+
+	m := map[types.Field]*types.WildcardQueryBuilder{}
+
+	m[types.Field(f.Key)] = types.NewWildcardQueryBuilder().Value(fmt.Sprintf("*%+v*", f.Value))
+
+	return qc.Wildcard(m), nil
 }
 
 func createExistsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
-	return nil, nil
+	qc := types.NewQueryContainerBuilder()
+
+	return qc.Exists(types.NewExistsQueryBuilder().Field(types.Field(f.Key))), nil
+}
+
+func createRangeFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) { // also handle GTE / GT / LTE / LT
+	qc := types.NewQueryContainerBuilder()
+
+	m := map[types.Field]*types.RangeQueryBuilder{}
+
+	var fVal float64
+
+	if i, ok := f.Value.(int64); ok {
+		fVal = float64(i)
+	} else if fl, ok := f.Value.(float64); ok {
+		fVal = fl
+	} else {
+		return nil, fmt.Errorf("Could not parse RANGE filter value as float64: %+v", f.Value)
+	}
+
+	r := types.NewNumberRangeQueryBuilder()
+
+	switch op := f.Operator; string(op) {
+	case spansquery.OPERATOR_GT:
+		r = r.Gt(fVal)
+	case spansquery.OPERATOR_GTE:
+		r = r.Gte(fVal)
+	case spansquery.OPERATOR_LTE:
+		r = r.Lte(fVal)
+	case spansquery.OPERATOR_LT:
+		r = r.Lt(fVal)
+	}
+
+	m[types.Field(f.Key)] = types.NewRangeQueryBuilder().NumberRangeQuery(r)
+
+	return qc.Range(m), nil
 }

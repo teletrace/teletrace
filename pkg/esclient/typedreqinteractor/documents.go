@@ -4,12 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"oss-tracing/pkg/esclient/typedreqinteractor/querybuilder"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
-	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
@@ -37,15 +35,7 @@ func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchReque
 	req := builder.Build()
 
 	search := c.Client.API.Search()
-	_r := search.Request(req).Index(idx)
-
-	http_req, _ := _r.HttpRequest(ctx)
-
-	buf := new(strings.Builder)
-	_, err = io.Copy(buf, http_req.Body)
-	rawReq := buf.String()
-
-	res, err := _r.Do(ctx)
+	res, err := search.Request(req).Index(idx).Do(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
@@ -107,10 +97,8 @@ func parseSpansResponse(res *http.Response) (*spansquery.SearchResponse, error) 
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
-	rawBody, _ := json.Marshal(body)
-
 	if res.StatusCode >= 400 {
-		return nil, fmt.Errorf("Could not search spans, got status: %+v, raw body req: %+v", res.StatusCode, string(rawBody))
+		return nil, fmt.Errorf("Could not search spans, got status: %+v", res.StatusCode)
 	}
 
 	hits := body["hits"].(map[string]any)["hits"].([]any)

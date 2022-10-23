@@ -56,12 +56,10 @@ type SearchRequest struct {
 	Timeframe       Timeframe
 	Sort            []Sort
 	SearchFilter    []SearchFilter
-	RequestMetadata Metadata
+	RequestMetadata *Metadata
 }
 
 type SearchResponse struct {
-	ResponseMetadata Metadata
+	ResponseMetadata *Metadata
 	Spans            []*internalspan.InternalSpan
-	RawResp          string
-	RawReq           string
 }

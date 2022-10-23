@@ -11,9 +11,11 @@ import (
 	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	spanstorage "oss-tracing/pkg/spanstorage"
 )
 
@@ -110,9 +112,18 @@ func (api *API) getPing(c *gin.Context) {
 }
 
 func (api *API) searchSpans(c *gin.Context) {
-	res, err := (*api.spanReader).Search(context.Background(), nil) // Create SearchRequest from body
+	var err error
+
+	req := spansquery.SearchRequest{}
+	err = mapstructure.Decode(c.Request.URL.Query(), &req)
+
 	if err != nil {
-		c.String(500, "Could not search spans")
+		c.String(400, "Could not parse Search request: %+v", err)
+	}
+
+	res, err := (*api.spanReader).Search(context.Background(), &req)
+	if err != nil {
+		c.String(500, "Could not search spans: %+v", err)
 	}
 	c.JSON(200, res.Spans)
 }

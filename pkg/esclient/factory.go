@@ -30,7 +30,6 @@ func NewInteractor(logger *zap.Logger, cfg interactor.ElasticConfig) (*interacto
 		return nil, fmt.Errorf("failed to create a raw client: %v", err)
 	}
 
-	//TODO allow choosing which api to use
 	indexTemplateController := typedreqinteractor.NewIndexTemplateController(typedApiClient)
 	componentTemplateController := typedreqinteractor.NewComponentTemplateController(typedApiClient)
 	dc := NewDocumentController(*rawApiClient, *typedApiClient, cfg.Index)
