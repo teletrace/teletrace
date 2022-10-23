@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/creasty/defaults"
 	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -110,6 +111,39 @@ func (api *API) registerRoutes() {
 
 func (api *API) getPing(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
+}
+
+func (api *API) getTraceById(c *gin.Context) {
+	var err error
+
+	f := spansquery.SearchFilter{
+		KeyValueFilter: &spansquery.KeyValueFilter{
+			Key:      "Span.TraceId",
+			Operator: "equals",
+			Value:    c.Param("id"),
+		},
+	}
+
+	req := &spansquery.SearchRequest{}
+
+	if err = defaults.Set(req); err != nil {
+		c.String(500, "Could not create default searchRequest: %+v", err)
+	}
+
+	req.Timeframe = spansquery.Timeframe{
+		StartTime: time.Unix(0, 0),
+		EndTime:   time.Now(),
+	}
+
+	req.SearchFilter = []spansquery.SearchFilter{f}
+
+	res, err := (*api.spanReader).Search(context.Background(), req)
+
+	if err != nil {
+		c.String(500, "Could not get trace by id: %+v", err)
+	}
+
+	c.JSON(200, res.Spans)
 }
 
 func (api *API) searchSpans(c *gin.Context) {

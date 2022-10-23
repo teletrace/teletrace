@@ -54,7 +54,7 @@ type Metadata struct {
 
 type SearchRequest struct {
 	Timeframe       Timeframe
-	Sort            []Sort
+	Sort            []Sort `default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
 	SearchFilter    []SearchFilter
 	RequestMetadata *Metadata
 }
