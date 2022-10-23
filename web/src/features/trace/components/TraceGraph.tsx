@@ -1,4 +1,5 @@
 import { Paper } from "@mui/material";
+import { Connection, Edge } from "@reactflow/core/dist/esm/types";
 import { useCallback } from "react";
 import ReactFlow, {
   Controls,
@@ -12,7 +13,7 @@ import BasicNode from "@/components/Graph/BasicNode";
 import {
   layoutEdges,
   layoutNodes,
-} from "@/components/Graph/utils/DynamicLayout";
+} from "@/components/Graph/utils/dynamic_layout";
 
 import "reactflow/dist/style.css";
 
@@ -24,7 +25,7 @@ export const TraceGraph = () => {
   const [nodes, , onNodesChange] = useNodesState(layoutNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutEdges);
   const onConnect = useCallback(
-    (params: any) => setEdges((eds) => addEdge(params, eds)),
+    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     []
   );
 
