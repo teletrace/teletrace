@@ -1,6 +1,8 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
+
 import { Head } from "@/components/Head";
+
 import { FilterBar } from "../components/FilterBar";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable/SpanTable";
@@ -8,9 +10,7 @@ import { SpanTable } from "../components/SpanTable/SpanTable";
 export const SpanSearch = () => {
   return (
     <>
-      <Head
-        title="Span Search"
-      />
+      <Head title="Span Search" />
       <Stack
         className="span-search"
         direction="row"
@@ -18,11 +18,7 @@ export const SpanSearch = () => {
         spacing={1}
         sx={{ height: "100%" }}
       >
-        <Stack
-          className="filters"
-          direction="column"
-          sx={{ height: "100%" }}
-        >
+        <Stack className="filters" direction="column" sx={{ height: "100%" }}>
           <Stack
             direction="row"
             divider={<Divider orientation="vertical" flexItem />}
@@ -70,7 +66,7 @@ export const SpanSearch = () => {
             flex={1}
             sx={{ minHeight: "0" }}
           >
-            <SpanTable/>
+            <SpanTable />
           </Stack>
         </Stack>
       </Stack>

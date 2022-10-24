@@ -1,23 +1,22 @@
 export type SpanStatus = {
-    message: string; 
-    code: number;
-}
+  message: string;
+  code: number;
+};
 
 export type Span = {
-    traceId: string;
-    spanId: string;
-    startTimeUnixNano: number;
-    endTimeUnixNano: number;
-    name: string;
-    status: SpanStatus;
-}
-   
+  traceId: string;
+  spanId: string;
+  startTimeUnixNano: number;
+  endTimeUnixNano: number;
+  name: string;
+  status: SpanStatus;
+};
+
 export type Resource = {
-    attributes: Record<string, any>;
-}
+  attributes: Record<string, any>;
+};
 
 export type InternalSpan = {
-    span: Span;
-    resource: Resource;
-}
-   
+  span: Span;
+  resource: Resource;
+};
