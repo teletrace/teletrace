@@ -5,7 +5,7 @@ import { Head } from "@/components/Head";
 
 import { FilterBar } from "../components/FilterBar";
 import { SearchBar } from "../components/SearchBar";
-import { SpanTable } from "../components/SpanTable/SpanTable";
+import { SpanTable } from "../components/SpanTable";
 
 export const SpanSearch = () => {
   return (
