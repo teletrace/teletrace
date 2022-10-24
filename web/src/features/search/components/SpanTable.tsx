@@ -14,9 +14,8 @@ import {
   useRef,
   useState,
 } from "react";
+
 import { fetchSpans } from "./fetchers/spans";
-
-
 
 const SPANS_QUERY_KEY = "spans";
 const FETCH_KEY = " spanId";
@@ -91,7 +90,9 @@ export function SpanTable() {
               `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
               span.name,
               span.status.code === 0 ? "Ok" : "Error",
-              typeof resource.attributes["service.name"] === 'string' ?  resource.attributes["service.name"] : "service unknown"
+              typeof resource.attributes["service.name"] === "string"
+                ? resource.attributes["service.name"]
+                : "service unknown"
             );
           })
         );

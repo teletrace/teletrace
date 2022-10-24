@@ -1,6 +1,5 @@
 import { InternalSpan } from "@/model/InternalSpan";
 
-
 const HOST_AND_PORT = "http://localhost:5000"; // TODO: Change to real API, this is a local test server for now
 
 export const fetchSpans = async (
