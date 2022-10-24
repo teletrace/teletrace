@@ -13,7 +13,6 @@
     "@tanstack/react-table": "^8.5.15",
     "axios": "^0.27.2",
     "date-fns": "^2.29.3",
-    "dateformat": "^5.0.3",
     "eslint-plugin-react-hooks": "^4.6.0",
     "material-react-table": "^1.2.10",
     "react": "^18.2.0",
