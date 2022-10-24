@@ -19,7 +19,7 @@ export const Layout = ({ children }: LayoutProps) => (
         </Typography>
       </Toolbar>
     </AppBar>
-    <Box component="main" padding={2} sx={{ flex: 1 }}>
+    <Box component="main" padding={2} sx={{ flex: 1, minHeight: 0 }}>
       {children}
     </Box>
   </Box>

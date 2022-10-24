@@ -23,6 +23,7 @@ export const SpanSearch = () => {
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
           justifyContent="space-between"
+          sx={{ minHeight: "0" }}
           flex={1}
         >
           <SpanTable />
@@ -32,7 +33,6 @@ export const SpanSearch = () => {
           direction="row"
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
-          flex={1}
         ></Stack>
       </Stack>
     </>
