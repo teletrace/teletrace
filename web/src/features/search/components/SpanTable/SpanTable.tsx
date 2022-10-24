@@ -1,21 +1,22 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { 
-    useCallback, 
-    useEffect, 
-    useMemo, 
-    useRef, 
-    useState,
-    UIEvent, } from 'react';
-import { 
-    SortingState, 
-    ColumnFiltersState
+    ColumnFiltersState, 
+    SortingState
 } from '@tanstack/react-table'
 import MaterialReactTable, {
     MRT_ColumnDef,
-    Virtualizer,
     MRT_ShowHideColumnsButton,
-    MRT_ToggleDensePaddingButton
+    MRT_ToggleDensePaddingButton,
+    Virtualizer
   } from 'material-react-table';
+import { 
+    UIEvent, 
+    useCallback, 
+    useEffect, 
+    useMemo, 
+    useRef,
+    useState, } from 'react';
+
 import { fetchSpans } from '@/fetchers/spans';
 
 const SPANS_QUERY_KEY = "spans";
@@ -34,7 +35,7 @@ class TableSpan {
         public status: string,
         public serviceName: string,
     ) {}
-};
+}
 
 export function SpanTable() {
     const tableContainerRef = useRef<HTMLDivElement>(null);

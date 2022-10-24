@@ -1,14 +1,9 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useQuery } from "@tanstack/react-query";
-
 import { Head } from "@/components/Head";
-import { fetchSpans } from "@/fetchers/spans";
-
-import { InternalSpan } from "../../../model/InternalSpan";
-import { SpanTable } from "../components/SpanTable/SpanTable";
-import { SearchBar } from "../components/SearchBar";
 import { FilterBar } from "../components/FilterBar";
+import { SearchBar } from "../components/SearchBar";
+import { SpanTable } from "../components/SpanTable/SpanTable";
 
 export const SpanSearch = () => {
   return (
@@ -26,7 +21,6 @@ export const SpanSearch = () => {
         <Stack
           className="filters"
           direction="column"
-          
           sx={{ height: "100%" }}
         >
           <Stack
