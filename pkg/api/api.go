@@ -107,6 +107,7 @@ func (api *API) registerRoutes() {
 	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
 	v1.GET("/search", api.searchSpans)
+	v1.GET("/trace/:id", api.getTraceById)
 }
 
 func (api *API) getPing(c *gin.Context) {
@@ -149,14 +150,18 @@ func (api *API) getTraceById(c *gin.Context) {
 func (api *API) searchSpans(c *gin.Context) {
 	var err error
 
-	req := spansquery.SearchRequest{}
+	req := &spansquery.SearchRequest{}
+	if err = defaults.Set(req); err != nil {
+		c.String(500, "Could not create default searchRequest: %+v", err)
+	}
+
 	err = mapstructure.Decode(c.Request.URL.Query(), &req)
 
 	if err != nil {
 		c.String(400, "Could not parse Search request: %+v", err)
 	}
 
-	res, err := (*api.spanReader).Search(context.Background(), &req)
+	res, err := (*api.spanReader).Search(context.Background(), req)
 	if err != nil {
 		c.String(500, "Could not search spans: %+v", err)
 	}
