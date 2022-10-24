@@ -19,11 +19,11 @@ import MaterialReactTable, {
 import { fetchSpans } from '@/fetchers/spans';
 
 const SPANS_QUERY_KEY = "spans";
-const FETCH_KEY = " spanId"
-const FETCH_BATCH_SIZE = 50
-const IS_ASCENDING = true
+const FETCH_KEY = " spanId";
+const FETCH_BATCH_SIZE = 50;
+const IS_ASCENDING = true;
 
-export class TSpan {
+class TableSpan {
     constructor(
         public id: string,
         public traceId: string,
@@ -42,9 +42,9 @@ export function SpanTable() {
 
     const [ columnFilters, setColumnFilters ] = useState<ColumnFiltersState>([]);
     const [ globalFilter, setGlobalFilter ] = useState<string>();
-    const [ sorting, setSorting ] = useState<SortingState>([])
+    const [ sorting, setSorting ] = useState<SortingState>([]);
 
-    const columns: MRT_ColumnDef<TSpan>[] = [
+    const columns: MRT_ColumnDef<TableSpan>[] = [
         {
             accessorKey: "startTime",
             header: "Start Time",
@@ -68,12 +68,12 @@ export function SpanTable() {
     ];
     
 
-    const { data, fetchNextPage, isError, isFetching, isLoading } = useInfiniteQuery<TSpan[]>(
+    const { data, fetchNextPage, isError, isFetching, isLoading } = useInfiniteQuery<TableSpan[]>(
         [ SPANS_QUERY_KEY, columnFilters, globalFilter, sorting ], 
         ({ pageParam = null }) => {
             return fetchSpans(FETCH_BATCH_SIZE, pageParam, FETCH_KEY, IS_ASCENDING).then(internalSpans => 
                 internalSpans.map(({ resource, span }) => {
-                    return new TSpan(
+                    return new TableSpan(
                         span.spanId,
                         span.traceId,
                         span.spanId,
@@ -152,7 +152,7 @@ export function SpanTable() {
                 isError
                 ? {
                     color: 'error',
-                    children: 'Error loading data',
+                    children: 'Error loading spans',
                 } : undefined
             }
             onColumnFiltersChange={setColumnFilters}
