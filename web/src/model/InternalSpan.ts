@@ -13,7 +13,7 @@ export type Span = {
 };
 
 export type Resource = {
-  attributes: Record<string, any>;
+  attributes: Record<string, unknown>;
 };
 
 export type InternalSpan = {

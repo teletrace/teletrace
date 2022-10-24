@@ -90,7 +90,7 @@ export function SpanTable() {
               `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
               span.name,
               span.status.code === 0 ? "Ok" : "Error",
-              resource.attributes["service.name"]
+              typeof resource.attributes["service.name"] === 'string' ?  resource.attributes["service.name"] : "service unknown"
             );
           })
         );
