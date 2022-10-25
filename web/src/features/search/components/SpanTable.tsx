@@ -1,5 +1,3 @@
-import { Sort } from "@/model/Sort";
-import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
@@ -17,12 +15,13 @@ import {
   useState,
 } from "react";
 
+import { Sort } from "@/model/Sort";
+
 import { fetchSpans } from "./fetchers/spans";
 
 const SPANS_QUERY_KEY = "spans";
 const FETCH_KEY = " spanId";
 const FETCH_BATCH_SIZE = 50;
-const IS_ASCENDING = true;
 
 class TableSpan {
   constructor(
@@ -45,7 +44,9 @@ export function SpanTable() {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const sort = sorting.map(columnSort => new Sort(columnSort.id, !columnSort.desc));
+  const sort = sorting.map(
+    (columnSort) => new Sort(columnSort.id, !columnSort.desc)
+  );
 
   const columns: MRT_ColumnDef<TableSpan>[] = [
     {
@@ -59,49 +60,45 @@ export function SpanTable() {
     {
       accessorKey: "name",
       header: "Resource name",
-      enableSorting: false
+      enableSorting: false,
     },
     {
       accessorKey: "status",
       header: "Status",
-      enableSorting: false
+      enableSorting: false,
     },
     {
       accessorKey: "serviceName",
       header: "Service Name",
-      enableSorting: false
+      enableSorting: false,
     },
   ];
 
   const { data, fetchNextPage, isError, isFetching, isLoading } =
     useInfiniteQuery<TableSpan[]>(
-      [ SPANS_QUERY_KEY, columnFilters, globalFilter, sorting ],
+      [SPANS_QUERY_KEY, columnFilters, globalFilter, sorting],
       ({ pageParam = null }) => {
-        return fetchSpans(
-          FETCH_BATCH_SIZE,
-          pageParam,
-          FETCH_KEY,
-          sort
-        ).then((internalSpans) =>
-          internalSpans.map(({ resource, span }) => {
-            return new TableSpan(
-              span.spanId,
-              span.traceId,
-              span.spanId,
-              new Date(span.startTimeUnixNano).toLocaleTimeString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }),
-              `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
-              span.name,
-              span.status.code === 0 ? "Ok" : "Error",
-              typeof resource.attributes["service.name"] === "string"
-                ? resource.attributes["service.name"]
-                : "service unknown"
-            );
-          })
+        return fetchSpans(FETCH_BATCH_SIZE, pageParam, FETCH_KEY, sort).then(
+          (internalSpans) =>
+            internalSpans.map(({ resource, span }) => {
+              return new TableSpan(
+                span.spanId,
+                span.traceId,
+                span.spanId,
+                new Date(span.startTimeUnixNano).toLocaleTimeString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }),
+                `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
+                span.name,
+                span.status.code === 0 ? "Ok" : "Error",
+                typeof resource.attributes["service.name"] === "string"
+                  ? resource.attributes["service.name"]
+                  : "service unknown"
+              );
+            })
         );
       },
       {
@@ -140,8 +137,6 @@ export function SpanTable() {
   useEffect(() => {
     fetchMoreOnBottomReached(tableContainerRef.current);
   }, [fetchMoreOnBottomReached]);
-
-
 
   return (
     <MaterialReactTable
