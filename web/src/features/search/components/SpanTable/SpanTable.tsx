@@ -167,7 +167,7 @@ export function SpanTable() {
       )}
       muiTableContainerProps={{
         ref: tableContainerRef,
-        sx: { maxHeight: "100%" },
+        sx: styles.container,
         onScroll: (event: UIEvent<HTMLDivElement>) =>
           fetchMoreOnBottomReached(event.target as HTMLDivElement),
       }}
@@ -193,9 +193,7 @@ export function SpanTable() {
       virtualizerInstanceRef={virtualizerInstanceRef} //get access to the virtualizer instance
       muiTableHeadProps={{
         sx: () => ({
-          "& tr:nth-of-type(odd)": {
-            backgroundColor: styles.headerBackgroundColor,
-          },
+          "& tr:nth-of-type(odd)": styles.header,
         }),
       }}
     />
