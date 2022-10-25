@@ -73,8 +73,6 @@ export function SpanTable() {
     },
   ];
 
-  console.log(JSON.stringify(sorting ?? []))
-
   const { data, fetchNextPage, isError, isFetching, isLoading } =
     useInfiniteQuery<TableSpan[]>(
       [ SPANS_QUERY_KEY, columnFilters, globalFilter, sorting ],
