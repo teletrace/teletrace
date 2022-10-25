@@ -1,6 +1,7 @@
 import { Paper } from "@mui/material";
 import { Connection, Edge } from "@reactflow/core/dist/esm/types";
-import { useCallback } from "react";
+import { Loader } from "@/components/Elements/Loader";
+import { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   Controls,
   addEdge,
@@ -22,6 +23,7 @@ const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 export const TraceGraph = () => {
+  const [loader, setLoader] = useState(false);
   const [nodes, , onNodesChange] = useNodesState(layoutNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutEdges);
   const onConnect = useCallback(
@@ -29,21 +31,32 @@ export const TraceGraph = () => {
     []
   );
 
+  useEffect(() => {
+    const graphIsCrested = () => {
+      return nodes.length > 0 && edges.length > 0;
+    };
+    setLoader(graphIsCrested);
+  }, []);
+
   return (
     <Paper sx={{ width: "100%" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        snapToGrid={true}
-        edgeTypes={edgeTypes}
-        fitView
-      >
-        <Controls />
-      </ReactFlow>
+      {loader ? (
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          snapToGrid={true}
+          edgeTypes={edgeTypes}
+          fitView
+        >
+          <Controls />
+        </ReactFlow>
+      ) : (
+        <Loader />
+      )}
     </Paper>
   );
 };
