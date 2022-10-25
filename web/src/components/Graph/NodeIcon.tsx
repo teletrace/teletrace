@@ -5,7 +5,7 @@ interface IconInterface {
   image: string;
 }
 
-export const NodeIcon = ({ name, image }: Readonly<IconInterface>) => {
+const NodeIcon = ({ name, image }: Readonly<IconInterface>) => {
   return (
     <img
       style={{

@@ -75,7 +75,7 @@ export const initialEdges: Edge[] = [
     target: "3",
     label: "3",
     data: { time: "20ms" },
-    markerEnd: { type: MarkerType.ArrowClosed },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
   },
   {
     id: "e2-4",
@@ -84,7 +84,6 @@ export const initialEdges: Edge[] = [
     target: "4",
     label: "4",
     data: { time: "20ms" },
-    style: { stroke: "#96979E" },
-    markerEnd: { type: MarkerType.ArrowClosed },
+    markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
   },
 ];
