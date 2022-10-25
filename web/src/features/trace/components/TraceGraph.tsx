@@ -1,6 +1,5 @@
 import { Paper } from "@mui/material";
 import { Connection, Edge } from "@reactflow/core/dist/esm/types";
-import { Loader } from "@/components/Elements/Loader";
 import { useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   Controls,
@@ -9,6 +8,7 @@ import ReactFlow, {
   useNodesState,
 } from "reactflow";
 
+import { Loader } from "@/components/Elements/Loader";
 import BasicEdge from "@/components/Graph/BasicEdge";
 import BasicNode from "@/components/Graph/BasicNode";
 import {
