@@ -62,4 +62,5 @@ type SearchRequest struct {
 type SearchResponse struct {
 	ResponseMetadata *Metadata
 	Spans            []*internalspan.InternalSpan
+	Raw              string
 }

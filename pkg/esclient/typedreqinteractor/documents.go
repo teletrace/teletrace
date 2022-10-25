@@ -18,6 +18,39 @@ import (
 func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
 	var err error
 
+	req, err := buildSearchRequest(r)
+
+	if err != nil {
+		return nil, fmt.Errorf("Could not build search request: %+v", err)
+	}
+
+	search := c.Client.API.Search()
+	res, err := search.Request(req).Index(idx).Do(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("Could not search spans: %+v", err)
+	}
+
+	defer res.Body.Close()
+
+	body, err := decodeResponse(res)
+
+	if err != nil {
+		return nil, fmt.Errorf("Could not decode http response: %+v", err)
+	}
+
+	searchResp, err := parseSpansResponse(body)
+
+	if err != nil {
+		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
+	}
+
+	return searchResp, nil
+}
+
+func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
+	var err error
+
 	builder := search.NewRequestBuilder()
 
 	builder, err = buildQuery(builder, r.SearchFilter...)
@@ -32,24 +65,7 @@ func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchReque
 
 	builder = builder.Size(200) // Where to get this number from?
 
-	req := builder.Build()
-
-	search := c.Client.API.Search()
-	res, err := search.Request(req).Index(idx).Do(ctx)
-
-	if err != nil {
-		return nil, fmt.Errorf("Could not search spans: %+v", err)
-	}
-
-	defer res.Body.Close()
-
-	searchResp, err := parseSpansResponse(res)
-
-	if err != nil {
-		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
-	}
-
-	return searchResp, nil
+	return builder.Build(), nil
 }
 
 func buildQuery(b *search.RequestBuilder, fs ...spansquery.SearchFilter) (*search.RequestBuilder, error) {
@@ -90,17 +106,22 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) (*search.RequestB
 
 }
 
-func parseSpansResponse(res *http.Response) (*spansquery.SearchResponse, error) {
+func decodeResponse(res *http.Response) (map[string]any, error) {
 	// check errors
 	var err error
 	var body map[string]any
-	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+	if err = json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
 	if res.StatusCode >= 400 {
 		return nil, fmt.Errorf("Could not search spans, got status: %+v", res.StatusCode)
 	}
+	return body, nil
+}
+
+func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error) {
+	var err error
 
 	hits := body["hits"].(map[string]any)["hits"].([]any)
 
@@ -116,5 +137,6 @@ func parseSpansResponse(res *http.Response) (*spansquery.SearchResponse, error) 
 		spans = append(spans, &s)
 	}
 
-	return &spansquery.SearchResponse{Spans: spans}, nil
+	strBody, _ := json.Marshal(body)
+	return &spansquery.SearchResponse{Spans: spans, Raw: string(strBody)}, nil
 }
