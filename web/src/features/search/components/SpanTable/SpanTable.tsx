@@ -15,9 +15,10 @@ import {
   useState,
 } from "react";
 
-import { Sort } from "@/model/Sort";
+import { fetchSpans } from "@/fetchers/spans";
 
-import { fetchSpans } from "./fetchers/spans";
+import { StatusBadge } from "../StatusBadge/StatusBadge";
+import styles from "./styles";
 
 const SPANS_QUERY_KEY = "spans";
 const FETCH_KEY = " spanId";
@@ -44,18 +45,16 @@ export function SpanTable() {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const sort = sorting.map(
-    (columnSort) => new Sort(columnSort.id, !columnSort.desc)
-  );
-
   const columns: MRT_ColumnDef<TableSpan>[] = [
     {
       accessorKey: "startTime",
       header: "Start Time",
+      enableSorting: false,
     },
     {
       accessorKey: "duration",
       header: "Duration",
+      enableSorting: false,
     },
     {
       accessorKey: "name",
@@ -66,6 +65,10 @@ export function SpanTable() {
       accessorKey: "status",
       header: "Status",
       enableSorting: false,
+      Cell: (mrtCell) => {        
+        const code = mrtCell.cell.getValue()
+        return <StatusBadge color={Number(code) === 2 ? 'error' : 'success'} text={Number(code) === 2 ? 'Error' : 'Ok'} />
+      }
     },
     {
       accessorKey: "serviceName",
@@ -78,7 +81,7 @@ export function SpanTable() {
     useInfiniteQuery<TableSpan[]>(
       [SPANS_QUERY_KEY, columnFilters, globalFilter, sorting],
       ({ pageParam = null }) => {
-        return fetchSpans(FETCH_BATCH_SIZE, pageParam, FETCH_KEY, sort).then(
+        return fetchSpans(FETCH_BATCH_SIZE, pageParam, FETCH_KEY).then(
           (internalSpans) =>
             internalSpans.map(({ resource, span }) => {
               return new TableSpan(
@@ -183,6 +186,13 @@ export function SpanTable() {
         sorting,
       }}
       virtualizerInstanceRef={virtualizerInstanceRef} //get access to the virtualizer instance
+      muiTableHeadProps={{
+        sx: () => ({
+          '& tr:nth-of-type(odd)': {
+            backgroundColor: styles.headerBackgroundColor,
+          },
+        }),
+      }}
     />
   );
 }
