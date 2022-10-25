@@ -65,10 +65,15 @@ export function SpanTable() {
       accessorKey: "status",
       header: "Status",
       enableSorting: false,
-      Cell: (mrtCell) => {        
-        const code = mrtCell.cell.getValue()
-        return <StatusBadge color={Number(code) === 2 ? 'error' : 'success'} text={Number(code) === 2 ? 'Error' : 'Ok'} />
-      }
+      Cell: (mrtCell) => {
+        const code = mrtCell.cell.getValue();
+        return (
+          <StatusBadge
+            color={Number(code) === 2 ? "error" : "success"}
+            text={Number(code) === 2 ? "Error" : "Ok"}
+          />
+        );
+      },
     },
     {
       accessorKey: "serviceName",
@@ -188,7 +193,7 @@ export function SpanTable() {
       virtualizerInstanceRef={virtualizerInstanceRef} //get access to the virtualizer instance
       muiTableHeadProps={{
         sx: () => ({
-          '& tr:nth-of-type(odd)': {
+          "& tr:nth-of-type(odd)": {
             backgroundColor: styles.headerBackgroundColor,
           },
         }),
