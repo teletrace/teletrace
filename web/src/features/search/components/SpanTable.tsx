@@ -1,3 +1,5 @@
+import { Sort } from "@/model/Sort";
+import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
@@ -43,6 +45,8 @@ export function SpanTable() {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const sort = sorting.map(columnSort => new Sort(columnSort.id, !columnSort.desc));
+
   const columns: MRT_ColumnDef<TableSpan>[] = [
     {
       accessorKey: "startTime",
@@ -55,26 +59,31 @@ export function SpanTable() {
     {
       accessorKey: "name",
       header: "Resource name",
+      enableSorting: false
     },
     {
       accessorKey: "status",
       header: "Status",
+      enableSorting: false
     },
     {
       accessorKey: "serviceName",
       header: "Service Name",
+      enableSorting: false
     },
   ];
 
+  console.log(JSON.stringify(sorting ?? []))
+
   const { data, fetchNextPage, isError, isFetching, isLoading } =
     useInfiniteQuery<TableSpan[]>(
-      [SPANS_QUERY_KEY, columnFilters, globalFilter, sorting],
+      [ SPANS_QUERY_KEY, columnFilters, globalFilter, sorting ],
       ({ pageParam = null }) => {
         return fetchSpans(
           FETCH_BATCH_SIZE,
           pageParam,
           FETCH_KEY,
-          IS_ASCENDING
+          sort
         ).then((internalSpans) =>
           internalSpans.map(({ resource, span }) => {
             return new TableSpan(
@@ -133,6 +142,8 @@ export function SpanTable() {
   useEffect(() => {
     fetchMoreOnBottomReached(tableContainerRef.current);
   }, [fetchMoreOnBottomReached]);
+
+
 
   return (
     <MaterialReactTable
