@@ -32,11 +32,11 @@ export const TraceGraph = () => {
   );
 
   useEffect(() => {
-    const graphIsCrested = () => {
+    const graphIsCreated = () => {
       //TODO implement fetch
       return nodes.length > 0 && edges.length > 0;
     };
-    setLoader(graphIsCrested);
+    setLoader(graphIsCreated);
   }, []);
 
   return (
