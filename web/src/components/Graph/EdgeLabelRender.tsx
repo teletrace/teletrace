@@ -8,7 +8,7 @@ interface EdgeLabelProps {
 
 const EdgeLabelRenderer = ({ children }: EdgeLabelProps) => {
   const domNode: HTMLDivElement | null = useStore((s) => s.domNode);
-  const renderer: React.MutableRefObject<any> = useRef(null);
+  const renderer: React.MutableRefObject<Element | null> = useRef(null);
 
   if (!domNode) {
     return null;

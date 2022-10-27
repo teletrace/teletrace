@@ -1,8 +1,9 @@
 import { Paper } from "@mui/material";
 import { Connection, Edge } from "@reactflow/core/dist/esm/types";
 import { useCallback, useEffect, useState } from "react";
-import ReactFlow, {
+import {
   Controls,
+  ReactFlow,
   addEdge,
   useEdgesState,
   useNodesState,
