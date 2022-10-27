@@ -31,13 +31,13 @@ Download and install docker in your machine from [here](https://docs.docker.com/
 
 The examples assumes that you are in the root folder
 
-using docker-compose:
+Using docker-compose:
 
 ```sh
 docker-compose -f deploy/docker-compose/docker-compose.yml up
 ```
 
-alternatively, using docker CLI:
+Alternatively, using docker CLI:
 
 ```sh
 docker build -f cmd/all-in-one/Dockerfile -t oss-tracing:latest .
