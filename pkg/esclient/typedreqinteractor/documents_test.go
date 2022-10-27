@@ -146,6 +146,7 @@ func TestParseSpansResponse(t *testing.T) {
 
 	spans, err := parseSpansResponse(res)
 
+	//nolint:ineffassign
 	assert.Len(t, spans.Spans, 1)
 }
 
@@ -156,5 +157,6 @@ func TestBuildSearchRequest_NoFilters(t *testing.T) {
 
 	_, err = buildSearchRequest(&searchReq)
 
+	//nolint:ineffassign
 	assert.Nil(t, err)
 }
