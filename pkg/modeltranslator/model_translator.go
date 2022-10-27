@@ -6,6 +6,8 @@ import (
 	"go.opentelemetry.io/collector/pdata/ptrace"
 )
 
+// TranslateOTLPToInternalModel converts traces from the OLTP format
+// to the InternalSpan model used by the the ingestion pipeline consumers.
 func TranslateOTLPToInternalModel(td ptrace.Traces) []*v1.InternalSpan {
 	var internalSpans []*v1.InternalSpan
 
