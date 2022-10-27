@@ -153,6 +153,7 @@ func TestParseSpansResponse(t *testing.T) {
 func TestBuildSearchRequest_NoFilters(t *testing.T) {
 	var err error
 
+	//nolint:ineffassign
 	searchReq, err := getSearchRequestMock()
 
 	//nolint:ineffassign
