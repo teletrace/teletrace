@@ -1,0 +1,10 @@
+version: "3"
+services:
+  api:
+    ports:
+      - "8080:8080"
+      - "4317:4317"
+      - "4318:4318"
+    build:
+      dockerfile: cmd/all-in-one/Dockerfile
+      context: ../../
