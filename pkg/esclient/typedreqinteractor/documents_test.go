@@ -156,6 +156,8 @@ func TestBuildSearchRequest_NoFilters(t *testing.T) {
 	//nolint:ineffassign
 	searchReq, err := getSearchRequestMock()
 
+	assert.Nil(t, err)
+
 	//nolint:ineffassign
 	_, err = buildSearchRequest(&searchReq)
 
