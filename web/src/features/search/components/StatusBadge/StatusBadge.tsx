@@ -18,14 +18,14 @@ export interface StatusBadgeProps {
 
 export function StatusBadge({ color, text, customColor = "white" }: StatusBadgeProps) {
   const customColorAndBackgroundColor = customColor && { background: customColor }
-  const colorXorCustomColor = !color && customColorAndBackgroundColor
+  const colorOrCustomColor = !color && customColorAndBackgroundColor
 
   return (
     <Badge
       variant="dot"
       sx={{
         "& .MuiBadge-anchorOriginTopLeftRectangular": {
-          ...colorXorCustomColor,
+          ...colorOrCustomColor,
           ...styles.badge,
         },
       }}
