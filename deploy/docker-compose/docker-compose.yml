@@ -1,10 +1,30 @@
 version: "3"
 services:
   lupa-api:
+    expose:
+      - "4317"
+      - "4318"
     ports:
       - "8080:8080"
-      - "4317:4317"
-      - "4318:4318"
     build:
       dockerfile: cmd/all-in-one/Dockerfile
       context: ../../
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+    networks:
+      - lupa
+
+  otel-collector:
+    image: otel/opentelemetry-collector:0.62.1
+    command: ["--config=/etc/otel-collector.yaml"]
+    volumes:
+      - ./otel-collector.yaml:/etc/otel-collector.yaml
+    networks:
+      - lupa
+
+networks:
+  lupa:
+    internal: false
