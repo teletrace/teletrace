@@ -9,82 +9,82 @@ import (
 )
 
 func BuildFilters(b *types.QueryContainerBuilder, fs ...spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
+	type filterCreator func(spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error)
+
+	type Filter struct {
+		Builder filterCreator
+		Must    bool
+	}
+
 	var must []types.QueryContainer
 	var mustNot []types.QueryContainer
+
+	m := map[string]Filter{
+		spansquery.OPERATOR_EQUALS: {
+			Builder: createEqualsFilter,
+			Must:    true,
+		},
+		spansquery.OPERATOR_NOT_EQUALS: {
+			Builder: createEqualsFilter,
+			Must:    false,
+		},
+		spansquery.OPERATOR_CONTAINS: {
+			Builder: createContainsFilter,
+			Must:    true,
+		},
+		spansquery.OPERATOR_NOT_CONTAINS: {
+			Builder: createContainsFilter,
+			Must:    false,
+		},
+		spansquery.OPERATOR_EXISTS: {
+			Builder: createExistsFilter,
+			Must:    true,
+		},
+		spansquery.OPERATOR_NOT_EXISTS: {
+			Builder: createExistsFilter,
+			Must:    false,
+		},
+		spansquery.OPERATOR_IN: {
+			Builder: createInFilter,
+			Must:    true,
+		},
+		spansquery.OPERATOR_NOT_IN: {
+			Builder: createInFilter,
+			Must:    false,
+		},
+		spansquery.OPERATOR_GT: {
+			Builder: createRangeFilter,
+			Must:    true,
+		},
+		spansquery.OPERATOR_GTE: {
+			Builder: createRangeFilter,
+			Must:    true,
+		},
+		spansquery.OPERATOR_LTE: {
+			Builder: createRangeFilter,
+			Must:    true,
+		},
+		spansquery.OPERATOR_LT: {
+			Builder: createRangeFilter,
+			Must:    true,
+		},
+	}
 
 	for _, f := range fs {
 
 		var err error
-		switch op := f.Operator; string(op) {
-		case spansquery.OPERATOR_EQUALS:
-			qc, err := createEqualsFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
 
-			must = append(must, (*qc).Build())
-		case spansquery.OPERATOR_NOT_EQUALS:
-			qc, err := createEqualsFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			mustNot = append(mustNot, (*qc).Build())
-		case spansquery.OPERATOR_IN:
-			qc, err := createInFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			must = append(must, (*qc).Build())
-		case spansquery.OPERATOR_NOT_IN:
-			qc, err := createInFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			mustNot = append(mustNot, (*qc).Build())
-		case spansquery.OPERATOR_CONTAINS:
-			qc, err := createContainsFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			must = append(must, (*qc).Build())
-		case spansquery.OPERATOR_NOT_CONTAINS:
-			qc, err := createContainsFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			mustNot = append(mustNot, (*qc).Build())
-		case spansquery.OPERATOR_EXISTS:
-			qc, err := createExistsFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			must = append(must, (*qc).Build())
-		case spansquery.OPERATOR_NOT_EXISTS:
-			qc, err := createExistsFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			mustNot = append(mustNot, (*qc).Build())
-		case spansquery.OPERATOR_GT, spansquery.OPERATOR_GTE, spansquery.OPERATOR_LTE, spansquery.OPERATOR_LT:
-			qc, err := createRangeFilter(f)
-			if err != nil {
-				return nil, fmt.Errorf("Could not build %s filter: %+v", f.Operator, err)
-			}
-
-			must = append(must, (*qc).Build())
-		default:
-			return nil, fmt.Errorf("Could not parse operator: %s", f.Operator)
-		}
+		filter := m[string(f.Operator)]
+		qc, err := filter.Builder(f)
 
 		if err != nil {
 			return nil, fmt.Errorf("Could not create filter from: %+v: %+v", f, err)
+		}
+
+		if filter.Must {
+			must = append(must, (*qc).Build())
+		} else {
+			mustNot = append(must, (*qc).Build())
 		}
 	}
 
