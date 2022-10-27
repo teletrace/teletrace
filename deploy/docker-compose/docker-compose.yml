@@ -1,6 +1,6 @@
 version: "3"
 services:
-  api:
+  lupa-api:
     ports:
       - "8080:8080"
       - "4317:4317"
