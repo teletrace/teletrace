@@ -148,6 +148,7 @@ func TestParseSpansResponse(t *testing.T) {
 	spans, err := parseSpansResponse(res)
 
 	assert.Len(t, spans.Spans, 1)
+	assert.Nil(t, err)
 }
 
 func TestBuildSearchRequest_NoFilters(t *testing.T) {
