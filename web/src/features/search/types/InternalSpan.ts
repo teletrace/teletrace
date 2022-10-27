@@ -1,3 +1,5 @@
+type AttributeValue = string | number | boolean
+
 export type SpanStatus = {
   message: string;
   code: number;
@@ -13,7 +15,7 @@ export type Span = {
 };
 
 export type Resource = {
-  attributes: Record<string, unknown>;
+  attributes: Record<string, AttributeValue>;
 };
 
 export type InternalSpan = {

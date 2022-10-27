@@ -11,18 +11,21 @@ export interface StatusBadgeProps {
     | "info"
     | "success"
     | "warning"
-    | undefined;
+
   text: string;
   customColor?: string;
 }
 
-export function StatusBadge({ color, text, customColor }: StatusBadgeProps) {
+export function StatusBadge({ color, text, customColor = "white" }: StatusBadgeProps) {
+  const customColorAndBackgroundColor = customColor && { background: customColor }
+  const colorXorCustomColor = !color && customColorAndBackgroundColor
+
   return (
     <Badge
       variant="dot"
       sx={{
         "& .MuiBadge-anchorOriginTopLeftRectangular": {
-          ...(!color && customColor && { background: customColor }),
+          ...colorXorCustomColor,
           ...styles.badge,
         },
       }}

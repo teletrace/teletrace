@@ -15,7 +15,7 @@ import {
   useState,
 } from "react";
 
-import { fetchSpans } from "@/fetchers/spans";
+import { fetchSpans } from "@/features/search/api/spans";
 
 import { StatusBadge } from "../StatusBadge/StatusBadge";
 import styles from "./styles";
@@ -69,7 +69,8 @@ export function SpanTable() {
         const code = mrtCell.cell.getValue();
         return (
           <StatusBadge
-            color={Number(code) === 2 ? "error" : "success"}
+            color={undefined}
+            // color={Number(code) === 2 ? "error" : "success"}
             text={Number(code) === 2 ? "Error" : "Ok"}
           />
         );
