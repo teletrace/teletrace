@@ -69,8 +69,7 @@ export function SpanTable() {
         const code = mrtCell.cell.getValue();
         return (
           <StatusBadge
-            color={undefined}
-            // color={Number(code) === 2 ? "error" : "success"}
+            color={Number(code) === 2 ? "error" : "success"}
             text={Number(code) === 2 ? "Error" : "Ok"}
           />
         );
