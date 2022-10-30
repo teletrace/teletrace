@@ -1,18 +1,13 @@
 import { graphlib, layout } from "dagre";
 import { Edge, Node } from "reactflow";
 
-import {
-  initialEdges,
-  initialNodes,
-} from "@/features/trace/components/TraceGraph";
-
 const dagreGraph = new graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const nodeWidth = 300;
 const nodeHeight = 200;
 
-const getLayoutElements = (nodes: Node[], edges: Edge[]) => {
+export const getLayoutElements = (nodes: Node[], edges: Edge[]) => {
   dagreGraph.setGraph({ rankdir: "TB" });
 
   nodes.forEach((node: Node) => {
@@ -40,8 +35,3 @@ const getLayoutElements = (nodes: Node[], edges: Edge[]) => {
 
   return { nodes, edges };
 };
-
-export const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
-  initialNodes,
-  initialEdges
-);

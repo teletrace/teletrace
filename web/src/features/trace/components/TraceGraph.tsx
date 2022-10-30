@@ -1,13 +1,12 @@
+import { getLayoutElements } from "@/components/Graph/utils/dynamic_layout";
 import { Paper } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
 import {
   Connection,
+  Controls,
   Edge,
   MarkerType,
   Node,
-} from "@reactflow/core/dist/esm/types";
-import { useCallback, useEffect, useState } from "react";
-import {
-  Controls,
   ReactFlow,
   addEdge,
   useEdgesState,
@@ -17,10 +16,6 @@ import {
 import { Loader } from "@/components/Elements/Loader";
 import BasicEdge from "@/components/Graph/BasicEdge";
 import BasicNode from "@/components/Graph/BasicNode";
-import {
-  layoutEdges,
-  layoutNodes,
-} from "@/components/Graph/utils/dynamic_layout";
 
 import "reactflow/dist/style.css";
 
@@ -117,6 +112,11 @@ const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 export const TraceGraph = () => {
+  const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
+    initialNodes,
+    initialEdges
+  );
+
   const [loader, setLoader] = useState(false);
   const [nodes, , onNodesChange] = useNodesState(layoutNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutEdges);
