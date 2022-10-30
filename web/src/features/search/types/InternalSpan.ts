@@ -1,4 +1,4 @@
-type AttributeValue = string | number | boolean
+type AttributeValue = string | number | boolean;
 
 export type SpanStatus = {
   message: string;

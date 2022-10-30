@@ -1,4 +1,3 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
   MRT_ColumnDef,
@@ -15,13 +14,11 @@ import {
   useState,
 } from "react";
 
-import { fetchSpans } from "@/features/search/api/spans";
-
+import { useSpans } from "../../api/spans";
 import { StatusBadge } from "../StatusBadge/StatusBadge";
 import styles from "./styles";
 
-const SPANS_QUERY_KEY = "spans";
-const FETCH_KEY = " spanId";
+const FETCH_KEY = "spanId";
 const FETCH_BATCH_SIZE = 50;
 
 class TableSpan {
@@ -82,45 +79,38 @@ export function SpanTable() {
     },
   ];
 
-  const { data, fetchNextPage, isError, isFetching, isLoading } =
-    useInfiniteQuery<TableSpan[]>(
-      [SPANS_QUERY_KEY, columnFilters, globalFilter, sorting],
-      ({ pageParam = null }) => {
-        return fetchSpans(FETCH_BATCH_SIZE, pageParam, FETCH_KEY).then(
-          (internalSpans) =>
-            internalSpans.map(({ resource, span }) => {
-              return new TableSpan(
-                span.spanId,
-                span.traceId,
-                span.spanId,
-                new Date(span.startTimeUnixNano).toLocaleTimeString("en-US", {
-                  weekday: "long",
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }),
-                `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
-                span.name,
-                span.status.code === 0 ? "Ok" : "Error",
-                typeof resource.attributes["service.name"] === "string"
-                  ? resource.attributes["service.name"]
-                  : "service unknown"
-              );
-            })
-        );
-      },
-      {
-        getNextPageParam: (lastPage) =>
-          lastPage.length ? lastPage[lastPage.length - 1] : undefined,
-        keepPreviousData: true,
-        refetchOnWindowFocus: false,
-      }
-    );
+  const { data, fetchNextPage, isError, isFetching, isLoading } = useSpans({
+    amt: FETCH_BATCH_SIZE,
+    key: FETCH_KEY,
+    columnFilters: columnFilters,
+    globalFilter: globalFilter,
+    sorting: sorting,
+  });
 
   const flatData = useMemo(
     () => data?.pages?.flatMap((page) => page) ?? [],
     [data]
   );
+
+  const tspans = flatData.map(({ resource, span }) => {
+    return new TableSpan(
+      span.spanId,
+      span.traceId,
+      span.spanId,
+      new Date(span.startTimeUnixNano).toLocaleTimeString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+      `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
+      span.name,
+      span.status.code === 0 ? "Ok" : "Error",
+      typeof resource.attributes["service.name"] === "string"
+        ? resource.attributes["service.name"]
+        : "service unknown"
+    );
+  });
 
   const totalFetched = flatData.length;
 
@@ -149,7 +139,7 @@ export function SpanTable() {
   return (
     <MaterialReactTable
       columns={columns}
-      data={flatData}
+      data={tspans}
       enablePagination={false}
       enableRowNumbers={false}
       enableRowVirtualization

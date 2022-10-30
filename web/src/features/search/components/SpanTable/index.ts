@@ -1,1 +1,1 @@
-export * from './SpanTable';
+export * from "./SpanTable";
