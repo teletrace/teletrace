@@ -53,8 +53,8 @@ export const CheckboxList = ({
   return (
     <List>
       {options.map((opt) => (
-        <Fragment>
-          <ListItem key={opt.value} disablePadding>
+        <Fragment key={opt.value}>
+          <ListItem disablePadding>
             <ListItemButton
               dense
               sx={styles.listItemButton}

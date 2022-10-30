@@ -1,7 +1,8 @@
-import { Divider, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useState } from "react";
 
 import { TagValuesSelector } from "../TagValuesSelector";
+import { styles } from "./styles";
 
 export const TagSidebar = () => {
   type TagValues = Array<number | string>;
@@ -14,14 +15,13 @@ export const TagSidebar = () => {
   const [instumentationLibs, setInstrumentationLibs] = useState<TagValues>([]);
 
   return (
-    <Stack spacing="2px">
+    <Stack spacing="2px" sx={styles.sideTagBar}>
       <TagValuesSelector
         title="Status"
         tag="span.status"
         value={statusCodes}
         onChange={setStatusCodes}
       />
-
       <TagValuesSelector
         searchable
         title="Service Name"
