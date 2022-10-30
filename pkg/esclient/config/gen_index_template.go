@@ -6,7 +6,6 @@ import (
 	"github.com/creasty/defaults"
 )
 
-//TODO change defaults with this functions input
 func NewIndexTemplate(idx string) (*interactor.IndexTemplate, error) {
 	indexTemplate := &interactor.IndexTemplate{}
 

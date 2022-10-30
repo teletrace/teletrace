@@ -6,7 +6,6 @@ import (
 	"github.com/creasty/defaults"
 )
 
-// TODO change defaults with this function inputs
 func NewComponentTemplate() (*interactor.ComponentTemplate, error) {
 	compTemplate := &interactor.ComponentTemplate{}
 
