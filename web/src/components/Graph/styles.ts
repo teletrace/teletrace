@@ -41,18 +41,18 @@ const styles = {
       border: "1px solid #5a5b61",
       boxShadow:
         "0px 11px 15px rgba(0, 0, 0, 0.2), 0px 9px 46px rgba(0, 0, 0, 0.12),0px 24px 38px rgba(0, 0, 0, 0.14)",
-      borderRadius: "32px;",
+      borderRadius: "32px",
 
-      flex: "none;",
-      order: "0;",
+      flex: "none",
+      order: "0",
       flexGrow: "0",
-      marginBottom: "5px;",
+      marginBottom: "5px",
     },
     nodeText: {
-      display: "flex;",
-      flexDirection: "column;",
-      flexWrap: "nowrap;",
-      justifyContent: "center;",
+      display: "flex",
+      flexDirection: "column",
+      flexWrap: "nowrap",
+      justifyContent: "center",
     },
     textContainer: {
       height: 24,
