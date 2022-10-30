@@ -190,7 +190,7 @@ export function SpanTable() {
         showProgressBars: isFetching,
         sorting,
       }}
-      virtualizerInstanceRef={virtualizerInstanceRef} //get access to the virtualizer instance
+      virtualizerInstanceRef={virtualizerInstanceRef}
       muiTableHeadProps={{
         sx: () => ({
           "& tr:nth-of-type(odd)": styles.header,
