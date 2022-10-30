@@ -4,8 +4,8 @@ const styles = {
   },
   header: {
     "& tr:nth-of-type(odd)": {
-        backgroundColor: "rgba(43, 45, 50, 1)",
-    }
+      backgroundColor: "rgba(43, 45, 50, 1)",
+    },
   },
 };
 

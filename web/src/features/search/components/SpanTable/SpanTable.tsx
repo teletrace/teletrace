@@ -5,14 +5,7 @@ import MaterialReactTable, {
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
-import {
-  UIEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { UIEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import { useSpans } from "../../api/span";
 import { StatusBadge } from "../StatusBadge/StatusBadge";
@@ -22,14 +15,14 @@ const FETCH_KEY = "spanId";
 const FETCH_BATCH_SIZE = 50;
 
 interface TableSpan {
-    id: string,
-    traceId: string,
-    spanId: string,
-    startTime: string,
-    duration: string,
-    name: string,
-    status: string,
-    serviceName: string
+  id: string;
+  traceId: string;
+  spanId: string;
+  startTime: string;
+  duration: string;
+  name: string;
+  status: string;
+  serviceName: string;
 }
 
 export function SpanTable() {
@@ -85,7 +78,7 @@ export function SpanTable() {
     sorting: sorting,
   });
 
-  const flatData = data?.pages?.flat() ?? []
+  const flatData = data?.pages?.flat() ?? [];
   const tableSpans = flatData.map(({ resource, span }): TableSpan => {
     return {
       id: span.spanId,
@@ -100,9 +93,10 @@ export function SpanTable() {
       duration: `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
       name: span.name,
       status: span.status.code === 0 ? "Ok" : "Error",
-      serviceName: typeof resource.attributes["service.name"] === "string"
-        ? resource.attributes["service.name"]
-        : "service unknown"
+      serviceName:
+        typeof resource.attributes["service.name"] === "string"
+          ? resource.attributes["service.name"]
+          : "service unknown",
     } as TableSpan;
   });
 
@@ -176,7 +170,7 @@ export function SpanTable() {
       }}
       virtualizerInstanceRef={virtualizerInstanceRef}
       muiTableHeadProps={{
-        sx: () => (styles.header),
+        sx: () => styles.header,
       }}
     />
   );

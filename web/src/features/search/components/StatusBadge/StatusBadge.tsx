@@ -10,15 +10,21 @@ export interface StatusBadgeProps {
     | "error"
     | "info"
     | "success"
-    | "warning"
+    | "warning";
 
   text: string;
   customColor?: string;
 }
 
-export function StatusBadge({ color, text, customColor = "white" }: StatusBadgeProps) {
-  const customColorAndBackgroundColor = customColor && { background: customColor }
-  const colorOrCustomColor = !color && customColorAndBackgroundColor
+export function StatusBadge({
+  color,
+  text,
+  customColor = "white",
+}: StatusBadgeProps) {
+  const customColorAndBackgroundColor = customColor && {
+    background: customColor,
+  };
+  const colorOrCustomColor = !color && customColorAndBackgroundColor;
 
   return (
     <Badge
