@@ -25,6 +25,11 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
+	api := api.NewAPI(logger, cfg)
+	if err := api.Start(); err != nil {
+		logger.Fatal("API server crashed", zap.Error(err))
+	}
+
 	ctx := context.Background()
 
 	esConfig := interactor.ElasticConfig{
@@ -37,21 +42,9 @@ func main() {
 		Index:        cfg.ESIndex,
 	}
 
-	s, err := es.NewStorage(ctx, logger, esConfig)
+	_, err = es.NewStorage(ctx, logger, esConfig)
 
 	if err != nil {
-		log.Fatalf("Failed to create storage instance: %+v", err)
+		log.Fatalf("Failed to initialize span writer: %+v", err)
 	}
-
-	err = s.Initialize()
-
-	if err != nil {
-		log.Fatalf("Failed to initialize storage instance: %+v", err)
-	}
-
-	api := api.NewAPI(logger, cfg, s)
-	if err := api.Start(); err != nil {
-		logger.Fatal("API server crashed", zap.Error(err))
-	}
-
 }

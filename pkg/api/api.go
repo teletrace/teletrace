@@ -1,22 +1,18 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/creasty/defaults"
 	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
-	spanstorage "oss-tracing/pkg/spanstorage"
 )
 
 const apiPrefix = "/v1"
@@ -26,35 +22,18 @@ var staticFilesPath = filepath.Join("web", "build")
 // API holds the config used for running the API as well as
 // the endpoint handlers and resources used by them (e.g. logger).
 type API struct {
-	logger     *zap.Logger
-	config     config.Config
-	router     *gin.Engine
-	spanWriter *spanstorage.SpanWriter
-	spanReader *spanstorage.SpanReader
+	logger *zap.Logger
+	config config.Config
+	router *gin.Engine
 }
 
 // NewAPI creates and returns a new API instance.
-func NewAPI(logger *zap.Logger, config config.Config, storage spanstorage.Storage) *API {
+func NewAPI(logger *zap.Logger, config config.Config) *API {
 	router := newRouter(logger, config)
-
-	spanWriter, err := storage.CreateSpanWriter()
-
-	if err != nil {
-		logger.Fatal("Failed to create spanWriter", zap.Error(err))
-	}
-
-	spanReader, err := storage.CreateSpanReader()
-
-	if err != nil {
-		logger.Fatal("Failed to create spanReader", zap.Error(err))
-	}
-
 	api := &API{
-		logger:     logger,
-		config:     config,
-		router:     router,
-		spanWriter: &spanWriter,
-		spanReader: &spanReader,
+		logger: logger,
+		config: config,
+		router: router,
 	}
 	api.registerMiddlewares()
 	api.registerRoutes()
@@ -105,45 +84,13 @@ func (api *API) registerStaticFilesMiddleware() {
 func (api *API) registerRoutes() {
 	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
-	v1.GET("/trace/:id", api.getTraceById)
 }
 
 func (api *API) getPing(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
 }
 
-func (api *API) getTraceById(c *gin.Context) {
-	var err error
-
-	f := spansquery.SearchFilter{
-		KeyValueFilter: &spansquery.KeyValueFilter{
-			Key:      "Span.TraceId",
-			Operator: "equals",
-			Value:    c.Param("id"),
-		},
-	}
-
-	req := &spansquery.SearchRequest{}
-
-	if err = defaults.Set(req); err != nil {
-		c.String(500, "Could not create default searchRequest: %+v", err)
-	}
-
-	req.Timeframe = spansquery.Timeframe{
-		StartTime: time.Unix(0, 0),
-		EndTime:   time.Now(),
-	}
-
-	req.SearchFilter = []spansquery.SearchFilter{f}
-
-	res, err := (*api.spanReader).Search(context.Background(), req)
-
-	if err != nil {
-		c.String(500, "Could not get trace by id: %+v", err)
-	}
-
-	c.JSON(200, res.Spans)
-}
+// Start runs the configured API instance.
 func (api *API) Start() error {
 	return api.router.Run(fmt.Sprintf(":%d", api.config.APIPort))
 }
