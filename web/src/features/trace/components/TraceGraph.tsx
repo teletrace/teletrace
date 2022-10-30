@@ -1,4 +1,3 @@
-import { getLayoutElements } from "@/components/Graph/utils/dynamic_layout";
 import { Paper } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -16,6 +15,7 @@ import {
 import { Loader } from "@/components/Elements/Loader";
 import BasicEdge from "@/components/Graph/BasicEdge";
 import BasicNode from "@/components/Graph/BasicNode";
+import { getLayoutElements } from "@/components/Graph/utils/dynamic_layout";
 
 import "reactflow/dist/style.css";
 
