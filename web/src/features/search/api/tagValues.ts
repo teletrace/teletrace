@@ -8,7 +8,10 @@ export const getTagValues = (tag: string): Promise<TagValue[]> => {
     setTimeout(
       () =>
         resolve([
-          { value: 200, occurrences: 10 * 1000 },
+          {
+            value: "muddy-news.net.muddy-news.net.muddy-news.net",
+            occurrences: 10 * 1000,
+          },
           { value: 300, occurrences: 14 * 1000 },
           { value: 400, occurrences: 22 * 1000 },
           { value: 500, occurrences: 50 * 1000 },

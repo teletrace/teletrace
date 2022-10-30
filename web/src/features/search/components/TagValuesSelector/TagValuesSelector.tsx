@@ -1,17 +1,19 @@
-import { ExpandMore } from "@mui/icons-material";
+import { ArrowForwardIosSharp } from "@mui/icons-material";
 import {
   Accordion,
+  AccordionActions,
   AccordionDetails,
   AccordionSummary,
+  Button,
   CircularProgress,
-  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 
 import { useTagValues } from "../../api/tagValues";
 import { TagValue } from "../../types/tagValues";
+import { styles } from "./styles";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
@@ -32,72 +34,60 @@ export const TagValuesSelector = ({
   searchable,
   onChange,
 }: TagValuesSelectorProps) => {
-  const { data: tagValues, isLoading } = useTagValues(tag);
   const [search, setSearch] = useState("");
+  const { data: tagValues, isLoading } = useTagValues(tag);
 
-  const tagOptions =
-    tagValues?.filter((tag) => tag.value.toString().includes(search)) || [];
+  const clearTags = () => onChange?.([]);
+
+  const tagOptions = tagValues
+    ?.filter((tag) => tag.value.toString().includes(search))
+    .map((tag) => ({
+      value: tag.value,
+      label: <CheckboxListLabel tag={tag} />,
+    }));
 
   return (
     <div style={{ width: 300 }}>
-      <Accordion defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMore />}
-          sx={{ flexDirection: "row-reverse" }}
-        >
-          <Stack direction="row" spacing={2}>
-            <div>{title}</div>
-            <div>{isLoading && <CircularProgress size="1rem" />}</div>
-          </Stack>
-        </AccordionSummary>
+      <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
+        <Stack direction="row">
+          <AccordionSummary
+            sx={styles.accordionSummary}
+            expandIcon={<ArrowForwardIosSharp sx={{ fontSize: "0.9rem" }} />}
+          >
+            <Stack direction="row" spacing={2} alignItems="center">
+              <div>{title}</div>
+              {isLoading && <CircularProgress size="1rem" />}
+            </Stack>
+          </AccordionSummary>
+          <AccordionActions>
+            {value.length > 0 && (
+              <Button size="small" onClick={clearTags}>
+                Clear
+              </Button>
+            )}
+          </AccordionActions>
+        </Stack>
 
         <AccordionDetails>
-          {!tagValues ? (
-            <LoaderSkeleton />
-          ) : (
-            <Fragment>
-              {searchable && (
-                <SearchField value={search} onChange={setSearch} />
-              )}
-
-              <CheckboxList
-                value={value}
-                onChange={onChange}
-                options={tagOptions.map((tag) => ({
-                  value: tag.value,
-                  label: <CheckboxListLabel tag={tag} />,
-                }))}
-              />
-            </Fragment>
+          {searchable && !!tagValues && (
+            <SearchField value={search} onChange={setSearch} />
           )}
+
+          <CheckboxList
+            value={value}
+            loading={!tagValues}
+            options={tagOptions || []}
+            onChange={onChange}
+          />
         </AccordionDetails>
       </Accordion>
     </div>
   );
 };
 
-const LoaderSkeleton = () => (
-  <Fragment>
-    <Skeleton
-      height={40}
-      variant="rounded"
-      sx={(theme) => ({ marginBottom: theme.spacing(1) })}
-    />
-    <Skeleton sx={{ fontSize: "2rem" }} width="60%" />
-    <Skeleton sx={{ fontSize: "2rem" }} width="60%" />
-    <Skeleton sx={{ fontSize: "2rem" }} width="60%" />
-    <Skeleton sx={{ fontSize: "2rem" }} width="60%" />
-  </Fragment>
-);
-
 const CheckboxListLabel = ({ tag }: { tag: TagValue }) => (
-  <Stack
-    direction="row"
-    spacing={1}
-    alignItems="center"
-    justifyContent="space-between"
-  >
-    <Typography>{tag.value}</Typography>
+  <Stack direction="row" alignItems="center" justifyContent="space-between">
+    <Typography noWrap>{tag.value}</Typography>
     <Typography variant="button" color="GrayText">
       {formatNumber(tag.occurrences)}
     </Typography>

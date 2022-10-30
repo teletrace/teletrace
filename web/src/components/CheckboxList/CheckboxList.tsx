@@ -3,10 +3,12 @@ import {
   List,
   ListItem,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
+  Skeleton,
 } from "@mui/material";
-import { ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
+
+import { styles } from "./styles";
 
 export type CheckboxListOption = {
   value: string | number;
@@ -16,6 +18,7 @@ export type CheckboxListOption = {
 export type CheckboxListProps = {
   value: Array<string | number>;
   options: Array<CheckboxListOption>;
+  loading?: boolean;
   onChange?: (value: Array<string | number>) => void;
 };
 
@@ -23,6 +26,7 @@ export const CheckboxList = ({
   value,
   options,
   onChange,
+  loading = false,
 }: CheckboxListProps) => {
   const handleToggle = (opt: string | number) => {
     const currentIndex = value.indexOf(opt);
@@ -37,21 +41,34 @@ export const CheckboxList = ({
     onChange?.(newChecked);
   };
 
+  if (loading)
+    return (
+      <Fragment>
+        <Skeleton sx={styles.skeleton} />
+        <Skeleton sx={styles.skeleton} />
+        <Skeleton sx={styles.skeleton} />
+      </Fragment>
+    );
+
   return (
     <List>
       {options.map((opt) => (
-        <ListItem key={opt.value} disablePadding>
-          <ListItemButton dense onClick={() => handleToggle(opt.value)}>
-            <ListItemIcon>
+        <Fragment>
+          <ListItem key={opt.value} disablePadding>
+            <ListItemButton
+              dense
+              sx={styles.listItemButton}
+              onClick={() => handleToggle(opt.value)}
+            >
               <Checkbox
                 disableRipple
                 edge="start"
                 checked={value.indexOf(opt.value) !== -1}
               />
-            </ListItemIcon>
-            <ListItemText primary={opt.label} />
-          </ListItemButton>
-        </ListItem>
+              <ListItemText primary={opt.label} />
+            </ListItemButton>
+          </ListItem>
+        </Fragment>
       ))}
     </List>
   );
