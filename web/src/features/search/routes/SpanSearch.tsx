@@ -3,7 +3,7 @@ import { Stack } from "@mui/system";
 
 import { Head } from "@/components/Head";
 
-import { SpanTable } from "../components/SpanTable/SpanTable";
+import { SpanTable } from "../components/SpanTable/index";
 
 export const SpanSearch = () => {
   return (

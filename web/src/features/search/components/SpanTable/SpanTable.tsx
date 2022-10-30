@@ -1,8 +1,8 @@
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
-  MRT_ColumnDef,
-  MRT_ShowHideColumnsButton,
-  MRT_ToggleDensePaddingButton,
+  MRT_ColumnDef as ColumnDef,
+  MRT_ShowHideColumnsButton as ShowHideColumnsButton,
+  MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
 import {
@@ -14,24 +14,22 @@ import {
   useState,
 } from "react";
 
-import { useSpans } from "../../api/spans";
+import { useSpans } from "../../api/span";
 import { StatusBadge } from "../StatusBadge/StatusBadge";
 import styles from "./styles";
 
 const FETCH_KEY = "spanId";
 const FETCH_BATCH_SIZE = 50;
 
-class TableSpan {
-  constructor(
-    public id: string,
-    public traceId: string,
-    public spanId: string,
-    public startTime: string,
-    public duration: string,
-    public name: string,
-    public status: string,
-    public serviceName: string
-  ) {}
+interface TableSpan {
+    id: string,
+    traceId: string,
+    spanId: string,
+    startTime: string,
+    duration: string,
+    name: string,
+    status: string,
+    serviceName: string
 }
 
 export function SpanTable() {
@@ -42,7 +40,7 @@ export function SpanTable() {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns: MRT_ColumnDef<TableSpan>[] = [
+  const columns: ColumnDef<TableSpan>[] = [
     {
       accessorKey: "startTime",
       header: "Start Time",
@@ -80,36 +78,32 @@ export function SpanTable() {
   ];
 
   const { data, fetchNextPage, isError, isFetching, isLoading } = useSpans({
-    amt: FETCH_BATCH_SIZE,
+    batchSize: FETCH_BATCH_SIZE,
     key: FETCH_KEY,
     columnFilters: columnFilters,
     globalFilter: globalFilter,
     sorting: sorting,
   });
 
-  const flatData = useMemo(
-    () => data?.pages?.flatMap((page) => page) ?? [],
-    [data]
-  );
-
-  const tspans = flatData.map(({ resource, span }) => {
-    return new TableSpan(
-      span.spanId,
-      span.traceId,
-      span.spanId,
-      new Date(span.startTimeUnixNano).toLocaleTimeString("en-US", {
+  const flatData = data?.pages?.flat() ?? []
+  const tableSpans = flatData.map(({ resource, span }): TableSpan => {
+    return {
+      id: span.spanId,
+      traceId: span.traceId,
+      spanId: span.spanId,
+      startTime: new Date(span.startTimeUnixNano).toLocaleTimeString("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       }),
-      `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
-      span.name,
-      span.status.code === 0 ? "Ok" : "Error",
-      typeof resource.attributes["service.name"] === "string"
+      duration: `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
+      name: span.name,
+      status: span.status.code === 0 ? "Ok" : "Error",
+      serviceName: typeof resource.attributes["service.name"] === "string"
         ? resource.attributes["service.name"]
         : "service unknown"
-    );
+    } as TableSpan;
   });
 
   const totalFetched = flatData.length;
@@ -139,7 +133,7 @@ export function SpanTable() {
   return (
     <MaterialReactTable
       columns={columns}
-      data={tspans}
+      data={tableSpans}
       enablePagination={false}
       enableRowNumbers={false}
       enableRowVirtualization
@@ -151,8 +145,8 @@ export function SpanTable() {
       enableColumnResizing
       renderToolbarInternalActions={({ table }) => (
         <>
-          <MRT_ToggleDensePaddingButton table={table} />
-          <MRT_ShowHideColumnsButton table={table} />
+          <ToggleDensePaddingButton table={table} />
+          <ShowHideColumnsButton table={table} />
         </>
       )}
       muiTableContainerProps={{
@@ -182,9 +176,7 @@ export function SpanTable() {
       }}
       virtualizerInstanceRef={virtualizerInstanceRef}
       muiTableHeadProps={{
-        sx: () => ({
-          "& tr:nth-of-type(odd)": styles.header,
-        }),
+        sx: () => (styles.header),
       }}
     />
   );

@@ -6,16 +6,14 @@ import { ExtractFnReturnType } from "@/libs/react-query";
 
 import { InternalSpan } from "../types/InternalSpan";
 
-const SPANS_QUERY_KEY = "spans";
-
 export const getSpans = async (
-  amt: number,
+  batchSize: number,
   start: string,
   key: string
 ): Promise<InternalSpan[]> => {
   return axiosClient.get("/span", {
     params: {
-      amt: amt,
+      batchSize: batchSize,
       start: start === null ? "" : start,
       key: key,
     },
@@ -25,7 +23,7 @@ export const getSpans = async (
 type QueryFnType = typeof getSpans;
 
 type UseSpansOptions = {
-  amt: number;
+  batchSize: number;
   key: string;
   globalFilter: string | undefined;
   columnFilters: ColumnFiltersState;
@@ -33,15 +31,15 @@ type UseSpansOptions = {
 };
 
 export const useSpans = ({
-  amt,
+  batchSize: batchSize,
   key,
   columnFilters,
   globalFilter,
   sorting,
 }: UseSpansOptions) => {
   return useInfiniteQuery<ExtractFnReturnType<QueryFnType>>(
-    [SPANS_QUERY_KEY, columnFilters, globalFilter, sorting],
-    ({ pageParam = null }) => getSpans(amt, pageParam, key),
+    ["spans", columnFilters, globalFilter, sorting],
+    ({ pageParam = null }) => getSpans(batchSize, pageParam, key),
     {
       getNextPageParam: (lastPage) =>
         lastPage.length ? lastPage[lastPage.length - 1] : undefined,

@@ -8,7 +8,8 @@ import { PromiseValue } from "type-fest";
 const queryConfig: DefaultOptions = {};
 export const queryClient = new QueryClient({ defaultOptions: queryConfig });
 
-export type ExtractFnReturnType<FnType extends (...args: any) => any> = // eslint-disable-line @typescript-eslint/no-explicit-any
+// eslint-disable=next-line @typescript-eslint/no-explicit-any
+export type ExtractFnReturnType<FnType extends (...args: any) => any> =
   PromiseValue<ReturnType<FnType>>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

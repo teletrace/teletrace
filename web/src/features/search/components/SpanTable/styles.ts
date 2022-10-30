@@ -3,7 +3,9 @@ const styles = {
     height: "100%",
   },
   header: {
-    backgroundColor: "rgba(43, 45, 50, 1)",
+    "& tr:nth-of-type(odd)": {
+        backgroundColor: "rgba(43, 45, 50, 1)",
+    }
   },
 };
 
