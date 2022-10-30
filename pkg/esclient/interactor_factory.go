@@ -22,16 +22,15 @@ func NewInteractor(logger *zap.Logger, cfg interactor.ElasticConfig) (*interacto
 		return nil, fmt.Errorf("failed to create a raw client: %v", err)
 	}
 
-	//TODO allow choosing which api to use
-	indexTemplateController := typedreqinteractor.NewIndexTemplateController(typedApiClient)
-	componentTemplateController := typedreqinteractor.NewComponentTemplateController(typedApiClient)
-	documentController := rawreqinteractor.NewDocumentController(rawApiClient, cfg.Index)
-	tagsController := rawreqinteractor.NewTagsController(rawApiClient, cfg.Index)
+	itc := NewIndexTemplateController(rawApiClient, typedApiClient)
+	ctc := NewComponentTemplateController(rawApiClient, typedApiClient)
+	dc := NewDocumentController(rawApiClient, typedApiClient, cfg.Index)
+	tc := NewTagsController(rawApiClient, typedApiClient, cfg.Index)
 
 	return &interactor.Interactor{
-		IndexTemplateController:     indexTemplateController,
-		ComponentTemplateController: componentTemplateController,
-		DocumentController:          documentController,
-		TagsController:              tagsController,
+		IndexTemplateController:     itc,
+		ComponentTemplateController: ctc,
+		DocumentController:          dc,
+		TagsController:              tc,
 	}, nil
 }
