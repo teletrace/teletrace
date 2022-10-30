@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"oss-tracing/pkg/model"
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
 
 type Doc any
@@ -54,6 +55,7 @@ type ComponentTemplateController interface {
 
 type DocumentController interface {
 	Bulk(ctx context.Context, docs ...*Doc) error
+	Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error)
 }
 
 type TagsController interface {
