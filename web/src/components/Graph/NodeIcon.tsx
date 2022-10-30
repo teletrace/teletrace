@@ -1,11 +1,11 @@
 import { memo } from "react";
 
-interface IconInterface {
+interface Icon {
   name: string;
   image: string;
 }
 
-const NodeIcon = ({ name, image }: Readonly<IconInterface>) => {
+const NodeIcon = ({ name, image }: Readonly<Icon>) => {
   return (
     <img
       style={{

@@ -16,15 +16,29 @@ import { Loader } from "@/components/Elements/Loader";
 import BasicEdge from "@/components/Graph/BasicEdge";
 import BasicNode from "@/components/Graph/BasicNode";
 import { getLayoutElements } from "@/components/Graph/utils/dynamic_layout";
+import {
+  basicEdgeType,
+  basicNodeType,
+  position,
+} from "@/components/Graph/utils/global";
 
 import "reactflow/dist/style.css";
 
-const position = { x: 0, y: 0 };
+interface NodeData {
+  name: string;
+  image: string;
+  type: string;
+}
 
-export const initialNodes: Node[] = [
+interface EdgeData {
+  time: string;
+  count?: number;
+}
+
+export const initialNodes: Node<NodeData>[] = [
   {
     id: "1",
-    type: "basicNode",
+    type: basicNodeType,
     data: {
       name: "/checkout",
       image:
@@ -37,7 +51,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: "2",
-    type: "basicNode",
+    type: basicNodeType,
     data: {
       name: "/invoices",
       image:
@@ -50,7 +64,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: "3",
-    type: "basicNode",
+    type: basicNodeType,
     data: {
       name: "update-subscription",
       image:
@@ -63,7 +77,7 @@ export const initialNodes: Node[] = [
   },
   {
     id: "4",
-    type: "basicNode",
+    type: basicNodeType,
     data: {
       name: "/payment",
       image:
@@ -76,20 +90,19 @@ export const initialNodes: Node[] = [
   },
 ];
 
-export const initialEdges: Edge[] = [
+export const initialEdges: Edge<EdgeData>[] = [
   {
     id: "e1-2",
-    type: "basicEdge",
+    type: basicEdgeType,
     source: "1",
     target: "2",
-    animated: false,
     label: "2",
     data: { time: "20ms", count: 2 },
     markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
   },
   {
     id: "e2-3",
-    type: "basicEdge",
+    type: basicEdgeType,
     source: "2",
     target: "3",
     label: "3",
@@ -98,7 +111,7 @@ export const initialEdges: Edge[] = [
   },
   {
     id: "e2-4",
-    type: "basicEdge",
+    type: basicEdgeType,
     source: "2",
     target: "4",
     label: "4",
