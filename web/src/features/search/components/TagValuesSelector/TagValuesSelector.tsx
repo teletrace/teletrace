@@ -47,7 +47,7 @@ export const TagValuesSelector = ({
     }));
 
   return (
-    <div style={{ width: 300 }}>
+    <div>
       <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
         <Stack direction="row">
           <AccordionSummary
