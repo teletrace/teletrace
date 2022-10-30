@@ -1,7 +1,10 @@
 import { graphlib, layout } from "dagre";
 import { Edge, Node } from "reactflow";
 
-import { initialEdges, initialNodes } from "@/models";
+import {
+  initialEdges,
+  initialNodes,
+} from "@/features/trace/components/TraceGraph";
 
 const dagreGraph = new graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
