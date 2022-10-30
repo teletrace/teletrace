@@ -21,20 +21,10 @@ export function StatusBadge({
   text,
   customColor = "white",
 }: StatusBadgeProps) {
-  const customColorAndBackgroundColor = customColor && {
-    background: customColor,
-  };
-  const colorOrCustomColor = !color && customColorAndBackgroundColor;
-
   return (
     <Badge
       variant="dot"
-      sx={{
-        "& .MuiBadge-anchorOriginTopLeftRectangular": {
-          ...colorOrCustomColor,
-          ...styles.badge,
-        },
-      }}
+      sx={styles.badge(color ?? customColor)}
       anchorOrigin={{
         horizontal: "left",
         vertical: "top",
