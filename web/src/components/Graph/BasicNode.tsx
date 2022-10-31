@@ -21,7 +21,7 @@ const BasicNode = ({ data }: NodeProps) => {
       />
       <Box sx={styles.nodeStyle.nodeBox}>
         <Box sx={styles.nodeStyle.nodeIconBox}>
-          <NodeIcon name={data.name} image={data.image} />
+          <NodeIcon name={data.image} />
         </Box>
         <Box sx={styles.nodeStyle.nodeText}>
           <Box sx={styles.nodeStyle.textContainer}>{data.name} </Box>

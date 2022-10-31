@@ -1,20 +1,28 @@
-import { memo } from "react";
+import React from "react";
 
-interface Icon {
+import { ReactComponent as ApiGatewayEndpoint } from "@/styles/icons/ApiGatewayEndpoint.svg";
+import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
+import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
+
+interface IconComponentProps {
   name: string;
-  image: string;
 }
 
-const NodeIcon = ({ name, image }: Readonly<Icon>) => {
-  return (
-    <img
-      style={{
-        inset: "4.17%",
-      }}
-      alt={name}
-      src={`data:image/svg+xml;utf8,${encodeURIComponent(image)}`}
-    />
-  );
+type ReactSVGComponent = React.FunctionComponent<
+  React.SVGProps<SVGSVGElement> & { title?: string }
+>;
+
+type IconTypes = { [name: string]: ReactSVGComponent };
+
+const iconTypes: IconTypes = {
+  LambdaFunction: LambdaFunction,
+  ApiGatewayEndpoint: ApiGatewayEndpoint,
+  IoTHTTP2Protocol: IoTHTTP2Protocol,
 };
 
-export default memo(NodeIcon);
+const NodeIcon = ({ name }: IconComponentProps) => {
+  const Icon = iconTypes[name];
+  return Icon ? <Icon height={30} width={30} /> : <div></div>;
+};
+
+export default NodeIcon;
