@@ -23,6 +23,24 @@ const (
 	httpEndpointEnvName = "HTTP_ENDPOINT"
 	httpEndpointDefault = "0.0.0.0:4318"
 
+	otlpQueueSizeEnvName = "OTLP_QUEUE_SIZE"
+	otlpQueueSizeDefault = 1000
+
+	otlpQueueWorkersEnvName = "OTLP_QUEUE_WORKERS"
+	otlpQueueWorkersDefault = 1
+
+	otlpQueueShutdownTimeoutSecondsEnvName = "OTLP_QUEUE_SHUTDOWN_TIMEOUT_SECONDS"
+	otlpQueueShutdownTimeoutSecondsDefault = 60
+
+	spansQueueSizeEnvName = "SPANS_QUEUE_SIZE"
+	spansQueueSizeDefault = 1000
+
+	spansQueueWorkersEnvName = "SPANS_QUEUE_WORKERS"
+	spansQueueWorkersDefault = 10
+
+	spansQueueShutdownTimeoutSecondsEnvName = "SPANS_QUEUE_SHUTDOWN_TIMEOUT_SECONDS"
+	spansQueueShutdownTimeoutSecondsDefault = 120
+
 	esEndpointEnvName = "ES_ENDPOINT"
 	esEndpointDefault = "http://0.0.0.0:9200"
 
@@ -47,10 +65,16 @@ const (
 
 // Config defines global configurations used throughout the application.
 type Config struct {
-	Debug        bool   `mapstructure:"debug"`
-	APIPort      int    `mapstructure:"api_port"`
-	GRPCEndpoint string `mapstructure:"grpc_endpoint"`
-	HTTPEndpoint string `mapstructure:"http_endpoint"`
+	Debug                            bool   `mapstructure:"debug"`
+	APIPort                          int    `mapstructure:"api_port"`
+	GRPCEndpoint                     string `mapstructure:"grpc_endpoint"`
+	HTTPEndpoint                     string `mapstructure:"http_endpoint"`
+	OTLPQueueSize                    int    `mapstructure:"otlp_queue_size"`
+	OTLPQueueWorkers                 int    `mapstructure:"otlp_queue_workers"`
+	OTLPQueueShutdownTimeoutSeconds  int    `mapstructure:"otlp_queue_shutdown_timeout_seconds"`
+	SpansQueueSize                   int    `mapstructure:"spans_queue_size"`
+	SpansQueueWorkers                int    `mapstructure:"spans_queue_workers"`
+	SpansQueueShutdownTimeoutSeconds int    `mapstructure:"spans_queue_shutdown_timeout_seconds"`
 
 	// Elasticsearch configs
 	ESEndpoints         string `mapstructure:"es_endpoint"`
@@ -97,6 +121,14 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(apiPortEnvName, apiPortDefault)
 	v.SetDefault(grpcEndpointEnvName, grpcEndpointDefault)
 	v.SetDefault(httpEndpointEnvName, httpEndpointDefault)
+	v.SetDefault(otlpQueueSizeEnvName, otlpQueueSizeDefault)
+	v.SetDefault(otlpQueueWorkersEnvName, otlpQueueWorkersDefault)
+	v.SetDefault(otlpQueueShutdownTimeoutSecondsEnvName, otlpQueueShutdownTimeoutSecondsDefault)
+	v.SetDefault(spansQueueSizeEnvName, spansQueueSizeDefault)
+	v.SetDefault(spansQueueWorkersEnvName, spansQueueWorkersDefault)
+	v.SetDefault(spansQueueShutdownTimeoutSecondsEnvName, spansQueueShutdownTimeoutSecondsDefault)
+
+	// Elasticsearch defaults
 	v.SetDefault(esEndpointEnvName, esEndpointDefault)
 	v.SetDefault(esUsernameEnvName, esUsernameDefault)
 	v.SetDefault(esPasswordEnvName, esPasswordDefault)
