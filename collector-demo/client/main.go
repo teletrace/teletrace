@@ -78,7 +78,7 @@ func initProvider() func() {
 		otlptracegrpc.WithInsecure(),
 		otlptracegrpc.WithEndpoint(otelAgentAddr),
 		otlptracegrpc.WithDialOption(grpc.WithBlock()))
-	sctx, cancel := context.WithTimeout(ctx, time.Second)
+	sctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 	traceExp, err := otlptrace.New(sctx, traceClient)
 	handleErr(err, "Failed to create the collector trace exporter")
