@@ -7,11 +7,12 @@ import (
 	"os/signal"
 	"syscall"
 
+	"oss-tracing/cmd/collector/app"
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
-	"oss-tracing/pkg/receiver"
+	"oss-tracing/plugin/spanstorage/es"
 
-	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 )
 
@@ -27,31 +28,39 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	receiver, err := receiver.NewReceiver(cfg, logger, fakeTracesProcessor)
+	storage, err := es.NewStorage(context.Background(), logger, getElasticConfig(cfg))
 	if err != nil {
-		logger.Fatal("Failed to initialize receiver", zap.Error(err))
+		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
+	}
+
+	collector, err := app.NewCollector(cfg, logger, storage)
+	if err != nil {
+		logger.Fatal("Failed to initialize collector", zap.Error(err))
+	}
+
+	if err := collector.Start(); err != nil {
+		logger.Fatal("Failed to start collector", zap.Error(err))
 	}
 
 	signalsChan := make(chan os.Signal, 1)
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
-
-	if err := receiver.Start(); err != nil {
-		logger.Fatal("Could not start receiver", zap.Error(err))
-	}
 
 	for sig := range signalsChan {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
 		break
 	}
 
-	if err := receiver.Shutdown(); err != nil {
-		logger.Fatal("Failed to gracefully shut down receiver", zap.Error(err))
-	}
+	collector.Stop()
 }
 
-// This is an example traces processor function.
-// It should be replaces with the actual implementation once it's ready.
-func fakeTracesProcessor(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
-	logger.Info("Received spans", zap.Int("span_count", td.SpanCount()))
-	return nil
+func getElasticConfig(cfg config.Config) interactor.ElasticConfig {
+	return interactor.ElasticConfig{
+		Endpoint:     cfg.ESEndpoints,
+		Username:     cfg.ESUsername,
+		Password:     cfg.ESPassword,
+		ApiKey:       cfg.ESAPIKey,
+		ServiceToken: cfg.ESServiceToken,
+		ForceCreate:  cfg.ESForceCreateConfig,
+		Index:        cfg.ESIndex,
+	}
 }
