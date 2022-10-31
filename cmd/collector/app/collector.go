@@ -15,6 +15,8 @@ import (
 	"go.uber.org/zap"
 )
 
+// Collector holds the config used for running the collector
+// as well as methods to run and stop it.
 type Collector struct {
 	cfg         config.Config
 	logger      *zap.Logger
@@ -24,6 +26,7 @@ type Collector struct {
 	spanStorage storage.Storage
 }
 
+// NewCollector creates the relevant collector components and returns a new Collector instance.
 func NewCollector(cfg config.Config, logger *zap.Logger, spanStorage storage.Storage) (*Collector, error) {
 	otlpQueue, err := queue.NewBoundedQueue(cfg.OTLPQueueSize)
 	if err != nil {
@@ -60,6 +63,7 @@ func getOTLPEnqueuer(otlpQueue *queue.BoundedQueue) func(ctx context.Context, lo
 	}
 }
 
+// Start runs the collector components and starts the spans ingestion process.
 func (c *Collector) Start() error {
 	if err := c.spanStorage.Initialize(); err != nil {
 		return fmt.Errorf("failed to initialize spans storage: %w", err)
@@ -99,6 +103,8 @@ func (c *Collector) getSpansWriterConsumer() func(item interface{}) {
 	}
 }
 
+// Stop attempts to gracefully stop all of the collector components.
+// Blocks until all components are stopped or times out.
 func (c *Collector) Stop() {
 	if err := c.receiver.Shutdown(); err != nil {
 		c.logger.Error("Failed to gracefully shut down receiver", zap.Error(err))
