@@ -28,7 +28,7 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	storage, err := es.NewStorage(context.Background(), logger, getElasticConfig(cfg))
+	storage, err := es.NewStorage(context.Background(), logger, interactor.NewElasticConfig(cfg))
 	if err != nil {
 		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
 	}
@@ -38,12 +38,12 @@ func main() {
 		logger.Fatal("Failed to initialize collector", zap.Error(err))
 	}
 
+	signalsChan := make(chan os.Signal, 1)
+	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
+
 	if err := collector.Start(); err != nil {
 		logger.Fatal("Failed to start collector", zap.Error(err))
 	}
-
-	signalsChan := make(chan os.Signal, 1)
-	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
 
 	for sig := range signalsChan {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
@@ -51,16 +51,4 @@ func main() {
 	}
 
 	collector.Stop()
-}
-
-func getElasticConfig(cfg config.Config) interactor.ElasticConfig {
-	return interactor.ElasticConfig{
-		Endpoint:     cfg.ESEndpoints,
-		Username:     cfg.ESUsername,
-		Password:     cfg.ESPassword,
-		ApiKey:       cfg.ESAPIKey,
-		ServiceToken: cfg.ESServiceToken,
-		ForceCreate:  cfg.ESForceCreateConfig,
-		Index:        cfg.ESIndex,
-	}
 }
