@@ -11,13 +11,7 @@ const BasicNode = ({ data }: NodeProps) => {
       <Handle
         type="target"
         position={Position.Top}
-        style={{
-          width: 0,
-          height: 0,
-          minHeight: 0,
-          minWidth: 0,
-          borderColor: "transparent",
-        }}
+        style={{ visibility: "hidden" }}
       />
       <Box sx={styles.nodeStyle.nodeBox}>
         <Box sx={styles.nodeStyle.nodeIconBox}>
@@ -32,13 +26,7 @@ const BasicNode = ({ data }: NodeProps) => {
         type="source"
         position={Position.Bottom}
         id="a"
-        style={{
-          width: 0,
-          height: 0,
-          minHeight: 0,
-          minWidth: 0,
-          borderColor: "transparent",
-        }}
+        style={{ visibility: "hidden" }}
       />
     </>
   );

@@ -12,7 +12,6 @@ const styles = {
     },
 
     counterContainer: {
-      boxSizing: "border-box",
       background: "#3b3c42",
       border: "0.063rem solid #96979e",
       borderRadius: "0.125rem",
@@ -27,12 +26,10 @@ const styles = {
       alignItems: "center",
     },
     nodeIconBox: {
-      boxSizing: "border-box",
       display: "flex",
       flexDirection: "row",
       justifyContent: "center",
       padding: "12px",
-      gap: "10px",
       width: "56px",
       height: "56px",
 
@@ -51,7 +48,6 @@ const styles = {
     nodeText: {
       display: "flex",
       flexDirection: "column",
-      flexWrap: "nowrap",
       justifyContent: "center",
     },
     textContainer: {
