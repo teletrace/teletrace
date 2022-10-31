@@ -31,6 +31,14 @@ Download and install docker in your machine from [here](https://docs.docker.com/
 
 The examples assumes that you are in the root folder
 
+Using docker-compose:
+
+```sh
+docker-compose -f deploy/docker-compose/docker-compose.yml up
+```
+
+Alternatively, using docker CLI:
+
 ```sh
 docker build -f cmd/all-in-one/Dockerfile -t oss-tracing:latest .
 docker run -p 8080:8080 -p 4317:4317 -p 4318:4318 oss-tracing:latest
