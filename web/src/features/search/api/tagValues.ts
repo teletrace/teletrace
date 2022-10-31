@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { TagValue } from "../types/tagValues";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getTagValues = (tag: string): Promise<TagValue[]> => {
   // TODO: this is a temp mock data, when the API is created, update this function
   return new Promise<TagValue[]>((resolve) => {

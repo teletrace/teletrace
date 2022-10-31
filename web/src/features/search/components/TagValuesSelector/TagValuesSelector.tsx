@@ -11,13 +11,13 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-import { useTagValues } from "../../api/tagValues";
-import { TagValue } from "../../types/tagValues";
-import { styles } from "./styles";
-
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
+
+import { useTagValues } from "../../api/tagValues";
+import { TagValue } from "../../types/tagValues";
+import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
   tag: string;
