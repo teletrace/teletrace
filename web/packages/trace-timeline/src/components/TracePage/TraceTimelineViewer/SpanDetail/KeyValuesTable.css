@@ -1,0 +1,45 @@
+.KeyValueTable {
+  background: #fff;
+  border: 1px solid #ddd;
+  margin-bottom: 0.7em;
+  max-height: 450px;
+  overflow: auto;
+}
+
+.KeyValueTable--body {
+  vertical-align: baseline;
+}
+
+.KeyValueTable--row > td {
+  padding: 0.25rem 0.5rem;
+}
+
+.KeyValueTable--row:nth-child(2n) > td {
+  background: #f5f5f5;
+}
+
+.KeyValueTable--keyColumn {
+  color: #888;
+  white-space: pre;
+  width: 125px;
+}
+
+.KeyValueTable--copyColumn {
+  text-align: right;
+}
+
+.KeyValueTable--row:not(:hover)
+  > .KeyValueTable--copyColumn
+  > .KeyValueTable--copyIcon {
+  visibility: hidden;
+}
+
+.KeyValueTable--row > td {
+  padding: 0.25rem 0.5rem;
+  vertical-align: top;
+}
+
+.KeyValueTable--linkIcon {
+  vertical-align: middle;
+  font-weight: bold;
+}

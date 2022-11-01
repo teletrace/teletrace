@@ -1,0 +1,24 @@
+.Ticks {
+  pointer-events: none;
+}
+
+.Ticks--tick {
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background: #d8d8d8;
+}
+
+.Ticks--tick:last-child {
+  width: 0;
+}
+
+.Ticks--tickLabel {
+  left: 0.25rem;
+  position: absolute;
+}
+
+.Ticks--tickLabel.isEndAnchor {
+  left: initial;
+  right: 0.25rem;
+}

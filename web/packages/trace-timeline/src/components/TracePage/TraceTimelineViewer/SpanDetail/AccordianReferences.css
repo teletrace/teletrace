@@ -1,0 +1,44 @@
+.ReferencesList--List {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+}
+.ReferencesList {
+  background: #fff;
+  border: 1px solid #ddd;
+  margin-bottom: 0.7em;
+  max-height: 450px;
+  overflow: auto;
+}
+
+.ReferencesList--itemContent {
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.ReferencesList--itemContent > a {
+  width: 100%;
+  display: inline-block;
+}
+
+.ReferencesList--Item:nth-child(2n) {
+  background: #f5f5f5;
+}
+
+.SpanReference--debugInfo {
+  letter-spacing: 0.25px;
+  margin: 0.5em 0 0;
+}
+
+.SpanReference--debugLabel::before {
+  color: #bbb;
+  content: attr(data-label);
+}
+
+.SpanReference--debugLabel {
+  margin: 0 5px 0 5px;
+}

@@ -1,0 +1,14 @@
+.CopyIcon,
+.CopyIcon:hover {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  height: 100%;
+  overflow: hidden;
+  padding: 0px;
+}
+
+.CopyIcon:focus {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: inherit;
+}

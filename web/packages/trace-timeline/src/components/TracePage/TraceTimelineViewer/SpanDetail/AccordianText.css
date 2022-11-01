@@ -1,0 +1,11 @@
+.AccordianText--header {
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0.25em 0.1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.AccordianText--header:hover {
+  background: #e8e8e8;
+}
