@@ -2,10 +2,10 @@ import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 
 import { Head } from "@/components/Head";
+import { Timeframe } from "@/types/spans/spanQuery";
 
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable/index";
-import { Timeframe } from "@/types/spans/spanQuery";
 
 export const SpanSearch = () => {
   const now = new Date().valueOf();

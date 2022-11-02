@@ -6,8 +6,9 @@ import MaterialReactTable, {
 } from "material-react-table";
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react";
 
+import { SearchFilter, Timeframe } from "@/types/spans/spanQuery";
+
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/spanQuery";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
