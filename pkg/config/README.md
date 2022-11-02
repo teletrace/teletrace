@@ -8,8 +8,8 @@ Its main purpose is loading config options from multiple sources (default values
 ```
 DEBUG - (default: true) Whether to run in debug (development) mode for extra debug info
 API_PORT - (default: 8080) API server port
-GRPC_ENDPOINT - (default: 0.0.0.0:4317) gRPC collector receiver port
-HTTP_ENDPOINT - (default: 0.0.0.0:4318) HTTP collector receiver port
+GRPC_ENDPOINT - (default: 0.0.0.0:4317) OTLP/gRPC collector receiver port
+HTTP_ENDPOINT - (default: 0.0.0.0:4318) OTLP/HTTP collector receiver port
 ```
 
 ## Config Sources

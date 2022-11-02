@@ -1,4 +1,4 @@
-package receiver
+package otlpreceiver
 
 import (
 	"context"
@@ -16,8 +16,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// Receiver handles incoming OTLP traces and registers consumers
-type Receiver struct {
+// otlpReceiver handles incoming OTLP traces and registers consumers
+type OtlpReceiver struct {
 	logger   *zap.Logger
 	receiver component.TracesReceiver
 }
@@ -25,7 +25,7 @@ type Receiver struct {
 // TracesProcessor consumes the received OTLP traces
 type TracesProcessor func(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error
 
-func NewReceiver(cfg config.Config, logger *zap.Logger, tracesProcessor TracesProcessor) (*Receiver, error) {
+func NewOtlpReceiver(cfg config.Config, logger *zap.Logger, tracesProcessor TracesProcessor) (*OtlpReceiver, error) {
 	otlpFactory := otlpreceiver.NewFactory()
 	otlpSettings := getOtlpReceiverSettings(logger)
 	otlpConfig := getOtlpReceiverConfig(otlpFactory, cfg)
@@ -35,16 +35,16 @@ func NewReceiver(cfg config.Config, logger *zap.Logger, tracesProcessor TracesPr
 		return nil, fmt.Errorf("could not create OTLP consumer: %w", err)
 	}
 
-	otlpReceiver, err := otlpFactory.CreateTracesReceiver(
+	receiver, err := otlpFactory.CreateTracesReceiver(
 		context.Background(), otlpSettings, otlpConfig, otlpConsumer,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("could not create OTLP receiver: %w", err)
 	}
 
-	return &Receiver{
+	return &OtlpReceiver{
 		logger:   logger,
-		receiver: otlpReceiver,
+		receiver: receiver,
 	}, nil
 }
 
@@ -72,7 +72,7 @@ func wrapWithLogger(tracesProcessor TracesProcessor, logger *zap.Logger) func(ct
 }
 
 // Start runs the receiver in the background
-func (r *Receiver) Start() error {
+func (r *OtlpReceiver) Start() error {
 	err := r.receiver.Start(context.Background(), &otelHost{logger: r.logger})
 	if err != nil {
 		return fmt.Errorf("could not start OTLP receiver: %w", err)
@@ -102,7 +102,7 @@ func (*otelHost) GetExporters() map[otelcfg.DataType]map[otelcfg.ComponentID]com
 }
 
 // Shutdown stops and gracefully shuts down the receiver
-func (r *Receiver) Shutdown() error {
+func (r *OtlpReceiver) Shutdown() error {
 	timeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := r.receiver.Shutdown(timeout); err != nil {
