@@ -14,7 +14,5 @@ export const useSpansQuery = (searchRequest: SearchRequest) => {
     queryKey: ["spans", searchRequest],
     queryFn: ({ pageParam }) => fetchSpans({ pageParam, searchRequest }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
-    keepPreviousData: true,
-    refetchOnWindowFocus: false,
   });
 };
