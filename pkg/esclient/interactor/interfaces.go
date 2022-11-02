@@ -9,13 +9,15 @@ import (
 type Doc any
 
 type ElasticConfig struct {
-	Endpoint     string
-	Username     string
-	Password     string
-	ApiKey       string
-	ServiceToken string
-	ForceCreate  bool
-	Index        string
+	Endpoint       string
+	Username       string
+	Password       string
+	ApiKey         string
+	ServiceToken   string
+	ForceCreate    bool
+	Index          string
+	IndexerWorkers int
+	IndexerTimeout int
 }
 
 type ExistsResponse struct {

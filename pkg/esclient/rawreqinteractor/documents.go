@@ -11,14 +11,14 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 )
 
-func NewBulkIndexer(c Client, idx string) (esutil.BulkIndexer, error) {
+func NewBulkIndexer(c Client, idx string, numWorkers int, flushInt int) (esutil.BulkIndexer, error) {
 	var err error
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:         idx,
 		Client:        c.Client,
-		NumWorkers:    1,
-		FlushInterval: 30 * time.Second,
+		NumWorkers:    numWorkers,
+		FlushInterval: time.Duration(flushInt) * time.Second,
 	})
 
 	if err != nil {
@@ -26,19 +26,6 @@ func NewBulkIndexer(c Client, idx string) (esutil.BulkIndexer, error) {
 	}
 
 	return bi, nil
-}
-
-func Close(ctx context.Context, c Client, bi esutil.BulkIndexer) error {
-	err := bi.Close(context.Background())
-
-	if err != nil {
-		return fmt.Errorf("Could not close the Bulk Indexer: %+v", err)
-	}
-
-	biStats := bi.Stats()
-	c.Logger.Sugar().Debugf("BiStats: %+v", biStats)
-
-	return nil
 }
 
 func AddToBulk(ctx context.Context, c Client, bi esutil.BulkIndexer, docs ...*interactor.Doc) error {
@@ -72,6 +59,19 @@ func AddToBulk(ctx context.Context, c Client, bi esutil.BulkIndexer, docs ...*in
 		}
 
 	}
+
+	return nil
+}
+
+func Close(ctx context.Context, c Client, bi esutil.BulkIndexer) error {
+	err := bi.Close(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("Could not close the Bulk Indexer: %+v", err)
+	}
+
+	biStats := bi.Stats()
+	c.Logger.Sugar().Debugf("BiStats: %+v", biStats)
 
 	return nil
 }

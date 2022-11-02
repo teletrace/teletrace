@@ -18,8 +18,8 @@ type documentController struct {
 	bulkIndexer esutil.BulkIndexer
 }
 
-func NewDocumentController(rc *rawreqinteractor.Client, tc *typedreqinteractor.Client, idx string) (*documentController, error) {
-	bi, err := rawreqinteractor.NewBulkIndexer(*rc, idx)
+func NewDocumentController(rc *rawreqinteractor.Client, tc *typedreqinteractor.Client, idx string, indexerWorkers int, indexerTimeout int) (*documentController, error) {
+	bi, err := rawreqinteractor.NewBulkIndexer(*rc, idx, indexerWorkers, indexerTimeout)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not create bulk indexer: %+v", err)

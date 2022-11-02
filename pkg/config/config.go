@@ -61,6 +61,12 @@ const (
 
 	esIndexEnvName = "ES_INDEX"
 	esIndexDefault = "lupa-spans"
+
+	esIndexerWorkersEnvName = "ES_INDEXER_WORKERS"
+	esIndexerWorkersDefault = 5
+
+	esIndexerTimeoutEnvName = "ES_INDEXER_TIMEOUT"
+	esIndexerTimeoutDefault = 30
 )
 
 // Config defines global configurations used throughout the application.
@@ -84,6 +90,8 @@ type Config struct {
 	ESServiceToken      string `mapstructure:"es_service_token"`
 	ESForceCreateConfig bool   `mapstructure:"es_force_create_config"`
 	ESIndex             string `mapstructure:"es_index"`
+	ESIndexerWorkers    int    `mapstructure:"es_indexer_workers"`
+	ESIndexerTimeout    int    `mapstructure:"es_indexer_timeout"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -136,4 +144,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esServiceTokenEnvName, esServiceTokenDefault)
 	v.SetDefault(esForceCreateConfigEnvName, esForceCreateConfigDefault)
 	v.SetDefault(esIndexEnvName, esIndexDefault)
+	v.SetDefault(esIndexerWorkersEnvName, esIndexerWorkersDefault)
+	v.SetDefault(esIndexerTimeoutEnvName, esIndexerTimeoutDefault)
 }
