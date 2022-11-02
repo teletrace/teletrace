@@ -5,7 +5,14 @@ import { Handle, NodeProps, Position } from "reactflow";
 import NodeIcon from "./NodeIcon";
 import styles from "./styles";
 
-const BasicNode = ({ data }: NodeProps) => {
+interface BasicNodeProps {
+  image: string;
+  name: string;
+  type: string;
+}
+
+const BasicNode = (props: NodeProps<BasicNodeProps>) => {
+  const { image, name, type } = props.data;
   return (
     <>
       <Handle
@@ -15,11 +22,11 @@ const BasicNode = ({ data }: NodeProps) => {
       />
       <Box sx={styles.nodeStyle.nodeBox}>
         <Box sx={styles.nodeStyle.nodeIconBox}>
-          <NodeIcon name={data.image} />
+          <NodeIcon name={image} />
         </Box>
         <Box sx={styles.nodeStyle.nodeText}>
-          <Box sx={styles.nodeStyle.textContainer}>{data.name} </Box>
-          <Box sx={styles.nodeStyle.textContainer}> {data.type} </Box>
+          <Box sx={styles.nodeStyle.textContainer}>{name} </Box>
+          <Box sx={styles.nodeStyle.textContainer}> {type} </Box>
         </Box>
       </Box>
       <Handle

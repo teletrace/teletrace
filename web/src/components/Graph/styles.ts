@@ -2,7 +2,6 @@ const styles = {
   edgeStyle: {
     edgeLabelContainer: {
       position: "absolute",
-      pointerEvents: "all",
       background: "#1e1e1e",
     },
 
@@ -32,17 +31,9 @@ const styles = {
       padding: "12px",
       width: "56px",
       height: "56px",
-
-      background: "#0b0b0d",
-
+      background: "transparent",
       border: "1px solid #5a5b61",
-      boxShadow:
-        "0px 11px 15px rgba(0, 0, 0, 0.2), 0px 9px 46px rgba(0, 0, 0, 0.12),0px 24px 38px rgba(0, 0, 0, 0.14)",
       borderRadius: "32px",
-
-      flex: "none",
-      order: "0",
-      flexGrow: "0",
       marginBottom: "5px",
     },
     nodeText: {
@@ -54,7 +45,6 @@ const styles = {
       height: 24,
       fontWeight: 600,
       fontSize: 16,
-      lineHeight: 24,
       display: "flex",
       alignItems: "center",
       letterSpacing: 0.15,

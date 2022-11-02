@@ -20,7 +20,8 @@ const iconTypes: IconTypes = {
   IoTHTTP2Protocol: IoTHTTP2Protocol,
 };
 
-const NodeIcon = ({ name }: IconComponentProps) => {
+const NodeIcon = (data: IconComponentProps) => {
+  const { name } = data;
   const Icon = iconTypes[name];
   return Icon ? <Icon height={30} width={30} /> : <div></div>;
 };
