@@ -36,7 +36,17 @@ func main() {
 		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
 	}
 
-	collector, err := app.NewCollector(cfg, logger, storage)
+	sw, err := storage.CreateSpanWriter()
+	if err != nil {
+		logger.Fatal("Failed to create Span Writer to Storage", zap.Error(err))
+	}
+
+	rw, err := storage.CreateSpanReader()
+	if err != nil {
+		logger.Fatal("Failed to create Span Reader from Storage", zap.Error(err))
+	}
+
+	collector, err := app.NewCollector(cfg, logger, &sw, &rw)
 	if err != nil {
 		logger.Fatal("Failed to initialize collector", zap.Error(err))
 	}
@@ -53,6 +63,7 @@ func main() {
 	}
 
 	collector.Stop()
+	sw.Close(context.Background())
 }
 
 func startAPI(logger *zap.Logger, api *api.API) {
