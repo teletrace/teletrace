@@ -48,16 +48,13 @@ export const TraceTags = () => {
                 flexDirection: "column",
                 paddingLeft: 1.5,
                 paddingRight: 1.5,
-              }}
-              style={{
                 display: "center",
                 alignSelf: "center",
                 flexWrap: "wrap",
               }}
             >
               <SvgIcon
-                sx={{ fontSize: 30 }}
-                style={{ fill: "none", stroke: "#3F8624" }}
+                sx={{ fontSize: 30, fill: "none", stroke: "#3F8624" }}
               >
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
               </SvgIcon>
@@ -68,8 +65,7 @@ export const TraceTags = () => {
                 }}
               />
               <SvgIcon
-                sx={{ fontSize: 30 }}
-                style={{ fill: "none", stroke: "#D45B07" }}
+                sx={{ fontSize: 30, fill: "none", stroke: "#D45B07"  }}
               >
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
               </SvgIcon>
