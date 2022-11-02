@@ -26,8 +26,8 @@ const (
 	otlpQueueSizeEnvName = "OTLP_QUEUE_SIZE"
 	otlpQueueSizeDefault = 1000
 
-	otlpQueueWorkersEnvName = "OTLP_QUEUE_WORKERS"
-	otlpQueueWorkersDefault = 1
+	otlpQueueWorkersCountEnvName = "OTLP_QUEUE_WORKERS_COUNT"
+	otlpQueueWorkersCountDefault = 1
 
 	otlpQueueShutdownTimeoutSecondsEnvName = "OTLP_QUEUE_SHUTDOWN_TIMEOUT_SECONDS"
 	otlpQueueShutdownTimeoutSecondsDefault = 60
@@ -35,8 +35,8 @@ const (
 	spansQueueSizeEnvName = "SPANS_QUEUE_SIZE"
 	spansQueueSizeDefault = 1000
 
-	spansQueueWorkersEnvName = "SPANS_QUEUE_WORKERS"
-	spansQueueWorkersDefault = 10
+	spansQueueWorkersCountEnvName = "SPANS_QUEUE_WORKERS_COUNT"
+	spansQueueWorkersCountDefault = 10
 
 	spansQueueShutdownTimeoutSecondsEnvName = "SPANS_QUEUE_SHUTDOWN_TIMEOUT_SECONDS"
 	spansQueueShutdownTimeoutSecondsDefault = 120
@@ -70,10 +70,10 @@ type Config struct {
 	GRPCEndpoint                     string `mapstructure:"grpc_endpoint"`
 	HTTPEndpoint                     string `mapstructure:"http_endpoint"`
 	OTLPQueueSize                    int    `mapstructure:"otlp_queue_size"`
-	OTLPQueueWorkers                 int    `mapstructure:"otlp_queue_workers"`
+	OTLPQueueWorkersCount            int    `mapstructure:"otlp_queue_workers_count"`
 	OTLPQueueShutdownTimeoutSeconds  int    `mapstructure:"otlp_queue_shutdown_timeout_seconds"`
 	SpansQueueSize                   int    `mapstructure:"spans_queue_size"`
-	SpansQueueWorkers                int    `mapstructure:"spans_queue_workers"`
+	SpansQueueWorkersCount           int    `mapstructure:"spans_queue_workers_count"`
 	SpansQueueShutdownTimeoutSeconds int    `mapstructure:"spans_queue_shutdown_timeout_seconds"`
 
 	// Elasticsearch configs
@@ -122,10 +122,10 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(grpcEndpointEnvName, grpcEndpointDefault)
 	v.SetDefault(httpEndpointEnvName, httpEndpointDefault)
 	v.SetDefault(otlpQueueSizeEnvName, otlpQueueSizeDefault)
-	v.SetDefault(otlpQueueWorkersEnvName, otlpQueueWorkersDefault)
+	v.SetDefault(otlpQueueWorkersCountEnvName, otlpQueueWorkersCountDefault)
 	v.SetDefault(otlpQueueShutdownTimeoutSecondsEnvName, otlpQueueShutdownTimeoutSecondsDefault)
 	v.SetDefault(spansQueueSizeEnvName, spansQueueSizeDefault)
-	v.SetDefault(spansQueueWorkersEnvName, spansQueueWorkersDefault)
+	v.SetDefault(spansQueueWorkersCountEnvName, spansQueueWorkersCountDefault)
 	v.SetDefault(spansQueueShutdownTimeoutSecondsEnvName, spansQueueShutdownTimeoutSecondsDefault)
 
 	// Elasticsearch defaults

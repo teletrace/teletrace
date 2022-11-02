@@ -69,8 +69,8 @@ func (c *Collector) Start() error {
 		return fmt.Errorf("failed to initialize spans storage: %w", err)
 	}
 
-	c.otlpQueue.StartConsumers(c.getOTLPTranslatorConsumer(), c.cfg.OTLPQueueWorkers)
-	c.spansQueue.StartConsumers(c.getSpansWriterConsumer(), c.cfg.SpansQueueWorkers)
+	c.otlpQueue.StartConsumers(c.getOTLPTranslatorConsumer(), c.cfg.OTLPQueueWorkersCount)
+	c.spansQueue.StartConsumers(c.getSpansWriterConsumer(), c.cfg.SpansQueueWorkersCount)
 
 	if err := c.receiver.Start(); err != nil {
 		return fmt.Errorf("failed to start receiver: %w", err)
