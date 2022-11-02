@@ -5,7 +5,7 @@ import { Head } from "@/components/Head";
 
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable/index";
-import { Timeframe } from "../types/spanQuery";
+import { Timeframe } from "@/types/spans/spanQuery";
 
 export const SpanSearch = () => {
   const now = new Date().valueOf();
