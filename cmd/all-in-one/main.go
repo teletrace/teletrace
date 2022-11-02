@@ -54,6 +54,10 @@ func main() {
 	signalsChan := make(chan os.Signal, 1)
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
 
+	if err := storage.Initialize(); err != nil {
+		logger.Fatal("failed to initialize spans storage", zap.Error(err))
+	}
+
 	go startAPI(logger, api)
 	go startCollector(logger, collector)
 
