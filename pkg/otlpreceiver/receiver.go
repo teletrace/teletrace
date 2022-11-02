@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// otlpReceiver handles incoming OTLP traces and registers consumers
+// OtlpReceiver handles incoming OTLP traces and registers consumers
 type OtlpReceiver struct {
 	logger   *zap.Logger
 	receiver component.TracesReceiver
