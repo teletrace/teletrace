@@ -1,12 +1,12 @@
 import { Stack } from "@mui/material";
 import { Fragment } from "react";
 
+import { Head } from "@/components/Head";
+
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { Timeframe } from "../types/spanQuery";
-
-import { Head } from "@/components/Head";
 
 export const SpanSearch = () => {
   const now = new Date().valueOf();
