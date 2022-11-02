@@ -50,7 +50,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         id: span.spanId,
         traceId: span.traceId,
         spanId: span.spanId,
-        startTime: new Date(span.startTime).toLocaleTimeString(formatDate(new Date(span.startTime).valueOf())),
+        startTime: formatDate(new Date(span.startTime).valueOf()),
         duration: `ms ${externalFields.duration}`,
         name: span.name,
         status: span.status.code === 0 ? "Ok" : "Error",
