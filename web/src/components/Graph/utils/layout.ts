@@ -1,8 +1,8 @@
-import { EdgeData, NodeData } from "@/components/Graph/types";
 import Elk, { ElkNode } from "elkjs";
 import { ElkExtendedEdge } from "elkjs/lib/elk-api";
 import { Edge, Node, Position } from "reactflow";
 
+import { EdgeData, NodeData } from "@/components/Graph/types";
 import {
   defaultNodeHeight,
   defaultNodeWidth,

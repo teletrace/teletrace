@@ -1,14 +1,5 @@
-import { EdgeData, NodeData } from "@/components/Graph/types";
-import {
-  basicEdgeType,
-  basicNodeType,
-  position,
-} from "@/components/Graph/utils/global";
-import { createGraphLayout } from "@/components/Graph/utils/layout";
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-
-import { Head } from "@/components/Head";
 import { useEffect } from "react";
 import {
   Edge,
@@ -17,6 +8,15 @@ import {
   useEdgesState,
   useNodesState,
 } from "reactflow";
+
+import { EdgeData, NodeData } from "@/components/Graph/types";
+import {
+  basicEdgeType,
+  basicNodeType,
+  position,
+} from "@/components/Graph/utils/global";
+import { createGraphLayout } from "@/components/Graph/utils/layout";
+import { Head } from "@/components/Head";
 
 import { TraceGraph } from "../components/TraceGraph";
 import { TraceTags } from "../components/TraceTags";

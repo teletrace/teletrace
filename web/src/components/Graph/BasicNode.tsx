@@ -1,7 +1,8 @@
-import { BasicNodeProps } from "@/components/Graph/types";
 import { Box } from "@mui/material";
 import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
+
+import { BasicNodeProps } from "@/components/Graph/types";
 
 import NodeIcon from "./NodeIcon";
 import styles from "./styles";
