@@ -1,12 +1,9 @@
 import React from "react";
 
+import { IconComponentProps } from "@/components/Graph/types";
 import { ReactComponent as ApiGatewayEndpoint } from "@/styles/icons/ApiGatewayEndpoint.svg";
 import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
 import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
-
-interface IconComponentProps {
-  name: string;
-}
 
 type ReactSVGComponent = React.FunctionComponent<
   React.SVGProps<SVGSVGElement> & { title?: string }

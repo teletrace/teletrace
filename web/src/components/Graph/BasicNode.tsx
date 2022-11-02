@@ -1,15 +1,10 @@
+import { BasicNodeProps } from "@/components/Graph/types";
 import { Box } from "@mui/material";
 import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 import NodeIcon from "./NodeIcon";
 import styles from "./styles";
-
-interface BasicNodeProps {
-  image: string;
-  name: string;
-  type: string;
-}
 
 const BasicNode = (props: NodeProps<BasicNodeProps>) => {
   const { image, name, type } = props.data;

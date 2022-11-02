@@ -11,8 +11,8 @@
     "@mui/x-data-grid": "^5.17.7",
     "@tanstack/react-query": "^4.3.7",
     "axios": "^0.27.2",
-    "dagre": "^0.8.5",
     "date-fns": "^2.29.3",
+    "elkjs": "^0.8.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4",
@@ -23,7 +23,6 @@
   "devDependencies": {
     "@craco/craco": "^6.4.5",
     "@tanstack/react-query-devtools": "^4.3.9",
-    "@types/dagre": "^0.7.48",
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -36,7 +35,8 @@
     "eslint-plugin-react": "^7.31.7",
     "react-scripts": "5.0.1",
     "sass": "^1.54.8",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.2",
+    "web-worker": "^1.2.0"
   },
   "scripts": {
     "start": "ESLINT_NO_DEV_ERRORS=true craco start",

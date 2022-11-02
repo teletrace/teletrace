@@ -1,13 +1,11 @@
 import { Paper } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
-  Connection,
   Controls,
   Edge,
   MarkerType,
   Node,
   ReactFlow,
-  addEdge,
   useEdgesState,
   useNodesState,
 } from "reactflow";
@@ -15,25 +13,15 @@ import {
 import { Loader } from "@/components/Elements/Loader";
 import BasicEdge from "@/components/Graph/BasicEdge";
 import BasicNode from "@/components/Graph/BasicNode";
-import { getLayoutElements } from "@/components/Graph/utils/dynamic_layout";
+import { EdgeData, NodeData } from "@/components/Graph/types";
 import {
   basicEdgeType,
   basicNodeType,
   position,
 } from "@/components/Graph/utils/global";
+import { createGraphLayout } from "@/components/Graph/utils/layout";
 
 import "reactflow/dist/style.css";
-
-interface NodeData {
-  name: string;
-  image: string;
-  type: string;
-}
-
-interface EdgeData {
-  time: string;
-  count?: number;
-}
 
 export const initialNodes: Node<NodeData>[] = [
   {
@@ -110,38 +98,31 @@ const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 export const TraceGraph = () => {
-  const { nodes: layoutNodes, edges: layoutEdges } = getLayoutElements(
-    initialNodes,
-    initialEdges
-  );
-
-  const [loader, setLoader] = useState(false);
-  const [nodes, , onNodesChange] = useNodesState(layoutNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(layoutEdges);
-  const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
-    []
-  );
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(() => {
-    const isGraphElReady = () => {
-      return nodes.length > 0 && edges.length >= 0;
+    const fetchData = async () => {
+      const els = await createGraphLayout(initialNodes, initialEdges);
+      if (els) {
+        setNodes(els.nodes);
+        setEdges(els.edges);
+      }
     };
-    setLoader(isGraphElReady);
+    fetchData().catch(console.error);
   }, []);
 
   return (
     <Paper sx={{ width: "100%" }}>
-      {loader ? (
+      {nodes ? (
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
           nodeTypes={nodeTypes}
           snapToGrid={true}
           edgeTypes={edgeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
           fitView
         >
           <Controls />
