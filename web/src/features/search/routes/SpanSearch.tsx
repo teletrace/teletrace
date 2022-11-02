@@ -5,8 +5,13 @@ import { Head } from "@/components/Head";
 
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable/index";
+import { SearchFilter, Timeframe } from "../types/spanQuery";
 
 export const SpanSearch = () => {
+  const now = new Date().valueOf();
+  const hourInMillis = 60 * 60 * 1000;
+  const defaultTimeframe: Timeframe = { startTime: now - hourInMillis, endTime: now };
+
   return (
     <>
       <Head
@@ -26,8 +31,8 @@ export const SpanSearch = () => {
           sx={{ minHeight: "0" }}
           flex={1}
         >
-          <SearchBar />
-          <SpanTable />
+          <SearchBar />          
+          <SpanTable timeframe={defaultTimeframe} />
         </Stack>
       </Stack>
     </>

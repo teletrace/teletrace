@@ -32,10 +32,12 @@ export type KeyValueFilter = {
   operator: Operator;
 };
 
-export type SearchFilter = KeyValueFilter | string;
+export type SearchFilter = {
+  keyValueFilter: KeyValueFilter;
+}
 
 export type SearchRequest = {
-  filter: SearchFilter;
+  filters: SearchFilter[];
   timeframe: Timeframe;
 
   sort?: Sort;

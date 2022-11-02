@@ -1,31 +1,24 @@
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
-  MRT_ColumnDef as ColumnDef,
   MRT_ShowHideColumnsButton as ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useSpansQuery } from "../../api/spanQuery";
 
-import { useSpans } from "../../api/useSpans";
-import { StatusBadge } from "../StatusBadge/StatusBadge";
+import { SearchFilter, Timeframe } from "../../types/spanQuery";
+import { columns, TableSpan } from "./columns";
 import styles from "./styles";
 
-const FETCH_KEY = "spanId";
-const FETCH_BATCH_SIZE = 50;
+const DEFAULT_SORT_FIELD = "startTime";
 
-interface TableSpan {
-  id: string;
-  traceId: string;
-  spanId: string;
-  startTime: string;
-  duration: string;
-  name: string;
-  status: string;
-  serviceName: string;
+interface SpanTableProps {
+  filters?: SearchFilter[]
+  timeframe: Timeframe
 }
 
-export function SpanTable() {
+export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef = useRef<Virtualizer>(null);
 
@@ -33,72 +26,37 @@ export function SpanTable() {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columns: ColumnDef<TableSpan>[] = [
-    {
-      accessorKey: "startTime",
-      header: "Start Time",
-      enableSorting: false,
-    },
-    {
-      accessorKey: "duration",
-      header: "Duration",
-      enableSorting: false,
-    },
-    {
-      accessorKey: "name",
-      header: "Resource name",
-      enableSorting: false,
-    },
-    {
-      accessorKey: "status",
-      header: "Status",
-      enableSorting: false,
-      Cell: (mrtCell) => {
-        const code = mrtCell.cell.getValue();
-        return (
-          <StatusBadge
-            color={Number(code) === 2 ? "error" : "success"}
-            text={Number(code) === 2 ? "Error" : "Ok"}
-          />
-        );
-      },
-    },
-    {
-      accessorKey: "serviceName",
-      header: "Service Name",
-      enableSorting: false,
-    },
-  ];
-
-  const { data, fetchNextPage, isError, isFetching, isLoading } = useSpans({
-    batchSize: FETCH_BATCH_SIZE,
-    key: FETCH_KEY,
-    columnFilters: columnFilters,
-    globalFilter: globalFilter,
-    sorting: sorting,
+  const columnSort = sorting.find(coulmnSort => coulmnSort.id === DEFAULT_SORT_FIELD)
+  const { data, fetchNextPage, isError, isFetching, isLoading } = useSpansQuery({
+      filters: filters,
+      timeframe: timeframe,
+      sort: columnSort === undefined ? undefined : { field: columnSort.id, ascending: !columnSort.desc },
+      metadata: undefined
   });
 
   const flatData = data?.pages?.flat() ?? [];
-  const tableSpans = flatData.map(({ resource, span }): TableSpan => {
-    return {
-      id: span.spanId,
-      traceId: span.traceId,
-      spanId: span.spanId,
-      startTime: new Date(span.startTimeUnixNano).toLocaleTimeString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-      duration: `${span.endTimeUnixNano - span.startTimeUnixNano} ms`,
-      name: span.name,
-      status: span.status.code === 0 ? "Ok" : "Error",
-      serviceName:
-        typeof resource.attributes["service.name"] === "string"
-          ? resource.attributes["service.name"]
-          : "service unknown",
-    } as TableSpan;
-  });
+  const tableSpans = flatData.flatMap(({ spans }) => 
+    spans.map(({ resource, span }): TableSpan => {
+      return {
+        id: span.spanId,
+        traceId: span.traceId,
+        spanId: span.spanId,
+        startTime: new Date(span.startTime).toLocaleTimeString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        duration: `${span.endTime - span.startTime} ms`,
+        name: span.name,
+        status: span.status.code === 0 ? "Ok" : "Error",
+        serviceName:
+          typeof resource.attributes["service.name"] === "string"
+            ? resource.attributes["service.name"]
+            : "service unknown",
+      } as TableSpan;
+    })
+  );
 
   const totalFetched = flatData.length;
 
