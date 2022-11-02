@@ -1,26 +1,34 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { TagValue } from "../types/tagValues";
+import { SearchRequest } from "../types/spanQuery";
+import { TagValuesResponse } from "../types/tagValues";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const getTagValues = (tag: string): Promise<TagValue[]> => {
-  // TODO: this is a temp mock data, when the API is created, update this function
-  return new Promise<TagValue[]>((resolve) => {
-    setTimeout(
-      () =>
-        resolve([
-          {
-            value: "muddy-news.net.muddy-news.net.muddy-news.net",
-            occurrences: 10 * 1000,
-          },
-          { value: 300, occurrences: 14 * 1000 },
-          { value: 400, occurrences: 22 * 1000 },
-          { value: 500, occurrences: 50 * 1000 },
-        ]),
-      5000
-    );
-  });
+/**
+ * fetch tag values
+ *
+ * @param tag             the tag to fetch values for
+ * @param searchRequest   optional search request to narrow down options
+ * @param nextToken       pagination token
+ */
+export const fetchTagValues = (
+  tag: string,
+  searchRequest?: SearchRequest,
+  nextToken?: string
+) => {
+  console.log({ tag, searchRequest, nextToken });
+  return Promise.reject<TagValuesResponse>("not implemented");
 };
 
-export const useTagValues = (tag: string) =>
-  useQuery(["tagValues", tag], () => getTagValues(tag));
+/**
+ * react hook to fetch tag values
+ *
+ * @param tag            the tag to fetch values for
+ * @param searchRequest  optional query to filter results by
+ */
+export const useTagValues = (tag: string, searchRequest?: SearchRequest) => {
+  return useInfiniteQuery({
+    queryKey: ["tagValues", tag, searchRequest],
+    queryFn: ({ pageParam }) => fetchTagValues(tag, searchRequest, pageParam),
+    getNextPageParam: (lastPage) => lastPage.metadata?.nextToken,
+  });
+};

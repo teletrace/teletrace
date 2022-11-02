@@ -4,26 +4,29 @@ import {
   AccordionActions,
   AccordionDetails,
   AccordionSummary,
+  Alert,
   Button,
   CircularProgress,
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { Fragment, useState } from "react";
+
+import { useTagValues } from "../../api/tagValues";
+import { SearchRequest } from "../../types/spanQuery";
+import { TagValue } from "../../types/tagValues";
+import { styles } from "./styles";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
-
-import { useTagValues } from "../../api/tagValues";
-import { TagValue } from "../../types/tagValues";
-import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
   tag: string;
   title: string;
   value: Array<string | number>;
   searchable?: boolean;
+  query?: SearchRequest;
   onChange?: (value: Array<string | number>) => void;
 };
 
@@ -31,15 +34,17 @@ export const TagValuesSelector = ({
   title,
   tag,
   value,
+  query,
   searchable,
   onChange,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
-  const { data: tagValues, isLoading } = useTagValues(tag);
+  const { data: tagValues, isFetching, isError } = useTagValues(tag, query);
 
   const clearTags = () => onChange?.([]);
 
-  const tagOptions = tagValues
+  const tagOptions = tagValues?.pages
+    .flatMap((page) => page.values)
     ?.filter((tag) => tag.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
@@ -56,7 +61,7 @@ export const TagValuesSelector = ({
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <div>{title}</div>
-              {isLoading && <CircularProgress size="1rem" />}
+              {isFetching && <CircularProgress size="1rem" />}
             </Stack>
           </AccordionSummary>
           <AccordionActions>
@@ -69,16 +74,22 @@ export const TagValuesSelector = ({
         </Stack>
 
         <AccordionDetails>
-          {searchable && !!tagValues && (
-            <SearchField value={search} onChange={setSearch} />
-          )}
+          {isError ? (
+            <Alert severity="error">Failed loading tag values</Alert>
+          ) : (
+            <Fragment>
+              {searchable && !!tagValues && (
+                <SearchField value={search} onChange={setSearch} />
+              )}
 
-          <CheckboxList
-            value={value}
-            loading={!tagValues}
-            options={tagOptions || []}
-            onChange={onChange}
-          />
+              <CheckboxList
+                value={value}
+                loading={!tagValues}
+                options={tagOptions || []}
+                onChange={onChange}
+              />
+            </Fragment>
+          )}
         </AccordionDetails>
       </Accordion>
     </div>

@@ -52,8 +52,8 @@ export const CheckboxList = ({
 
   return (
     <List>
-      {options.map((opt) => (
-        <Fragment key={opt.value}>
+      {options.map((opt, index) => (
+        <Fragment key={index}>
           <ListItem disablePadding>
             <ListItemButton
               dense

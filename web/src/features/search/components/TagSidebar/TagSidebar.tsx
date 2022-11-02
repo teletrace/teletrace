@@ -23,13 +23,13 @@ export const TagSidebar = () => {
           value={statusCodes}
           onChange={setStatusCodes}
         />
-        <TagValuesSelector
-          searchable
-          title="Service Name"
-          tag="service.name"
-          value={serviceNames}
-          onChange={setServiceNames}
-        />
+        {/* <TagValuesSelector */}
+        {/*   searchable */}
+        {/*   title="Service Name" */}
+        {/*   tag="service.name" */}
+        {/*   value={serviceNames} */}
+        {/*   onChange={setServiceNames} */}
+        {/* /> */}
         <TagValuesSelector
           searchable
           title="HTTP Route"
@@ -51,13 +51,13 @@ export const TagSidebar = () => {
           value={httpStatusCodes}
           onChange={setHttpStatusCodes}
         />
-        <TagValuesSelector
-          searchable
-          title="Instumentation Library"
-          tag="instrumentation.library"
-          value={instumentationLibs}
-          onChange={setInstrumentationLibs}
-        />
+        {/* <TagValuesSelector */}
+        {/*   searchable */}
+        {/*   title="Instumentation Library" */}
+        {/*   tag="instrumentation.library" */}
+        {/*   value={instumentationLibs} */}
+        {/*   onChange={setInstrumentationLibs} */}
+        {/* /> */}
       </Stack>
     </Paper>
   );
