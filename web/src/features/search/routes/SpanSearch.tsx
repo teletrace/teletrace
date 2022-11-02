@@ -4,6 +4,8 @@ import { Stack } from "@mui/system";
 import { Head } from "@/components/Head";
 
 import { SpanTable } from "../components/SpanTable/index";
+import { SearchBar } from "../components/SearchBar";
+
 
 export const SpanSearch = () => {
   return (
@@ -26,9 +28,9 @@ export const SpanSearch = () => {
           sx={{ minHeight: "0" }}
           flex={1}
         >
+          <SearchBar />
           <SpanTable />
         </Stack>
-
         <Stack
           direction="row"
           divider={<Divider orientation="vertical" flexItem />}
