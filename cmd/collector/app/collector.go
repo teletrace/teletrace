@@ -6,8 +6,8 @@ import (
 	"oss-tracing/pkg/config"
 	v1 "oss-tracing/pkg/model/internalspan/v1"
 	"oss-tracing/pkg/modeltranslator"
+	"oss-tracing/pkg/otlpreceiver"
 	"oss-tracing/pkg/queue"
-	"oss-tracing/pkg/receiver"
 	storage "oss-tracing/pkg/spanstorage"
 	"time"
 
@@ -18,12 +18,12 @@ import (
 // Collector holds the config used for running the collector
 // as well as methods to run and stop it.
 type Collector struct {
-	cfg         config.Config
-	logger      *zap.Logger
-	otlpQueue   *queue.BoundedQueue
-	spansQueue  *queue.BoundedQueue
-	receiver    *receiver.Receiver
-	spanStorage storage.Storage
+	cfg          config.Config
+	logger       *zap.Logger
+	otlpQueue    *queue.BoundedQueue
+	spansQueue   *queue.BoundedQueue
+	otlpReceiver *otlpreceiver.OtlpReceiver
+	spanStorage  storage.Storage
 }
 
 // NewCollector creates the relevant collector components and returns a new Collector instance.
@@ -38,18 +38,18 @@ func NewCollector(cfg config.Config, logger *zap.Logger, spanStorage storage.Sto
 		return nil, fmt.Errorf("failed to initialize spans queue: %w", err)
 	}
 
-	receiver, err := receiver.NewReceiver(cfg, logger, getOTLPEnqueuer(otlpQueue))
+	otlpReceiver, err := otlpreceiver.NewOtlpReceiver(cfg, logger, getOTLPEnqueuer(otlpQueue))
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize receiver: %w", err)
+		return nil, fmt.Errorf("failed to initialize OTLP receiver: %w", err)
 	}
 
 	return &Collector{
-		cfg:         cfg,
-		logger:      logger,
-		spanStorage: spanStorage,
-		otlpQueue:   otlpQueue,
-		spansQueue:  spansQueue,
-		receiver:    receiver,
+		cfg:          cfg,
+		logger:       logger,
+		spanStorage:  spanStorage,
+		otlpQueue:    otlpQueue,
+		spansQueue:   spansQueue,
+		otlpReceiver: otlpReceiver,
 	}, nil
 }
 
@@ -72,8 +72,8 @@ func (c *Collector) Start() error {
 	c.otlpQueue.StartConsumers(c.getOTLPTranslatorConsumer(), c.cfg.OTLPQueueWorkersCount)
 	c.spansQueue.StartConsumers(c.getSpansWriterConsumer(), c.cfg.SpansQueueWorkersCount)
 
-	if err := c.receiver.Start(); err != nil {
-		return fmt.Errorf("failed to start receiver: %w", err)
+	if err := c.otlpReceiver.Start(); err != nil {
+		return fmt.Errorf("failed to start OTLP receiver: %w", err)
 	}
 
 	return nil
@@ -106,8 +106,8 @@ func (c *Collector) getSpansWriterConsumer() func(item interface{}) {
 // Stop attempts to gracefully stop all of the collector components.
 // Blocks until all components are stopped or times out.
 func (c *Collector) Stop() {
-	if err := c.receiver.Shutdown(); err != nil {
-		c.logger.Error("Failed to gracefully shut down receiver", zap.Error(err))
+	if err := c.otlpReceiver.Shutdown(); err != nil {
+		c.logger.Error("Failed to gracefully shut down OTLP receiver", zap.Error(err))
 	}
 
 	otlpQueueTimeout := time.Duration(c.cfg.OTLPQueueShutdownTimeoutSeconds) * time.Second
