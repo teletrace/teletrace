@@ -1,5 +1,4 @@
-import { Divider } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Stack } from "@mui/material";
 import { Fragment } from "react";
 
 import { SearchBar } from "../components/SearchBar";
