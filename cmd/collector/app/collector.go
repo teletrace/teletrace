@@ -112,8 +112,4 @@ func (c *Collector) Stop() {
 	if err := c.spansQueue.Stop(spansQueueTimeout); err != nil {
 		c.logger.Error("Failed to gracefully stop spans queue", zap.Error(err))
 	}
-
-	if err := c.spanStorage.Close(); err != nil {
-		c.logger.Error("Failed to gracefully shut down spanStroage")
-	}
 }
