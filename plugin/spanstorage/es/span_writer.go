@@ -51,9 +51,7 @@ func (w *spanWriter) AddToBulk(ctx context.Context, spans ...*v1.InternalSpan) e
 }
 
 func (w *spanWriter) FlushBulk(ctx context.Context) error {
-	var err error
-
-	err = w.documentController.FlushBulk(ctx)
+	err := w.documentController.FlushBulk(ctx)
 
 	if err != nil {
 		return fmt.Errorf("Could not flush documents bulk %+v", err)

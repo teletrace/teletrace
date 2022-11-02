@@ -29,9 +29,7 @@ func NewBulkIndexer(c Client, idx string) (esutil.BulkIndexer, error) {
 }
 
 func Flush(ctx context.Context, c Client, bi esutil.BulkIndexer) error {
-	var err error
-
-	err = bi.Close(context.Background())
+	err := bi.Close(context.Background())
 
 	if err != nil {
 		return fmt.Errorf("Could not close the Bulk Indexer: %+v", err)
