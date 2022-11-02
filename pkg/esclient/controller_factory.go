@@ -28,20 +28,20 @@ func NewDocumentController(rc *rawreqinteractor.Client, tc *typedreqinteractor.C
 	return &documentController{rawClient: rc, typedClient: tc, idx: idx, bulkIndexer: bi}, nil
 }
 
-func NewIndexTemplateController(_ *rawreqinteractor.Client, tc *typedreqinteractor.Client) (interactor.IndexTemplateController, error) {
-	return typedreqinteractor.NewIndexTemplateController(tc), nil
+func NewIndexTemplateController(_ *rawreqinteractor.Client, tc *typedreqinteractor.Client) interactor.IndexTemplateController {
+	return typedreqinteractor.NewIndexTemplateController(tc)
 }
 
-func NewComponentTemplateController(_ *rawreqinteractor.Client, tc *typedreqinteractor.Client) (interactor.ComponentTemplateController, error) {
-	return typedreqinteractor.NewComponentTemplateController(tc), nil
+func NewComponentTemplateController(_ *rawreqinteractor.Client, tc *typedreqinteractor.Client) interactor.ComponentTemplateController {
+	return typedreqinteractor.NewComponentTemplateController(tc)
 }
 
-func NewTagsController(rc *rawreqinteractor.Client, _ *typedreqinteractor.Client, idx string) (interactor.TagsController, error) {
-	return rawreqinteractor.NewTagsController(rc, idx), nil
+func NewTagsController(rc *rawreqinteractor.Client, _ *typedreqinteractor.Client, idx string) interactor.TagsController {
+	return rawreqinteractor.NewTagsController(rc, idx)
 }
 
-func (c *documentController) AddToBulk(ctx context.Context, docs ...*interactor.Doc) error {
-	return rawreqinteractor.AddToBulk(ctx, *c.rawClient, c.bulkIndexer, docs...)
+func (c *documentController) WriteBulk(ctx context.Context, docs ...*interactor.Doc) error {
+	return rawreqinteractor.WriteBulk(ctx, *c.rawClient, c.bulkIndexer, docs...)
 }
 
 func (c *documentController) Close(ctx context.Context) error {

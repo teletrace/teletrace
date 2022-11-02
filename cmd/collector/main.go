@@ -38,12 +38,7 @@ func main() {
 		logger.Fatal("Failed to create Span Writer to Storage", zap.Error(err))
 	}
 
-	rw, err := storage.CreateSpanReader()
-	if err != nil {
-		logger.Fatal("Failed to create Span Reader from Storage", zap.Error(err))
-	}
-
-	collector, err := app.NewCollector(cfg, logger, &sw, &rw)
+	collector, err := app.NewCollector(cfg, logger, &sw)
 	if err != nil {
 		logger.Fatal("Failed to initialize collector", zap.Error(err))
 	}
@@ -52,7 +47,7 @@ func main() {
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
 
 	if err := storage.Initialize(); err != nil {
-		logger.Fatal("failed to initialize spans storage", zap.Error(err))
+		logger.Fatal("Failed to initialize spans storage", zap.Error(err))
 	}
 
 	if err := collector.Start(); err != nil {

@@ -28,7 +28,7 @@ func NewBulkIndexer(c Client, idx string, numWorkers int, flushInt int) (esutil.
 	return bi, nil
 }
 
-func AddToBulk(ctx context.Context, c Client, bi esutil.BulkIndexer, docs ...*interactor.Doc) error {
+func WriteBulk(ctx context.Context, c Client, bi esutil.BulkIndexer, docs ...*interactor.Doc) error {
 	for _, doc := range docs {
 		var err error
 		var failures []error // will not throw exception

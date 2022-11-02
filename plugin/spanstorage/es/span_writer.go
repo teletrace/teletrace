@@ -16,7 +16,7 @@ func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.InternalSpan) error
 
 	doc := interactor.Doc(span)
 
-	err = w.documentController.AddToBulk(ctx, &doc)
+	err = w.documentController.WriteBulk(ctx, &doc)
 
 	if err != nil {
 		return fmt.Errorf("Could not index document: %+v", err)
@@ -31,7 +31,7 @@ func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.InternalSpan) error
 	return nil
 }
 
-func (w *spanWriter) AddToBulk(ctx context.Context, spans ...*v1.InternalSpan) error {
+func (w *spanWriter) WriteBulk(ctx context.Context, spans ...*v1.InternalSpan) error {
 	var err error
 
 	docs := make([]*interactor.Doc, 0, len(spans))
@@ -41,7 +41,7 @@ func (w *spanWriter) AddToBulk(ctx context.Context, spans ...*v1.InternalSpan) e
 		docs = append(docs, &doc)
 	}
 
-	err = w.documentController.AddToBulk(ctx, docs...)
+	err = w.documentController.WriteBulk(ctx, docs...)
 
 	if err != nil {
 		return fmt.Errorf("Could not bulk index documents: %+v", err)
