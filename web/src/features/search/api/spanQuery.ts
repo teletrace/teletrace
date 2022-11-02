@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { SearchRequest, SearchResponse } from "../types/spanQuery";
+import { SearchRequest, SearchResponse } from "@/types/spans/spanQuery";
 
 type FetchSpansParams = { pageParam: string; searchRequest: SearchRequest };
 
