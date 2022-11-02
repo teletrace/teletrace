@@ -1,22 +1,22 @@
 import ArrowIcon from "@mui/icons-material/ArrowForward";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { SvgIcon } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import { grey } from "@mui/material/colors";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+
+
 import styles from "../styles/styles.tags";
-import { SvgIcon } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { padding } from "@mui/system";
+import { FlattenedSpan, SpansMock } from "./spansMock";
 
 interface TagsProps {
-  spanAction: string;
-  selectedSpanId: string;
-  spanDuration: string;
-  spanDateTime: string;
+  span: FlattenedSpan;
+  selectedSpanId: string
 }
 
 export const TraceTags = () => {
@@ -27,7 +27,6 @@ export const TraceTags = () => {
       setExpanded(isExpanded ? panel : false);
     };
 
-
   function TagsMainAccordion(props: TagsProps) {
     return (
       <Accordion
@@ -36,53 +35,27 @@ export const TraceTags = () => {
       >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
-          sx={{ flexDirection: "row-reverse" }}
+          sx={styles.accordionSummary}
           style={{
             backgroundColor: expanded === props.selectedSpanId ? grey[800] : "",
           }}
         >
           <Grid container justifyContent="flex-start" alignItems="center">
-            <Grid
-              item
-              sx={{
-                flexDirection: "column",
-                paddingLeft: 1.5,
-                paddingRight: 1.5,
-                display: "center",
-                alignSelf: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              <SvgIcon
-                sx={{ fontSize: 30, fill: "none", stroke: "#3F8624" }}
-              >
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+            <Grid item sx={styles.accordionGridIconsItem}>
+              <SvgIcon sx={styles.accordionSvgIcon}>
+                <path d={props.span.firstIconPath} />
               </SvgIcon>
-              <ArrowIcon
-                sx={{
-                  color: "#6E6F75",
-                  fontSize: "medium",
-                }}
-              />
-              <SvgIcon
-                sx={{ fontSize: 30, fill: "none", stroke: "#D45B07"  }}
-              >
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+              <ArrowIcon sx={styles.accordionArrowIcon} />
+              <SvgIcon sx={styles.accordionSvgIcon}>
+                <path d={props.span.secondIconPath} />
               </SvgIcon>
             </Grid>
-            <Grid
-              item
-              sx={{
-                alignItems: "flex-start",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
+            <Grid item sx={styles.accordionGridTypographyItem}>
               <Typography sx={styles.accordionTitleTypography}>
-                {props.spanAction}
+                {props.span.spanAction}
               </Typography>
               <Typography variant="caption" sx={{ color: grey[300] }}>
-                {`${props.spanDuration}ms`} | {props.spanDateTime}
+                {`${props.span.spanDuration}ms`} | {props.span.spanDateTime}
               </Typography>
             </Grid>
           </Grid>
@@ -95,9 +68,15 @@ export const TraceTags = () => {
   }
 
   return (
-    <Paper sx={{ width: "100%"}} >
-      <TagsMainAccordion selectedSpanId="panel1" spanAction="Execute" spanDuration="192.45" spanDateTime="1:36.12.610 - Jan 24, 2022" />
-      <TagsMainAccordion selectedSpanId="panel2" spanAction="Execute" spanDuration="192.45" spanDateTime="1:36.12.610 - Jan 24, 2022" />
+    <Paper sx={{ width: "100%" }}>
+      <TagsMainAccordion
+        span={SpansMock[0]}
+        selectedSpanId="panel1"
+      />
+      <TagsMainAccordion
+        span={SpansMock[1]}
+        selectedSpanId="panel1"
+      />
     </Paper>
   );
 };
