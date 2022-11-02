@@ -3,6 +3,7 @@ import { Stack } from "@mui/system";
 
 import { Head } from "@/components/Head";
 
+import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 
 export const SpanSearch = () => {
@@ -18,16 +19,10 @@ export const SpanSearch = () => {
         spacing={2}
         sx={{ height: "100%" }}
       >
-        <Stack
-          direction="row"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={2}
-          justifyContent="space-between"
-          flex={1}
-        >
+        <Stack spacing={2} justifyContent="space-between" flex={1}>
+          <SearchBar />
           <SpanTable />
         </Stack>
-
         <Stack
           direction="row"
           divider={<Divider orientation="vertical" flexItem />}
