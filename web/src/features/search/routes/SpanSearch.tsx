@@ -3,7 +3,7 @@ import { Fragment } from "react";
 
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
-import { TagSidebar } from "../components/TagSidebar/TagSidebar";
+import { TagSidebar } from "../components/TagSidebar";
 import { Timeframe } from "../types/spanQuery";
 
 import { Head } from "@/components/Head";
