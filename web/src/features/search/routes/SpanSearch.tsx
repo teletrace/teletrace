@@ -3,10 +3,8 @@ import { Stack } from "@mui/system";
 
 import { Head } from "@/components/Head";
 
-
-import { SpanTable } from "../components/SpanTable/index";
 import { SearchBar } from "../components/SearchBar";
-
+import { SpanTable } from "../components/SpanTable/index";
 
 export const SpanSearch = () => {
   return (
@@ -19,17 +17,17 @@ export const SpanSearch = () => {
         direction="row"
         divider={<Divider orientation="horizontal" flexItem />}
         spacing={2}
-      > 
+      >
         <Stack
-            direction="column"
-            divider={<Divider orientation="vertical" flexItem />}
-            spacing={1}
-            justifyContent="space-between"
-            sx={{ minHeight: "0" }}
-            flex={1}            
-          >
-            <SearchBar />
-            <SpanTable />
+          direction="column"
+          divider={<Divider orientation="vertical" flexItem />}
+          spacing={1}
+          justifyContent="space-between"
+          sx={{ minHeight: "0" }}
+          flex={1}
+        >
+          <SearchBar />
+          <SpanTable />
         </Stack>
       </Stack>
     </>
