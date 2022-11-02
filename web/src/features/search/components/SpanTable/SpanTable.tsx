@@ -7,11 +7,11 @@ import MaterialReactTable, {
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import { SearchFilter, Timeframe } from "@/types/spans/spanQuery";
+import { formatDate } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
-import { formatDate } from "@/utils/format";
 
 const DEFAULT_SORT_FIELD = "startTime";
 
@@ -43,26 +43,26 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     }
   );
 
-  
-  const tableSpans = data?.pages?.flatMap((page) =>
-    page.spans.flatMap(({ resource, span, externalFields }): TableSpan => {
-      return {
-        id: span.spanId,
-        traceId: span.traceId,
-        spanId: span.spanId,
-        startTime: formatDate(new Date(span.startTime).valueOf()),
-        duration: `ms ${externalFields.duration}`,
-        name: span.name,
-        status: span.status.code === 0 ? "Ok" : "Error",
-        serviceName:
-          typeof resource.attributes["service.name"] === "string"
-            ? resource.attributes["service.name"]
-            : "service unknown",
-      };
-    })
-  ) ?? [];
+  const tableSpans =
+    data?.pages?.flatMap((page) =>
+      page.spans.flatMap(({ resource, span, externalFields }): TableSpan => {
+        return {
+          id: span.spanId,
+          traceId: span.traceId,
+          spanId: span.spanId,
+          startTime: formatDate(new Date(span.startTime).valueOf()),
+          duration: `ms ${externalFields.duration}`,
+          name: span.name,
+          status: span.status.code === 0 ? "Ok" : "Error",
+          serviceName:
+            typeof resource.attributes["service.name"] === "string"
+              ? resource.attributes["service.name"]
+              : "service unknown",
+        };
+      })
+    ) ?? [];
 
-  const totalFetched = tableSpans?.length
+  const totalFetched = tableSpans?.length;
 
   const fetchMoreOnBottomReached = useCallback(
     (containerRefElement?: HTMLDivElement | null) => {
@@ -80,12 +80,15 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     if (virtualizerInstanceRef.current) {
       virtualizerInstanceRef.current.scrollToIndex(0);
     }
-  }
-  useEffect(() => onSortingOrFiltersChange, [sorting, columnFilters, globalFilter]);
+  };
+  useEffect(
+    () => onSortingOrFiltersChange,
+    [sorting, columnFilters, globalFilter]
+  );
 
   const onAlreadyScrolledToBottom = () => {
     fetchMoreOnBottomReached(tableContainerRef.current);
-  }
+  };
   useEffect(() => onAlreadyScrolledToBottom, [fetchMoreOnBottomReached]);
 
   return (

@@ -1,5 +1,5 @@
 const styles = {
-  badge: (color: string) => ({ 
+  badge: (color: string) => ({
     "& .MuiBadge-anchorOriginTopLeftRectangular": {
       color: { background: color },
       height: "5px",
@@ -9,7 +9,7 @@ const styles = {
       minWidth: "5px",
       padding: 0,
       top: "50%",
-    }
+    },
   }),
   badgeText: {
     marginLeft: "10px",
