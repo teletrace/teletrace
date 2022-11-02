@@ -22,10 +22,25 @@ func NewInteractor(logger *zap.Logger, cfg interactor.ElasticConfig) (*interacto
 		return nil, fmt.Errorf("failed to create a raw client: %v", err)
 	}
 
-	itc := NewIndexTemplateController(rawApiClient, typedApiClient)
-	ctc := NewComponentTemplateController(rawApiClient, typedApiClient)
-	dc := NewDocumentController(rawApiClient, typedApiClient, cfg.Index)
-	tc := NewTagsController(rawApiClient, typedApiClient, cfg.Index)
+	itc, err := NewIndexTemplateController(rawApiClient, typedApiClient)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create an Index Template Controller: %v", err)
+	}
+
+	ctc, err := NewComponentTemplateController(rawApiClient, typedApiClient)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create a Component Template Controller: %v", err)
+	}
+
+	dc, err := NewDocumentController(rawApiClient, typedApiClient, cfg.Index)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create a Document Controller: %v", err)
+	}
+
+	tc, err := NewTagsController(rawApiClient, typedApiClient, cfg.Index)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create a Tags Controller: %v", err)
+	}
 
 	return &interactor.Interactor{
 		IndexTemplateController:     itc,

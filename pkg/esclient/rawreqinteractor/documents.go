@@ -9,10 +9,9 @@ import (
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v8/esutil"
-	"go.uber.org/zap"
 )
 
-func Bulk(ctx context.Context, c Client, idx string, docs ...*interactor.Doc) error {
+func NewBulkIndexer(c Client, idx string) (esutil.BulkIndexer, error) {
 	var err error
 
 	bi, err := esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
@@ -23,14 +22,14 @@ func Bulk(ctx context.Context, c Client, idx string, docs ...*interactor.Doc) er
 	})
 
 	if err != nil {
-		return fmt.Errorf("Error creating the indexer: %+v", err)
+		return nil, fmt.Errorf("Error creating the indexer: %+v", err)
 	}
 
-	err = bulk(ctx, c.Logger, bi, idx, docs...)
+	return bi, nil
+}
 
-	if err != nil {
-		return fmt.Errorf("Error bulk-indexing documents: %+v", err)
-	}
+func Flush(ctx context.Context, c Client, bi esutil.BulkIndexer) error {
+	var err error
 
 	err = bi.Close(context.Background())
 
@@ -44,7 +43,7 @@ func Bulk(ctx context.Context, c Client, idx string, docs ...*interactor.Doc) er
 	return nil
 }
 
-func bulk(ctx context.Context, logger *zap.Logger, bi esutil.BulkIndexer, idx string, docs ...*interactor.Doc) error {
+func AddToBulk(ctx context.Context, c Client, bi esutil.BulkIndexer, docs ...*interactor.Doc) error {
 	for _, doc := range docs {
 		var err error
 		var failures []error // will not throw exception
@@ -67,7 +66,7 @@ func bulk(ctx context.Context, logger *zap.Logger, bi esutil.BulkIndexer, idx st
 		)
 
 		if len(failures) > 0 {
-			logger.Sugar().Errorf("Failed to index items in Elasticsearch: %+v", failures)
+			c.Logger.Sugar().Errorf("Failed to index items in Elasticsearch: %+v", failures)
 		}
 
 		if err != nil {

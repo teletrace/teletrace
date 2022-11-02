@@ -17,7 +17,11 @@ func (sw spanWriter) WriteSpan(ctx context.Context, span *internalspan.InternalS
 	return nil
 }
 
-func (sw spanWriter) WriteBulk(ctx context.Context, span ...*internalspan.InternalSpan) error {
+func (sw spanWriter) AddToBulk(ctx context.Context, span ...*internalspan.InternalSpan) error {
+	return nil
+}
+
+func (sw spanWriter) FlushBulk(ctx context.Context) error {
 	return nil
 }
 
