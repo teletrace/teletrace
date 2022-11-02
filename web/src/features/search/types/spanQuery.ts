@@ -37,9 +37,9 @@ export type SearchFilter = {
 }
 
 export type SearchRequest = {
-  filters: SearchFilter[];
   timeframe: Timeframe;
 
+  filters?: SearchFilter[];
   sort?: Sort;
   metadata?: { nextToken: string };
 };
