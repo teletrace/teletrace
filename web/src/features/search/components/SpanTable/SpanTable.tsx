@@ -5,17 +5,17 @@ import MaterialReactTable, {
   Virtualizer,
 } from "material-react-table";
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react";
-import { useSpansQuery } from "../../api/spanQuery";
 
+import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/spanQuery";
-import { columns, TableSpan } from "./columns";
+import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
 const DEFAULT_SORT_FIELD = "startTime";
 
 interface SpanTableProps {
-  filters?: SearchFilter[]
-  timeframe: Timeframe
+  filters?: SearchFilter[];
+  timeframe: Timeframe;
 }
 
 export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
@@ -26,16 +26,23 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columnSort = sorting.find(coulmnSort => coulmnSort.id === DEFAULT_SORT_FIELD)
-  const { data, fetchNextPage, isError, isFetching, isLoading } = useSpansQuery({
+  const columnSort = sorting.find(
+    (coulmnSort) => coulmnSort.id === DEFAULT_SORT_FIELD
+  );
+  const { data, fetchNextPage, isError, isFetching, isLoading } = useSpansQuery(
+    {
       filters: filters,
       timeframe: timeframe,
-      sort: columnSort === undefined ? undefined : { field: columnSort.id, ascending: !columnSort.desc },
-      metadata: undefined
-  });
+      sort:
+        columnSort === undefined
+          ? undefined
+          : { field: columnSort.id, ascending: !columnSort.desc },
+      metadata: undefined,
+    }
+  );
 
   const flatData = data?.pages?.flat() ?? [];
-  const tableSpans = flatData.flatMap(({ spans }) => 
+  const tableSpans = flatData.flatMap(({ spans }) =>
     spans.map(({ resource, span }): TableSpan => {
       return {
         id: span.spanId,

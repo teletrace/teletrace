@@ -34,7 +34,7 @@ export type KeyValueFilter = {
 
 export type SearchFilter = {
   keyValueFilter: KeyValueFilter;
-}
+};
 
 export type SearchRequest = {
   timeframe: Timeframe;

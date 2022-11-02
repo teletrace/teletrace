@@ -1,4 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+
 import { SearchRequest, SearchResponse } from "../types/spanQuery";
 
 type FetchSpansParams = { pageParam: string; searchRequest: SearchRequest };
@@ -13,7 +14,7 @@ export const useSpansQuery = (searchRequest: SearchRequest) => {
     queryKey: ["spans", searchRequest],
     queryFn: ({ pageParam }) => fetchSpans({ pageParam, searchRequest }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
-    keepPreviousData: true, 
+    keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
 };
