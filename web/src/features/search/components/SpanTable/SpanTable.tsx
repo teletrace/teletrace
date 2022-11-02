@@ -7,7 +7,7 @@ import MaterialReactTable, {
 } from "material-react-table";
 import { UIEvent, useCallback, useEffect, useRef, useState } from "react";
 
-import { useSpans } from "../../api/span";
+import { useSpans } from "../../api/useSpans";
 import { StatusBadge } from "../StatusBadge/StatusBadge";
 import styles from "./styles";
 
