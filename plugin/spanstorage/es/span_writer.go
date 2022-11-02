@@ -22,7 +22,7 @@ func (w *spanWriter) WriteSpan(ctx context.Context, span *v1.InternalSpan) error
 		return fmt.Errorf("Could not index document: %+v", err)
 	}
 
-	err = w.documentController.FlushBulk(ctx)
+	err = w.documentController.Close(ctx)
 
 	if err != nil {
 		return fmt.Errorf("Could not bulk index documents: %+v", err)
@@ -50,8 +50,8 @@ func (w *spanWriter) AddToBulk(ctx context.Context, spans ...*v1.InternalSpan) e
 	return nil
 }
 
-func (w *spanWriter) FlushBulk(ctx context.Context) error {
-	err := w.documentController.FlushBulk(ctx)
+func (w *spanWriter) Close(ctx context.Context) error {
+	err := w.documentController.Close(ctx)
 
 	if err != nil {
 		return fmt.Errorf("Could not flush documents bulk %+v", err)

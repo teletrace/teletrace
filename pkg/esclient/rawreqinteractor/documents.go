@@ -28,7 +28,7 @@ func NewBulkIndexer(c Client, idx string) (esutil.BulkIndexer, error) {
 	return bi, nil
 }
 
-func Flush(ctx context.Context, c Client, bi esutil.BulkIndexer) error {
+func Close(ctx context.Context, c Client, bi esutil.BulkIndexer) error {
 	err := bi.Close(context.Background())
 
 	if err != nil {

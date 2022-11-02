@@ -44,8 +44,8 @@ func (c *documentController) AddToBulk(ctx context.Context, docs ...*interactor.
 	return rawreqinteractor.AddToBulk(ctx, *c.rawClient, c.bulkIndexer, docs...)
 }
 
-func (c *documentController) FlushBulk(ctx context.Context) error {
-	return rawreqinteractor.Flush(ctx, *c.rawClient, c.bulkIndexer)
+func (c *documentController) Close(ctx context.Context) error {
+	return rawreqinteractor.Close(ctx, *c.rawClient, c.bulkIndexer)
 }
 
 func (c *documentController) Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {

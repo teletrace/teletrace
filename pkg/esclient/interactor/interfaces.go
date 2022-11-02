@@ -55,7 +55,7 @@ type ComponentTemplateController interface {
 
 type DocumentController interface {
 	AddToBulk(ctx context.Context, docs ...*Doc) error
-	FlushBulk(ctx context.Context) error
+	Close(ctx context.Context) error
 	Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error)
 }
 
