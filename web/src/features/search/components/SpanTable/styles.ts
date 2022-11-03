@@ -1,6 +1,6 @@
 const styles = {
   container: {
-    height: "100%"
+    height: "100%",
   },
   header: {
     "& tr:nth-of-type(odd)": {

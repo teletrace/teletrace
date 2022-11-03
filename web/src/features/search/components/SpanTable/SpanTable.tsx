@@ -106,9 +106,9 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         muiToolbarAlertBannerProps={
           isError
             ? {
-              color: "error",
-              children: "Error loading spans",
-            }
+                color: "error",
+                children: "Error loading spans",
+              }
             : undefined
         }
         onColumnFiltersChange={setColumnFilters}
