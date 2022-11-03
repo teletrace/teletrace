@@ -21,7 +21,6 @@ export const TraceGraph = (params: TraceGraphParams) => {
           nodes={nodes}
           edges={edges}
           nodeTypes={nodeTypes}
-          snapToGrid={true}
           edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}

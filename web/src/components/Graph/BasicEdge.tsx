@@ -44,7 +44,7 @@ export const BasicEdge = ({
           <Box sx={styles.edgeStyle.timeContainer}>{data?.time}</Box>
           {data?.count && (
             <Box sx={styles.edgeStyle.counterContainer}>
-              <Box sx={{ margin: "0.313rem" }}>{data?.count}</Box>
+              <Box sx={{ margin: "0.313rem" }}>{data.count}</Box>
             </Box>
           )}
         </Box>
