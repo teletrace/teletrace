@@ -1,5 +1,4 @@
-import { OnEdgesChange, OnNodesChange } from "@reactflow/core/dist/esm/types";
-import { Edge, Node } from "reactflow";
+import { Edge, Node, OnEdgesChange, OnNodesChange } from "reactflow";
 
 export interface NodeData {
   name: string;
