@@ -74,7 +74,10 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...spansquery.KeyValueFilte
 
 		var err error
 
-		filter := m[string(f.Operator)]
+		filter, ok := m[string(f.Operator)]
+		if !ok {
+			return nil, fmt.Errorf("Invalid operator from: %+v", f)
+		}
 		qc, err := filter.Builder(f)
 
 		if err != nil {
