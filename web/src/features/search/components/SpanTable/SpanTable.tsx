@@ -79,52 +79,54 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     ) ?? [];
 
   return (
-    <MaterialReactTable
-      columns={columns}
-      data={tableSpans}
-      enablePagination={false}
-      enableRowNumbers={false}
-      enableTopToolbar={false}
-      enableColumnActions={false}
-      enableBottomToolbar={false}
-      manualFiltering
-      manualSorting
-      enableColumnResizing
-      renderToolbarInternalActions={({ table }) => (
-        <>
-          <ToggleDensePaddingButton table={table} />
-          <ShowHideColumnsButton table={table} />
-        </>
-      )}
-      muiTableContainerProps={{
-        ref: tableContainerRef,
-        sx: styles.container,
-        onScroll: (event: UIEvent<HTMLDivElement>) =>
-          fetchMoreOnBottomReached(event.target as HTMLDivElement),
-      }}
-      muiToolbarAlertBannerProps={
-        isError
-          ? {
+    <div style={{ overflowY: "auto" }}>
+      <MaterialReactTable
+        columns={columns}
+        data={tableSpans}
+        enablePagination={false}
+        enableRowNumbers={false}
+        enableTopToolbar={false}
+        enableColumnActions={false}
+        enableBottomToolbar={false}
+        manualFiltering
+        manualSorting
+        enableColumnResizing
+        renderToolbarInternalActions={({ table }) => (
+          <>
+            <ToggleDensePaddingButton table={table} />
+            <ShowHideColumnsButton table={table} />
+          </>
+        )}
+        muiTableContainerProps={{
+          ref: tableContainerRef,
+          sx: styles.container,
+          onScroll: (event: UIEvent<HTMLDivElement>) =>
+            fetchMoreOnBottomReached(event.target as HTMLDivElement),
+        }}
+        muiToolbarAlertBannerProps={
+          isError
+            ? {
               color: "error",
               children: "Error loading spans",
             }
-          : undefined
-      }
-      onColumnFiltersChange={setColumnFilters}
-      onGlobalFilterChange={setGlobalFilter}
-      onSortingChange={setSorting}
-      state={{
-        columnFilters,
-        globalFilter,
-        isLoading,
-        showAlertBanner: isError,
-        showProgressBars: isFetching,
-        sorting,
-      }}
-      virtualizerInstanceRef={virtualizerInstanceRef}
-      muiTableHeadProps={{
-        sx: styles.header,
-      }}
-    />
+            : undefined
+        }
+        onColumnFiltersChange={setColumnFilters}
+        onGlobalFilterChange={setGlobalFilter}
+        onSortingChange={setSorting}
+        state={{
+          columnFilters,
+          globalFilter,
+          isLoading,
+          showAlertBanner: isError,
+          showProgressBars: isFetching,
+          sorting,
+        }}
+        virtualizerInstanceRef={virtualizerInstanceRef}
+        muiTableHeadProps={{
+          sx: styles.header,
+        }}
+      />
+    </div>
   );
 }

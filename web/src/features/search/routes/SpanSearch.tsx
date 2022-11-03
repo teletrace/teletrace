@@ -22,19 +22,13 @@ export const SpanSearch = () => {
         description="Designated page to span search's flow graph and timeline"
       />
       <Stack
-        direction="row"
-        divider={<Divider orientation="horizontal" flexItem />}
-        spacing={2}
+        direction="column"
+        divider={<Divider orientation="vertical" flexItem />}
+        spacing={1}
+        sx={{ height: "100%" }}
       >
-        <Stack
-          direction="column"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={1}
-          flex={1}
-        >
-          <SearchBar />
-          <SpanTable timeframe={defaultTimeframe} />
-        </Stack>
+        <SearchBar />
+        <SpanTable timeframe={defaultTimeframe} />
       </Stack>
     </>
   );

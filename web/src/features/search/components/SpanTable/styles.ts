@@ -1,6 +1,6 @@
 const styles = {
   container: {
-    maxHeight: "80vh",
+    height: "100%"
   },
   header: {
     "& tr:nth-of-type(odd)": {
