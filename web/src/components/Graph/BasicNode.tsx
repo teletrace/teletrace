@@ -1,13 +1,12 @@
 import { Box } from "@mui/material";
-import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
+import { NodeIcon } from "@/components/Graph/NodeIcon";
 import { BasicNodeProps } from "@/components/Graph/types";
 
-import NodeIcon from "./NodeIcon";
-import styles from "./styles";
+import { styles } from "./styles";
 
-const BasicNode = (props: NodeProps<BasicNodeProps>) => {
+export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
   const { image, name, type } = props.data;
   return (
     <>
@@ -34,5 +33,3 @@ const BasicNode = (props: NodeProps<BasicNodeProps>) => {
     </>
   );
 };
-
-export default memo(BasicNode);

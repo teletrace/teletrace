@@ -17,10 +17,8 @@ const iconTypes: IconTypes = {
   IoTHTTP2Protocol: IoTHTTP2Protocol,
 };
 
-const NodeIcon = (data: IconComponentProps) => {
+export const NodeIcon = (data: IconComponentProps) => {
   const { name } = data;
   const Icon = iconTypes[name];
   return Icon ? <Icon height={30} width={30} /> : <div></div>;
 };
-
-export default NodeIcon;

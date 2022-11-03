@@ -1,4 +1,4 @@
-const styles = {
+export const styles = {
   edgeStyle: {
     edgeLabelContainer: {
       position: "absolute",
@@ -53,5 +53,3 @@ const styles = {
     },
   },
 };
-
-export default styles;

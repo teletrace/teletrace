@@ -6,7 +6,7 @@ interface EdgeLabelProps {
   children: ReactElement;
 }
 
-const EdgeLabelRenderer = ({ children }: EdgeLabelProps) => {
+export const EdgeLabelRender = ({ children }: EdgeLabelProps) => {
   const domNode: HTMLDivElement | null = useStore((s) => s.domNode);
   const renderer: MutableRefObject<Element | null> = useRef(null);
 
@@ -27,5 +27,3 @@ const EdgeLabelRenderer = ({ children }: EdgeLabelProps) => {
 
   return createPortal(children, renderer.current);
 };
-
-export default EdgeLabelRenderer;

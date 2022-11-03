@@ -1,12 +1,11 @@
 import { Box } from "@mui/material";
-import { memo } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
-import EdgeLabelRender from "@/components/Graph/EdgeLabelRender";
+import { EdgeLabelRender } from "@/components/Graph/EdgeLabelRender";
 
-import styles from "./styles";
+import { styles } from "./styles";
 
-const BasicEdge = ({
+export const BasicEdge = ({
   id,
   sourceX,
   sourceY,
@@ -14,7 +13,7 @@ const BasicEdge = ({
   targetY,
   sourcePosition,
   targetPosition,
-  style = {},
+  style,
   data,
   markerEnd,
 }: EdgeProps) => {
@@ -53,5 +52,3 @@ const BasicEdge = ({
     </>
   );
 };
-
-export default memo(BasicEdge);
