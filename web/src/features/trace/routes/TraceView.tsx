@@ -1,6 +1,6 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Edge,
   MarkerType,
@@ -106,17 +106,21 @@ const initialEdges: Edge<EdgeData>[] = [
 ];
 
 export const TraceView = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   useEffect(() => {
-    const fetchData = async () => {
-      const els = await createGraphLayout(initialNodes, initialEdges);
-      if (els) {
-        setNodes(els.nodes);
-        setEdges(els.edges);
-      }
-    };
-    fetchData().catch(console.error);
+    setTimeout(() => {
+      createGraphLayout(initialNodes, initialEdges)
+        .then((els) => {
+          if (els.nodes.length > 0) {
+            setIsLoading(false);
+            setNodes(els.nodes);
+            setEdges(els.edges);
+          }
+        })
+        .catch(() => alert("something went wrong!!! Could not render graph"));
+    }, 1000);
   }, []);
   return (
     <>
@@ -142,6 +146,7 @@ export const TraceView = () => {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            isLoading={isLoading}
           />
           <TraceTags />
         </Stack>

@@ -27,4 +27,5 @@ export interface TraceGraphParams {
   edges: Edge<EdgeData>[];
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
+  isLoading: boolean;
 }

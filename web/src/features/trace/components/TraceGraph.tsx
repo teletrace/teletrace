@@ -1,4 +1,4 @@
-import { Paper } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import { Controls, ReactFlow } from "reactflow";
 
 import { Loader } from "@/components/Elements/Loader";
@@ -13,10 +13,12 @@ const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 export const TraceGraph = (params: TraceGraphParams) => {
-  const { nodes, edges, onNodesChange, onEdgesChange } = params;
+  const { nodes, edges, onNodesChange, onEdgesChange, isLoading } = params;
   return (
     <Paper sx={{ width: "100%" }}>
-      {nodes ? (
+      {isLoading ? (
+        <Loader />
+      ) : nodes.length > 0 ? (
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -29,7 +31,7 @@ export const TraceGraph = (params: TraceGraphParams) => {
           <Controls />
         </ReactFlow>
       ) : (
-        <Loader />
+        <Box>No Data to display</Box>
       )}
     </Paper>
   );
