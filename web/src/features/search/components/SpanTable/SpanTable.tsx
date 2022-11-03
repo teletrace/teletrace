@@ -4,10 +4,9 @@ import MaterialReactTable, {
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
-import { UIEvent, useCallback, useRef, useState } from "react";
+import { UIEvent, useRef, useState } from "react";
 
 import { SearchFilter, Timeframe } from "@/types/spans/spanQuery";
-import { formatDate } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { TableSpan, columns } from "./columns";
@@ -31,17 +30,29 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const columnSort = sorting.find(
     (coulmnSort) => coulmnSort.id === DEFAULT_SORT_FIELD
   );
-  const { data, fetchNextPage, isError, isFetching, isLoading } = useSpansQuery(
-    {
-      filters: filters,
-      timeframe: timeframe,
-      sort:
-        columnSort === undefined
-          ? undefined
-          : { field: columnSort.id, ascending: !columnSort.desc },
-      metadata: undefined,
+
+  const searchRequest = {
+    filters: filters,
+    timeframe: timeframe,
+    sort:
+      columnSort === undefined
+        ? undefined
+        : { field: columnSort.id, ascending: !columnSort.desc },
+    metadata: undefined,
+  };
+  const { data, fetchNextPage, isError, isFetching, isLoading } =
+    useSpansQuery(searchRequest);
+
+  const fetchMoreOnBottomReached = (
+    containerRefElement?: HTMLDivElement | null
+  ) => {
+    if (containerRefElement) {
+      const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+      if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
+        fetchNextPage();
+      }
     }
-  );
+  };
 
   const tableSpans =
     data?.pages?.flatMap((page) =>
@@ -50,7 +61,12 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
-          startTime: formatDate(new Date(span.startTime).valueOf()),
+          startTime: new Date(span.startTime).toLocaleTimeString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
           duration: `ms ${externalFields.duration}`,
           name: span.name,
           status: span.status.code === 0 ? "Ok" : "Error",
@@ -62,27 +78,12 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       })
     ) ?? [];
 
-  const totalFetched = tableSpans?.length;
-
-  const fetchMoreOnBottomReached = useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-        if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
-          fetchNextPage();
-        }
-      }
-    },
-    [fetchNextPage, isFetching, totalFetched]
-  );
-
   return (
     <MaterialReactTable
       columns={columns}
       data={tableSpans}
       enablePagination={false}
       enableRowNumbers={false}
-      enableRowVirtualization
       enableTopToolbar={false}
       enableColumnActions={false}
       enableBottomToolbar={false}

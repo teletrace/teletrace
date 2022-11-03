@@ -22,7 +22,7 @@ export const SpanSearch = () => {
         description="Designated page to span search's flow graph and timeline"
       />
       <Stack
-        direction="column"
+        direction="row"
         divider={<Divider orientation="horizontal" flexItem />}
         spacing={2}
       >
