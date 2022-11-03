@@ -4,7 +4,7 @@ import MaterialReactTable, {
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
-import { UIEvent, useCallback, useEffect, useRef, useState } from "react";
+import { UIEvent, useCallback, useRef, useState } from "react";
 
 import { SearchFilter, Timeframe } from "@/types/spans/spanQuery";
 import { formatDate } from "@/utils/format";
