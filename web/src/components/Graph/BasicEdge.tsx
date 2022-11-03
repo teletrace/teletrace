@@ -13,7 +13,6 @@ export const BasicEdge = ({
   targetY,
   sourcePosition,
   targetPosition,
-  style,
   data,
   markerEnd,
 }: EdgeProps) => {
