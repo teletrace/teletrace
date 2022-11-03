@@ -20,8 +20,8 @@ export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
           <NodeIcon name={image} />
         </Box>
         <Box sx={styles.nodeStyle.nodeText}>
-          <Box sx={styles.nodeStyle.textContainer}>{name} </Box>
-          <Box sx={styles.nodeStyle.textContainer}> {type} </Box>
+          <Box sx={{ color: "#E9EAF1" }}>{name}</Box>
+          <Box sx={{ fontSize: 14 }}>{type}</Box>
         </Box>
       </Box>
       <Handle

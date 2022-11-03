@@ -13,6 +13,7 @@ import { EdgeData, NodeData } from "@/components/Graph/types";
 import {
   basicEdgeType,
   basicNodeType,
+  edgeArrowSize,
   position,
 } from "@/components/Graph/utils/global";
 import { createGraphLayout } from "@/components/Graph/utils/layout";
@@ -72,7 +73,11 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "1",
     target: "2",
     data: { time: "20ms", count: 2 },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      width: edgeArrowSize,
+      height: edgeArrowSize,
+    },
   },
   {
     id: "e2-3",
@@ -80,7 +85,11 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "2",
     target: "3",
     data: { time: "20ms" },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      width: edgeArrowSize,
+      height: edgeArrowSize,
+    },
   },
   {
     id: "e2-4",
@@ -88,7 +97,11 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "2",
     target: "4",
     data: { time: "20ms" },
-    markerEnd: { type: MarkerType.ArrowClosed, width: 20, height: 20 },
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      width: edgeArrowSize,
+      height: edgeArrowSize,
+    },
   },
 ];
 
