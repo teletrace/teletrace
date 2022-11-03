@@ -76,21 +76,6 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     [fetchNextPage, isFetching, totalFetched]
   );
 
-  const onSortingOrFiltersChange = () => {
-    if (virtualizerInstanceRef.current) {
-      virtualizerInstanceRef.current.scrollToIndex(0);
-    }
-  };
-  useEffect(
-    () => onSortingOrFiltersChange,
-    [sorting, columnFilters, globalFilter]
-  );
-
-  const onAlreadyScrolledToBottom = () => {
-    fetchMoreOnBottomReached(tableContainerRef.current);
-  };
-  useEffect(() => onAlreadyScrolledToBottom, [fetchMoreOnBottomReached]);
-
   return (
     <MaterialReactTable
       columns={columns}
