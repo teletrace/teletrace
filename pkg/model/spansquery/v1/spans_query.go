@@ -2,7 +2,6 @@ package model
 
 import (
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
-	"time"
 )
 
 const (
@@ -28,39 +27,37 @@ type FilterQueryString string
 type ContinuationToken string
 
 type Timeframe struct {
-	StartTime time.Time
-	EndTime   time.Time
+	StartTime uint64 `json:"startTime"`
+	EndTime   uint64 `json:"endTime"`
 }
 
 type Sort struct {
-	Field     SortField
-	Ascending bool
+	Field     SortField `json:"field"`
+	Ascending bool      `json:"ascending"`
 }
 
 type KeyValueFilter struct {
-	Key      FilterKey
-	Operator FilterOperator
-	Value    FilterValue
+	Key      FilterKey      `json:"key"`
+	Operator FilterOperator `json:"operator"`
+	Value    FilterValue    `json:"value"`
 }
 
 type SearchFilter struct {
-	KeyValueFilter *KeyValueFilter    // Optional
-	QueryString    *FilterQueryString // Optional
+	KeyValueFilter *KeyValueFilter `json:"keyValueFilter"` // Optional, we might want other filter kinds in the future
 }
 
 type Metadata struct {
-	NextToken ContinuationToken
+	NextToken ContinuationToken `json:"nextToken"`
 }
 
 type SearchRequest struct {
-	Timeframe       Timeframe
-	Sort            []Sort `default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
-	SearchFilter    []SearchFilter
-	RequestMetadata *Metadata
+	Timeframe    Timeframe      `json:"timeframe"`
+	Sort         []Sort         `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
+	SearchFilter []SearchFilter `json:"searchFilter"`
+	Metadata     *Metadata      `json:"metadata"`
 }
 
 type SearchResponse struct {
-	ResponseMetadata *Metadata
-	Spans            []*internalspan.InternalSpan
-	Raw              string
+	Metadata *Metadata                    `json:"metadata"`
+	Spans    []*internalspan.InternalSpan `json:"spans"`
 }
