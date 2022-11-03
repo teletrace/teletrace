@@ -25,19 +25,19 @@ func TestBuildFilters(t *testing.T) {
 		},
 		{
 			"Test Invalid operator filter",
-			[]spansquery.KeyValueFilter{{"key", "IN", "banana"}},
+			[]spansquery.KeyValueFilter{{Key: "key", Operator: "IN", Value: "banana"}},
 			true,
 			nil,
 		},
 		{
 			"Test Invalid IN filter",
-			[]spansquery.KeyValueFilter{{"key", "in", "banana"}},
+			[]spansquery.KeyValueFilter{{Key: "key", Operator: spansquery.OPERATOR_IN, Value: "banana"}},
 			true,
 			nil,
 		},
 		{
 			"Test Invalid numerical filter",
-			[]spansquery.KeyValueFilter{{"key", "gt", "banana"}},
+			[]spansquery.KeyValueFilter{{Key: "key", Operator: spansquery.OPERATOR_GT, Value: "banana"}},
 			true,
 			nil,
 		},
