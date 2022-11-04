@@ -6,3 +6,13 @@ The `logs` package provides logging related capabilities.\
 ## Configuration
 
 This package is using [config options](../config/README.md) provided by `pkg/config`.
+
+## Usage
+
+```go
+logger, err := logs.NewLogger(cfg)
+if err != nil {
+    log.Fatalf("Failed to initialize logger: %v", err)
+}
+defer logs.FlushBufferedLogs(logger)
+```
