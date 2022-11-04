@@ -12,7 +12,7 @@ This package is using [config options](../config/README.md) provided by `pkg/con
 ```go
 logger, err := logs.NewLogger(cfg)
 if err != nil {
-    log.Fatalf("Failed to initialize logger: %v", err)
+    // failed to initialize logger
 }
 defer logs.FlushBufferedLogs(logger)
 ```

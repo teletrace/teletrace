@@ -10,13 +10,10 @@ This package is using [config options](../config/README.md) provided by `pkg/con
 ## Usage
 
 ```go
-cfg, _ := config.NewConfig()
-logger, _ := logs.NewLogger(cfg)
-
 api := api.NewAPI(logger, cfg)
 
-// api.Start() blocks the goroutine unless an error happens
+// api.Start() blocks the goroutine
 if err := api.Start(); err != nil {
-    logger.Fatal("API server crashed", zap.Error(err))
+    // API server stopped due to an error
 }
 ```
