@@ -18,6 +18,6 @@ if err != nil {
 // Flushes any buffered logs before the process exists
 defer logs.FlushBufferedLogs(logger)
 
-// Example of logging an error
+// Error logging example
 logger.Error("Failed to do some operation", zap.Error(err))
 ```
