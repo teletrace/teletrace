@@ -12,7 +12,7 @@ This package is using [config options](../config/README.md) provided by `pkg/con
 ```go
 api := api.NewAPI(logger, cfg)
 
-// api.Start() blocks the goroutine
+// Starts the API server and blocks the goroutine
 if err := api.Start(); err != nil {
     // API server stopped due to an error
 }

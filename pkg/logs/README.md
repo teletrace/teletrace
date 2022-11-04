@@ -12,7 +12,12 @@ This package is using [config options](../config/README.md) provided by `pkg/con
 ```go
 logger, err := logs.NewLogger(cfg)
 if err != nil {
-    // failed to initialize logger
+    // Failed to initialize logger
 }
+
+// Flushes any buffered logs before the process exists
 defer logs.FlushBufferedLogs(logger)
+
+// Example of logging an error
+logger.Error("Failed to do some operation", zap.Error(err))
 ```
