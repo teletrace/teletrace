@@ -12,6 +12,8 @@ import { useSpansQuery } from "../../api/spanQuery";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
+import useScroll from "./useScroll";
+
 const DEFAULT_SORT_FIELD = "startTime";
 
 interface SpanTableProps {
@@ -20,7 +22,7 @@ interface SpanTableProps {
 }
 
 export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
-  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef = useRef<Virtualizer>(null);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -40,19 +42,9 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         : { field: columnSort.id, ascending: !columnSort.desc },
     metadata: undefined,
   };
+  
   const { data, fetchNextPage, isError, isFetching, isLoading } =
     useSpansQuery(searchRequest);
-
-  const fetchMoreOnBottomReached = (
-    containerRefElement?: HTMLDivElement | null
-  ) => {
-    if (containerRefElement) {
-      const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
-      if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
-        fetchNextPage();
-      }
-    }
-  };
 
   const tableSpans =
     data?.pages?.flatMap((page) =>
@@ -78,8 +70,19 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       })
     ) ?? [];
 
+    const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
+      if (tableWrapper) {
+        const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
+        if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
+          fetchNextPage();
+        }
+      }
+    };
+
+   useScroll<HTMLDivElement>(fetchMoreOnBottomReached, tableWrapperRef.current)
+
   return (
-    <div style={{ overflowY: "auto" }}>
+    <div ref={tableWrapperRef} style={{ overflowY: "auto" }}>
       <MaterialReactTable
         columns={columns}
         data={tableSpans}
@@ -97,12 +100,6 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
             <ShowHideColumnsButton table={table} />
           </>
         )}
-        muiTableContainerProps={{
-          ref: tableContainerRef,
-          sx: styles.container,
-          onScroll: (event: UIEvent<HTMLDivElement>) =>
-            fetchMoreOnBottomReached(event.target as HTMLDivElement),
-        }}
         muiToolbarAlertBannerProps={
           isError
             ? {

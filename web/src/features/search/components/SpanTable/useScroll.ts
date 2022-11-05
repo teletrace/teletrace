@@ -1,9 +1,16 @@
 import { useEffect } from "react";
 
-export const useScroll = (callback: () => void) => {
+const useScroll = <T extends HTMLElement> (
+  callback: (element: T) => void, 
+  element: T | null
+) => {
   useEffect(() => {
-    window.addEventListener("scroll", () => {
-      callback();
-    });
+    if (element) {
+      element.addEventListener("scroll", () => {
+        callback(element);
+      });
+    }
   }, [callback]);
 };
+
+export default useScroll;
