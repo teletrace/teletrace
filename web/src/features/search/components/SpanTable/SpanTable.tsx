@@ -4,14 +4,14 @@ import MaterialReactTable, {
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
-import { UIEvent, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { SearchFilter, Timeframe } from "@/types/spans/spanQuery";
+import { formatDateToTimeString } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
-
 import useScroll from "./useScroll";
 
 const DEFAULT_SORT_FIELD = "startTime";
@@ -42,7 +42,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         : { field: columnSort.id, ascending: !columnSort.desc },
     metadata: undefined,
   };
-  
+
   const { data, fetchNextPage, isError, isFetching, isLoading } =
     useSpansQuery(searchRequest);
 
@@ -53,12 +53,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
-          startTime: new Date(span.startTime).toLocaleTimeString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }),
+          startTime: formatDateToTimeString(span.startTime),
           duration: `ms ${externalFields.duration}`,
           name: span.name,
           status: span.status.code === 0 ? "Ok" : "Error",
@@ -70,16 +65,16 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       })
     ) ?? [];
 
-    const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
-      if (tableWrapper) {
-        const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
-        if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
-          fetchNextPage();
-        }
+  const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
+    if (tableWrapper) {
+      const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
+      if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
+        fetchNextPage();
       }
-    };
+    }
+  };
 
-   useScroll<HTMLDivElement>(fetchMoreOnBottomReached, tableWrapperRef.current)
+  useScroll<HTMLDivElement>(fetchMoreOnBottomReached, tableWrapperRef.current);
 
   return (
     <div ref={tableWrapperRef} style={{ overflowY: "auto" }}>

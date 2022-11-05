@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-const useScroll = <T extends HTMLElement> (
-  callback: (element: T) => void, 
+const useScroll = <T extends HTMLElement>(
+  callback: (element: T) => void,
   element: T | null
 ) => {
   useEffect(() => {
