@@ -11,7 +11,7 @@ func NewElasticConfig(cfg config.Config) ElasticConfig {
 		ServiceToken:   cfg.ESServiceToken,
 		ForceCreate:    cfg.ESForceCreateConfig,
 		Index:          cfg.ESIndex,
-		IndexerWorkers: cfg.ESIndexerWorkers,
-		IndexerTimeout: cfg.ESIndexerTimeout,
+		IndexerWorkers: cfg.ESIndexerWorkersCount,
+		IndexerTimeout: cfg.ESIndexerFlushThresholdSeconds,
 	}
 }
