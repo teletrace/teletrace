@@ -4,7 +4,6 @@ import { Box } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
-import { grey } from "@mui/material/colors";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
@@ -16,14 +15,14 @@ import { FlattenedSpan } from "../spansMock";
 import styles from "./styles";
 
 interface TraceTagsProps {
-  spans:  FlattenedSpan[];
+  spans: FlattenedSpan[];
 }
 interface TagsProps {
   span: FlattenedSpan;
   selectedSpanId: string;
 }
 
-export const TraceTags = ({spans}: TraceTagsProps) => {
+export const TraceTags = ({ spans }: TraceTagsProps) => {
   const [expanded, setExpanded] = useState<string | false>(false);
 
   const handleChange =
@@ -42,13 +41,19 @@ export const TraceTags = ({spans}: TraceTagsProps) => {
           expandIcon={
             <ExpandMoreIcon
               sx={styles.accordionExpandIcon}
-              style = {expanded === props.selectedSpanId ? styles.expandedRow : styles.notExpandedRow }
+              style={
+                expanded === props.selectedSpanId
+                  ? styles.expandedRowIcon
+                  : styles.notExpandedRowIcon
+              }
             />
           }
           sx={styles.accordionSummary}
-          style={{
-            backgroundColor: expanded === props.selectedSpanId ? grey[800] : "",
-          }}
+          style={
+            expanded === props.selectedSpanId
+              ? styles.expandedRow
+              : styles.notExpandedRow
+          }
         >
           <Box sx={styles.accordionIconsBox}>
             <IoTHTTP2Protocol style={styles.accordionNodeIcon} />

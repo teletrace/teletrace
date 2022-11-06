@@ -1,9 +1,15 @@
 const styles = {
   expandedRow: {
+    backgroundColor: "#2B2D32",
+  },
+  notExpandedRow: {
+    backgroundColor: "#1B1C21",
+  },
+  expandedRowIcon: {
     marginRight: "0px",
     marginLeft: "23px",
   },
-  notExpandedRow: {
+  notExpandedRowIcon: {
     marginRight: "23px",
     marginLeft: "0px",
   },
