@@ -1,6 +1,6 @@
 /** types used to query spans from the lupa backend */
 
-import { InternalSpan } from "./span";
+import { InternalSpan } from "@/types/span";
 
 export type Timeframe = {
   startTime: number;
