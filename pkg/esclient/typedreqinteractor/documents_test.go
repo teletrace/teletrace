@@ -123,8 +123,8 @@ func getSearchResponseMock() (map[string]any, error) {
 
 func getSearchRequestMock(fs ...spansquery.SearchFilter) (spansquery.SearchRequest, error) {
 	tf := spansquery.Timeframe{
-		StartTime: time.Unix(0, 0),
-		EndTime:   time.Now(),
+		StartTime: uint64(time.Unix(0, 0).UnixNano()),
+		EndTime:   uint64(time.Now().UnixNano()),
 	}
 
 	sort := spansquery.Sort{

@@ -137,6 +137,5 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 		spans = append(spans, &s)
 	}
 
-	strBody, _ := json.Marshal(body)
-	return &spansquery.SearchResponse{Spans: spans, Raw: string(strBody)}, nil
+	return &spansquery.SearchResponse{Spans: spans}, nil
 }
