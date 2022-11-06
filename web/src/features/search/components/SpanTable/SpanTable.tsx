@@ -4,7 +4,7 @@ import MaterialReactTable, {
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { SearchFilter, Timeframe } from "@/types/spans/spanQuery";
 import { formatDateToTimeString } from "@/utils/format";
@@ -12,7 +12,6 @@ import { formatDateToTimeString } from "@/utils/format";
 import { useSpansQuery } from "../../api/spanQuery";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
-import useScroll from "./useScroll";
 
 const DEFAULT_SORT_FIELD = "startTime";
 
@@ -66,15 +65,18 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     ) ?? [];
 
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
-    if (tableWrapper) {
-      const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
-      if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
-        fetchNextPage();
-      }
+    const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
+    if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
+      fetchNextPage();
     }
   };
 
-  useScroll<HTMLDivElement>(fetchMoreOnBottomReached, tableWrapperRef.current);
+  const tableWrapper = tableWrapperRef.current;
+  useEffect(() => {
+    tableWrapper?.addEventListener("scroll", () => {
+      fetchMoreOnBottomReached(tableWrapper);
+    });
+  }, [fetchMoreOnBottomReached, tableWrapper]);
 
   return (
     <div ref={tableWrapperRef} style={{ overflowY: "auto" }}>
