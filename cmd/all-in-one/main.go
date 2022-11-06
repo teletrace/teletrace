@@ -7,12 +7,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	"oss-tracing/cmd/collector/app"
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
-	"oss-tracing/pkg/receiver"
+	"oss-tracing/plugin/spanstorage/es"
 
-	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 )
 
@@ -29,30 +30,29 @@ func main() {
 	defer logs.FlushBufferedLogs(logger)
 
 	api := api.NewAPI(logger, cfg)
-	receiver, err := receiver.NewReceiver(cfg, logger, fakeTracesProcessor)
+
+	storage, err := es.NewStorage(context.Background(), logger, interactor.NewElasticConfig(cfg))
 	if err != nil {
-		logger.Fatal("Failed to initialize receiver", zap.Error(err))
+		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
+	}
+
+	collector, err := app.NewCollector(cfg, logger, storage)
+	if err != nil {
+		logger.Fatal("Failed to initialize collector", zap.Error(err))
 	}
 
 	signalsChan := make(chan os.Signal, 1)
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
 
 	go startAPI(logger, api)
-	go startReceiver(logger, receiver)
+	go startCollector(logger, collector)
 
 	for sig := range signalsChan {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
 		break
 	}
 
-	stopReceiver(logger, receiver)
-}
-
-// This is an example traces processor function.
-// It should be replaces with the actual implementation once it's ready.
-func fakeTracesProcessor(ctx context.Context, logger *zap.Logger, td ptrace.Traces) error {
-	logger.Info("Received spans", zap.Int("span_count", td.SpanCount()))
-	return nil
+	collector.Stop()
 }
 
 func startAPI(logger *zap.Logger, api *api.API) {
@@ -61,14 +61,8 @@ func startAPI(logger *zap.Logger, api *api.API) {
 	}
 }
 
-func startReceiver(logger *zap.Logger, receiver *receiver.Receiver) {
-	if err := receiver.Start(); err != nil {
-		logger.Fatal("Could not start receiver", zap.Error(err))
-	}
-}
-
-func stopReceiver(logger *zap.Logger, receiver *receiver.Receiver) {
-	if err := receiver.Shutdown(); err != nil {
-		logger.Fatal("Failed to gracefully shut down receiver", zap.Error(err))
+func startCollector(logger *zap.Logger, collector *app.Collector) {
+	if err := collector.Start(); err != nil {
+		logger.Fatal("Failed to start collector", zap.Error(err))
 	}
 }

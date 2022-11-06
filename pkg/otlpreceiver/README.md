@@ -1,6 +1,6 @@
-# receiver
+# otlpreceiver
 
-The `receiver` package sets up HTTP and gRPC servers for receiving OTLP communication.
+The `otlpreceiver` package sets up HTTP and gRPC servers for receiving OTLP communication.
 
 ## Configuration
 
