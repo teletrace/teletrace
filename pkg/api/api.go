@@ -94,6 +94,7 @@ func (api *API) getPing(c *gin.Context) {
 }
 
 // Start runs the configured API instance.
+// Blocks the goroutine indefinitely unless an error happens.
 func (api *API) Start() error {
 	return api.router.Run(fmt.Sprintf(":%d", api.config.APIPort))
 }
