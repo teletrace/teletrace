@@ -19,6 +19,7 @@ import {
 import { createGraphLayout } from "@/components/Graph/utils/layout";
 import { Head } from "@/components/Head";
 
+import { SpansMock } from "../components/spansMock";
 import { TraceGraph } from "../components/TraceGraph";
 import TraceTags from "../components/TraceTags";
 import { TraceTimeline } from "../components/TraceTimeline";
@@ -149,7 +150,7 @@ export const TraceView = () => {
             onEdgesChange={onEdgesChange}
             isLoading={isLoading}
           />
-          <TraceTags />
+          <TraceTags spans={SpansMock}/>
         </Stack>
 
         <Stack

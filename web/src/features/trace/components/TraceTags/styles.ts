@@ -1,4 +1,12 @@
 const styles = {
+  expandedRow: {
+    marginRight: "0px",
+    marginLeft: "23px",
+  },
+  notExpandedRow: {
+    marginRight: "23px",
+    marginLeft: "0px",
+  },
   mainPaper: {
     width: "100%",
     backgroundColor: "black",

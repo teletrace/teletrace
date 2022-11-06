@@ -12,19 +12,22 @@ import { useState } from "react";
 import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
 import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
 
-import { FlattenedSpan, SpansMock } from "../spansMock";
+import { FlattenedSpan } from "../spansMock";
 import styles from "./styles";
 
+interface TraceTagsProps {
+  spans:  FlattenedSpan[];
+}
 interface TagsProps {
   span: FlattenedSpan;
   selectedSpanId: string;
 }
 
-export const TraceTags = () => {
+export const TraceTags = ({spans}: TraceTagsProps) => {
   const [expanded, setExpanded] = useState<string | false>(false);
 
   const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
     };
 
@@ -39,10 +42,7 @@ export const TraceTags = () => {
           expandIcon={
             <ExpandMoreIcon
               sx={styles.accordionExpandIcon}
-              style={{
-                marginLeft: expanded === props.selectedSpanId ? "23px" : "0",
-                marginRight: expanded === props.selectedSpanId ? "0" : "23px",
-              }}
+              style = {expanded === props.selectedSpanId ? styles.expandedRow : styles.notExpandedRow }
             />
           }
           sx={styles.accordionSummary}
@@ -75,10 +75,10 @@ export const TraceTags = () => {
 
   return (
     <Paper sx={styles.mainPaper}>
-      {Array.from(SpansMock).map((spanMock, index) => (
+      {spans.map((span, index) => (
         <TagsMainAccordion
           key={index}
-          span={spanMock}
+          span={span}
           selectedSpanId={index.toString()}
         />
       ))}
