@@ -150,7 +150,7 @@ export const TraceView = () => {
             onEdgesChange={onEdgesChange}
             isLoading={isLoading}
           />
-          <TraceTags spans={SpansMock}/>
+          <TraceTags spans={SpansMock} />
         </Stack>
 
         <Stack
