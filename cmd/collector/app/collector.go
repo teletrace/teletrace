@@ -23,19 +23,19 @@ type Collector struct {
 	otlpQueue    *queue.BoundedQueue
 	spansQueue   *queue.BoundedQueue
 	otlpReceiver *otlpreceiver.OtlpReceiver
-	spanStorage  storage.Storage
+	spanWriter *storage.SpanWriter
 }
 
 // NewCollector creates the relevant collector components and returns a new Collector instance.
-func NewCollector(cfg config.Config, logger *zap.Logger, spanStorage storage.Storage) (*Collector, error) {
+func NewCollector(cfg config.Config, logger *zap.Logger, sw *storage.SpanWriter) (*Collector, error) {
 	otlpQueue, err := queue.NewBoundedQueue(cfg.OTLPQueueSize)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize OTLP queue: %w", err)
+		return nil, fmt.Errorf("Failed to initialize OTLP queue: %w", err)
 	}
 
 	spansQueue, err := queue.NewBoundedQueue(cfg.SpansQueueSize)
 	if err != nil {
-		return nil, fmt.Errorf("failed to initialize spans queue: %w", err)
+		return nil, fmt.Errorf("Failed to initialize spans queue: %w", err)
 	}
 
 	otlpReceiver, err := otlpreceiver.NewOtlpReceiver(cfg, logger, getOTLPEnqueuer(otlpQueue))
@@ -46,7 +46,7 @@ func NewCollector(cfg config.Config, logger *zap.Logger, spanStorage storage.Sto
 	return &Collector{
 		cfg:          cfg,
 		logger:       logger,
-		spanStorage:  spanStorage,
+    spanWriter:   sw,
 		otlpQueue:    otlpQueue,
 		spansQueue:   spansQueue,
 		otlpReceiver: otlpReceiver,
@@ -65,10 +65,6 @@ func getOTLPEnqueuer(otlpQueue *queue.BoundedQueue) func(ctx context.Context, lo
 
 // Start runs the collector components and starts the spans ingestion process.
 func (c *Collector) Start() error {
-	if err := c.spanStorage.Initialize(); err != nil {
-		return fmt.Errorf("failed to initialize spans storage: %w", err)
-	}
-
 	c.otlpQueue.StartConsumers(c.getOTLPTranslatorConsumer(), c.cfg.OTLPQueueWorkersCount)
 	c.spansQueue.StartConsumers(c.getSpansWriterConsumer(), c.cfg.SpansQueueWorkersCount)
 
@@ -91,14 +87,9 @@ func (c *Collector) getOTLPTranslatorConsumer() func(item interface{}) {
 
 func (c *Collector) getSpansWriterConsumer() func(item interface{}) {
 	return func(item interface{}) {
-		spanWriter, err := c.spanStorage.CreateSpanWriter()
+		err := (*c.spanWriter).WriteBulk(context.Background(), item.([]*v1.InternalSpan)...)
 		if err != nil {
-			c.logger.Error("Failed to create span writer", zap.Error(err))
-		} else {
-			err := spanWriter.WriteBulk(context.Background(), item.([]*v1.InternalSpan)...)
-			if err != nil {
-				c.logger.Error("Failed to write spans to spans storage", zap.Error(err))
-			}
+			c.logger.Error("Failed to write spans to spans storage", zap.Error(err))
 		}
 	}
 }

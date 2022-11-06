@@ -9,13 +9,15 @@ import (
 type Doc any
 
 type ElasticConfig struct {
-	Endpoint     string
-	Username     string
-	Password     string
-	ApiKey       string
-	ServiceToken string
-	ForceCreate  bool
-	Index        string
+	Endpoint       string
+	Username       string
+	Password       string
+	ApiKey         string
+	ServiceToken   string
+	ForceCreate    bool
+	Index          string
+	IndexerWorkers int
+	IndexerTimeout int
 }
 
 type ExistsResponse struct {
@@ -54,7 +56,8 @@ type ComponentTemplateController interface {
 }
 
 type DocumentController interface {
-	Bulk(ctx context.Context, docs ...*Doc) error
+	WriteBulk(ctx context.Context, docs ...*Doc) error
+	Close(ctx context.Context) error
 	Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error)
 }
 

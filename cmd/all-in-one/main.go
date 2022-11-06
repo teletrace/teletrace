@@ -29,20 +29,34 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	api := api.NewAPI(logger, cfg)
-
 	storage, err := es.NewStorage(context.Background(), logger, interactor.NewElasticConfig(cfg))
 	if err != nil {
 		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
 	}
 
-	collector, err := app.NewCollector(cfg, logger, storage)
+	sw, err := storage.CreateSpanWriter()
+	if err != nil {
+		logger.Fatal("Failed to create Span Writer to Storage", zap.Error(err))
+	}
+
+	sr, err := storage.CreateSpanReader()
+	if err != nil {
+		logger.Fatal("Failed to create Span Reader from Storage", zap.Error(err))
+	}
+
+	api := api.NewAPI(logger, cfg, &sr)
+
+	collector, err := app.NewCollector(cfg, logger, &sw)
 	if err != nil {
 		logger.Fatal("Failed to initialize collector", zap.Error(err))
 	}
 
 	signalsChan := make(chan os.Signal, 1)
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
+
+	if err := storage.Initialize(); err != nil {
+		logger.Fatal("Failed to initialize spans storage", zap.Error(err))
+	}
 
 	go startAPI(logger, api)
 	go startCollector(logger, collector)
@@ -53,6 +67,7 @@ func main() {
 	}
 
 	collector.Stop()
+	sw.Close(context.Background())
 }
 
 func startAPI(logger *zap.Logger, api *api.API) {
