@@ -53,19 +53,39 @@ func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
 
 	builder := search.NewRequestBuilder()
 
-	builder, err = buildQuery(builder, r.SearchFilter...)
-	if err != nil {
+	timeframeFilters := createTimeframeFilters(r.Timeframe)
+
+	filters := append(r.SearchFilter, timeframeFilters...)
+
+	if builder, err = buildQuery(builder, filters...); err != nil {
 		return nil, fmt.Errorf("Could not build query for search request: %+v. err: %+v", r, err)
 	}
 
-	builder, err = buildSort(builder, r.Sort...)
-	if err != nil {
-		return nil, fmt.Errorf("Could not build sort for search request: %+v. err: %+v", r, err)
-	}
+	builder = buildSort(builder, r.Sort...)
 
 	builder = builder.Size(200) // Where to get this number from?
 
 	return builder.Build(), nil
+}
+
+func createTimeframeFilters(tf spansquery.Timeframe) []spansquery.SearchFilter {
+	return []spansquery.SearchFilter{
+		{
+			KeyValueFilter: &spansquery.KeyValueFilter{
+				Key:      "span.startTimeUnixNano",
+				Operator: spansquery.OPERATOR_GTE,
+				Value:    tf.StartTime,
+			},
+		},
+		{
+			KeyValueFilter: &spansquery.KeyValueFilter{
+				Key:      "span.endTimeUnixNano",
+				Operator: spansquery.OPERATOR_LTE,
+				Value:    tf.EndTime,
+			},
+		},
+	}
+
 }
 
 func buildQuery(b *search.RequestBuilder, fs ...spansquery.SearchFilter) (*search.RequestBuilder, error) {
@@ -88,10 +108,10 @@ func buildQuery(b *search.RequestBuilder, fs ...spansquery.SearchFilter) (*searc
 	return b.Query(query), nil
 }
 
-func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) (*search.RequestBuilder, error) {
+func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
 	DIRECTION := map[bool]sortorder.SortOrder{true: sortorder.Asc, false: sortorder.Desc}
 
-	var sorts []types.SortCombinations
+	sorts := []types.SortCombinations{}
 	for _, _s := range s {
 		sorts = append(sorts, types.NewSortCombinationsBuilder().
 			Field(types.Field(_s.Field)).
@@ -99,10 +119,11 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) (*search.RequestB
 				SortOptions(map[types.Field]*types.FieldSortBuilder{
 					types.Field(_s.Field): types.NewFieldSortBuilder().Order(DIRECTION[_s.Ascending]),
 				}),
-			),
+			).
+			Build(),
 		)
 	}
-	return b.Sort(types.NewSortBuilder().Sort(types.Sort(sorts))), nil
+	return b.Sort(types.NewSortBuilder().Sort(sorts))
 
 }
 
@@ -137,6 +158,5 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 		spans = append(spans, &s)
 	}
 
-	strBody, _ := json.Marshal(body)
-	return &spansquery.SearchResponse{Spans: spans, Raw: string(strBody)}, nil
+	return &spansquery.SearchResponse{Spans: spans}, nil
 }

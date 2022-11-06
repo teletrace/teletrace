@@ -25,7 +25,17 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	api := api.NewAPI(logger, cfg)
+	storage, err := es.NewStorage(context.Background(), logger, interactor.NewElasticConfig(cfg))
+	if err != nil {
+		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
+	}
+
+	sr, err := storage.CreateSpanReader()
+	if err != nil {
+		logger.Fatal("Failed to create Span Reader from Storage", zap.Error(err))
+	}
+
+	api := api.NewAPI(logger, cfg, &sr)
 	if err := api.Start(); err != nil {
 		logger.Fatal("API server crashed", zap.Error(err))
 	}

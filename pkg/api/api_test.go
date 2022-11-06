@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
+	storage "oss-tracing/pkg/spanstorage/mock"
 	"path"
 	"path/filepath"
 	"testing"
@@ -22,7 +23,10 @@ func TestLoggerMiddleware(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodGet, pingRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
-	api := NewAPI(fakeLogger, cfg)
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
 	api.router.ServeHTTP(resRecorder, req)
 
 	logs := observedLogs.All()
@@ -39,8 +43,10 @@ func TestRecoveryLoggerMiddleware(t *testing.T) {
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, panicRoute, nil)
 	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
 
-	api := NewAPI(fakeLogger, cfg)
+	api := NewAPI(fakeLogger, cfg, &srMock)
 	api.router.GET(panicRoute, func(c *gin.Context) {
 		panic(panicMsg)
 	})
@@ -65,8 +71,11 @@ func TestPingRoute(t *testing.T) {
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, "/ping"), nil)
 	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
 
-	api := NewAPI(fakeLogger, cfg)
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
 	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
@@ -89,8 +98,10 @@ func runStaticFilesRouteTest(t *testing.T, testedRoute string) {
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, testedRoute, nil)
 	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
 
-	api := NewAPI(fakeLogger, cfg)
+	api := NewAPI(fakeLogger, cfg, &srMock)
 	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)

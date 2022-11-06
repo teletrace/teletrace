@@ -1,9 +1,38 @@
-import { Paper, Typography } from "@mui/material";
+import { Box, Paper } from "@mui/material";
+import { Controls, ReactFlow } from "reactflow";
 
-export const TraceGraph = () => {
+import { Loader } from "@/components/Elements/Loader";
+import { BasicEdge } from "@/components/Graph/BasicEdge";
+import { BasicNode } from "@/components/Graph/BasicNode";
+import { TraceGraphParams } from "@/components/Graph/types";
+
+import "reactflow/dist/style.css";
+
+const nodeTypes = { basicNode: BasicNode };
+
+const edgeTypes = { basicEdge: BasicEdge };
+
+export const TraceGraph = (params: TraceGraphParams) => {
+  const { nodes, edges, onNodesChange, onEdgesChange, isLoading } = params;
   return (
     <Paper sx={{ width: "100%" }}>
-      <Typography>Graph goes here</Typography>
+      {isLoading ? (
+        <Loader />
+      ) : nodes.length > 0 ? (
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          fitView
+        >
+          <Controls />
+        </ReactFlow>
+      ) : (
+        <Box>No Data to display</Box>
+      )}
     </Paper>
   );
 };

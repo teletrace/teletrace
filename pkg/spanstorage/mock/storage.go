@@ -21,6 +21,10 @@ func (sw spanWriter) WriteBulk(ctx context.Context, span ...*internalspan.Intern
 	return nil
 }
 
+func (sw spanWriter) Close(ctx context.Context) error {
+	return nil
+}
+
 func (sr spanReader) Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
 	return nil, nil
 }

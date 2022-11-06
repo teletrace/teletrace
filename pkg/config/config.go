@@ -61,6 +61,12 @@ const (
 
 	esIndexEnvName = "ES_INDEX"
 	esIndexDefault = "lupa-spans"
+
+	esIndexerWorkersCountEnvName = "ES_INDEXER_WORKERS_COUNT"
+	esIndexerWorkersCountDefault = 5
+
+	esIndexerFlushThresholdSecondsEnvName = "ES_INDEXER_FLUSH_THRESHOLD_SECONDS"
+	esIndexerFlushThresholdSecondsDefault = 30
 )
 
 // Config defines global configurations used throughout the application.
@@ -77,13 +83,15 @@ type Config struct {
 	SpansQueueShutdownTimeoutSeconds int    `mapstructure:"spans_queue_shutdown_timeout_seconds"`
 
 	// Elasticsearch configs
-	ESEndpoints         string `mapstructure:"es_endpoint"`
-	ESUsername          string `mapstructure:"es_username"`
-	ESPassword          string `mapstructure:"es_password"`
-	ESAPIKey            string `mapstructure:"es_api_key"`
-	ESServiceToken      string `mapstructure:"es_service_token"`
-	ESForceCreateConfig bool   `mapstructure:"es_force_create_config"`
-	ESIndex             string `mapstructure:"es_index"`
+	ESEndpoints                    string `mapstructure:"es_endpoint"`
+	ESUsername                     string `mapstructure:"es_username"`
+	ESPassword                     string `mapstructure:"es_password"`
+	ESAPIKey                       string `mapstructure:"es_api_key"`
+	ESServiceToken                 string `mapstructure:"es_service_token"`
+	ESForceCreateConfig            bool   `mapstructure:"es_force_create_config"`
+	ESIndex                        string `mapstructure:"es_index"`
+	ESIndexerWorkersCount          int    `mapstructure:"es_indexer_workers_count"`
+	ESIndexerFlushThresholdSeconds int    `mapstructure:"es_indexer_flush_threshold_seconds"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -136,4 +144,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esServiceTokenEnvName, esServiceTokenDefault)
 	v.SetDefault(esForceCreateConfigEnvName, esForceCreateConfigDefault)
 	v.SetDefault(esIndexEnvName, esIndexDefault)
+	v.SetDefault(esIndexerFlushThresholdSecondsEnvName, esIndexerFlushThresholdSecondsDefault)
+	v.SetDefault(esIndexerWorkersCountEnvName, esIndexerWorkersCountDefault)
 }

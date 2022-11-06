@@ -1,6 +1,6 @@
 /** types used to query spans from the lupa backend */
 
-import { InternalSpan } from "./span";
+import { InternalSpan } from "@/types/span";
 
 export type Timeframe = {
   startTime: number;
@@ -32,12 +32,14 @@ export type KeyValueFilter = {
   operator: Operator;
 };
 
-export type SearchFilter = KeyValueFilter | string;
+export type SearchFilter = {
+  keyValueFilter: KeyValueFilter;
+};
 
 export type SearchRequest = {
-  filter: SearchFilter;
   timeframe: Timeframe;
 
+  filters?: SearchFilter[];
   sort?: Sort;
   metadata?: { nextToken: string };
 };
