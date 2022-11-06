@@ -48,8 +48,8 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
 
   const tableSpans =
     data?.pages?.flatMap((page) =>
-      page.spans.flatMap(({ resource, span, externalFields }): TableSpan => {
-        return {
+      page.spans.flatMap(({ resource, span, externalFields }): TableSpan => 
+        ({
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
@@ -61,8 +61,8 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
             typeof resource.attributes["service.name"] === "string"
               ? resource.attributes["service.name"]
               : "service unknown",
-        };
-      })
+        })
+      )
     ) ?? [];
 
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
