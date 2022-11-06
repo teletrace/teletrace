@@ -53,7 +53,9 @@
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "yarn run eslint",
-    "eslint": "eslint 'src/**/*.{ts,tsx}' --max-warnings=0"
+    "eslint": "eslint 'src/**/*.{ts,tsx}' --max-warnings=0",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "browserslist": {
     "production": [
