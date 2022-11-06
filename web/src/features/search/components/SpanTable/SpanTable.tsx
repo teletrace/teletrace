@@ -48,8 +48,8 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
 
   const tableSpans =
     data?.pages?.flatMap((page) =>
-      page.spans.flatMap(({ resource, span, externalFields }): TableSpan => 
-        ({
+      page.spans.flatMap(
+        ({ resource, span, externalFields }): TableSpan => ({
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
