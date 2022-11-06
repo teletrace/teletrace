@@ -1,7 +1,6 @@
 # otlpreceiver
 
-The `otlpreceiver` package sets up HTTP and gRPC servers for receiving OTLP communication.\
-Accepts a callback for consuming the incoming traces.
+The `otlpreceiver` package sets up HTTP and gRPC servers for receiving OTLP communication.
 
 ## Configuration
 
