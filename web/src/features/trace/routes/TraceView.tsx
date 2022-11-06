@@ -20,8 +20,9 @@ import { createGraphLayout } from "@/components/Graph/utils/layout";
 import { Head } from "@/components/Head";
 
 import { TraceGraph } from "../components/TraceGraph";
-import { TraceTags } from "../components/TraceTags";
+import TraceTags from "../components/TraceTags";
 import { TraceTimeline } from "../components/TraceTimeline";
+
 
 const initialNodes: Node<NodeData>[] = [
   {

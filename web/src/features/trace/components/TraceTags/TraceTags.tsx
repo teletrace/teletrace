@@ -12,8 +12,8 @@ import { useState } from "react";
 import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
 import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
 
-import styles from "../styles/styles.tags";
-import { FlattenedSpan, SpansMock } from "./spansMock";
+import { FlattenedSpan, SpansMock } from "../spansMock";
+import styles from "./styles";
 
 interface TagsProps {
   span: FlattenedSpan;
