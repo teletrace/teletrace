@@ -11,10 +11,6 @@ export interface EdgeData {
   count?: number;
 }
 
-export interface IconComponentProps {
-  name: string;
-}
-
 export interface BasicNodeProps {
   image: string;
   name: string;
