@@ -1,4 +1,4 @@
-package receiver
+package otlpreceiver
 
 import (
 	"context"
@@ -35,7 +35,7 @@ func TestReceiverGRPCEndpoint(t *testing.T) {
 		return nil
 	}
 
-	receiver, err := NewReceiver(cfg, logger, tracesProcessor)
+	receiver, err := NewOtlpReceiver(cfg, logger, tracesProcessor)
 	assert.NoError(t, err)
 	assert.NoError(t, receiver.Start())
 	defer func() {
@@ -95,7 +95,7 @@ func TestReceiverHTTPEndpoint(t *testing.T) {
 		return nil
 	}
 
-	receiver, err := NewReceiver(cfg, logger, tracesProcessor)
+	receiver, err := NewOtlpReceiver(cfg, logger, tracesProcessor)
 	assert.NoError(t, err)
 	assert.NoError(t, receiver.Start())
 	defer func() {
