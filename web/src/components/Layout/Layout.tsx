@@ -24,9 +24,7 @@ export const Layout = ({ children }: LayoutProps) => (
       padding={2}
       sx={{ flex: 1, height: "calc(100vh - 64px)" }}
     >
-      <Box component="main" padding={4} flex={1}>
-        {children}
-      </Box>
+      {children}
     </Box>
   </Box>
 );

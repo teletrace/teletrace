@@ -1,12 +1,12 @@
-import { Stack } from "@mui/material";
+import { Divider, Stack } from "@mui/material";
 import { Fragment } from "react";
+
+import { Head } from "@/components/Head";
 
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { Timeframe } from "../types/spanQuery";
-
-import { Head } from "@/components/Head";
 
 export const SpanSearch = () => {
   const now = new Date().valueOf();
@@ -23,12 +23,17 @@ export const SpanSearch = () => {
         description="Designated page to span search's flow graph and timeline"
       />
 
-      <Stack direction="row" spacing={2}>
+      <Stack direction="row" spacing={2} sx={{ height: "100%" }}>
         <aside style={{ width: 320 }}>
           <TagSidebar />
         </aside>
 
-        <Stack direction="column" spacing={2} flex={1}>
+        <Stack
+          direction="column"
+          divider={<Divider orientation="vertical" flexItem />}
+          spacing={1}
+          sx={{ height: "100%" }}
+        >
           <SearchBar />
           <SpanTable timeframe={defaultTimeframe} />
         </Stack>

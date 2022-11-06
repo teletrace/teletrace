@@ -6,12 +6,12 @@ import MaterialReactTable, {
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
 
+import { formatDateToTimeString } from "@/utils/format";
+
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/spanQuery";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
-
-import { formatDateToTimeString } from "@/utils/format";
 
 const DEFAULT_SORT_FIELD = "startTime";
 
