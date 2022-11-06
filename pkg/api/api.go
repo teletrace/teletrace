@@ -13,6 +13,7 @@ import (
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
+	storage "oss-tracing/pkg/spanstorage"
 )
 
 const apiPrefix = "/v1"
@@ -22,18 +23,20 @@ var staticFilesPath = filepath.Join("web", "build")
 // API holds the config used for running the API as well as
 // the endpoint handlers and resources used by them (e.g. logger).
 type API struct {
-	logger *zap.Logger
-	config config.Config
-	router *gin.Engine
+	logger     *zap.Logger
+	config     config.Config
+	router     *gin.Engine
+	spanReader *storage.SpanReader
 }
 
 // NewAPI creates and returns a new API instance.
-func NewAPI(logger *zap.Logger, config config.Config) *API {
+func NewAPI(logger *zap.Logger, config config.Config, sr *storage.SpanReader) *API {
 	router := newRouter(logger, config)
 	api := &API{
-		logger: logger,
-		config: config,
-		router: router,
+		logger:     logger,
+		config:     config,
+		router:     router,
+		spanReader: sr,
 	}
 	api.registerMiddlewares()
 	api.registerRoutes()
@@ -91,6 +94,7 @@ func (api *API) getPing(c *gin.Context) {
 }
 
 // Start runs the configured API instance.
+// Blocks the goroutine indefinitely unless an error happens.
 func (api *API) Start() error {
 	return api.router.Run(fmt.Sprintf(":%d", api.config.APIPort))
 }

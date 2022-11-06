@@ -33,13 +33,22 @@ func main() {
 		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
 	}
 
-	collector, err := app.NewCollector(cfg, logger, storage)
+	sw, err := storage.CreateSpanWriter()
+	if err != nil {
+		logger.Fatal("Failed to create Span Writer to Storage", zap.Error(err))
+	}
+
+	collector, err := app.NewCollector(cfg, logger, &sw)
 	if err != nil {
 		logger.Fatal("Failed to initialize collector", zap.Error(err))
 	}
 
 	signalsChan := make(chan os.Signal, 1)
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
+
+	if err := storage.Initialize(); err != nil {
+		logger.Fatal("Failed to initialize spans storage", zap.Error(err))
+	}
 
 	if err := collector.Start(); err != nil {
 		logger.Fatal("Failed to start collector", zap.Error(err))
@@ -51,4 +60,5 @@ func main() {
 	}
 
 	collector.Stop()
+	sw.Close(context.Background())
 }
