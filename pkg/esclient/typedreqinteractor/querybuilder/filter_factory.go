@@ -162,6 +162,8 @@ func createRangeFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilde
 
 	if i, ok := f.Value.(int64); ok {
 		fVal = float64(i)
+	} else if ui, ok := f.Value.(uint64); ok {
+		fVal = float64(ui)
 	} else if fl, ok := f.Value.(float64); ok {
 		fVal = fl
 	} else {
