@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { NodeIcon } from "@/components/Graph/NodeIcon";
 import { BasicNodeProps } from "@/components/Graph/types";
+import { TraceViewIcon } from "@/components/TraceViewIcon/TraceViewIcon";
 
 import { styles } from "./styles";
 
@@ -17,7 +17,7 @@ export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
       />
       <Box sx={styles.nodeStyle.nodeBox}>
         <Box sx={styles.nodeStyle.nodeIconBox}>
-          <NodeIcon name={image} />
+          <TraceViewIcon name={image} />
         </Box>
         <Box sx={styles.nodeStyle.nodeText}>
           <Box sx={{ color: "#E9EAF1" }}>{name}</Box>
