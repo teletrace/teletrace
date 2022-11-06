@@ -1,10 +1,18 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useEffect, useState } from "react";
 import {
+  MouseEvent as ReactMouseEvent,
+  ReactEventHandler,
+  useEffect,
+  useState,
+} from "react";
+import {
+  applyEdgeChanges,
   Edge,
+  getConnectedEdges,
   MarkerType,
   Node,
+  updateEdge,
   useEdgesState,
   useNodesState,
 } from "reactflow";
@@ -107,8 +115,8 @@ const initialEdges: Edge<EdgeData>[] = [
 
 export const TraceView = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
   useEffect(() => {
     setTimeout(() => {
       createGraphLayout(initialNodes, initialEdges)
@@ -122,6 +130,12 @@ export const TraceView = () => {
         .catch(() => alert("something went wrong!!! Could not render graph"));
     }, 1000);
   }, []);
+
+  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
+    const connectedEdges = getConnectedEdges([node], edges);
+    edges.map((e: Edge<EdgeData>) => (e.animated = connectedEdges.includes(e)));
+    setEdges((edges) => [...edges]);
+  };
   return (
     <>
       <Head
@@ -146,6 +160,7 @@ export const TraceView = () => {
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            onNodeClick={onNodeClick}
             isLoading={isLoading}
           />
           <TraceTags />

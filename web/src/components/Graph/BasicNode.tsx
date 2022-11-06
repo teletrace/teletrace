@@ -6,8 +6,14 @@ import { ResourceIcon } from "@/components/ResourceIcon/ResourceIcon";
 
 import { styles } from "./styles";
 
+enum IconBorderColor {
+  GRAY = "#5a5b61",
+  BLUE = "#009EB4",
+}
+
 export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
   const { image, name, type } = props.data;
+  const isSelected = props.selected;
   return (
     <>
       <Handle
@@ -16,7 +22,14 @@ export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
         style={{ visibility: "hidden" }}
       />
       <Box sx={styles.nodeStyle.nodeBox}>
-        <Box sx={styles.nodeStyle.nodeIconBox}>
+        <Box
+          sx={{
+            ...styles.nodeStyle.nodeIconBox,
+            borderColor: isSelected
+              ? IconBorderColor.BLUE
+              : IconBorderColor.GRAY,
+          }}
+        >
           <ResourceIcon name={image} />
         </Box>
         <Box sx={styles.nodeStyle.nodeText}>

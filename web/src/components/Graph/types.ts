@@ -1,3 +1,4 @@
+import { NodeMouseHandler } from "@reactflow/core/dist/esm/types/nodes";
 import { Edge, Node, OnEdgesChange, OnNodesChange } from "reactflow";
 
 export interface NodeData {
@@ -22,5 +23,6 @@ export interface TraceGraphParams {
   edges: Edge<EdgeData>[];
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
+  onNodeClick: NodeMouseHandler;
   isLoading: boolean;
 }

@@ -5,6 +5,11 @@ import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
 
 import { styles } from "./styles";
 
+enum EdgeColor {
+  GRAY = "#96979E",
+  BLUE = "#009EB4",
+}
+
 export const BasicEdge = ({
   id,
   sourceX,
@@ -15,6 +20,7 @@ export const BasicEdge = ({
   targetPosition,
   data,
   markerEnd,
+  animated,
 }: EdgeProps) => {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -24,11 +30,12 @@ export const BasicEdge = ({
     targetY,
     targetPosition,
   });
+  const edgeColor = animated ? EdgeColor.BLUE : EdgeColor.GRAY;
   return (
     <>
       <path
         id={id}
-        style={{ padding: 1 }}
+        style={{ padding: 1, stroke: edgeColor }}
         className="react-flow__edge-path"
         d={edgePath}
         markerEnd={markerEnd}
@@ -43,7 +50,14 @@ export const BasicEdge = ({
         <Box sx={styles.edgeStyle.edgeLabelContainer}>
           <Box sx={styles.edgeStyle.timeContainer}>{data.time}</Box>
           {data?.count && (
-            <Box sx={styles.edgeStyle.counterContainer}>{data.count}</Box>
+            <Box
+              sx={{
+                ...styles.edgeStyle.counterContainer,
+                borderColor: edgeColor,
+              }}
+            >
+              {data.count}
+            </Box>
           )}
         </Box>
       </foreignObject>
