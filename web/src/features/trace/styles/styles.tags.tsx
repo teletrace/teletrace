@@ -1,35 +1,46 @@
 const styles = {
-  accordionSummary: {
-    flexDirection: "row-reverse",
-  },
-  accordionGridIconsItem: {
-    flexDirection: "column",
-    paddingLeft: 1.5,
-    paddingRight: 1.5,
-    display: "center",
-    alignSelf: "center",
-    flexWrap: "wrap",
-  },
-  accordionGridTypographyItem: {
-    alignItems: "flex-start",
+  mainAccordion: {
     display: "flex",
     flexDirection: "column",
+    width: "100%",
+    borderRadius: "8px",
+    marginBottom: "8px",
+    "&::before": {
+      display: "none",
+    },
   },
-  accordionSvgIcon: {
-    fontSize: 30,
-    fill: "none",
-    stroke: "#3F8624",
+  accordionExpandIcon: {
+    color: "#FFFFFF",
+    fontSize: "22px",
   },
-  accordionArrowIcon: {
-    color: "#6E6F75",
-    fontSize: "medium",
+  accordionIconsBox: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: "17px",
+  },
+  accordionSummary: {
+    display: "flex",
+    flexDirection: "row-reverse",
+    width: "100%",
+    height: "60px",
+    alignitems: "center",
+    borderTopLeftRadius: "8px",
+    borderTopRightRadius: "8px",
   },
   accordionTitleTypography: {
-    fontFamily: "Inter",
+    margin: "0",
     fontWeight: "700",
     fontSize: "14px",
-    color: "#FFFFFF",
-    paddingBottom: 1,
+    lineHeight: "20px",
+    letterSpacing: "0.15px",
+    marginBottom: "8px",
+  },
+  accordionSummaryTypography: {
+    fontSize: "12px",
+    fontWeight: "500",
+    letterSpacing: "0.4px",
+    color: "#B6B7BE",
   },
 };
 

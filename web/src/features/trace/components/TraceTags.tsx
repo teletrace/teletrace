@@ -1,22 +1,22 @@
-import ArrowIcon from "@mui/icons-material/ArrowForward";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { SvgIcon } from "@mui/material";
+import { Box } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import { grey } from "@mui/material/colors";
-import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-
+import { ReactComponent as IoTHTTP2Protocol } from "../styles/icons/IoTHTTP2Protocol.svg";
+import { ReactComponent as LambdaFunction } from "../styles/icons/LambdaFunction.svg";
 import styles from "../styles/styles.tags";
 import { FlattenedSpan, SpansMock } from "./spansMock";
 
 interface TagsProps {
   span: FlattenedSpan;
-  selectedSpanId: string
+  selectedSpanId: string;
 }
 
 export const TraceTags = () => {
@@ -32,33 +32,38 @@ export const TraceTags = () => {
       <Accordion
         expanded={expanded === props.selectedSpanId}
         onChange={handleChange(props.selectedSpanId)}
+        sx={styles.mainAccordion}
       >
         <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
+          expandIcon={
+            <ExpandMoreIcon sx={ styles.accordionExpandIcon } />
+          }
           sx={styles.accordionSummary}
           style={{
             backgroundColor: expanded === props.selectedSpanId ? grey[800] : "",
           }}
         >
-          <Grid container justifyContent="flex-start" alignItems="center">
-            <Grid item sx={styles.accordionGridIconsItem}>
-              <SvgIcon sx={styles.accordionSvgIcon}>
-                <path d={props.span.firstIconPath} />
-              </SvgIcon>
-              <ArrowIcon sx={styles.accordionArrowIcon} />
-              <SvgIcon sx={styles.accordionSvgIcon}>
-                <path d={props.span.secondIconPath} />
-              </SvgIcon>
-            </Grid>
-            <Grid item sx={styles.accordionGridTypographyItem}>
-              <Typography sx={styles.accordionTitleTypography}>
-                {props.span.spanAction}
-              </Typography>
-              <Typography variant="caption" sx={{ color: grey[300] }}>
-                {`${props.span.spanDuration}ms`} | {props.span.spanDateTime}
-              </Typography>
-            </Grid>
-          </Grid>
+          <Box
+            sx={ styles.accordionIconsBox }
+          >
+            <IoTHTTP2Protocol
+              style={{ width: "22px", height: "22px", marginLeft: "23px" }}
+            />
+            <ArrowForwardIcon
+              style={{ fontSize: "medium", margin: "0 8px", color: "#96979E" }}
+            />
+            <LambdaFunction style={{ width: "25px" }} />
+          </Box>
+          <Box >
+            <Typography sx={styles.accordionTitleTypography}>
+              {props.span.spanAction}
+            </Typography>
+            <Typography sx={styles.accordionSummaryTypography}>
+              {`${props.span.spanDuration}ms`}{" "}
+              <span style={{ margin: "0 4px" }}>|</span>{" "}
+              {props.span.spanDateTime}
+            </Typography>
+          </Box>
         </AccordionSummary>
         <AccordionDetails>
           <Typography>Add inner accordion</Typography>
@@ -68,15 +73,14 @@ export const TraceTags = () => {
   }
 
   return (
-    <Paper sx={{ width: "100%" }}>
-      <TagsMainAccordion
-        span={SpansMock[0]}
-        selectedSpanId="panel1"
-      />
-      <TagsMainAccordion
-        span={SpansMock[1]}
-        selectedSpanId="panel1"
-      />
+    <Paper sx={{ width: "100%", backgroundColor: "black" }}>
+      {Array.from(SpansMock).map((spanMock, index) => (
+        <TagsMainAccordion
+          key={index}
+          span={spanMock}
+          selectedSpanId={index.toString()}
+        />
+      ))}
     </Paper>
   );
 };
