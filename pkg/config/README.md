@@ -22,3 +22,17 @@ Config options can be loaded from multiple sources:
 
 Config sources are prioritized:
 default values (lowest priority) < config file < env variables (highest priority).
+
+## Usage
+
+```go
+cfg, err := config.NewConfig()
+if err != nil {
+    // Failed to initialize config
+}
+
+// Config access example
+if cfg.Debug {
+    // Debug is true
+}
+```
