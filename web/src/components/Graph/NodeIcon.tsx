@@ -22,5 +22,5 @@ const iconTypes: IconTypes = {
 export const NodeIcon = (data: IconComponentProps) => {
   const { name } = data;
   const Icon = iconTypes[name] || iconTypes["DefaultIcon"];
-  return Icon ? <Icon height={30} width={30} /> : null;
+  return <Icon height={30} width={30} />;
 };
