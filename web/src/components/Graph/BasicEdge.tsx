@@ -41,7 +41,7 @@ export const BasicEdge = ({
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
         <Box sx={styles.edgeStyle.edgeLabelContainer}>
-          <Box sx={styles.edgeStyle.timeContainer}>{data?.time}</Box>
+          <Box sx={styles.edgeStyle.timeContainer}>{data.time}</Box>
           {data?.count && (
             <Box sx={styles.edgeStyle.counterContainer}>{data.count}</Box>
           )}
