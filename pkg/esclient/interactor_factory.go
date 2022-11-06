@@ -23,8 +23,14 @@ func NewInteractor(logger *zap.Logger, cfg interactor.ElasticConfig) (*interacto
 	}
 
 	itc := NewIndexTemplateController(rawApiClient, typedApiClient)
+
 	ctc := NewComponentTemplateController(rawApiClient, typedApiClient)
-	dc := NewDocumentController(rawApiClient, typedApiClient, cfg.Index)
+
+	dc, err := NewDocumentController(rawApiClient, typedApiClient, cfg.Index, cfg.IndexerWorkers, cfg.IndexerTimeout)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create a Document Controller: %v", err)
+	}
+
 	tc := NewTagsController(rawApiClient, typedApiClient, cfg.Index)
 
 	return &interactor.Interactor{
