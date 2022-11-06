@@ -53,15 +53,13 @@ func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
 
 	builder := search.NewRequestBuilder()
 
-	builder, err = buildQuery(builder, r.SearchFilter...)
-	if err != nil {
+	builder = buildTimeframe(builder, r.Timeframe)
+
+	if builder, err = buildQuery(builder, r.SearchFilter...); err != nil {
 		return nil, fmt.Errorf("Could not build query for search request: %+v. err: %+v", r, err)
 	}
 
-	builder, err = buildSort(builder, r.Sort...)
-	if err != nil {
-		return nil, fmt.Errorf("Could not build sort for search request: %+v. err: %+v", r, err)
-	}
+	builder = buildSort(builder, r.Sort...)
 
 	builder = builder.Size(200) // Where to get this number from?
 
@@ -88,7 +86,7 @@ func buildQuery(b *search.RequestBuilder, fs ...spansquery.SearchFilter) (*searc
 	return b.Query(query), nil
 }
 
-func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) (*search.RequestBuilder, error) {
+func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
 	DIRECTION := map[bool]sortorder.SortOrder{true: sortorder.Asc, false: sortorder.Desc}
 
 	var sorts []types.SortCombinations
@@ -102,8 +100,16 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) (*search.RequestB
 			),
 		)
 	}
-	return b.Sort(types.NewSortBuilder().Sort(types.Sort(sorts))), nil
+	return b.Sort(types.NewSortBuilder().Sort(types.Sort(sorts)))
 
+}
+
+func buildTimeframe(b *search.RequestBuilder, t spansquery.Timeframe) *search.RequestBuilder {
+	m := map[types.Field]*types.RangeQueryBuilder{}
+	m["Span.StartTimeUnixNano"] = types.NewRangeQueryBuilder().DateRangeQuery(types.NewDateRangeQueryBuilder().
+		Gte(types.DateMath(fmt.Sprint(t.StartTime))).
+		Lte(types.DateMath(fmt.Sprint(t.EndTime))))
+	return b.Query(types.NewQueryContainerBuilder().Range(m))
 }
 
 func decodeResponse(res *http.Response) (map[string]any, error) {
