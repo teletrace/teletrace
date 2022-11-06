@@ -22,7 +22,7 @@ const iconTypes: IconTypes = {
   DefaultResourceIcon: DefaultResourceIcon,
 };
 
-export const TraceViewIcon = (data: IconComponentProps) => {
+export const ResourceIcon = (data: IconComponentProps) => {
   const { name } = data;
   const Icon = iconTypes[name] || iconTypes["DefaultResourceIcon"];
   return <Icon height={30} width={30} />;
