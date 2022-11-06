@@ -1,9 +1,7 @@
-import { RawSpan } from "@/types/spans/span";
+import { RawSpan } from "@/types/span";
 
 export type FlattenedSpan = {
   span: RawSpan;
-  firstIconPath: string;
-  secondIconPath: string;
   spanAction: string;
   spanDuration: string;
   spanDateTime: string;
@@ -25,8 +23,6 @@ export const SpansMock: FlattenedSpan[] = [
       droppedEventsCount: 0,
       droppedLinksCount: 0,
     },
-    firstIconPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
-    secondIconPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
     spanAction: "Execute",
     spanDuration: "192.45",
     spanDateTime: "1:36.12.610 - Jan 24, 2022",
@@ -46,8 +42,6 @@ export const SpansMock: FlattenedSpan[] = [
       droppedEventsCount: 0,
       droppedLinksCount: 0,
     },
-    firstIconPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
-    secondIconPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
     spanAction: "spanAction",
     spanDuration: "spanDuration",
     spanDateTime: "spanDateTime",
@@ -67,8 +61,6 @@ export const SpansMock: FlattenedSpan[] = [
       droppedEventsCount: 0,
       droppedLinksCount: 0,
     },
-    firstIconPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
-    secondIconPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
     spanAction: "Execute",
     spanDuration: "192.45",
     spanDateTime: "1:36.12.610 - Jan 24, 2022",

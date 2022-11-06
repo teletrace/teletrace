@@ -1,4 +1,8 @@
 const styles = {
+  mainPaper: {
+    width: "100%",
+    backgroundColor: "black",
+  },
   mainAccordion: {
     display: "flex",
     flexDirection: "column",
@@ -12,6 +16,7 @@ const styles = {
   accordionExpandIcon: {
     color: "#FFFFFF",
     fontSize: "22px",
+    marginRight: "23px",
   },
   accordionIconsBox: {
     display: "flex",
@@ -19,6 +24,8 @@ const styles = {
     alignItems: "center",
     marginRight: "17px",
   },
+  accordionArrowIcon: { fontSize: "medium", margin: "0 8px", color: "#96979E" },
+  accordionNodeIcon: { width: "25px", height: "22px" },
   accordionSummary: {
     display: "flex",
     flexDirection: "row-reverse",
@@ -41,6 +48,9 @@ const styles = {
     fontWeight: "500",
     letterSpacing: "0.4px",
     color: "#B6B7BE",
+  },
+  accordionInnerTypography: {
+    margin: "0 4px",
   },
 };
 

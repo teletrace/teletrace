@@ -9,8 +9,9 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { ReactComponent as IoTHTTP2Protocol } from "../styles/icons/IoTHTTP2Protocol.svg";
-import { ReactComponent as LambdaFunction } from "../styles/icons/LambdaFunction.svg";
+import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
+import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
+
 import styles from "../styles/styles.tags";
 import { FlattenedSpan, SpansMock } from "./spansMock";
 
@@ -36,31 +37,31 @@ export const TraceTags = () => {
       >
         <AccordionSummary
           expandIcon={
-            <ExpandMoreIcon sx={ styles.accordionExpandIcon } />
+            <ExpandMoreIcon
+              sx={styles.accordionExpandIcon}
+              style={{
+                marginLeft: expanded === props.selectedSpanId ? "23px" : "0",
+                marginRight: expanded === props.selectedSpanId ? "0" : "23px",
+              }}
+            />
           }
           sx={styles.accordionSummary}
           style={{
             backgroundColor: expanded === props.selectedSpanId ? grey[800] : "",
           }}
         >
-          <Box
-            sx={ styles.accordionIconsBox }
-          >
-            <IoTHTTP2Protocol
-              style={{ width: "22px", height: "22px", marginLeft: "23px" }}
-            />
-            <ArrowForwardIcon
-              style={{ fontSize: "medium", margin: "0 8px", color: "#96979E" }}
-            />
-            <LambdaFunction style={{ width: "25px" }} />
+          <Box sx={styles.accordionIconsBox}>
+            <IoTHTTP2Protocol style={styles.accordionNodeIcon} />
+            <ArrowForwardIcon style={styles.accordionArrowIcon} />
+            <LambdaFunction style={styles.accordionNodeIcon} />
           </Box>
-          <Box >
+          <Box>
             <Typography sx={styles.accordionTitleTypography}>
               {props.span.spanAction}
             </Typography>
             <Typography sx={styles.accordionSummaryTypography}>
               {`${props.span.spanDuration}ms`}{" "}
-              <span style={{ margin: "0 4px" }}>|</span>{" "}
+              <span style={styles.accordionInnerTypography}>|</span>{" "}
               {props.span.spanDateTime}
             </Typography>
           </Box>
@@ -73,7 +74,7 @@ export const TraceTags = () => {
   }
 
   return (
-    <Paper sx={{ width: "100%", backgroundColor: "black" }}>
+    <Paper sx={styles.mainPaper}>
       {Array.from(SpansMock).map((spanMock, index) => (
         <TagsMainAccordion
           key={index}
