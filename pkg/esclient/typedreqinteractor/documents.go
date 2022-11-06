@@ -127,16 +127,6 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBu
 
 }
 
-func buildTimeframe(b *search.RequestBuilder, t spansquery.Timeframe) *search.RequestBuilder {
-	m := map[types.Field]*types.RangeQueryBuilder{}
-	m["span.startTimeUnixNano"] = types.NewRangeQueryBuilder().
-		DateRangeQuery(types.NewDateRangeQueryBuilder().
-			Gte(types.DateMath(fmt.Sprint(t.StartTime))).
-			Lte(types.DateMath(fmt.Sprint(t.EndTime))),
-		)
-	return b.Query(types.NewQueryContainerBuilder().Range(m))
-}
-
 func decodeResponse(res *http.Response) (map[string]any, error) {
 	// check errors
 	var err error
