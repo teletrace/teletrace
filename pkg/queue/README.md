@@ -14,7 +14,7 @@ The implementation is general and does not assume the type of data, therefore it
 // Maximum number of items in the queue
 queueCapacity := 100
 
-queue, err := NewBoundedQueue(queueCapacity)
+q, err := queue.NewBoundedQueue(queueCapacity)
 if err != nil {
     // Invalid config (e.g. capacity < 1)
 }
@@ -23,13 +23,18 @@ if err != nil {
 numConsumers := 5
 
 // Callback to run on each item, and number of callbacks (=consumers) to run concurrently
-queue.StartConsumers(func(item interface{}) {
+q.StartConsumers(func(item interface{}) {
     operation(item)
 }, numConsumers)
 
 // Enqueue item
-ok := queue.Enqueue("foo")
+ok := q.Enqueue("foo")
 if !ok {
     // Failed to add to queue due to full/stopped queue
+}
+
+// Blocks until all the consumers are stopped or timeout reached
+if err := q.Stop(3 * time.Second); err != nil {
+    // Failed to gracefully stop consumers
 }
 ```

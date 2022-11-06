@@ -2,11 +2,19 @@ import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 
 import { Head } from "@/components/Head";
+import { Timeframe } from "@/types/spans/spanQuery";
 
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 
 export const SpanSearch = () => {
+  const now = new Date().valueOf();
+  const hourInMillis = 60 * 60 * 1000;
+  const defaultTimeframe: Timeframe = {
+    startTime: now - hourInMillis,
+    endTime: now,
+  };
+
   return (
     <>
       <Head
@@ -15,20 +23,12 @@ export const SpanSearch = () => {
       />
       <Stack
         direction="column"
-        divider={<Divider orientation="horizontal" flexItem />}
-        spacing={2}
+        divider={<Divider orientation="vertical" flexItem />}
+        spacing={1}
         sx={{ height: "100%" }}
       >
-        <Stack spacing={2} justifyContent="space-between" flex={1}>
-          <SearchBar />
-          <SpanTable />
-        </Stack>
-        <Stack
-          direction="row"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={2}
-          flex={1}
-        ></Stack>
+        <SearchBar />
+        <SpanTable timeframe={defaultTimeframe} />
       </Stack>
     </>
   );
