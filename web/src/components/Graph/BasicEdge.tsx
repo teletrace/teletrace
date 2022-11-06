@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { EdgeProps, getBezierPath } from "reactflow";
 
-import { foreignObjectSize } from "@/components/Graph/utils/global";
+import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
 
 import { styles } from "./styles";
 
@@ -34,10 +34,10 @@ export const BasicEdge = ({
         markerEnd={markerEnd}
       />
       <foreignObject
-        width={foreignObjectSize}
-        height={foreignObjectSize}
-        x={labelX - foreignObjectSize / 2}
-        y={labelY - foreignObjectSize / 2}
+        width={FOREIGN_OBJECT_SIZE}
+        height={FOREIGN_OBJECT_SIZE}
+        x={labelX - FOREIGN_OBJECT_SIZE / 2}
+        y={labelY - FOREIGN_OBJECT_SIZE / 2}
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
         <Box sx={styles.edgeStyle.edgeLabelContainer}>

@@ -11,10 +11,10 @@ import {
 
 import { EdgeData, NodeData } from "@/components/Graph/types";
 import {
-  basicEdgeType,
-  basicNodeType,
-  edgeArrowSize,
-  position,
+  BASIC_EDGE_TYPE,
+  BASIC_NODE_TYPE,
+  EDGE_ARROW_SIZE,
+  POSITION,
 } from "@/components/Graph/utils/global";
 import { createGraphLayout } from "@/components/Graph/utils/layout";
 import { Head } from "@/components/Head";
@@ -26,81 +26,81 @@ import { TraceTimeline } from "../components/TraceTimeline";
 const initialNodes: Node<NodeData>[] = [
   {
     id: "1",
-    type: basicNodeType,
+    type: BASIC_NODE_TYPE,
     data: {
       name: "/checkout",
       image: "IoTHTTP2Protocol",
       type: "Http",
     },
-    position,
+    position: POSITION,
   },
   {
     id: "2",
-    type: basicNodeType,
+    type: BASIC_NODE_TYPE,
     data: {
       name: "/invoices",
       image: "LambdaFunction",
       type: "Node.js",
     },
-    position,
+    position: POSITION,
   },
   {
     id: "3",
-    type: basicNodeType,
+    type: BASIC_NODE_TYPE,
     data: {
       name: "update-subscription",
       image: "ApiGatewayEndpoint",
       type: "SNS",
     },
-    position,
+    position: POSITION,
   },
   {
     id: "4",
-    type: basicNodeType,
+    type: BASIC_NODE_TYPE,
     data: {
       name: "/payment",
       image: "IoTHTTP2Protocol",
       type: "Http",
     },
-    position,
+    position: POSITION,
   },
 ];
 
 const initialEdges: Edge<EdgeData>[] = [
   {
     id: "e1-2",
-    type: basicEdgeType,
+    type: BASIC_EDGE_TYPE,
     source: "1",
     target: "2",
     data: { time: "20ms", count: 2 },
     markerEnd: {
       type: MarkerType.ArrowClosed,
-      width: edgeArrowSize,
-      height: edgeArrowSize,
+      width: EDGE_ARROW_SIZE,
+      height: EDGE_ARROW_SIZE,
     },
   },
   {
     id: "e2-3",
-    type: basicEdgeType,
+    type: BASIC_EDGE_TYPE,
     source: "2",
     target: "3",
     data: { time: "20ms" },
     markerEnd: {
       type: MarkerType.ArrowClosed,
-      width: edgeArrowSize,
-      height: edgeArrowSize,
+      width: EDGE_ARROW_SIZE,
+      height: EDGE_ARROW_SIZE,
     },
   },
   {
     id: "e2-4",
-    type: basicEdgeType,
+    type: BASIC_EDGE_TYPE,
     source: "2",
     target: "4",
     data: { time: "20ms" },
     markerEnd: {
       type: MarkerType.ArrowClosed,
-      width: edgeArrowSize,
-      height: edgeArrowSize,
+      width: EDGE_ARROW_SIZE,
+      height: EDGE_ARROW_SIZE,
     },
   },
 ];

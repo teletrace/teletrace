@@ -4,8 +4,8 @@ import { Edge, Node, Position } from "reactflow";
 
 import { EdgeData, NodeData } from "@/components/Graph/types";
 import {
-  defaultNodeHeight,
-  defaultNodeWidth,
+  DEFAULT_NODE_HEIGHT,
+  DEFAULT_NODE_WIDTH,
 } from "@/components/Graph/utils/global";
 
 export const createGraphLayout = async (
@@ -19,15 +19,14 @@ export const createGraphLayout = async (
     defaultLayoutOptions: {
       "elk.algorithm": "mrtree",
       "elk.direction": "DOWN",
-      // "elk.spacing": "50",
     },
   });
 
   nodes.forEach((node) => {
     layerNodes.push({
       id: node.id,
-      width: defaultNodeWidth,
-      height: defaultNodeHeight,
+      width: DEFAULT_NODE_WIDTH,
+      height: DEFAULT_NODE_HEIGHT,
     });
   });
   edges.forEach((edge) => {
@@ -45,7 +44,7 @@ export const createGraphLayout = async (
   });
 
   nodes.map((el) => {
-    const node = newGraph?.children?.find((n) => n.id === el.id);
+    const node = newGraph.children?.find((n) => n.id === el.id);
     el.sourcePosition = Position.Top;
     el.targetPosition = Position.Bottom;
     if (node?.x && node?.y && node?.width && node?.height) {
