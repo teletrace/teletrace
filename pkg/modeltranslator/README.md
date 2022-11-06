@@ -1,6 +1,6 @@
 # modeltranslator
 
-The `modeltranslator` package translates OTLP trace data to the internal model used by the collector.
+The `modeltranslator` package translates OTLP trace data to the internal model used throughout the project.
 
 ## Usage
 
