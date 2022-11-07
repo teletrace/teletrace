@@ -21,9 +21,8 @@ import { Head } from "@/components/Head";
 
 import { SpansMock } from "../components/spansMock";
 import { TraceGraph } from "../components/TraceGraph";
-import TraceTags from "../components/TraceTags";
+import MultipleTracesTags from "../components/TraceTags";
 import { TraceTimeline } from "../components/TraceTimeline";
-
 
 const initialNodes: Node<NodeData>[] = [
   {
@@ -150,7 +149,7 @@ export const TraceView = () => {
             onEdgesChange={onEdgesChange}
             isLoading={isLoading}
           />
-          <TraceTags spans={SpansMock} />
+          <MultipleTracesTags spans={SpansMock} selectedSpanId="spanId2" />
         </Stack>
 
         <Stack
