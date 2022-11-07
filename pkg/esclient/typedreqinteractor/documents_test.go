@@ -58,49 +58,14 @@ func getSearchResponseMock() (map[string]any, error) {
                       "Kind":1,
                       "Links":null,
                       "Name":"span_name",
-                      "ParentSpanId":[
-                         0,
-                         0,
-                         0,
-                         0,
-                         0,
-                         0,
-                         0,
-                         0
-                      ],
-                      "SpanId":[
-                         1,
-                         2,
-                         3,
-                         4,
-                         5,
-                         6,
-                         7,
-                         8
-                      ],
+                      "ParentSpanId":"00000000",
+                      "SpanId":"12345678",
                       "StartTimeUnixNano":0,
                       "Status":{
                          "Code":0,
                          "Message":"STATUS_MESSAGE"
                       },
-                      "TraceId":[
-                         1,
-                         2,
-                         3,
-                         4,
-                         5,
-                         6,
-                         7,
-                         8,
-                         8,
-                         7,
-                         6,
-                         5,
-                         4,
-                         3,
-                         2,
-                         1
-                      ],
+                      "TraceId":"1234567887654321",
                       "TraceState":"state"
                    }
                 }
