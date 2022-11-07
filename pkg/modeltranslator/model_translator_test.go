@@ -89,8 +89,8 @@ func createExpectedInternalSpans() []*v1.InternalSpan {
 			DroppedAttributesCount: 6,
 		})
 		spanLinks = append(spanLinks, &v1.SpanLink{
-			TraceId:    [16]byte{4},
-			SpanId:     [8]byte{5},
+			TraceId:    pcommon.NewTraceID([16]byte{4}).HexString(),
+			SpanId:     pcommon.NewSpanID([8]byte{5}).HexString(),
 			TraceState: fmt.Sprintf("[SpanLink-%d]TraceState", i),
 			Attributes: v1.Attributes{
 				"attribute": fmt.Sprintf("[SpanLink-%d]attribute", i),
@@ -118,10 +118,10 @@ func createExpectedInternalSpans() []*v1.InternalSpan {
 			DroppedAttributesCount: 2,
 		})
 		spans = append(spans, &v1.Span{
-			TraceId:           [16]byte{1},
-			SpanId:            [8]byte{2},
+			TraceId:           pcommon.NewTraceID([16]byte{1}).HexString(),
+			SpanId:            pcommon.NewSpanID([8]byte{2}).HexString(),
 			TraceState:        fmt.Sprintf("[Span-%d]TraceState", i),
-			ParentSpanId:      [8]byte{3},
+			ParentSpanId:      pcommon.NewSpanID([8]byte{3}).HexString(),
 			Name:              fmt.Sprintf("[Span-%d]Name", i),
 			Kind:              2, // SERVER
 			StartTimeUnixNano: 0,
