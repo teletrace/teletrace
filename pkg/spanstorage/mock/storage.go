@@ -3,6 +3,7 @@ package mock
 import (
 	"context"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
+	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	spanstorage "oss-tracing/pkg/spanstorage"
 )
@@ -26,7 +27,11 @@ func (sw spanWriter) Close(ctx context.Context) error {
 }
 
 func (sr spanReader) Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	return nil, nil
+	spans := []*internalspan.InternalSpan{spanformatutiltests.GenInternalSpan(nil, nil, nil)}
+	return &spansquery.SearchResponse{
+		Metadata: nil,
+		Spans:    spans,
+	}, nil
 }
 
 func (s storage) CreateSpanWriter() (spanstorage.SpanWriter, error) {
