@@ -70,17 +70,11 @@ func (api *API) registerMiddlewares() {
 	// static files middleware, for serving frontend files
 	api.registerStaticFilesMiddleware()
 
-	api.router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"OPTIONS", "POST"},
-		AllowHeaders:     []string{"Origin", "content-type"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "http://localhost:3000"
-		},
-		MaxAge: 12 * time.Hour,
-	}))
+	// CORS policy config middleware
+	// TODO: Figure out if this configuration is right for the project's needs
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://localhost:3000"} // TODO: Replace with actual clients
+	api.router.Use(cors.New(config))
 }
 
 func (api *API) registerStaticFilesMiddleware() {
