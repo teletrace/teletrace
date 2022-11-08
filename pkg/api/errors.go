@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var errorTypeToHttpStatus map[errorType]int = map[errorType]int{
+var errorTypeToHttpStatus = map[errorType]int{
 	inputError:  http.StatusBadRequest,
 	serverError: http.StatusInternalServerError,
 }
