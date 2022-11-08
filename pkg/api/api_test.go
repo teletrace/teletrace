@@ -111,6 +111,22 @@ func TestSearchRoute(t *testing.T) {
 	assert.Equal(t, expectedSpanId, resBody.Spans[0].Span.SpanId)
 }
 
+func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/search"), bytes.NewReader(malformedBody))
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
+}
+
 func TestRootStaticRoute(t *testing.T) {
 	runStaticFilesRouteTest(t, "/")
 }
