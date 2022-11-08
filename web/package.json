@@ -6,5 +6,11 @@
   ],
   "devDependencies": {
     "lerna": "^6.0.3"
+  },
+  "scripts": {
+    "start": "npx lerna run start",
+    "build": "npx lerna run build",
+    "test": "npx lerna run test",
+    "lint": "npx lerna run lint"
   }
 }
