@@ -56,10 +56,11 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           duration: `ms ${externalFields.duration}`,
           name: span.name,
           status: span.status.code === 0 ? "Ok" : "Error",
-          serviceName: 
-            (resource.attributes?.["service.name"] !== undefined && typeof resource.attributes?.["service.name"] === "string")
-              ? resource.attributes["service.name"]           
-              : "service unknown"
+          serviceName:
+            resource.attributes?.["service.name"] !== undefined &&
+            typeof resource.attributes?.["service.name"] === "string"
+              ? resource.attributes["service.name"]
+              : "service unknown",
         })
       )
     ) ?? [];
