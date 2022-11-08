@@ -63,9 +63,6 @@ func (api *API) registerMiddlewares() {
 		UTC:        true,
 	}))
 
-	// error handling middleware
-	api.router.Use(errorHandler)
-
 	// zap recovery logger middleware
 	api.router.Use(ginzap.RecoveryWithZap(api.logger, false))
 
