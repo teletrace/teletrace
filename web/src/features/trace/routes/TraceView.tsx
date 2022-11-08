@@ -110,6 +110,7 @@ export const TraceView = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
+  const [selectedNodeId, setSelectedNodeId] = useState("");
   useEffect(() => {
     setTimeout(() => {
       createGraphLayout(initialNodes, initialEdges)
@@ -126,6 +127,7 @@ export const TraceView = () => {
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     event.preventDefault();
+    setSelectedNodeId(node.id);
     const connectedEdges = getConnectedEdges([node], edges);
     setEdges(
       edges.map((e: Edge<EdgeData>) =>
@@ -166,6 +168,7 @@ export const TraceView = () => {
 
   const onPaneClick = (event: ReactMouseEvent) => {
     event.preventDefault();
+    setSelectedNodeId("");
     setEdges(
       edges.map((e: Edge<EdgeData>) => {
         return { ...e, animated: false, selected: false };
@@ -173,6 +176,7 @@ export const TraceView = () => {
     );
   };
 
+  console.log(selectedNodeId);
   return (
     <>
       <Head

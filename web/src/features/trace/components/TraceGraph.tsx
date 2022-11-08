@@ -41,6 +41,7 @@ export const TraceGraph = (params: TraceGraphParams) => {
           onPaneClick={onPaneClick}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeMouseLeave={onNodeMouseLeave}
+          selectNodesOnDrag={false}
           fitView
         >
           <Controls />
