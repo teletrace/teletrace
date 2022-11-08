@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
 import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
@@ -6,8 +7,10 @@ import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
 import { styles } from "./styles";
 
 enum EdgeColor {
-  GRAY = "#96979E",
-  BLUE = "#009EB4",
+  NORMAL = "#96979E",
+  HOVER = "#FFFFFF",
+  SELECTED = "#00CDE7",
+  ERROR = "#EF5854",
 }
 
 export const BasicEdge = ({
@@ -21,6 +24,7 @@ export const BasicEdge = ({
   data,
   markerEnd,
   animated,
+  selected,
 }: EdgeProps) => {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -30,7 +34,17 @@ export const BasicEdge = ({
     targetY,
     targetPosition,
   });
-  const edgeColor = animated ? EdgeColor.BLUE : EdgeColor.GRAY;
+
+  const [edgeColor, setEdgeColor] = useState(EdgeColor.NORMAL);
+  useEffect(() => {
+    if (animated && selected) {
+      setEdgeColor(EdgeColor.SELECTED);
+    } else if (animated && !selected) {
+      setEdgeColor(EdgeColor.HOVER);
+    } else {
+      setEdgeColor(EdgeColor.NORMAL);
+    }
+  }, [animated, selected]);
   return (
     <>
       <path

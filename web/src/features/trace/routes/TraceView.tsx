@@ -7,15 +7,17 @@ import {
   useState,
 } from "react";
 import {
-  applyEdgeChanges,
   Edge,
-  getConnectedEdges,
   MarkerType,
   Node,
+  applyEdgeChanges,
+  getConnectedEdges,
   updateEdge,
   useEdgesState,
   useNodesState,
 } from "reactflow";
+
+import { MouseEvent } from "react";
 
 import { EdgeData, NodeData } from "@/components/Graph/types";
 import {
@@ -133,9 +135,18 @@ export const TraceView = () => {
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     const connectedEdges = getConnectedEdges([node], edges);
-    edges.map((e: Edge<EdgeData>) => (e.animated = connectedEdges.includes(e)));
+    edges.map((e: Edge<EdgeData>) => {
+      if (connectedEdges.includes(e)) {
+        e.animated = true;
+        e.selected = true;
+      } else {
+        e.animated = false;
+        e.selected = false;
+      }
+    });
     setEdges((edges) => [...edges]);
   };
+
   return (
     <>
       <Head
