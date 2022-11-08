@@ -59,7 +59,7 @@ func errorHandler(c *gin.Context) {
 	}
 }
 
-// Determine which errorResponse to return given a raised error
+// Determine which errorResponse to build given a raised error
 // Respond with the appropriate http status and body
 func respondWithError(err error, c *gin.Context) {
 	errorMessage := err.Error()
