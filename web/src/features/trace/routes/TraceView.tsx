@@ -125,8 +125,12 @@ export const TraceView = () => {
     }, 1000);
   }, []);
 
+  useEffect(() => {
+    console.log(selectedNodeId);
+  }, [selectedNodeId]);
+
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.preventDefault();
+    event.stopPropagation();
     setSelectedNodeId(node.id);
     const connectedEdges = getConnectedEdges([node], edges);
     setEdges(
@@ -139,12 +143,12 @@ export const TraceView = () => {
   };
 
   const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.preventDefault();
+    event.stopPropagation();
     if (!node.selected) {
       const connectedEdges = getConnectedEdges([node], edges);
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
-          connectedEdges.includes(e)
+          connectedEdges.includes(e) && !e.selected
             ? { ...e, animated: true, selected: false }
             : e
         )
@@ -153,12 +157,12 @@ export const TraceView = () => {
   };
 
   const onNodeMouseLeave = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.preventDefault();
+    event.stopPropagation();
     if (!node.selected) {
       const connectedEdges = getConnectedEdges([node], edges);
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
-          connectedEdges.includes(e)
+          connectedEdges.includes(e) && !e.selected
             ? { ...e, animated: false, selected: false }
             : e
         )
@@ -167,7 +171,7 @@ export const TraceView = () => {
   };
 
   const onPaneClick = (event: ReactMouseEvent) => {
-    event.preventDefault();
+    event.stopPropagation();
     setSelectedNodeId("");
     setEdges(
       edges.map((e: Edge<EdgeData>) => {
@@ -176,7 +180,6 @@ export const TraceView = () => {
     );
   };
 
-  console.log(selectedNodeId);
   return (
     <>
       <Head

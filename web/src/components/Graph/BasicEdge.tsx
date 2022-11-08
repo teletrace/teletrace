@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
 import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
@@ -13,7 +13,7 @@ enum EdgeColor {
   ERROR = "#EF5854",
 }
 
-export const BasicEdge = ({
+const BasicEdgeImpl = ({
   id,
   sourceX,
   sourceY,
@@ -49,7 +49,7 @@ export const BasicEdge = ({
     <>
       <path
         id={id}
-        style={{ padding: 1, stroke: edgeColor }}
+        style={{ padding: 1, stroke: edgeColor, cursor: "default" }}
         className="react-flow__edge-path"
         d={edgePath}
         markerEnd={markerEnd}
@@ -78,3 +78,5 @@ export const BasicEdge = ({
     </>
   );
 };
+
+export const BasicEdge = memo(BasicEdgeImpl);

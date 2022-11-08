@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { MouseEvent, MouseEventHandler, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 import { BasicNodeProps } from "@/components/Graph/types";
@@ -15,7 +15,7 @@ enum IconBorderColor {
   ERR_HOVER = "#B52D29",
 }
 
-export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
+const BasicNodeImpl = (props: NodeProps<BasicNodeProps>) => {
   const [borderColor, setBorderColor] = useState<IconBorderColor>(
     IconBorderColor.NORMAL
   );
@@ -64,3 +64,5 @@ export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
     </>
   );
 };
+
+export const BasicNode = memo(BasicNodeImpl);

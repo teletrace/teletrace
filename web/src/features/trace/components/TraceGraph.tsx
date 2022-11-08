@@ -1,4 +1,5 @@
 import { Box, Paper } from "@mui/material";
+import { memo, useMemo } from "react";
 import { Controls, ReactFlow } from "reactflow";
 
 import { Loader } from "@/components/Elements/Loader";
@@ -8,11 +9,10 @@ import { TraceGraphParams } from "@/components/Graph/types";
 
 import "reactflow/dist/style.css";
 
-const nodeTypes = { basicNode: BasicNode };
+const TraceGraphImpl = (params: TraceGraphParams) => {
+  const nodeTypes = useMemo(() => ({ basicNode: BasicNode }), []);
+  const edgeTypes = useMemo(() => ({ basicEdge: BasicEdge }), []);
 
-const edgeTypes = { basicEdge: BasicEdge };
-
-export const TraceGraph = (params: TraceGraphParams) => {
   const {
     nodes,
     edges,
@@ -42,6 +42,7 @@ export const TraceGraph = (params: TraceGraphParams) => {
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeMouseLeave={onNodeMouseLeave}
           selectNodesOnDrag={false}
+          defaultMarkerColor={"#96979E"}
           fitView
         >
           <Controls />
@@ -52,3 +53,5 @@ export const TraceGraph = (params: TraceGraphParams) => {
     </Paper>
   );
 };
+
+export const TraceGraph = memo(TraceGraphImpl);
