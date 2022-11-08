@@ -42,7 +42,6 @@ const TraceGraphImpl = (params: TraceGraphParams) => {
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeMouseLeave={onNodeMouseLeave}
           selectNodesOnDrag={false}
-          defaultMarkerColor={"#96979E"}
           fitView
         >
           <Controls />
