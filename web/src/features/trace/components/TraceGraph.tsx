@@ -20,6 +20,8 @@ export const TraceGraph = (params: TraceGraphParams) => {
     onEdgesChange,
     onNodeClick,
     onPaneClick,
+    onNodeMouseEnter,
+    onNodeMouseLeave,
     isLoading,
   } = params;
 
@@ -37,6 +39,8 @@ export const TraceGraph = (params: TraceGraphParams) => {
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
+          onNodeMouseEnter={onNodeMouseEnter}
+          onNodeMouseLeave={onNodeMouseLeave}
           fitView
         >
           <Controls />

@@ -125,6 +125,7 @@ export const TraceView = () => {
   }, []);
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
+    event.preventDefault();
     const connectedEdges = getConnectedEdges([node], edges);
     setEdges(
       edges.map((e: Edge<EdgeData>) =>
@@ -133,6 +134,34 @@ export const TraceView = () => {
           : { ...e, animated: false, selected: false }
       )
     );
+  };
+
+  const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {
+    event.preventDefault();
+    if (!node.selected) {
+      const connectedEdges = getConnectedEdges([node], edges);
+      setEdges(
+        edges.map((e: Edge<EdgeData>) =>
+          connectedEdges.includes(e)
+            ? { ...e, animated: true, selected: false }
+            : e
+        )
+      );
+    }
+  };
+
+  const onNodeMouseLeave = (event: ReactMouseEvent, node: Node<NodeData>) => {
+    event.preventDefault();
+    if (!node.selected) {
+      const connectedEdges = getConnectedEdges([node], edges);
+      setEdges(
+        edges.map((e: Edge<EdgeData>) =>
+          connectedEdges.includes(e)
+            ? { ...e, animated: false, selected: false }
+            : e
+        )
+      );
+    }
   };
 
   const onPaneClick = (event: ReactMouseEvent) => {
@@ -170,6 +199,8 @@ export const TraceView = () => {
             onEdgesChange={onEdgesChange}
             onNodeClick={onNodeClick}
             onPaneClick={onPaneClick}
+            onNodeMouseEnter={onNodeMouseEnter}
+            onNodeMouseLeave={onNodeMouseLeave}
             isLoading={isLoading}
           />
           <TraceTags />

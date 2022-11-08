@@ -31,5 +31,7 @@ export interface TraceGraphParams {
   onEdgesChange: OnEdgesChange;
   onNodeClick: NodeMouseHandler;
   onPaneClick: (event: ReactMouseEvent) => void;
+  onNodeMouseEnter: NodeMouseHandler;
+  onNodeMouseLeave: NodeMouseHandler;
   isLoading: boolean;
 }
