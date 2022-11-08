@@ -122,9 +122,8 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       }}
       muiTableContainerProps={{
         ref: tableWrapperRef,
-        sx: { maxHeigth: "100%", minHeigth: "0" },
       }}
-      muiTablePaperProps={{ sx: { display: "flex", minHeight: 0 } }}
+      muiTablePaperProps={{ sx: styles.paper }}
     />
   );
 }
