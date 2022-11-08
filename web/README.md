@@ -1,10 +1,10 @@
-# Lupa UI Packages
+# Lupa UI Monorepo
 
 ## Packages
 
-- **Lupa UI** - The main Lupa web application
+- **lupa-ui** - The main Lupa web application
 
-## Shared Scripts
+## Scripts
 
 The following scripts will run against all the packages in the monorepo:
 
@@ -13,9 +13,14 @@ The following scripts will run against all the packages in the monorepo:
 - `yarn test`
 - `yarn lint`
 
+The following scripts will run against the `lupa-ui` package:
+
+- `yarn start:lupa-ui`
+- `yarn build:lupa-ui`
+
 ## Installation
 
-Installs the required packages for each package in the monorepo:
+Installs the required packages for all the packages in the monorepo:
 
 ```sh
 yarn install
