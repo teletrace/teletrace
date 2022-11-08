@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -68,6 +69,18 @@ func (api *API) registerMiddlewares() {
 
 	// static files middleware, for serving frontend files
 	api.registerStaticFilesMiddleware()
+
+	api.router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"OPTIONS", "POST"},
+		AllowHeaders:     []string{"Origin", "content-type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "http://localhost:3000"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 }
 
 func (api *API) registerStaticFilesMiddleware() {
