@@ -45,7 +45,6 @@ func NewAPI(logger *zap.Logger, config config.Config, sr *storage.SpanReader) *A
 func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	setGinMode(config)
 	router := gin.New()
-	router.Use(errorHandler)
 	return router
 }
 
@@ -63,6 +62,9 @@ func (api *API) registerMiddlewares() {
 		TimeFormat: time.RFC3339,
 		UTC:        true,
 	}))
+
+	// error handling middleware
+	api.router.Use(errorHandler)
 
 	// zap recovery logger middleware
 	api.router.Use(ginzap.RecoveryWithZap(api.logger, false))
