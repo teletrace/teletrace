@@ -1,3 +1,3 @@
-import { MultipleTracesTags } from "./TraceTags";
+import { TraceTags } from "./TraceTags";
 
-export default MultipleTracesTags;
+export default TraceTags;

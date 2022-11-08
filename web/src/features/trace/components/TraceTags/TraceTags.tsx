@@ -6,7 +6,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
 import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
@@ -24,49 +24,44 @@ interface TagsProps {
   selectedSpanId: string;
 }
 
-export const MultipleTracesTags = ({ spans, selectedSpanId }: Traces) => {
+export const TraceTags = ({ spans, selectedSpanId }: Traces) => {
   return (
     <Paper sx={styles.mainPaper}>
       {spans.map((span, index) => (
-        <TraceTags key={index} span={span} selectedSpanId={selectedSpanId} />
+        <SingleTraceTags
+          key={index}
+          span={span}
+          selectedSpanId={selectedSpanId}
+        />
       ))}
-      ;
     </Paper>
   );
 };
 
-const TraceTags = ({ span, selectedSpanId }: TagsProps) => {
+export const SingleTraceTags = ({ span, selectedSpanId }: TagsProps) => {
   const [expanded, setExpanded] = useState(span.span.spanId === selectedSpanId);
 
-  const handleChange = () => (_: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? true : false);
-  };
+  useEffect(() => {
+    setExpanded(selectedSpanId === span.span.spanId);
+  }, [selectedSpanId, span.span.spanId]);
+
   const X_DIVIDER = "|";
 
   return (
     <Accordion
       expanded={expanded}
-      onChange={handleChange()}
+      onChange={() => setExpanded(!expanded)}
       sx={styles.mainAccordion}
     >
       <AccordionSummary
-        expandIcon={
-          <ExpandMoreIcon
-            sx={{
-              ...(expanded
-                ? styles.expandedRowIcon
-                : styles.notExpandedRowIcon),
-              ...styles.accordionExpandIcon,
-            }}
-          />
-        }
+        expandIcon={<ExpandMoreIcon sx={styles.accordionExpandIcon} />}
         sx={{
           ...(expanded ? styles.expandedRow : styles.notExpandedRow),
           ...styles.accordionSummary,
         }}
       >
         <Box sx={styles.accordionIconsBox}>
-          <IoTHTTP2Protocol style={styles.accordionNodeIcon} />
+          <IoTHTTP2Protocol style={styles.accordionFirstNodeIcon} />
           <ArrowForwardIcon style={styles.accordionArrowIcon} />
           <LambdaFunction style={styles.accordionNodeIcon} />
         </Box>

@@ -5,14 +5,6 @@ const styles = {
   notExpandedRow: {
     backgroundColor: "#1B1C21",
   },
-  expandedRowIcon: {
-    marginRight: "0px",
-    marginLeft: "23px",
-  },
-  notExpandedRowIcon: {
-    marginRight: "23px",
-    marginLeft: "0px",
-  },
   mainPaper: {
     width: "100%",
     backgroundColor: "black",
@@ -30,7 +22,6 @@ const styles = {
   accordionExpandIcon: {
     color: "#FFFFFF",
     fontSize: "22px",
-    marginRight: "23px",
   },
   accordionIconsBox: {
     display: "flex",
@@ -39,6 +30,7 @@ const styles = {
     marginRight: "17px",
   },
   accordionArrowIcon: { fontSize: "medium", margin: "0 8px", color: "#96979E" },
+  accordionFirstNodeIcon: { marginLeft: "23px", width: "25px", height: "22px" },
   accordionNodeIcon: { width: "25px", height: "22px" },
   accordionSummary: {
     display: "flex",
