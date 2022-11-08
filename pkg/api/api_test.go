@@ -104,7 +104,8 @@ func TestSearchRoute(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
 
 	var resBody *model.SearchResponse
-	json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
 	assert.NotNil(t, resBody)
 	assert.NotEmpty(t, resBody.Spans)
 	expectedSpanId := spanformatutiltests.GenInternalSpan(nil, nil, nil).Span.SpanId
