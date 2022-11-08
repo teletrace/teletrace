@@ -13,8 +13,16 @@ const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 export const TraceGraph = (params: TraceGraphParams) => {
-  const { nodes, edges, onNodesChange, onEdgesChange, onNodeClick, isLoading } =
-    params;
+  const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onNodeClick,
+    onPaneClick,
+    isLoading,
+  } = params;
+
   return (
     <Paper sx={{ width: "100%" }}>
       {isLoading ? (
@@ -28,6 +36,7 @@ export const TraceGraph = (params: TraceGraphParams) => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
+          onPaneClick={onPaneClick}
           fitView
         >
           <Controls />

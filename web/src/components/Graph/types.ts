@@ -1,3 +1,4 @@
+import { MouseEvent as ReactMouseEvent } from "react";
 import {
   Edge,
   Node,
@@ -29,5 +30,6 @@ export interface TraceGraphParams {
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onNodeClick: NodeMouseHandler;
+  onPaneClick: (event: ReactMouseEvent) => void;
   isLoading: boolean;
 }

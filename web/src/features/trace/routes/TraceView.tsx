@@ -1,18 +1,11 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import {
-  MouseEvent as ReactMouseEvent,
-  ReactEventHandler,
-  useEffect,
-  useState,
-} from "react";
+import { MouseEvent as ReactMouseEvent, useEffect, useState } from "react";
 import {
   Edge,
   MarkerType,
   Node,
-  applyEdgeChanges,
   getConnectedEdges,
-  updateEdge,
   useEdgesState,
   useNodesState,
 } from "reactflow";
@@ -142,6 +135,15 @@ export const TraceView = () => {
     );
   };
 
+  const onPaneClick = (event: ReactMouseEvent) => {
+    event.preventDefault();
+    setEdges(
+      edges.map((e: Edge<EdgeData>) => {
+        return { ...e, animated: false, selected: false };
+      })
+    );
+  };
+
   return (
     <>
       <Head
@@ -167,6 +169,7 @@ export const TraceView = () => {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onNodeClick={onNodeClick}
+            onPaneClick={onPaneClick}
             isLoading={isLoading}
           />
           <TraceTags />
