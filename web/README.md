@@ -6,9 +6,17 @@
 
 ## Shared Scripts
 
-The following scripts will run against all of the packages:
+The following scripts will run against all the packages in the monorepo:
 
 - `yarn start`
 - `yarn build`
 - `yarn test`
 - `yarn lint`
+
+## Installation
+
+Installs the required packages for each package in the monorepo:
+
+```sh
+yarn install
+```
