@@ -1,0 +1,40 @@
+.date-time-selector {
+  padding: 20px;
+  width: 330px;
+
+  .error {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 12px;
+    gap: 8px;
+    width: 272px;
+    height: 40px;
+    background: rgba(239, 88, 84, 0.12);
+    border: 1px solid #ef5854;
+    color: #f00;
+    font-weight: bold;
+    border-radius: 8px;
+    flex: none;
+    order: 1;
+    align-self: stretch;
+    flex-grow: 0;
+  }
+
+  .date-row {
+    margin-top: 16px;
+    .label {
+      font-size: 14px;
+      color: #ffffff;
+    }
+  }
+
+  .date-picker {
+    margin-right: 5px;
+  }
+
+  .date-picker,
+  .time-picker {
+    width: 135px;
+  }
+}
