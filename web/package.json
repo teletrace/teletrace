@@ -9,7 +9,9 @@
   },
   "scripts": {
     "start": "npx lerna run start",
+    "start:lupa-ui": "npx lerna run --scope lupa-ui start",
     "build": "npx lerna run build",
+    "build:lupa-ui": "npx lerna run --scope lupa-ui build",
     "test": "npx lerna run test",
     "lint": "npx lerna run lint"
   }
