@@ -4,7 +4,7 @@ const styles = {
       backgroundColor: "rgba(43, 45, 50, 1)",
     },
   },
-  paper: { display: "flex", minHeight: 0 }
+  paper: { display: "flex", minHeight: 0 },
 };
 
 export default styles;
