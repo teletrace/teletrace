@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
@@ -46,6 +45,7 @@ func NewAPI(logger *zap.Logger, config config.Config, sr *storage.SpanReader) *A
 func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	setGinMode(config)
 	router := gin.New()
+	router.Use(errorHandler)
 	return router
 }
 
@@ -87,10 +87,7 @@ func (api *API) registerStaticFilesMiddleware() {
 func (api *API) registerRoutes() {
 	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
-}
-
-func (api *API) getPing(c *gin.Context) {
-	c.String(http.StatusOK, "pong")
+	v1.POST("/search", api.search)
 }
 
 // Start runs the configured API instance.
