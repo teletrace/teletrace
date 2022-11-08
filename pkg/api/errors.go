@@ -41,7 +41,7 @@ func raiseApiError(err error, errorType errorType, c *gin.Context) {
 		}
 	}
 
-	c.Error(apiErr)
+	_ = c.Error(apiErr)
 }
 
 func errorHandler(c *gin.Context) {
@@ -56,10 +56,9 @@ func errorHandler(c *gin.Context) {
 func respondWithError(err error, c *gin.Context) {
 	errorMessage := err.Error()
 	errResponse := &errorResponse{Message: errorMessage}
-	switch err.(type) {
+	switch err := err.(type) {
 	case *apiError:
-		apiError := err.(*apiError)
-		c.JSON(apiError.httpStatus, errResponse)
+		c.JSON(err.httpStatus, errResponse)
 		return
 	default:
 		c.JSON(http.StatusInternalServerError, errResponse)
