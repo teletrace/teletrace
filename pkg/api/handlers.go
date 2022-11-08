@@ -15,12 +15,12 @@ func (api *API) search(c *gin.Context) {
 	var req model.SearchRequest
 	err := c.BindJSON(&req)
 	if err != nil {
-		throwApiError(err, inputError, c)
+		raiseApiError(err, inputError, c)
 		return
 	}
 	res, err := (*api.spanReader).Search(c, &req)
 	if err != nil {
-		throwApiError(err, serverError, c)
+		raiseApiError(err, serverError, c)
 		return
 	}
 	c.JSON(http.StatusOK, res)

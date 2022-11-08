@@ -26,7 +26,7 @@ func (err *apiError) Error() string {
 	return err.message
 }
 
-func throwApiError(err error, errorType errorType, c *gin.Context) {
+func raiseApiError(err error, errorType errorType, c *gin.Context) {
 	var apiErr *apiError
 	switch errorType {
 	case inputError:
