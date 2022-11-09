@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"time"
 
@@ -51,5 +52,13 @@ func (api *API) getTraceById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
 
+func (api *API) getAvailableTags(c *gin.Context) {
+	res, err := (*api.spanReader).GetAvailableTags(c, model.GetAvailableTagsRequest{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
+	}
+
+	c.JSON(http.StatusOK, res)
 }
