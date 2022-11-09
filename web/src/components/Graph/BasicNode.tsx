@@ -1,8 +1,8 @@
 import { Box } from "@mui/material";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { BasicNodeProps, NodeColor } from "@/components/Graph/types";
+import { BasicNodeProps } from "@/components/Graph/types";
 import { ResourceIcon } from "@/components/ResourceIcon/ResourceIcon";
 
 import { styles } from "./styles";
