@@ -3,10 +3,10 @@ package api
 import "github.com/gin-gonic/gin"
 
 type errorResponse struct {
-	Error string `json:"error"`
+	ErrorMessage string `json:"errorMessage"`
 }
 
 func respondWithError(statusCode int, err error, c *gin.Context) {
-	errResponse := &errorResponse{Error: err.Error()}
+	errResponse := &errorResponse{ErrorMessage: err.Error()}
 	c.JSON(statusCode, errResponse)
 }
