@@ -1,10 +1,15 @@
 package api
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
+	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
+	model "oss-tracing/pkg/model/spansquery/v1"
 	storage "oss-tracing/pkg/spanstorage/mock"
 	"path"
 	"path/filepath"
@@ -80,6 +85,47 @@ func TestPingRoute(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
 	assert.Equal(t, "pong", resRecorder.Body.String())
+}
+
+func TestSearchRoute(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	anyEndTime := 578098000
+	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", anyEndTime))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/search"), bytes.NewReader(jsonBody))
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	var resBody *model.SearchResponse
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Spans)
+	expectedSpanId := spanformatutiltests.GenInternalSpan(nil, nil, nil).Span.SpanId
+	assert.Equal(t, expectedSpanId, resBody.Spans[0].Span.SpanId)
+}
+
+func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/search"), bytes.NewReader(malformedBody))
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
 }
 
 func TestRootStaticRoute(t *testing.T) {
