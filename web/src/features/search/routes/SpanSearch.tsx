@@ -23,8 +23,13 @@ export const SpanSearch = () => {
         description="Designated page to span search's flow graph and timeline"
       />
 
-      <Stack direction="row" spacing={2} sx={{ height: "100%" }}>
-        <aside style={{ width: 320 }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="flex-start"
+        sx={{ height: "100%" }}
+      >
+        <aside style={{ display: "flex", maxHeight: "100%" }}>
           <TagSidebar />
         </aside>
 
