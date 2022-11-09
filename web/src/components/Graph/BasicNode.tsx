@@ -2,30 +2,20 @@ import { Box } from "@mui/material";
 import { memo, useEffect, useState } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { BasicNodeProps } from "@/components/Graph/types";
+import { BasicNodeProps, NodeColor } from "@/components/Graph/types";
 import { ResourceIcon } from "@/components/ResourceIcon/ResourceIcon";
 
 import { styles } from "./styles";
 
-enum IconBorderColor {
-  NORMAL = "#96979E",
-  HOVER = "#FFFFFF",
-  SELECTED = "#009EB4",
-  ERR_NORMAL = "#EF5854",
-  ERR_HOVER = "#B52D29",
-}
-
 const BasicNodeImpl = (props: NodeProps<BasicNodeProps>) => {
-  const [borderColor, setBorderColor] = useState<IconBorderColor>(
-    IconBorderColor.NORMAL
-  );
+  const [borderColor, setBorderColor] = useState<NodeColor>(NodeColor.NORMAL);
   const { image, name, type } = props.data;
   const isSelected = props.selected;
 
   useEffect(() => {
     isSelected
-      ? setBorderColor(IconBorderColor.SELECTED)
-      : setBorderColor(IconBorderColor.NORMAL);
+      ? setBorderColor(NodeColor.SELECTED)
+      : setBorderColor(NodeColor.NORMAL);
   }, [isSelected]);
 
   return (
@@ -38,10 +28,10 @@ const BasicNodeImpl = (props: NodeProps<BasicNodeProps>) => {
       <Box sx={styles.nodeStyle.nodeBox}>
         <Box
           onMouseEnter={() => {
-            if (!isSelected) setBorderColor(IconBorderColor.HOVER);
+            if (!isSelected) setBorderColor(NodeColor.HOVER);
           }}
           onMouseLeave={() => {
-            if (!isSelected) setBorderColor(IconBorderColor.NORMAL);
+            if (!isSelected) setBorderColor(NodeColor.NORMAL);
           }}
           sx={{
             ...styles.nodeStyle.nodeIconBox,

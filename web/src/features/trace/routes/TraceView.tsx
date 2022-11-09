@@ -10,7 +10,7 @@ import {
   useNodesState,
 } from "reactflow";
 
-import { EdgeData, NodeData } from "@/components/Graph/types";
+import { EdgeColor, EdgeData, NodeData } from "@/components/Graph/types";
 import {
   BASIC_EDGE_TYPE,
   BASIC_NODE_TYPE,
@@ -18,6 +18,7 @@ import {
   POSITION,
 } from "@/components/Graph/utils/global";
 import { createGraphLayout } from "@/components/Graph/utils/layout";
+import { updateEdgeStyle } from "@/components/Graph/utils/utils";
 import { Head } from "@/components/Head";
 
 import { TraceGraph } from "../components/TraceGraph";
@@ -74,10 +75,16 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "1",
     target: "2",
     data: { time: "20ms", count: 2 },
+    style: {
+      stroke: EdgeColor.NORMAL,
+      padding: 1,
+      cursor: "default",
+    },
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: EDGE_ARROW_SIZE,
       height: EDGE_ARROW_SIZE,
+      color: EdgeColor.NORMAL,
     },
   },
   {
@@ -86,10 +93,16 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "2",
     target: "3",
     data: { time: "20ms" },
+    style: {
+      padding: 1,
+      cursor: "default",
+      stroke: EdgeColor.NORMAL,
+    },
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: EDGE_ARROW_SIZE,
       height: EDGE_ARROW_SIZE,
+      color: EdgeColor.NORMAL,
     },
   },
   {
@@ -98,10 +111,16 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "2",
     target: "4",
     data: { time: "20ms" },
+    style: {
+      stroke: EdgeColor.NORMAL,
+      padding: 1,
+      cursor: "default",
+    },
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: EDGE_ARROW_SIZE,
       height: EDGE_ARROW_SIZE,
+      color: EdgeColor.NORMAL,
     },
   },
 ];
@@ -136,8 +155,8 @@ export const TraceView = () => {
     setEdges(
       edges.map((e: Edge<EdgeData>) =>
         connectedEdges.includes(e)
-          ? { ...e, animated: true, selected: true }
-          : { ...e, animated: false, selected: false }
+          ? updateEdgeStyle({ ...e }, true, true, EdgeColor.SELECTED)
+          : updateEdgeStyle({ ...e }, false, false, EdgeColor.NORMAL)
       )
     );
   };
@@ -148,9 +167,9 @@ export const TraceView = () => {
       const connectedEdges = getConnectedEdges([node], edges);
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
-          connectedEdges.includes(e) && !e.selected
-            ? { ...e, animated: true, selected: false }
-            : e
+          !e.selected && connectedEdges.includes(e)
+            ? updateEdgeStyle({ ...e }, true, false, EdgeColor.HOVER)
+            : { ...e }
         )
       );
     }
@@ -162,9 +181,9 @@ export const TraceView = () => {
       const connectedEdges = getConnectedEdges([node], edges);
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
-          connectedEdges.includes(e) && !e.selected
-            ? { ...e, animated: false, selected: false }
-            : e
+          !e.selected && connectedEdges.includes(e)
+            ? updateEdgeStyle({ ...e }, false, false, EdgeColor.NORMAL)
+            : { ...e }
         )
       );
     }
@@ -174,9 +193,9 @@ export const TraceView = () => {
     event.stopPropagation();
     setSelectedNodeId("");
     setEdges(
-      edges.map((e: Edge<EdgeData>) => {
-        return { ...e, animated: false, selected: false };
-      })
+      edges.map((e: Edge<EdgeData>) =>
+        updateEdgeStyle({ ...e }, false, false, EdgeColor.NORMAL)
+      )
     );
   };
 

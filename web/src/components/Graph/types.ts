@@ -35,3 +35,18 @@ export interface TraceGraphParams {
   onNodeMouseLeave: NodeMouseHandler;
   isLoading: boolean;
 }
+
+export enum EdgeColor {
+  NORMAL = "#96979E",
+  HOVER = "#FFFFFF",
+  SELECTED = "#00CDE7",
+  ERROR = "#EF5854",
+}
+
+export enum NodeColor {
+  NORMAL = "#96979E",
+  HOVER = "#FFFFFF",
+  SELECTED = "#009EB4",
+  ERR_NORMAL = "#EF5854",
+  ERR_HOVER = "#B52D29",
+}

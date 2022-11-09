@@ -1,17 +1,10 @@
 import { Box } from "@mui/material";
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
 import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
 
 import { styles } from "./styles";
-
-enum EdgeColor {
-  NORMAL = "#96979E",
-  HOVER = "#FFFFFF",
-  SELECTED = "#00CDE7",
-  ERROR = "#EF5854",
-}
 
 const BasicEdgeImpl = ({
   id,
@@ -23,8 +16,7 @@ const BasicEdgeImpl = ({
   targetPosition,
   data,
   markerEnd,
-  animated,
-  selected,
+  style,
 }: EdgeProps) => {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -35,21 +27,11 @@ const BasicEdgeImpl = ({
     targetPosition,
   });
 
-  const [edgeColor, setEdgeColor] = useState(EdgeColor.NORMAL);
-  useEffect(() => {
-    if (animated && selected) {
-      setEdgeColor(EdgeColor.SELECTED);
-    } else if (animated && !selected) {
-      setEdgeColor(EdgeColor.HOVER);
-    } else {
-      setEdgeColor(EdgeColor.NORMAL);
-    }
-  }, [animated, selected]);
   return (
     <>
       <path
         id={id}
-        style={{ padding: 1, stroke: edgeColor, cursor: "default" }}
+        style={style}
         className="react-flow__edge-path"
         d={edgePath}
         markerEnd={markerEnd}
@@ -67,7 +49,7 @@ const BasicEdgeImpl = ({
             <Box
               sx={{
                 ...styles.edgeStyle.counterContainer,
-                borderColor: edgeColor,
+                borderColor: style?.stroke,
               }}
             >
               {data.count}
