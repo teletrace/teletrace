@@ -71,9 +71,8 @@ func (api *API) registerMiddlewares() {
 	api.registerStaticFilesMiddleware()
 
 	// CORS policy config middleware
-	// TODO: Figure out if this configuration is right for the project's needs
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:3000"} // TODO: Replace with actual clients
+	config.AllowOrigins = []string{"*"} // TODO: Replace with actual clients
 	api.router.Use(cors.New(config))
 }
 
