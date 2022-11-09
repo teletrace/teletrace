@@ -89,6 +89,7 @@ func (api *API) registerRoutes() {
 	v1 := api.router.Group(apiPrefix)
 	v1.GET("/ping", api.getPing)
 	v1.POST("/search", api.search)
+	v1.GET("/trace/:id", api.getTraceById)
 }
 
 // Start runs the configured API instance.

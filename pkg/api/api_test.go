@@ -14,6 +14,7 @@ import (
 	"path"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -90,8 +91,7 @@ func TestPingRoute(t *testing.T) {
 func TestSearchRoute(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
-	anyEndTime := 578098000
-	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", anyEndTime))
+	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/search"), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	storageMock, _ := storage.NewStorageMock()
@@ -110,6 +110,29 @@ func TestSearchRoute(t *testing.T) {
 	assert.NotEmpty(t, resBody.Spans)
 	expectedSpanId := spanformatutiltests.GenInternalSpan(nil, nil, nil).Span.SpanId
 	assert.Equal(t, expectedSpanId, resBody.Spans[0].Span.SpanId)
+}
+
+func TestGetTraceById(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	expectedTraceId := spanformatutiltests.GenInternalSpan(nil, nil, nil).Span.TraceId
+	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, fmt.Sprintf("/trace/%v", expectedTraceId)), nil)
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	var resBody *model.SearchResponse
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Spans)
+	assert.Equal(t, expectedTraceId, resBody.Spans[0].Span.TraceId)
 }
 
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {

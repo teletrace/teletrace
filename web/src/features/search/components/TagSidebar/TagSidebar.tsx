@@ -15,7 +15,7 @@ export const TagSidebar = () => {
   const [instumentationLibs, setInstrumentationLibs] = useState<TagValues>([]);
 
   return (
-    <Paper sx={{ overflow: "hidden" }}>
+    <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
       <Stack spacing="2px" sx={styles.sideTagBar}>
         <TagValuesSelector
           title="Status"
