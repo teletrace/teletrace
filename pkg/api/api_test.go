@@ -157,7 +157,6 @@ func TestGetAvailableTags(t *testing.T) {
 	assert.NotEmpty(t, resBody.Tags)
 	const mockTagName = "custom-tag"
 	assert.Equal(t, mockTagName, resBody.Tags[0].Name)
-
 }
 
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
