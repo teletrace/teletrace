@@ -2,7 +2,8 @@ package api
 
 import (
 	"net/http"
-	model "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/pkg/model"
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +14,7 @@ func (api *API) getPing(c *gin.Context) {
 }
 
 func (api *API) search(c *gin.Context) {
-	var req model.SearchRequest
+	var req spansquery.SearchRequest
 	err := c.BindJSON(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, &gin.H{"message": err.Error()})
@@ -29,16 +30,16 @@ func (api *API) search(c *gin.Context) {
 
 func (api *API) getTraceById(c *gin.Context) {
 	traceId := c.Param("id")
-	sr := &model.SearchRequest{
-		Timeframe: model.Timeframe{
+	sr := &spansquery.SearchRequest{
+		Timeframe: spansquery.Timeframe{
 			StartTime: 0,
 			EndTime:   uint64(time.Now().UnixNano()),
 		},
-		SearchFilters: []model.SearchFilter{
+		SearchFilters: []spansquery.SearchFilter{
 			{
-				KeyValueFilter: &model.KeyValueFilter{
+				KeyValueFilter: &spansquery.KeyValueFilter{
 					Key:      "span.traceId",
-					Operator: model.OPERATOR_EQUALS,
+					Operator: spansquery.OPERATOR_EQUALS,
 					Value:    traceId,
 				},
 			},
@@ -52,5 +53,13 @@ func (api *API) getTraceById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
 
+func (api *API) getAvailableTags(c *gin.Context) {
+	res, err := (*api.spanReader).GetAvailableTags(c, model.GetAvailableTagsRequest{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
+	}
+
+	c.JSON(http.StatusOK, res)
 }
