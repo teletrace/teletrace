@@ -99,13 +99,13 @@ func (api *API) Start() error {
 }
 
 // Common method to validate an http request's body
-func (api *API) validateRequestBody(req model.Request, c *gin.Context) bool {
+func (api *API) validateRequestBody(req *model.Request, c *gin.Context) bool {
 	parseError := c.BindJSON(req)
 	if parseError != nil {
 		c.JSON(http.StatusBadRequest, &gin.H{"message": parseError.Error()})
 		return true
 	}
-	validationError := req.Validate(c)
+	validationError := req.Validate()
 	if validationError != nil {
 		c.JSON(http.StatusBadRequest, &gin.H{"message": validationError.Error()})
 		return true
