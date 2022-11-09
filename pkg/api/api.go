@@ -72,7 +72,7 @@ func (api *API) registerMiddlewares() {
 
 	// CORS policy config middleware
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*"} // TODO: Replace with actual clients
+	config.AllowOrigins = []string{"*"}
 	api.router.Use(cors.New(config))
 }
 
