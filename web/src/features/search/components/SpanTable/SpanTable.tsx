@@ -52,12 +52,13 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
-          startTime: formatDateToTimeString(span.startTime),
+          startTime: formatDateToTimeString(span.startTimeUnixNano),
           duration: `ms ${externalFields.duration}`,
           name: span.name,
           status: span.status.code === 0 ? "Ok" : "Error",
           serviceName:
-            typeof resource.attributes["service.name"] === "string"
+            resource.attributes?.["service.name"] !== undefined &&
+            typeof resource.attributes?.["service.name"] === "string"
               ? resource.attributes["service.name"]
               : "service unknown",
         })
