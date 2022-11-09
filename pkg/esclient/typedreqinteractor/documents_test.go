@@ -98,9 +98,9 @@ func getSearchRequestMock(fs ...spansquery.SearchFilter) (spansquery.SearchReque
 	}
 
 	return spansquery.SearchRequest{
-		Timeframe:    tf,
-		Sort:         []spansquery.Sort{sort}, // TODO add a function that creates the search request with defaults
-		SearchFilter: fs,
+		Timeframe:     tf,
+		Sort:          []spansquery.Sort{sort}, // TODO add a function that creates the search request with defaults
+		SearchFilters: fs,
 	}, nil
 }
 
