@@ -112,6 +112,29 @@ func TestSearchRoute(t *testing.T) {
 	assert.Equal(t, expectedSpanId, resBody.Spans[0].Span.SpanId)
 }
 
+func TestGetTraceById(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	expectedTraceId := spanformatutiltests.GenInternalSpan(nil, nil, nil).Span.TraceId
+	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, fmt.Sprintf("/trace/%v", expectedTraceId)), nil)
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	var resBody *model.SearchResponse
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Spans)
+	assert.Equal(t, expectedTraceId, resBody.Spans[0].Span.TraceId)
+}
+
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
