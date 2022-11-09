@@ -40,8 +40,8 @@ export type RawSpan = {
   name: string;
   kind: number;
   status: SpanStatus;
-  startTime: number;
-  endTime: number;
+  startTimeUnixNano: number;
+  endTimeUnixNano: number;
   traceState: string;
   attributes: Attributes;
   droppedAttributesCount: number;

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -70,6 +71,9 @@ func (api *API) registerMiddlewares() {
 
 	// static files middleware, for serving frontend files
 	api.registerStaticFilesMiddleware()
+
+	// CORS policy config middleware
+	api.router.Use(cors.Default())
 }
 
 func (api *API) registerStaticFilesMiddleware() {
