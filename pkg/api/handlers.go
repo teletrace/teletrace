@@ -34,7 +34,7 @@ func (api *API) getTraceById(c *gin.Context) {
 	sr := &model.SearchRequest{
 		Timeframe: model.Timeframe{
 			StartTime: 0,
-			EndTime:   uint64(time.Now().UnixMilli()),
+			EndTime:   uint64(time.Now().UnixNano()),
 		},
 		SearchFilters: []model.SearchFilter{
 			{
