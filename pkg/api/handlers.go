@@ -8,8 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const traceIdKey = "span.traceId"
-
 func (api *API) getPing(c *gin.Context) {
 	c.String(http.StatusOK, "pong")
 }
@@ -39,7 +37,7 @@ func (api *API) getTraceById(c *gin.Context) {
 		SearchFilters: []model.SearchFilter{
 			{
 				KeyValueFilter: &model.KeyValueFilter{
-					Key:      traceIdKey,
+					Key:      "span.traceId",
 					Operator: model.OPERATOR_EQUALS,
 					Value:    traceId,
 				},
