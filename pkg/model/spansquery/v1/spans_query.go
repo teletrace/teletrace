@@ -53,7 +53,7 @@ type Metadata struct {
 type SearchRequest struct {
 	Timeframe     Timeframe      `json:"timeframe"`
 	Sort          []Sort         `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
-	SearchFilters []SearchFilter `json:"searchFilters"`
+	SearchFilters []SearchFilter `json:"filters"`
 	Metadata      *Metadata      `json:"metadata"`
 }
 
