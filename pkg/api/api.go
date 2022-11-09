@@ -71,9 +71,7 @@ func (api *API) registerMiddlewares() {
 	api.registerStaticFilesMiddleware()
 
 	// CORS policy config middleware
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"*"}
-	api.router.Use(cors.New(config))
+	api.router.Use(cors.Default())
 }
 
 func (api *API) registerStaticFilesMiddleware() {
