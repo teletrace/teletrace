@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/model"
 	storage "oss-tracing/pkg/spanstorage"
 )
 
@@ -95,4 +97,19 @@ func (api *API) registerRoutes() {
 // Blocks the goroutine indefinitely unless an error happens.
 func (api *API) Start() error {
 	return api.router.Run(fmt.Sprintf(":%d", api.config.APIPort))
+}
+
+// Common method to validate an http request's body
+func (api *API) validateRequestBody(req model.Request, c *gin.Context) bool {
+	parseError := c.BindJSON(req)
+	if parseError != nil {
+		c.JSON(http.StatusBadRequest, &gin.H{"message": parseError.Error()})
+		return true
+	}
+	validationError := req.Validate(c)
+	if validationError != nil {
+		c.JSON(http.StatusBadRequest, &gin.H{"message": validationError.Error()})
+		return true
+	}
+	return false
 }

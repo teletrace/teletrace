@@ -15,9 +15,8 @@ func (api *API) getPing(c *gin.Context) {
 
 func (api *API) search(c *gin.Context) {
 	var req spansquery.SearchRequest
-	err := c.BindJSON(&req)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, &gin.H{"message": err.Error()})
+	isValidationError := api.validateRequestBody(&req, c)
+	if isValidationError {
 		return
 	}
 	res, err := (*api.spanReader).Search(c, &req)
