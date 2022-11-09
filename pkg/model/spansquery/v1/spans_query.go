@@ -1,7 +1,10 @@
 package model
 
 import (
+	"fmt"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -55,6 +58,14 @@ type SearchRequest struct {
 	Sort         []Sort         `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
 	SearchFilter []SearchFilter `json:"searchFilter"`
 	Metadata     *Metadata      `json:"metadata"`
+}
+
+func (sr *SearchRequest) Validate(c *gin.Context) error {
+	if sr.Timeframe.EndTime < sr.Timeframe.StartTime {
+		return fmt.Errorf("endTime cannot be smaller than startTime")
+	}
+
+	return nil
 }
 
 type SearchResponse struct {
