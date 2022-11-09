@@ -105,7 +105,7 @@ func (api *API) validateRequestBody(req model.Request, c *gin.Context) bool {
 		c.JSON(http.StatusBadRequest, &gin.H{"message": parseError.Error()})
 		return true
 	}
-	validationError := req.Validate(c)
+	validationError := req.Validate()
 	if validationError != nil {
 		c.JSON(http.StatusBadRequest, &gin.H{"message": validationError.Error()})
 		return true
