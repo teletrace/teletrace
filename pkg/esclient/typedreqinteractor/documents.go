@@ -55,7 +55,7 @@ func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
 
 	timeframeFilters := createTimeframeFilters(r.Timeframe)
 
-	filters := append(r.SearchFilter, timeframeFilters...)
+	filters := append(r.SearchFilters, timeframeFilters...)
 
 	if builder, err = buildQuery(builder, filters...); err != nil {
 		return nil, fmt.Errorf("Could not build query for search request: %+v. err: %+v", r, err)
