@@ -1,6 +1,11 @@
-import { Edge } from "reactflow";
+import { Edge, Node } from "reactflow";
 
-import { EdgeColor, EdgeData } from "@/components/Graph/types";
+import {
+  EdgeColor,
+  EdgeData,
+  NodeColor,
+  NodeData,
+} from "@/components/Graph/types";
 
 export const updateEdgeStyle = (
   edge: Edge<EdgeData>,
@@ -17,4 +22,14 @@ export const updateEdgeStyle = (
     edge.style = { ...edge.style, stroke: color };
   }
   return edge;
+};
+
+export const updateNodeStyle = (
+  node: Node<NodeData>,
+  selected: boolean,
+  color: NodeColor
+): Node<NodeData> => {
+  node.data = { ...node.data, color: color };
+  node.selected = selected;
+  return node;
 };

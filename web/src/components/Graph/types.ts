@@ -11,6 +11,7 @@ export interface NodeData {
   name: string;
   image: string;
   type: string;
+  color: NodeColor;
 }
 
 export interface EdgeData {
@@ -22,6 +23,7 @@ export interface BasicNodeProps {
   image: string;
   name: string;
   type: string;
+  color: NodeColor;
 }
 
 export interface TraceGraphParams {

@@ -10,7 +10,12 @@ import {
   useNodesState,
 } from "reactflow";
 
-import { EdgeColor, EdgeData, NodeData } from "@/components/Graph/types";
+import {
+  EdgeColor,
+  EdgeData,
+  NodeColor,
+  NodeData,
+} from "@/components/Graph/types";
 import {
   BASIC_EDGE_TYPE,
   BASIC_NODE_TYPE,
@@ -18,7 +23,10 @@ import {
   POSITION,
 } from "@/components/Graph/utils/global";
 import { createGraphLayout } from "@/components/Graph/utils/layout";
-import { updateEdgeStyle } from "@/components/Graph/utils/utils";
+import {
+  updateEdgeStyle,
+  updateNodeStyle,
+} from "@/components/Graph/utils/utils";
 import { Head } from "@/components/Head";
 
 import { TraceGraph } from "../components/TraceGraph";
@@ -33,6 +41,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "/checkout",
       image: "IoTHTTP2Protocol",
       type: "Http",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -43,6 +52,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "/invoices",
       image: "LambdaFunction",
       type: "Node.js",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -53,6 +63,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "update-subscription",
       image: "ApiGatewayEndpoint",
       type: "SNS",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -63,6 +74,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "/payment",
       image: "IoTHTTP2Protocol",
       type: "Http",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -144,14 +156,17 @@ export const TraceView = () => {
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    console.log(selectedNodeId);
-  }, [selectedNodeId]);
-
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     event.stopPropagation();
     setSelectedNodeId(node.id);
     const connectedEdges = getConnectedEdges([node], edges);
+    setNodes(
+      nodes.map((n: Node<NodeData>) =>
+        n.id === node.id
+          ? updateNodeStyle({ ...n }, true, NodeColor.SELECTED)
+          : updateNodeStyle({ ...n }, false, NodeColor.NORMAL)
+      )
+    );
     setEdges(
       edges.map((e: Edge<EdgeData>) =>
         connectedEdges.includes(e)
@@ -165,6 +180,13 @@ export const TraceView = () => {
     event.stopPropagation();
     if (!node.selected) {
       const connectedEdges = getConnectedEdges([node], edges);
+      setNodes(
+        nodes.map((n: Node<NodeData>) =>
+          n.id === node.id
+            ? updateNodeStyle({ ...n }, false, NodeColor.HOVER)
+            : { ...n }
+        )
+      );
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
           !e.selected && connectedEdges.includes(e)
@@ -179,6 +201,13 @@ export const TraceView = () => {
     event.stopPropagation();
     if (!node.selected) {
       const connectedEdges = getConnectedEdges([node], edges);
+      setNodes(
+        nodes.map((n: Node<NodeData>) =>
+          n.id === node.id
+            ? updateNodeStyle({ ...n }, false, NodeColor.NORMAL)
+            : { ...n }
+        )
+      );
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
           !e.selected && connectedEdges.includes(e)
@@ -192,6 +221,11 @@ export const TraceView = () => {
   const onPaneClick = (event: ReactMouseEvent) => {
     event.stopPropagation();
     setSelectedNodeId("");
+    setNodes(
+      nodes.map((n: Node<NodeData>) =>
+        updateNodeStyle({ ...n }, true, NodeColor.NORMAL)
+      )
+    );
     setEdges(
       edges.map((e: Edge<EdgeData>) =>
         updateEdgeStyle({ ...e }, false, false, EdgeColor.NORMAL)

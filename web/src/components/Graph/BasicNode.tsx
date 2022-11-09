@@ -8,15 +8,7 @@ import { ResourceIcon } from "@/components/ResourceIcon/ResourceIcon";
 import { styles } from "./styles";
 
 const BasicNodeImpl = (props: NodeProps<BasicNodeProps>) => {
-  const [borderColor, setBorderColor] = useState<NodeColor>(NodeColor.NORMAL);
-  const { image, name, type } = props.data;
-  const isSelected = props.selected;
-
-  useEffect(() => {
-    isSelected
-      ? setBorderColor(NodeColor.SELECTED)
-      : setBorderColor(NodeColor.NORMAL);
-  }, [isSelected]);
+  const { image, name, type, color } = props.data;
 
   return (
     <>
@@ -27,15 +19,9 @@ const BasicNodeImpl = (props: NodeProps<BasicNodeProps>) => {
       />
       <Box sx={styles.nodeStyle.nodeBox}>
         <Box
-          onMouseEnter={() => {
-            if (!isSelected) setBorderColor(NodeColor.HOVER);
-          }}
-          onMouseLeave={() => {
-            if (!isSelected) setBorderColor(NodeColor.NORMAL);
-          }}
           sx={{
             ...styles.nodeStyle.nodeIconBox,
-            borderColor: borderColor,
+            borderColor: color,
           }}
         >
           <ResourceIcon name={image} />
