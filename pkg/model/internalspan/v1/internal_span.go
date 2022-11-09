@@ -10,8 +10,8 @@ type SpanEvent struct {
 }
 
 type SpanLink struct {
-	TraceId                [16]byte   `json:"traceId"`
-	SpanId                 [8]byte    `json:"spanId"`
+	TraceId                string     `json:"traceId"`
+	SpanId                 string     `json:"spanId"`
 	TraceState             string     `json:"traceState"`
 	Attributes             Attributes `json:"attributes"`
 	DroppedAttributesCount uint32     `json:"droppedAttributesCount"`
@@ -35,10 +35,10 @@ type InstrumentationScope struct {
 }
 
 type Span struct {
-	TraceId                [16]byte     `json:"traceId"`
-	SpanId                 [8]byte      `json:"spanId"`
+	TraceId                string       `json:"traceId"`
+	SpanId                 string       `json:"spanId"`
 	TraceState             string       `json:"traceState"`
-	ParentSpanId           [8]byte      `json:"parentSpanId"`
+	ParentSpanId           string       `json:"parentSpanId"`
 	Name                   string       `json:"name"`
 	Kind                   int32        `json:"kind"`
 	StartTimeUnixNano      uint64       `json:"startTimeUnixNano"`

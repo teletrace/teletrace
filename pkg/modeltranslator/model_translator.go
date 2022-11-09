@@ -64,10 +64,10 @@ func getInternalSpan(span ptrace.Span) *v1.Span {
 	status := getInternalSpanStatus(span)
 
 	return &v1.Span{
-		TraceId:                span.TraceID().Bytes(),
-		SpanId:                 span.SpanID().Bytes(),
+		TraceId:                span.TraceID().HexString(),
+		SpanId:                 span.SpanID().HexString(),
 		TraceState:             string(span.TraceState()),
-		ParentSpanId:           span.ParentSpanID().Bytes(),
+		ParentSpanId:           span.ParentSpanID().HexString(),
 		Name:                   span.Name(),
 		Kind:                   int32(span.Kind()),
 		StartTimeUnixNano:      uint64(span.StartTimestamp()),
@@ -105,8 +105,8 @@ func getInternalSpanLinks(span ptrace.Span) []*v1.SpanLink {
 		spanLink := spanLinkSlice.At(i)
 		internalSpanLinks = append(internalSpanLinks,
 			&v1.SpanLink{
-				TraceId:                spanLink.TraceID().Bytes(),
-				SpanId:                 spanLink.SpanID().Bytes(),
+				TraceId:                spanLink.TraceID().HexString(),
+				SpanId:                 spanLink.SpanID().HexString(),
 				TraceState:             string(spanLink.TraceState()),
 				Attributes:             spanLink.Attributes().AsRaw(),
 				DroppedAttributesCount: spanLink.DroppedAttributesCount(),
