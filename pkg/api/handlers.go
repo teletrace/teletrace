@@ -21,7 +21,7 @@ func (api *API) search(c *gin.Context) {
 	}
 	res, err := (*api.spanReader).Search(c, &req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
+		respondWithError(http.StatusInternalServerError, err, c)
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -47,7 +47,7 @@ func (api *API) getTraceById(c *gin.Context) {
 
 	res, err := (*api.spanReader).Search(c, sr)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
+		respondWithError(http.StatusInternalServerError, err, c)
 		return
 	}
 
@@ -57,7 +57,8 @@ func (api *API) getTraceById(c *gin.Context) {
 func (api *API) getAvailableTags(c *gin.Context) {
 	res, err := (*api.spanReader).GetAvailableTags(c, model.GetAvailableTagsRequest{})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
+		respondWithError(http.StatusInternalServerError, err, c)
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
