@@ -60,15 +60,15 @@ type SearchRequest struct {
 	Metadata     *Metadata      `json:"metadata"`
 }
 
+type SearchResponse struct {
+	Metadata *Metadata                    `json:"metadata"`
+	Spans    []*internalspan.InternalSpan `json:"spans"`
+}
+
 func (sr *SearchRequest) Validate(c *gin.Context) error {
 	if sr.Timeframe.EndTime < sr.Timeframe.StartTime {
 		return fmt.Errorf("endTime cannot be smaller than startTime")
 	}
 
 	return nil
-}
-
-type SearchResponse struct {
-	Metadata *Metadata                    `json:"metadata"`
-	Spans    []*internalspan.InternalSpan `json:"spans"`
 }
