@@ -9,19 +9,22 @@ export type Sort = {
   ascending: boolean;
 };
 
-export type Operator =
-  | "equals"
-  | "not_equals"
-  | "in"
-  | "not_in"
-  | "contains"
-  | "not_contains"
-  | "exists"
-  | "not_exists"
-  | "gt"
-  | "gte"
-  | "lt"
-  | "lte";
+export const operatorsList = [
+  "equals",
+  "not_equals",
+  "in",
+  "not_in",
+  "contains",
+  "not_contains",
+  "exists",
+  "not_exists",
+  "gt",
+  "gte",
+  "lt",
+  "lte",
+] as const;
+
+export type Operator = typeof operatorsList[number];
 
 export type KeyValueFilter = {
   key: string;
