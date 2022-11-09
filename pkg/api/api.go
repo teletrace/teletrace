@@ -88,7 +88,7 @@ func (api *API) registerRoutes() {
 	v1.GET("/ping", api.getPing)
 	v1.POST("/search", api.search)
 	v1.GET("/trace/:id", api.getTraceById)
-	v1.GET("/tags", api.getTraceById)
+	v1.GET("/tags", api.getAvailableTags)
 }
 
 // Start runs the configured API instance.
