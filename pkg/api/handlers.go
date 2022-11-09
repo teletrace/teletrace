@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
-	model "oss-tracing/pkg/model/spansquery/v1"
 	"time"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,16 +28,16 @@ func (api *API) search(c *gin.Context) {
 
 func (api *API) getTraceById(c *gin.Context) {
 	traceId := c.Param("id")
-	sr := &model.SearchRequest{
-		Timeframe: model.Timeframe{
+	sr := &spansquery.SearchRequest{
+		Timeframe: spansquery.Timeframe{
 			StartTime: 0,
 			EndTime:   uint64(time.Now().UnixNano()),
 		},
-		SearchFilters: []model.SearchFilter{
+		SearchFilters: []spansquery.SearchFilter{
 			{
-				KeyValueFilter: &model.KeyValueFilter{
+				KeyValueFilter: &spansquery.KeyValueFilter{
 					Key:      "span.traceId",
-					Operator: model.OPERATOR_EQUALS,
+					Operator: spansquery.OPERATOR_EQUALS,
 					Value:    traceId,
 				},
 			},
