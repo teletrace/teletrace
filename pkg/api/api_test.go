@@ -8,8 +8,9 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/model"
 	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
-	model "oss-tracing/pkg/model/spansquery/v1"
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	storage "oss-tracing/pkg/spanstorage/mock"
 	"path"
 	"path/filepath"
@@ -103,7 +104,7 @@ func TestSearchRoute(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
 
-	var resBody *model.SearchResponse
+	var resBody *spansquery.SearchResponse
 	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
 	assert.Nil(t, err)
 	assert.NotNil(t, resBody)
@@ -127,12 +128,36 @@ func TestGetTraceById(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
 
-	var resBody *model.SearchResponse
+	var resBody *spansquery.SearchResponse
 	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
 	assert.Nil(t, err)
 	assert.NotNil(t, resBody)
 	assert.NotEmpty(t, resBody.Spans)
 	assert.Equal(t, expectedTraceId, resBody.Spans[0].Span.TraceId)
+}
+
+func TestGetAvailableTags(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, "/tags"), nil)
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	var resBody *model.GetAvailableTagsResult
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Tags)
+	const mockTagName = "custom-tag"
+	assert.Equal(t, mockTagName, resBody.Tags[0].Name)
+
 }
 
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
