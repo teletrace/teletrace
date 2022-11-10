@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	factories, err := getComponents()
+	factories, err := components()
 	if err != nil {
 		log.Fatalf("failed to build components: %v", err)
 	}
@@ -17,7 +17,7 @@ func main() {
 	info := component.BuildInfo{
 		Command:     "lupa-otelcol",
 		Description: "Lupa OpenTelemetry Collector",
-		Version:     "1.0.0",
+		Version:     "0.0.0",
 	}
 
 	params := service.CollectorSettings{

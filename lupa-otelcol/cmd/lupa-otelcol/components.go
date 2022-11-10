@@ -7,7 +7,7 @@ import (
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 )
 
-func getComponents() (component.Factories, error) {
+func components() (component.Factories, error) {
 	receivers, err := component.MakeReceiverFactoryMap(
 		otlpreceiver.NewFactory(),
 	)
