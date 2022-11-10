@@ -181,7 +181,6 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
-	fmt.Print(body)
 	return body, err
 }
 
