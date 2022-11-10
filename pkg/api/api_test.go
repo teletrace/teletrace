@@ -159,7 +159,7 @@ func TestGetAvailableTags(t *testing.T) {
 	assert.Equal(t, mockTagName, resBody.Tags[0].Name)
 }
 
-func TestGetTagsValues(t *testing.T) {
+func TestTagsValues(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
 	expectedTag := "span.attributes.custom-tag"
