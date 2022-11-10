@@ -24,8 +24,12 @@ import {
 } from "@/components/Graph/utils/global";
 import { createGraphLayout } from "@/components/Graph/utils/layout";
 import {
-  updateEdgeStyle,
-  updateNodeStyle,
+  applyHoverEdgeStyle,
+  applyHoveredNodeStyle,
+  applyNormalEdgeStyle,
+  applyNormalNodeStyle,
+  applySelectedEdgeStyle,
+  applySelectedNodeStyle,
 } from "@/components/Graph/utils/utils";
 import { Head } from "@/components/Head";
 
@@ -160,16 +164,14 @@ export const TraceView = () => {
     const connectedEdges = getConnectedEdges([node], edges);
     setNodes(
       nodes.map((n: Node<NodeData>) =>
-        n.id === node.id
-          ? updateNodeStyle({ ...n }, true, NodeColor.SELECTED)
-          : updateNodeStyle({ ...n }, false, NodeColor.NORMAL)
+        n.id === node.id ? applySelectedNodeStyle(n) : applyNormalNodeStyle(n)
       )
     );
     setEdges(
       edges.map((e: Edge<EdgeData>) =>
         connectedEdges.includes(e)
-          ? updateEdgeStyle({ ...e }, true, true, EdgeColor.SELECTED)
-          : updateEdgeStyle({ ...e }, false, false, EdgeColor.NORMAL)
+          ? applySelectedEdgeStyle(e)
+          : applyNormalEdgeStyle(e)
       )
     );
   };
@@ -180,16 +182,12 @@ export const TraceView = () => {
       const connectedEdges = getConnectedEdges([node], edges);
       setNodes(
         nodes.map((n: Node<NodeData>) =>
-          n.id === node.id
-            ? updateNodeStyle({ ...n }, false, NodeColor.HOVER)
-            : { ...n }
+          n.id === node.id ? applyHoveredNodeStyle(n) : n
         )
       );
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
-          !e.selected && connectedEdges.includes(e)
-            ? updateEdgeStyle({ ...e }, true, false, EdgeColor.HOVER)
-            : { ...e }
+          !e.selected && connectedEdges.includes(e) ? applyHoverEdgeStyle(e) : e
         )
       );
     }
@@ -201,16 +199,14 @@ export const TraceView = () => {
       const connectedEdges = getConnectedEdges([node], edges);
       setNodes(
         nodes.map((n: Node<NodeData>) =>
-          n.id === node.id
-            ? updateNodeStyle({ ...n }, false, NodeColor.NORMAL)
-            : { ...n }
+          n.id === node.id ? applyNormalNodeStyle(n) : n
         )
       );
       setEdges(
         edges.map((e: Edge<EdgeData>) =>
           !e.selected && connectedEdges.includes(e)
-            ? updateEdgeStyle({ ...e }, false, false, EdgeColor.NORMAL)
-            : { ...e }
+            ? applyNormalEdgeStyle(e)
+            : e
         )
       );
     }
@@ -218,16 +214,8 @@ export const TraceView = () => {
 
   const onPaneClick = (event: ReactMouseEvent) => {
     event.stopPropagation();
-    setNodes(
-      nodes.map((n: Node<NodeData>) =>
-        updateNodeStyle({ ...n }, true, NodeColor.NORMAL)
-      )
-    );
-    setEdges(
-      edges.map((e: Edge<EdgeData>) =>
-        updateEdgeStyle({ ...e }, false, false, EdgeColor.NORMAL)
-      )
-    );
+    setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
+    setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
   };
 
   return (

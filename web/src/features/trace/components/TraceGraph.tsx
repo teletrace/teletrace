@@ -1,5 +1,5 @@
 import { Box, Paper } from "@mui/material";
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { Controls, ReactFlow } from "reactflow";
 
 import { Loader } from "@/components/Elements/Loader";
@@ -9,10 +9,10 @@ import { TraceGraphParams } from "@/components/Graph/types";
 
 import "reactflow/dist/style.css";
 
-const TraceGraphImpl = (params: TraceGraphParams) => {
-  const nodeTypes = useMemo(() => ({ basicNode: BasicNode }), []);
-  const edgeTypes = useMemo(() => ({ basicEdge: BasicEdge }), []);
+const nodeTypes = { basicNode: BasicNode };
+const edgeTypes = { basicEdge: BasicEdge };
 
+const TraceGraphImpl = (params: TraceGraphParams) => {
   const {
     nodes,
     edges,
