@@ -56,11 +56,10 @@ export const theme = createTheme({
     button: {
       alignItems: "center",
       display: "flex",
-      fontSize: "12px",
+      fontSize: "14px",
       fontStyle: "normal",
       fontWeight: 500,
-      letterSpacing: "0.4px",
-      lineHeight: "16px",
+      lineHeight: "20px",
     },
     caption: {
       fontStyle: "normal",
@@ -171,8 +170,13 @@ export const theme = createTheme({
     },
     MuiButton: {
       styleOverrides: {
-        containedSizeSmall: {
+        sizeSmall: {
           height: "24px",
+          fontSize: "12px",
+          lineHeight: "16px",
+        },
+        sizeLarge: {
+          height: "40px",
         },
         contained: {
           "&:disabled": {
