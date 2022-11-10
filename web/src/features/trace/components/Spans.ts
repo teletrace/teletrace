@@ -1,13 +1,13 @@
 import { RawSpan } from "@/types/span";
 
-export type FlattenedSpan = {
+export type Span = {
   span: RawSpan;
   spanAction: string;
   spanDuration: string;
   spanDateTime: string;
 };
 
-export const SpansMock: FlattenedSpan[] = [
+export const SpansMock: Span[] = [
   {
     span: {
       spanId: "spanId",

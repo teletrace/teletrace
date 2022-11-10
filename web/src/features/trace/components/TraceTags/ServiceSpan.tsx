@@ -10,15 +10,15 @@ import { useEffect, useState } from "react";
 import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
 import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
 
-import { FlattenedSpan } from "../Spans";
+import { Span } from "../Spans";
 import styles from "./styles";
 
 interface SpanTagsProps {
-  span: FlattenedSpan;
+  span: Span;
   selectedSpanId: string;
 }
 
-export const SingleServiceSpan = ({ span, selectedSpanId }: SpanTagsProps) => {
+export const ServiceSpan = ({ span, selectedSpanId }: SpanTagsProps) => {
   const [expanded, setExpanded] = useState(span.span.spanId === selectedSpanId);
 
   useEffect(() => {
