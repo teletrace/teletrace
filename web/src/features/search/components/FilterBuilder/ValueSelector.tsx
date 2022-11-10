@@ -4,11 +4,12 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { useState } from "react";
 import { styles } from "./styles";
+import { ValueTypes } from "../../types/spanQuery";
 
 export type ValueSelectorProps = {
-  value: unknown;
+  value: ValueTypes;
   selectMode: string;
-  onChange: (value: unknown) => void;
+  onChange: (value: ValueTypes) => void;
 };
 
 export const ValueSelector = ({
@@ -24,7 +25,11 @@ export const ValueSelector = ({
     return (
       <FormControl sx={styles.valueSelector}>
         <InputLabel id="value">Value</InputLabel>
-        <Select id="value-selector" value={"10"} onChange={handleChange}>
+        <Select
+          id="value-selector"
+          value={value.toString()}
+          onChange={handleChange}
+        >
           <MenuItem value="">
             <em>None</em>
           </MenuItem>

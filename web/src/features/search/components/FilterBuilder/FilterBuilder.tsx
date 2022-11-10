@@ -13,6 +13,7 @@ import { styles } from "./styles";
 import { useState } from "react";
 import { availableTag } from "../../types/availableTags";
 import { Operator } from "../../types/spanQuery";
+import { ValueTypes } from "../../types/spanQuery";
 
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | null;
@@ -38,7 +39,7 @@ const valueSelectModeByOperators = {
 export const FilterBuilderDialog = (props: FilterDialogProps) => {
   const [filter, setFilter] = useState<availableTag | null>(null);
   const [operator, setOperator] = useState<Operator>("in");
-  const [value, setValue] = useState<unknown>(null);
+  const [value, setValue] = useState<ValueTypes>([]);
   const [valueSelectMode, setValueSelectMode] = useState<string>(
     valueSelectModeByOperators.in
   );

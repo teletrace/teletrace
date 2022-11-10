@@ -26,9 +26,11 @@ export const operatorsList = [
 
 export type Operator = typeof operatorsList[number];
 
+export type ValueTypes = string | number | string[] | number[];
+
 export type KeyValueFilter = {
   key: string;
-  value: string;
+  value: ValueTypes;
   operator: Operator;
 };
 
