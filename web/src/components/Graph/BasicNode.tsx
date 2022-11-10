@@ -2,12 +2,12 @@ import { Box } from "@mui/material";
 import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { BasicNodeProps } from "@/components/Graph/types";
+import { NodeData } from "@/components/Graph/types";
 import { ResourceIcon } from "@/components/ResourceIcon/ResourceIcon";
 
 import { styles } from "./styles";
 
-const BasicNodeImpl = (props: NodeProps<BasicNodeProps>) => {
+const BasicNodeImpl = (props: NodeProps<NodeData>) => {
   const { image, name, type, color } = props.data;
 
   return (

@@ -14,13 +14,6 @@ export interface EdgeData {
   count?: number;
 }
 
-export interface BasicNodeProps {
-  image: string;
-  name: string;
-  type: string;
-  color: NodeColor;
-}
-
 export interface TraceGraphParams {
   setSelectedNode: (val: Node<NodeData> | object) => void;
   traceData: TraceData;
