@@ -1,3 +1,3 @@
-import { TraceTags } from "./TraceTags";
+import { ServiceSpansList } from "./ServiceSpansList";
 
-export default TraceTags;
+export default ServiceSpansList;
