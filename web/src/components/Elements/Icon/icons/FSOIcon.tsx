@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const FSOIconComponent = (
   <svg
@@ -30,7 +30,7 @@ const FSOIconComponent = (
       </clipPath>
     </defs>
   </svg>
-)
+);
 
-export const FSOIcon = FSOIconComponent
-export default { FSOIcon }
+export const FSOIcon = FSOIconComponent;
+export default { FSOIcon };

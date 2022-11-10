@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const MongoDB = (
   <svg
@@ -25,6 +25,6 @@ const MongoDB = (
       />
     </defs>
   </svg>
-)
+);
 
-export default MongoDB
+export default MongoDB;

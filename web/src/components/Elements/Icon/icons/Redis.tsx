@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Redis = (
   <svg viewBox="0 0 519 443" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,6 +36,6 @@ const Redis = (
       fill="#9A2928"
     />
   </svg>
-)
+);
 
-export default Redis
+export default Redis;

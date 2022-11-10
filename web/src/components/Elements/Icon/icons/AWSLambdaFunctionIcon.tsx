@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const AWSLambdaFunctionIconComponent = (
   <svg
@@ -15,7 +15,7 @@ const AWSLambdaFunctionIconComponent = (
       fill="#D45B07"
     />
   </svg>
-)
+);
 
-export const AWSLambdaFunctionIcon = AWSLambdaFunctionIconComponent
-export default { AWSLambdaFunctionIcon }
+export const AWSLambdaFunctionIcon = AWSLambdaFunctionIconComponent;
+export default { AWSLambdaFunctionIcon };

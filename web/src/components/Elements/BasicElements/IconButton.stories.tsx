@@ -1,12 +1,12 @@
-import { Box, IconButton } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Box, IconButton } from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { PhotoCamera } from '../Icon'
+import { PhotoCamera } from "../Icon";
 
 export default {
   component: IconButton,
-  title: 'IconButton',
-} as ComponentMeta<typeof IconButton>
+  title: "IconButton",
+} as ComponentMeta<typeof IconButton>;
 
 const Template: ComponentStory<typeof IconButton> = (args) => (
   <Box>
@@ -14,15 +14,15 @@ const Template: ComponentStory<typeof IconButton> = (args) => (
       <PhotoCamera />
     </IconButton>
   </Box>
-)
+);
 
-export const Primary = Template.bind({})
-export const Secondary = Template.bind({})
+export const Primary = Template.bind({});
+export const Secondary = Template.bind({});
 
 Primary.args = {
-  color: 'primary',
-}
+  color: "primary",
+};
 
 Secondary.args = {
-  color: 'secondary',
-}
+  color: "secondary",
+};

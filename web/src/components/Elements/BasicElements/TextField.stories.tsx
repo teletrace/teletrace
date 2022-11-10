@@ -1,20 +1,20 @@
-import { Box, TextField } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Box, TextField } from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
   component: TextField,
-  title: 'TextField',
-} as ComponentMeta<typeof TextField>
+  title: "TextField",
+} as ComponentMeta<typeof TextField>;
 
 const Template: ComponentStory<typeof TextField> = (args) => (
   <TextField {...args} />
-)
+);
 
 const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
   <Box
     component="form"
     sx={{
-      '& .MuiTextField-root': { m: 1, width: '25ch' },
+      "& .MuiTextField-root": { m: 1, width: "25ch" },
     }}
   >
     <TextField
@@ -31,13 +31,13 @@ const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
       {...args}
     />
   </Box>
-)
+);
 
 const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
   <Box
     component="form"
     sx={{
-      '& .MuiTextField-root': { m: 1, width: '25ch' },
+      "& .MuiTextField-root": { m: 1, width: "25ch" },
     }}
   >
     <div>
@@ -218,8 +218,8 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
       />
     </div>
   </Box>
-)
+);
 
-export const Primary = Template.bind({})
-export const Basic = BasicTemplate.bind({})
-export const FromProps = TemplateFromProps.bind({})
+export const Primary = Template.bind({});
+export const Basic = BasicTemplate.bind({});
+export const FromProps = TemplateFromProps.bind({});

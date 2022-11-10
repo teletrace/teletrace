@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Google = (
   <svg
@@ -25,5 +25,5 @@ const Google = (
       fill="#EB4335"
     />
   </svg>
-)
-export default Google
+);
+export default Google;

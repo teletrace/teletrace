@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const NodeJSComponent = (
   <svg
@@ -15,6 +15,6 @@ const NodeJSComponent = (
       />
     </g>
   </svg>
-)
-export const NodeJSIcon = NodeJSComponent
-export default { NodeJSIcon }
+);
+export const NodeJSIcon = NodeJSComponent;
+export default { NodeJSIcon };

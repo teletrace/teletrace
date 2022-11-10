@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Python = (
   <svg viewBox="0 0 533 531" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -35,6 +35,6 @@ const Python = (
       </linearGradient>
     </defs>
   </svg>
-)
+);
 
-export default Python
+export default Python;

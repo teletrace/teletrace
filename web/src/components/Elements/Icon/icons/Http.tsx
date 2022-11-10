@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Http = (
   <svg viewBox="0 0 415 417" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -15,6 +15,6 @@ const Http = (
       fill="white"
     />
   </svg>
-)
+);
 
-export default Http
+export default Http;

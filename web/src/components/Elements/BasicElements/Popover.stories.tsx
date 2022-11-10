@@ -1,25 +1,25 @@
-import { Button, Popover, Typography } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useState } from 'react'
+import { Button, Popover, Typography } from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { useState } from "react";
 
 export default {
   component: Popover,
-  title: 'Popover',
-} as ComponentMeta<typeof Popover>
+  title: "Popover",
+} as ComponentMeta<typeof Popover>;
 
 const Template: ComponentStory<typeof Popover> = (args) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleClose = () => {
-    setAnchorEl(null)
-  }
+    setAnchorEl(null);
+  };
 
-  const open = Boolean(anchorEl)
-  const id = open ? 'simple-popover' : undefined
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   return (
     <div>
@@ -31,8 +31,8 @@ const Template: ComponentStory<typeof Popover> = (args) => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          horizontal: 'left',
-          vertical: 'bottom',
+          horizontal: "left",
+          vertical: "bottom",
         }}
         {...args}
         open={open}
@@ -40,16 +40,16 @@ const Template: ComponentStory<typeof Popover> = (args) => {
         <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
       </Popover>
     </div>
-  )
-}
+  );
+};
 
-export const Primary = Template.bind({})
-export const Secondary = Template.bind({})
+export const Primary = Template.bind({});
+export const Secondary = Template.bind({});
 
 Primary.args = {
-  color: 'primary',
-}
+  color: "primary",
+};
 
 Secondary.args = {
-  color: 'secondary',
-}
+  color: "secondary",
+};

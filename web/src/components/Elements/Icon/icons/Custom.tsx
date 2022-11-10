@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Custom = (
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -7,5 +7,5 @@ const Custom = (
       fill="white"
     />
   </svg>
-)
-export default Custom
+);
+export default Custom;

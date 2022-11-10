@@ -1,23 +1,29 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import {useState} from 'react'
-
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { useState } from "react";
 
 export default {
   component: Dialog,
-  title: 'Dialog',
-} as ComponentMeta<typeof Dialog>
+  title: "Dialog",
+} as ComponentMeta<typeof Dialog>;
 
 const Template: ComponentStory<typeof Dialog> = () => {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(true);
 
   const handleClickOpen = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
 
   const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen}>
@@ -46,7 +52,7 @@ const Template: ComponentStory<typeof Dialog> = () => {
         </DialogActions>
       </Dialog>
     </div>
-  )
-}
+  );
+};
 
-export const Primary = Template.bind({})
+export const Primary = Template.bind({});

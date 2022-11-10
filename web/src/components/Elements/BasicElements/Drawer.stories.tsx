@@ -1,19 +1,30 @@
-import { AppBar, Box, CssBaseline, Divider, Drawer, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import {
+  AppBar,
+  Box,
+  CssBaseline,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { Mail, MoveToInbox } from '../Icon'
-
+import { Mail, MoveToInbox } from "../Icon";
 
 export default {
   component: Drawer,
-  title: 'Drawer',
-} as ComponentMeta<typeof Drawer>
+  title: "Drawer",
+} as ComponentMeta<typeof Drawer>;
 
-const drawerWidth = 240
+const drawerWidth = 240;
 
 const Template: ComponentStory<typeof Drawer> = () => (
   <div>
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -32,14 +43,14 @@ const Template: ComponentStory<typeof Drawer> = () => (
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
-            boxSizing: 'border-box',
+            boxSizing: "border-box",
           },
         }}
       >
         <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
+        <Box sx={{ overflow: "auto" }}>
           <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
               <ListItem key={text}>
                 <ListItemIcon>
                   {index % 2 === 0 ? <MoveToInbox /> : <Mail />}
@@ -50,7 +61,7 @@ const Template: ComponentStory<typeof Drawer> = () => (
           </List>
           <Divider />
           <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+            {["All mail", "Trash", "Spam"].map((text, index) => (
               <ListItem key={text}>
                 <ListItemIcon>
                   {index % 2 === 0 ? <MoveToInbox /> : <Mail />}
@@ -95,6 +106,6 @@ const Template: ComponentStory<typeof Drawer> = () => (
       </Box>
     </Box>
   </div>
-)
+);
 
-export const Primary = Template.bind({})
+export const Primary = Template.bind({});

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 export const FSOIconBW = (
   <svg viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -9,6 +9,6 @@ export const FSOIconBW = (
       fill="white"
     />
   </svg>
-)
+);
 
-export default FSOIconBW
+export default FSOIconBW;

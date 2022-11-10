@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const CapIconComponent = (
   <svg
@@ -7,7 +7,7 @@ const CapIconComponent = (
     viewBox="0 0 24 24"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    style={{ paddingTop: '2px' }}
+    style={{ paddingTop: "2px" }}
   >
     <path
       fillRule="evenodd"
@@ -16,7 +16,7 @@ const CapIconComponent = (
       fill="white"
     />
   </svg>
-)
+);
 
-export const CapIcon = CapIconComponent
-export default { CapIcon }
+export const CapIcon = CapIconComponent;
+export default { CapIcon };

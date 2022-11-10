@@ -1,23 +1,23 @@
-import { Box, Button, ButtonGroup } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Box, Button, ButtonGroup } from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
   component: ButtonGroup,
-  title: 'ButtonGroup',
-} as ComponentMeta<typeof ButtonGroup>
+  title: "ButtonGroup",
+} as ComponentMeta<typeof ButtonGroup>;
 
 const Template: ComponentStory<typeof ButtonGroup> = (args) => (
   <div>
-    <Box component="span" sx={{ color: 'white', fontFamily: 'Inter' }}>
+    <Box component="span" sx={{ color: "white", fontFamily: "Inter" }}>
       Text
     </Box>
     <Box
       component="div"
       sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '20px',
-        width: '400px',
+        display: "flex",
+        justifyContent: "space-between",
+        padding: "20px",
+        width: "400px",
       }}
     >
       <ButtonGroup
@@ -30,16 +30,16 @@ const Template: ComponentStory<typeof ButtonGroup> = (args) => (
         <Button>Three</Button>
       </ButtonGroup>
     </Box>
-    <Box component="span" sx={{ color: 'white', fontFamily: 'Inter' }}>
+    <Box component="span" sx={{ color: "white", fontFamily: "Inter" }}>
       Contained
     </Box>
     <Box
       component="div"
       sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '20px',
-        width: '400px',
+        display: "flex",
+        justifyContent: "space-between",
+        padding: "20px",
+        width: "400px",
       }}
     >
       <ButtonGroup
@@ -52,16 +52,16 @@ const Template: ComponentStory<typeof ButtonGroup> = (args) => (
         <Button>Three</Button>
       </ButtonGroup>
     </Box>
-    <Box component="span" sx={{ color: 'white', fontFamily: 'Inter' }}>
+    <Box component="span" sx={{ color: "white", fontFamily: "Inter" }}>
       Outlined
     </Box>
     <Box
       component="div"
       sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        padding: '20px',
-        width: '400px',
+        display: "flex",
+        justifyContent: "space-between",
+        padding: "20px",
+        width: "400px",
       }}
     >
       <ButtonGroup
@@ -75,15 +75,15 @@ const Template: ComponentStory<typeof ButtonGroup> = (args) => (
       </ButtonGroup>
     </Box>
   </div>
-)
+);
 
-export const Primary = Template.bind({})
-export const Secondary = Template.bind({})
+export const Primary = Template.bind({});
+export const Secondary = Template.bind({});
 
 Primary.args = {
-  color: 'primary',
-}
+  color: "primary",
+};
 
 Secondary.args = {
-  color: 'secondary',
-}
+  color: "secondary",
+};

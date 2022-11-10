@@ -1,20 +1,27 @@
-import { Box, Button, Divider, Grid, IconButton, Tooltip, Typography } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { Delete } from '../Icon'
-
+import { Delete } from "../Icon";
 
 function BasicTooltip() {
   return (
     <Box
       sx={{
-        alignItems: 'center',
-        display: 'grid',
-        gridTemplateColumns: '1fr 2fr',
-        width: '100%',
+        alignItems: "center",
+        display: "grid",
+        gridTemplateColumns: "1fr 2fr",
+        width: "100%",
       }}
     >
-      <Typography variant="subtitle1" sx={{ color: 'primary.dark' }}>
+      <Typography variant="subtitle1" sx={{ color: "primary.dark" }}>
         Basic tooltip
       </Typography>
       <Box>
@@ -25,20 +32,20 @@ function BasicTooltip() {
         </Tooltip>
       </Box>
     </Box>
-  )
+  );
 }
 
 function PositionedTooltips() {
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: "100%" }}>
       <Box
         sx={{
-          alignItems: 'center',
-          display: 'grid',
-          gridTemplateColumns: '1fr 2fr',
+          alignItems: "center",
+          display: "grid",
+          gridTemplateColumns: "1fr 2fr",
         }}
       >
-        <Typography variant="subtitle1" sx={{ color: 'primary.dark' }}>
+        <Typography variant="subtitle1" sx={{ color: "primary.dark" }}>
           Positioned tooltips
         </Typography>
         <Box>
@@ -65,19 +72,19 @@ function PositionedTooltips() {
             <Grid item xs={6}>
               <Tooltip title="Add" placement="right-start">
                 <span>
-                  <Button sx={{ display: 'inline-block' }}>right-start</Button>
+                  <Button sx={{ display: "inline-block" }}>right-start</Button>
                 </span>
               </Tooltip>
               <br />
               <Tooltip title="Add" placement="right">
                 <span>
-                  <Button sx={{ display: 'inline-block' }}>right</Button>
+                  <Button sx={{ display: "inline-block" }}>right</Button>
                 </span>
               </Tooltip>
               <br />
               <Tooltip title="Add" placement="right-end">
                 <span>
-                  <Button sx={{ display: 'inline-block' }}>right-end</Button>
+                  <Button sx={{ display: "inline-block" }}>right-end</Button>
                 </span>
               </Tooltip>
             </Grid>
@@ -133,54 +140,54 @@ function PositionedTooltips() {
         </Box>
       </Box>
     </Box>
-  )
+  );
 }
 
 function ArrowTooltips() {
   return (
     <Box
       sx={{
-        alignItems: 'center',
-        display: 'grid',
-        gridTemplateColumns: '1fr 2fr',
-        width: '100%',
+        alignItems: "center",
+        display: "grid",
+        gridTemplateColumns: "1fr 2fr",
+        width: "100%",
       }}
     >
-      <Typography variant="subtitle1" sx={{ color: 'primary.dark' }}>
+      <Typography variant="subtitle1" sx={{ color: "primary.dark" }}>
         Arrow tooltip
       </Typography>
-      <span style={{ display: 'flex' }}>
+      <span style={{ display: "flex" }}>
         <Tooltip title="Add" arrow>
           <span>
-            <Button sx={{ display: 'inline-block' }}>Arrow</Button>
+            <Button sx={{ display: "inline-block" }}>Arrow</Button>
           </span>
         </Tooltip>
       </span>
     </Box>
-  )
+  );
 }
 
 export default {
   component: Tooltip,
-  title: 'Tooltip',
-} as ComponentMeta<typeof Tooltip>
+  title: "Tooltip",
+} as ComponentMeta<typeof Tooltip>;
 
 const Template: ComponentStory<typeof Tooltip> = () => (
   <Box
     sx={{
-      alignContent: 'center',
-      alignItems: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-around',
+      alignContent: "center",
+      alignItems: "center",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-around",
     }}
   >
     <BasicTooltip />
-    <Divider sx={{ margin: '14px 0', width: '100%' }} />
+    <Divider sx={{ margin: "14px 0", width: "100%" }} />
     <PositionedTooltips />
-    <Divider sx={{ margin: '14px 0', width: '100%' }} />
+    <Divider sx={{ margin: "14px 0", width: "100%" }} />
     <ArrowTooltips />
   </Box>
-)
+);
 
-export const Primary = Template.bind({})
+export const Primary = Template.bind({});

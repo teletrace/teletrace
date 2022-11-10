@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Sqs = (
   <svg viewBox="0 3 48 42" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,5 +38,5 @@ const Sqs = (
       </clipPath>
     </defs>
   </svg>
-)
-export default Sqs
+);
+export default Sqs;

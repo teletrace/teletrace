@@ -1,21 +1,28 @@
-import { Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import {
+  Box,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { Drafts, Inbox } from '../Icon'
-
+import { Drafts, Inbox } from "../Icon";
 
 export default {
   component: List,
-  title: 'List',
-} as ComponentMeta<typeof List>
+  title: "List",
+} as ComponentMeta<typeof List>;
 
 const Template: ComponentStory<typeof List> = () => (
   <Box
     sx={{
-      width: '100%',
+      width: "100%",
       maxWidth: 360,
-      bgcolor: 'background.paper',
-      color: 'white',
+      bgcolor: "background.paper",
+      color: "white",
     }}
   >
     <nav aria-label="main mailbox folders">
@@ -54,6 +61,6 @@ const Template: ComponentStory<typeof List> = () => (
       </List>
     </nav>
   </Box>
-)
+);
 
-export const Primary = Template.bind({})
+export const Primary = Template.bind({});

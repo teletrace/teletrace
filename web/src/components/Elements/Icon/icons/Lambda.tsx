@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Lambda = (
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -9,5 +9,5 @@ const Lambda = (
       fill="#F47C20"
     />
   </svg>
-)
-export default Lambda
+);
+export default Lambda;
