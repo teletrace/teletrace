@@ -56,11 +56,11 @@ export const theme = createTheme({
     button: {
       alignItems: "center",
       display: "flex",
-      fontSize: "14px",
+      fontSize: "12px",
       fontStyle: "normal",
       fontWeight: 500,
-      letterSpacing: "1.25px",
-      lineHeight: "17px",
+      letterSpacing: "0.4px",
+      lineHeight: "16px",
     },
     caption: {
       fontStyle: "normal",
@@ -164,12 +164,16 @@ export const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
+          borderRadius: "0px",
           background: greyScaleColors.grey900,
         },
       },
     },
     MuiButton: {
       styleOverrides: {
+        containedSizeSmall: {
+          height: "24px",
+        },
         contained: {
           "&:disabled": {
             backgroundColor: primaryActionColors.primaryDisabled,
