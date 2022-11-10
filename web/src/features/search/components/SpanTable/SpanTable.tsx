@@ -52,12 +52,13 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
-          startTime: formatDateToTimeString(span.startTime),
+          startTime: formatDateToTimeString(span.startTimeUnixNano),
           duration: `ms ${externalFields.duration}`,
           name: span.name,
           status: span.status.code === 0 ? "Ok" : "Error",
           serviceName:
-            typeof resource.attributes["service.name"] === "string"
+            resource.attributes?.["service.name"] !== undefined &&
+            typeof resource.attributes?.["service.name"] === "string"
               ? resource.attributes["service.name"]
               : "service unknown",
         })
@@ -79,48 +80,51 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   }, [fetchMoreOnBottomReached, tableWrapper]);
 
   return (
-    <div ref={tableWrapperRef} style={{ overflowY: "auto" }}>
-      <MaterialReactTable
-        columns={columns}
-        data={tableSpans}
-        enablePagination={false}
-        enableRowNumbers={false}
-        enableTopToolbar={false}
-        enableColumnActions={false}
-        enableBottomToolbar={false}
-        manualFiltering
-        manualSorting
-        enableColumnResizing
-        renderToolbarInternalActions={({ table }) => (
-          <>
-            <ToggleDensePaddingButton table={table} />
-            <ShowHideColumnsButton table={table} />
-          </>
-        )}
-        muiToolbarAlertBannerProps={
-          isError
-            ? {
-                color: "error",
-                children: "Error loading spans",
-              }
-            : undefined
-        }
-        onColumnFiltersChange={setColumnFilters}
-        onGlobalFilterChange={setGlobalFilter}
-        onSortingChange={setSorting}
-        state={{
-          columnFilters,
-          globalFilter,
-          isLoading,
-          showAlertBanner: isError,
-          showProgressBars: isFetching,
-          sorting,
-        }}
-        virtualizerInstanceRef={virtualizerInstanceRef}
-        muiTableHeadProps={{
-          sx: styles.header,
-        }}
-      />
-    </div>
+    <MaterialReactTable
+      columns={columns}
+      data={tableSpans}
+      enablePagination={false}
+      enableRowNumbers={false}
+      enableTopToolbar={false}
+      enableColumnActions={false}
+      enableBottomToolbar={false}
+      manualFiltering
+      manualSorting
+      enableStickyHeader={true}
+      enableColumnResizing
+      renderToolbarInternalActions={({ table }) => (
+        <>
+          <ToggleDensePaddingButton table={table} />
+          <ShowHideColumnsButton table={table} />
+        </>
+      )}
+      muiToolbarAlertBannerProps={
+        isError
+          ? {
+              color: "error",
+              children: "Error loading spans",
+            }
+          : undefined
+      }
+      onColumnFiltersChange={setColumnFilters}
+      onGlobalFilterChange={setGlobalFilter}
+      onSortingChange={setSorting}
+      state={{
+        columnFilters,
+        globalFilter,
+        isLoading,
+        showAlertBanner: isError,
+        showProgressBars: isFetching,
+        sorting,
+      }}
+      virtualizerInstanceRef={virtualizerInstanceRef}
+      muiTableHeadProps={{
+        sx: styles.header,
+      }}
+      muiTableContainerProps={{
+        ref: tableWrapperRef,
+      }}
+      muiTablePaperProps={{ sx: styles.paper }}
+    />
   );
 }

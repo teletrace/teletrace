@@ -18,6 +18,7 @@ require github.com/creasty/defaults v1.6.0
 
 require (
 	github.com/felixge/httpsnoop v1.0.3 // indirect
+	github.com/gin-contrib/cors v1.4.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
