@@ -58,7 +58,6 @@ func (api *API) getAvailableTags(c *gin.Context) {
 	res, err := (*api.spanReader).GetAvailableTags(c, model.GetAvailableTagsRequest{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
-		return
 	}
 
 	c.JSON(http.StatusOK, res)
