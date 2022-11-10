@@ -1,4 +1,4 @@
-package v1
+package internalspanv1
 
 type Attributes map[string]any
 

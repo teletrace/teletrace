@@ -1,21 +1,22 @@
-package spanformatutiltests
+package util
 
 import (
-	v1 "oss-tracing/pkg/model/internalspan/v1"
 	"time"
+
+	internalspan "github.com/epsagon/lupa/model/internalspan/internalspanv1"
 )
 
-func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[string]any) *v1.InternalSpan {
-	return &v1.InternalSpan{
-		Resource: &v1.Resource{
+func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[string]any) *internalspan.InternalSpan {
+	return &internalspan.InternalSpan{
+		Resource: &internalspan.Resource{
 			Attributes: r_attr,
 		},
-		Scope: &v1.InstrumentationScope{
+		Scope: &internalspan.InstrumentationScope{
 			Name:       "scope",
 			Version:    "version",
 			Attributes: i_attr,
 		},
-		Span: &v1.Span{
+		Span: &internalspan.Span{
 			TraceId:         "1234567887654321",
 			SpanId:          "12345678",
 			TraceState:      "state",
@@ -23,12 +24,12 @@ func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[st
 			Kind:            1,
 			EndTimeUnixNano: uint64(time.Now().UTC().Nanosecond()),
 			Attributes:      s_attr,
-			Status: &v1.SpanStatus{
+			Status: &internalspan.SpanStatus{
 				Message: "STATUS_MESSAGE",
 				Code:    0,
 			},
 		},
-		ExternalFields: &v1.ExternalFields{
+		ExternalFields: &internalspan.ExternalFields{
 			DurationNano: 1000000000,
 		},
 	}
