@@ -1,9 +1,5 @@
 package model
 
-import (
-	"time"
-)
-
 type GetAvailableTagsRequest struct {
 }
 
@@ -20,10 +16,10 @@ type GetTagsValuesRequest struct {
 	Query *string
 
 	// The minimum time to search spans in
-	StartTime time.Time
+	StartTime uint64
 
 	// The maximum time to search span in
-	EndTime time.Time
+	EndTime uint64
 
 	AutoPrefixTags *bool
 }

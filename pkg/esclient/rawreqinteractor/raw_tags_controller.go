@@ -125,10 +125,22 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	}
 
 	query := map[string]any{
-		"range": map[string]any{
-			"@timestamp": map[string]any{
-				"gte": request.StartTime,
-				"lte": request.EndTime,
+		"bool": map[string]any{
+			"must": []map[string]any{
+				{
+					"range": map[string]any{
+						"span.startTimeUnixNano": map[string]any{
+							"gte": request.StartTime,
+						},
+					},
+				},
+				{
+					"range": map[string]any{
+						"span.endTimeUnixNano": map[string]any{
+							"lte": request.EndTime,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -169,6 +181,7 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
+	fmt.Print(body)
 	return body, err
 }
 

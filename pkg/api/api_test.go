@@ -159,6 +159,44 @@ func TestGetAvailableTags(t *testing.T) {
 	assert.Equal(t, mockTagName, resBody.Tags[0].Name)
 }
 
+func TestGetTagsValues(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	expectedTag := "custom-tag"
+	expectedTag2 := "custom-tag2"
+	expectedTagsAmount := 2
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", expectedTag, expectedTag2)), nil)
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	var resBody *model.GetTagsValuesResult
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Tags)
+	assert.True(t, len(resBody.Tags) == expectedTagsAmount)
+	assert.NotNil(t, resBody.Tags[expectedTag])
+
+	expectedValue := "custom-value"
+	expectedValueCount := 3
+	assert.Equal(t, expectedValue, resBody.Tags[expectedTag][0].Value)
+	assert.Equal(t, expectedValueCount, resBody.Tags[expectedTag][0].Count)
+
+	assert.NotNil(t, resBody.Tags[expectedTag])
+	expectedValue2 := "custom-value2"
+	expectedValue2Count := 1
+	assert.Equal(t, expectedValue2, resBody.Tags[expectedTag2][0].Value)
+	assert.Equal(t, expectedValue2Count, resBody.Tags[expectedTag2][0].Count)
+
+}
+
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}

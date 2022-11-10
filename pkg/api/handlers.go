@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -56,6 +57,26 @@ func (api *API) getTraceById(c *gin.Context) {
 
 func (api *API) getAvailableTags(c *gin.Context) {
 	res, err := (*api.spanReader).GetAvailableTags(c, model.GetAvailableTagsRequest{})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (api *API) getTagsValues(c *gin.Context) {
+	tagsParam := c.Request.URL.Query().Get("tags")
+	tags := strings.Split(tagsParam, ",")
+
+	res, err := (*api.spanReader).GetTagsValues(c,
+		model.GetTagsValuesRequest{
+			Tags:           tags,
+			Query:          nil,
+			StartTime:      0,
+			EndTime:        uint64(time.Now().UnixNano()),
+			AutoPrefixTags: nil,
+		})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
 		return
