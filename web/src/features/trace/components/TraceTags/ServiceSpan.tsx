@@ -1,5 +1,5 @@
+import { ArrowForwardIosSharp } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Stack } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -31,10 +31,11 @@ export const ServiceSpan = ({ span, selectedSpanId }: SpanTagsProps) => {
     <Accordion
       expanded={expanded}
       onChange={() => setExpanded(!expanded)}
+      disableGutters={true}
       sx={styles.mainAccordion}
     >
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon sx={styles.accordionExpandIcon} />}
+        expandIcon={<ArrowForwardIosSharp sx={styles.accordionExpandIcon} />}
         sx={{
           ...(expanded ? styles.expandedRow : styles.notExpandedRow),
           ...styles.accordionSummary,
