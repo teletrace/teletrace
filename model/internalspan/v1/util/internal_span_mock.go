@@ -1,4 +1,4 @@
-package util
+package internalspanv1util
 
 import (
 	"time"
