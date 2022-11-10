@@ -213,6 +213,24 @@ func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
 }
 
+func TestTagsValuesWithMalformedRequestBody(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	mockTag := "span.attributes.custom-tag"
+	mockTag2 := "span.attributes.custom-tag2"
+	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", mockTag, mockTag2)), bytes.NewReader(malformedBody))
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
+}
+
 func TestRootStaticRoute(t *testing.T) {
 	runStaticFilesRouteTest(t, "/")
 }
