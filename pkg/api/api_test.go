@@ -195,7 +195,6 @@ func TestTagsValues(t *testing.T) {
 	expectedValue2Count := 1
 	assert.Equal(t, expectedValue2, resBody.Tags[expectedTag2][0].Value)
 	assert.Equal(t, expectedValue2Count, resBody.Tags[expectedTag2][0].Count)
-
 }
 
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
