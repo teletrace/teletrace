@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -20,4 +21,5 @@ type SpanWriter interface {
 
 type SpanReader interface {
 	Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error)
+	GetAvailableTags(ctx context.Context, r model.GetAvailableTagsRequest) (*model.GetAvailableTagsResult, error)
 }

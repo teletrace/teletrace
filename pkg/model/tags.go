@@ -50,17 +50,19 @@ type TagValueInfo struct {
 //
 // e.g
 // ```json
-// {
-//   "tags": {
-//     "http.status_code": [
-//       { "value": 200, "count": 7 },
-//       { "value": 500, "count": 2 },
-//     ]
-//     "http.url": [
-//       { "value": "http://some.url", "count": 9 },
-//     ]
-//   }
-// }
+//
+//	{
+//	  "tags": {
+//	    "http.status_code": [
+//	      { "value": 200, "count": 7 },
+//	      { "value": 500, "count": 2 },
+//	    ]
+//	    "http.url": [
+//	      { "value": "http://some.url", "count": 9 },
+//	    ]
+//	  }
+//	}
+//
 // ```
 type GetTagsValuesResult struct {
 	Tags map[string][]TagValueInfo

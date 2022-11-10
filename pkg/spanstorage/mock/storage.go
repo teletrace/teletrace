@@ -2,6 +2,7 @@ package mock
 
 import (
 	"context"
+	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
@@ -31,6 +32,17 @@ func (sr spanReader) Search(ctx context.Context, r *spansquery.SearchRequest) (*
 	return &spansquery.SearchResponse{
 		Metadata: nil,
 		Spans:    spans,
+	}, nil
+}
+
+func (sr spanReader) GetAvailableTags(ctx context.Context, r model.GetAvailableTagsRequest) (*model.GetAvailableTagsResult, error) {
+	return &model.GetAvailableTagsResult{
+		Tags: []model.TagInfo{
+			{
+				Name: "custom-tag",
+				Type: "string",
+			},
+		},
 	}, nil
 }
 
