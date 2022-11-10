@@ -9,6 +9,8 @@ processors:
 
 exporters:
   elasticsearch:
+
+  # Temporary until ES implementation, used for build purposes
   otlp:
     endpoint: example:4320
     tls:
