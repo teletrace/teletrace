@@ -1,14 +1,7 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { MouseEvent as ReactMouseEvent, useEffect, useState } from "react";
-import {
-  Edge,
-  MarkerType,
-  Node,
-  getConnectedEdges,
-  useEdgesState,
-  useNodesState,
-} from "reactflow";
+import { useEffect, useState } from "react";
+import { Edge, MarkerType, Node } from "reactflow";
 
 import {
   EdgeColor,
@@ -23,14 +16,6 @@ import {
   POSITION,
 } from "@/components/Graph/utils/global";
 import { createGraphLayout } from "@/components/Graph/utils/layout";
-import {
-  applyHoverEdgeStyle,
-  applyHoveredNodeStyle,
-  applyNormalEdgeStyle,
-  applyNormalNodeStyle,
-  applySelectedEdgeStyle,
-  applySelectedNodeStyle,
-} from "@/components/Graph/utils/utils";
 import { Head } from "@/components/Head";
 
 import { TraceGraph } from "../components/TraceGraph";
@@ -141,82 +126,35 @@ const initialEdges: Edge<EdgeData>[] = [
   },
 ];
 
+export interface TraceData {
+  nodes: Node<NodeData>[];
+  edges: Edge<EdgeData>[];
+}
+
 export const TraceView = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
+  const [selectedNode, setSelectedNode] = useState({});
+  const [traceData, setTraceData] = useState<TraceData>({
+    nodes: [],
+    edges: [],
+  });
+
   useEffect(() => {
     setTimeout(() => {
       createGraphLayout(initialNodes, initialEdges)
-        .then((els) => {
-          if (els.nodes.length > 0) {
+        .then((els: { nodes: Node<NodeData>[]; edges: Edge<EdgeData>[] }) => {
+          if (els) {
+            setTraceData(els);
             setIsLoading(false);
-            setNodes(els.nodes);
-            setEdges(els.edges);
           }
         })
         .catch(() => alert("something went wrong!!! Could not render graph"));
     }, 1000);
   }, []);
 
-  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    const connectedEdges = getConnectedEdges([node], edges);
-    setNodes(
-      nodes.map((n: Node<NodeData>) =>
-        n.id === node.id ? applySelectedNodeStyle(n) : applyNormalNodeStyle(n)
-      )
-    );
-    setEdges(
-      edges.map((e: Edge<EdgeData>) =>
-        connectedEdges.includes(e)
-          ? applySelectedEdgeStyle(e)
-          : applyNormalEdgeStyle(e)
-      )
-    );
-  };
-
-  const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    if (!node.selected) {
-      const connectedEdges = getConnectedEdges([node], edges);
-      setNodes(
-        nodes.map((n: Node<NodeData>) =>
-          n.id === node.id ? applyHoveredNodeStyle(n) : n
-        )
-      );
-      setEdges(
-        edges.map((e: Edge<EdgeData>) =>
-          !e.selected && connectedEdges.includes(e) ? applyHoverEdgeStyle(e) : e
-        )
-      );
-    }
-  };
-
-  const onNodeMouseLeave = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    if (!node.selected) {
-      const connectedEdges = getConnectedEdges([node], edges);
-      setNodes(
-        nodes.map((n: Node<NodeData>) =>
-          n.id === node.id ? applyNormalNodeStyle(n) : n
-        )
-      );
-      setEdges(
-        edges.map((e: Edge<EdgeData>) =>
-          !e.selected && connectedEdges.includes(e)
-            ? applyNormalEdgeStyle(e)
-            : e
-        )
-      );
-    }
-  };
-
-  const onPaneClick = (event: ReactMouseEvent) => {
-    event.stopPropagation();
-    setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
-    setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
-  };
+  useEffect(() => {
+    console.log(selectedNode);
+  }, [selectedNode]);
 
   return (
     <>
@@ -238,15 +176,9 @@ export const TraceView = () => {
           flex={1}
         >
           <TraceGraph
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeClick={onNodeClick}
-            onPaneClick={onPaneClick}
-            onNodeMouseEnter={onNodeMouseEnter}
-            onNodeMouseLeave={onNodeMouseLeave}
             isLoading={isLoading}
+            setSelectedNode={setSelectedNode}
+            traceData={traceData}
           />
           <TraceTags />
         </Stack>

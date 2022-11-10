@@ -1,11 +1,6 @@
-import { MouseEvent as ReactMouseEvent } from "react";
-import {
-  Edge,
-  Node,
-  NodeMouseHandler,
-  OnEdgesChange,
-  OnNodesChange,
-} from "reactflow";
+import { Node } from "reactflow";
+
+import { TraceData } from "@/features/trace";
 
 export interface NodeData {
   name: string;
@@ -27,14 +22,8 @@ export interface BasicNodeProps {
 }
 
 export interface TraceGraphParams {
-  nodes: Node<NodeData>[];
-  edges: Edge<EdgeData>[];
-  onNodesChange: OnNodesChange;
-  onEdgesChange: OnEdgesChange;
-  onNodeClick: NodeMouseHandler;
-  onPaneClick: (event: ReactMouseEvent) => void;
-  onNodeMouseEnter: NodeMouseHandler;
-  onNodeMouseLeave: NodeMouseHandler;
+  setSelectedNode: (val: Node<NodeData> | object) => void;
+  traceData: TraceData;
   isLoading: boolean;
 }
 
