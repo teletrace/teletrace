@@ -1,5 +1,5 @@
-export * from './primary'
-export * from './secondary'
-export * from './greyscale'
-export * from './status'
-export * from './error'
+export * as primaryActionColors from "./primary";
+export * as secondaryActionColors from "./secondary";
+export * as greyScaleColors from "./greyscale";
+export * as statusColors from "./status";
+export * as errorActionColors from "./error";

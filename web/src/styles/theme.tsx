@@ -5,120 +5,120 @@ import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 
-import { errorLight, grey300, grey400, grey800, grey900, primary, primaryDisabled, primaryFocused, primaryHovered, secondary, secondaryDisabled, secondaryHovered, success } from "./colors";
+import {
+  errorActionColors,
+  greyScaleColors,
+  primaryActionColors,
+  secondaryActionColors,
+  statusColors,
+} from "./colors";
 
 export const theme = createTheme({
   palette: {
     background: {
-      default: '#0B0B0D',
-      paper: '#0B0B0D',
+      default: "#0B0B0D",
+      paper: "#0B0B0D",
     },
     error: {
-      main: errorLight,
+      contrastText: "#0B0B0D",
+      main: statusColors.errorLight,
     },
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      contrastText: '#0B0B0D',
-      main: primary,
+      contrastText: "#0B0B0D",
+      main: primaryActionColors.primary,
     },
     secondary: {
-      main: secondary,
+      contrastText: "#0B0B0D",
+      main: secondaryActionColors.secondary,
     },
     success: {
-      main: success,
+      main: statusColors.success,
     },
   },
   typography: {
+    fontFamily: ['"Inter"', "sans-serif"].join(","),
+    fontSize: 12,
     body1: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '14px',
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-      letterSpacing: '0.15px',
-      lineHeight: '17px',
+      fontSize: "14px",
+      fontStyle: "normal",
+      fontWeight: "normal",
+      letterSpacing: "0.15px",
+      lineHeight: "17px",
     },
     body2: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '14px',
-      fontStyle: 'normal',
-      fontWeight: 'bold',
-      letterSpacing: '0.5px',
-      lineHeight: '17px',
+      fontSize: "14px",
+      fontStyle: "normal",
+      fontWeight: "bold",
+      letterSpacing: "0.5px",
+      lineHeight: "17px",
     },
     button: {
-      alignItems: 'center',
-      display: 'flex',
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '14px',
-      fontStyle: 'normal',
+      alignItems: "center",
+      display: "flex",
+      fontSize: "14px",
+      fontStyle: "normal",
       fontWeight: 500,
-      letterSpacing: '1.25px',
-      lineHeight: '17px',
+      letterSpacing: "1.25px",
+      lineHeight: "17px",
     },
     caption: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '12px',
-      fontStyle: 'normal',
+      fontStyle: "normal",
       fontWeight: 500,
-      letterSpacing: '0.4px',
-      lineHeight: '15px',
+      letterSpacing: "0.4px",
+      lineHeight: "15px",
     },
-    fontFamily: 'Inter, sans-serif',
     h1: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '96px',
-      fontStyle: 'normal',
+      fontFamily: "Inter, sans-serif",
+      fontSize: "96px",
+      fontStyle: "normal",
       fontWeight: 300,
-      letterSpacing: '-1.5px',
-      lineHeight: '116px',
+      letterSpacing: "-1.5px",
+      lineHeight: "116px",
     },
     h2: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '60px',
-      fontStyle: 'normal',
+      fontSize: "60px",
+      fontStyle: "normal",
       fontWeight: 300,
-      letterSpacing: '-1.5px',
-      lineHeight: '73px',
+      letterSpacing: "-1.5px",
+      lineHeight: "73px",
     },
     h3: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '48px',
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-      letterSpacing: '-1.5px',
-      lineHeight: '58px',
+      fontSize: "48px",
+      fontStyle: "normal",
+      fontWeight: "normal",
+      letterSpacing: "-1.5px",
+      lineHeight: "58px",
     },
     h4: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '34px',
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-      letterSpacing: '-1.5px',
-      lineHeight: '41px',
+      fontSize: "34px",
+      fontStyle: "normal",
+      fontWeight: "normal",
+      letterSpacing: "-1.5px",
+      lineHeight: "41px",
     },
     h5: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '24px',
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-      letterSpacing: '0.5px',
-      lineHeight: '29px',
+      fontSize: "24px",
+      fontStyle: "normal",
+      fontWeight: "normal",
+      letterSpacing: "0.5px",
+      lineHeight: "29px",
     },
     h6: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '20px',
-      fontStyle: 'normal',
+      fontFamily: "Inter, sans-serif",
+      fontSize: "20px",
+      fontStyle: "normal",
       fontWeight: 500,
-      letterSpacing: '0.15px',
-      lineHeight: '24px',
+      letterSpacing: "0.15px",
+      lineHeight: "24px",
     },
     overline: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '10px',
-      fontStyle: 'normal',
+      fontFamily: "Inter, sans-serif",
+      fontSize: "10px",
+      fontStyle: "normal",
       fontWeight: 500,
-      letterSpacing: '1.5px',
-      lineHeight: '12px',
+      letterSpacing: "1.5px",
+      lineHeight: "12px",
     },
     // placeholder: {
     //   fontFamily: 'Inter, sans-serif',
@@ -129,25 +129,19 @@ export const theme = createTheme({
     //   lineHeight: '12px',
     // },
     subtitle1: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '16px',
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-      letterSpacing: '0.15px',
-      lineHeight: '19px',
+      fontSize: "16px",
+      fontStyle: "normal",
+      fontWeight: "normal",
+      letterSpacing: "0.15px",
+      lineHeight: "19px",
     },
     subtitle2: {
-      fontFamily: 'Inter, sans-serif',
-      fontSize: '14px',
-      fontStyle: 'normal',
+      fontSize: "14px",
+      fontStyle: "normal",
       fontWeight: 500,
-      letterSpacing: '0.15px',
-      lineHeight: '17px',
+      letterSpacing: "0.15px",
+      lineHeight: "17px",
     },
-  },
-  typography: {
-    fontFamily: ['"Inter"', "sans-serif"].join(","),
-    fontSize: 12,
   },
   components: {
     MuiAccordion: {
@@ -170,7 +164,7 @@ export const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          background: grey900,
+          background: greyScaleColors.grey900,
         },
       },
     },
@@ -178,58 +172,66 @@ export const theme = createTheme({
       styleOverrides: {
         contained: {
           "&:disabled": {
-            backgroundColor: primaryDisabled,
+            backgroundColor: primaryActionColors.primaryDisabled,
           },
           "&:hover": {
-            backgroundColor: primaryHovered,
+            backgroundColor: primaryActionColors.primaryHovered,
           },
         },
         containedSecondary: {
           "&:disabled": {
-            backgroundColor: secondaryDisabled,
+            backgroundColor: secondaryActionColors.secondaryDisabled,
           },
           "&:hover": {
-            backgroundColor: secondaryHovered,
+            backgroundColor: secondaryActionColors.secondaryHovered,
+          },
+        },
+        containedError: {
+          "&:disabled": {
+            backgroundColor: errorActionColors.errorDisabled,
+          },
+          "&:hover": {
+            backgroundColor: errorActionColors.errorHovered,
           },
         },
         outlined: {
           "&:disabled": {
-            borderColor: primaryDisabled,
+            borderColor: primaryActionColors.primaryDisabled,
           },
           "&:hover": {
-            borderColor: primaryHovered,
+            borderColor: primaryActionColors.primaryHovered,
           },
         },
         outlinedSecondary: {
           "&:disabled": {
-            borderColor: secondaryDisabled,
+            borderColor: secondaryActionColors.secondaryDisabled,
           },
           "&:hover": {
-            borderColor: secondaryHovered,
+            borderColor: secondaryActionColors.secondaryHovered,
           },
         },
         root: {
           borderRadius: "8px",
         },
-        text: {
-          color: primary,
-        },
+        // text: {
+        //   color: '#0B0B0D',
+        // },
       },
     },
     MuiButtonBase: {
       styleOverrides: {
         root: {
-          'text-transform' : "unset !important",
+          "text-transform": "unset !important",
         },
       },
     },
     MuiButtonGroup: {
       styleOverrides: {
         root: {
-          '& .MuiButtonGroup-grouped:not(:last-of-type)': {
+          "& .MuiButtonGroup-grouped:not(:last-of-type)": {
             borderRightColor: colors.common.white,
           },
-          '& .MuiToggleButtonGroup-grouped:not(:last-of-type)': {
+          "& .MuiToggleButtonGroup-grouped:not(:last-of-type)": {
             borderRightColor: colors.common.white,
           },
         },
@@ -238,8 +240,8 @@ export const theme = createTheme({
     MuiDialog: {
       styleOverrides: {
         root: {
-          '& .MuiDialog-paper': {
-            padding: '8px 16px 12px 4px',
+          "& .MuiDialog-paper": {
+            padding: "8px 16px 12px 4px",
           },
         },
       },
@@ -252,25 +254,25 @@ export const theme = createTheme({
           margin: "0px 4px",
         },
         notchedOutline: {
-          border: `1px solid ${grey400}`,
+          border: `1px solid ${greyScaleColors.grey400}`,
           borderRadius: "8px",
         },
         root: {
           "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            border: `1px solid ${primaryFocused}`,
-            filter: `drop-shadow(0px 0px 2px ${primaryFocused})`, // not working
+            border: `1px solid ${primaryActionColors.primaryFocused}`,
+            filter: `drop-shadow(0px 0px 2px ${primaryActionColors.primaryFocused})`, // not working
           },
           "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: primaryHovered,
+            borderColor: primaryActionColors.primaryHovered,
           },
-          borderColor: primaryHovered,
+          borderColor: primaryActionColors.primaryHovered,
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: grey900,
+          backgroundColor: greyScaleColors.grey900,
           backgroundImage: "none",
           borderRadius: "8px",
           fontFamily: "Inter, sans-serif",
@@ -281,13 +283,13 @@ export const theme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         arrow: {
-          color: grey800,
+          color: greyScaleColors.grey800,
         },
         tooltip: {
-          backgroundColor: grey800,
-          borderRadius: '4px',
-          color: grey300,
-          padding: '16px',
+          backgroundColor: greyScaleColors.grey800,
+          borderRadius: "4px",
+          color: greyScaleColors.grey300,
+          padding: "16px",
         },
       },
     },

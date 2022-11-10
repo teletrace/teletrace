@@ -1,72 +1,175 @@
-import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter'
-import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify'
-import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
-import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight'
-import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useState } from 'react'
+import { Add } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "@mui/material";
+import { ComponentMeta, ComponentStory } from "@storybook/react";
+import { useState } from "react";
 
 export default {
-  component: ToggleButtonGroup,
-  title: 'ToggleButtonGroup',
-} as ComponentMeta<typeof ToggleButtonGroup>
+  component: Button,
+  title: "Button",
+} as ComponentMeta<typeof Button>;
 
-const Template: ComponentStory<typeof ToggleButtonGroup> = (args) => {
-  const [alignment, setAlignment] = useState<string | null>('left')
-
-  const handleAlignment = (
-    event: React.MouseEvent<HTMLElement>,
-    newAlignment: string | null,
-  ) => {
-    setAlignment(newAlignment)
-  }
-
+const Template: ComponentStory<typeof Button> = (args) => {
   return (
     <div>
-      <Box component="span" sx={{ color: 'white', fontFamily: 'Inter' }}>
-        Text
-      </Box>
-      <Box
-        component="div"
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          padding: '20px',
-          width: '400px',
-        }}
-      >
-        <ToggleButtonGroup
-          value={alignment}
-          exclusive
-          onChange={handleAlignment}
-          aria-label="text alignment"
-          {...args}
-        >
-          <ToggleButton value="left" aria-label="left aligned">
-            <FormatAlignLeftIcon />
-          </ToggleButton>
-          <ToggleButton value="center" aria-label="centered">
-            <FormatAlignCenterIcon />
-          </ToggleButton>
-          <ToggleButton value="right" aria-label="right aligned">
-            <FormatAlignRightIcon />
-          </ToggleButton>
-          <ToggleButton value="justify" aria-label="justified" disabled>
-            <FormatAlignJustifyIcon />
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell>Normal</TableCell>
+            <TableCell>
+              <Button id="normal" size="large" variant="contained" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="normal" variant="contained" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="normal" variant="contained" size="small" {...args}>
+                Button
+              </Button>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Hovered</TableCell>
+            <TableCell>
+              <Button id="hovered" variant="contained" size="large" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="hovered" variant="contained" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="hovered" variant="contained" size="small" {...args}>
+                Button
+              </Button>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Pressed</TableCell>
+            <TableCell>
+              <Button id="pressed" variant="contained" size="large" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="pressed" variant="contained" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="pressed" variant="contained" size="small" {...args}>
+                Button
+              </Button>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Disabled</TableCell>
+            <TableCell>
+              <Button
+                id="disabled"
+                variant="contained"
+                disabled
+                size="large"
+                {...args}
+              >
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="disabled" variant="contained" disabled {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button
+                id="disabled"
+                variant="contained"
+                disabled
+                size="small"
+                {...args}
+              >
+                Button
+              </Button>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Focused</TableCell>
+            <TableCell>
+              <Button id="focused" variant="contained" size="large" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="focused" variant="contained" {...args}>
+                Button
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button id="focused" size="small" variant="contained" {...args}>
+                Button
+              </Button>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </div>
-  )
-}
+  );
+};
 
-export const Primary = Template.bind({})
-export const Secondary = Template.bind({})
+const Parameters = {
+  pseudo: {
+    hover: ["#hovered"],
+    focus: ["#focused"],
+    active: ["#pressed"],
+  },
+};
+
+export const Primary = Template.bind({});
+export const PrimaryStartIcon = Template.bind({});
+export const PrimaryEndIcon = Template.bind({});
+export const Secondary = Template.bind({});
+export const Error = Template.bind({});
+
+{
+  /* <TableCell><Button id="focused" startIcon={<Add/>} variant="contained" {...args}>Button</Button></TableCell>
+<TableCell><Button id="focused" endIcon={<Add/>} variant="contained" {...args}>Button</Button></TableCell> */
+}
 
 Primary.args = {
-  color: 'primary',
-}
+  color: "primary",
+};
+Primary.parameters = Parameters;
+
+PrimaryStartIcon.args = {
+  color: "primary",
+  startIcon: <Add />,
+};
+PrimaryStartIcon.parameters = Parameters;
+
+PrimaryEndIcon.args = {
+  color: "primary",
+  endIcon: <Add />,
+};
+PrimaryEndIcon.parameters = Parameters;
 
 Secondary.args = {
-  color: 'secondary',
-}
+  color: "secondary",
+};
+Secondary.parameters = Parameters;
+
+Error.args = {
+  color: "error",
+};
+Error.parameters = Parameters;
