@@ -1,3 +1,3 @@
-module github.com/epsagon/lupa-model
+module github.com/epsagon/lupa/model
 
 go 1.19
