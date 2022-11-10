@@ -75,14 +75,9 @@ func (api *API) tagsValues(c *gin.Context) {
 	tags := strings.Split(tagsParam, ",")
 
 	autoPrefixTags := false
-	res, err := (*api.spanReader).GetTagsValues(c,
-		model.GetTagsValuesRequest{
-			Tags:           tags,
-			Query:          nil,
-			StartTime:      req.StartTime,
-			EndTime:        req.EndTime,
-			AutoPrefixTags: &autoPrefixTags,
-		})
+	req.AutoPrefixTags = &autoPrefixTags
+	req.Tags = tags
+	res, err := (*api.spanReader).GetTagsValues(c, req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
 		return

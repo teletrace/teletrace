@@ -9,6 +9,12 @@ type GetAvailableTagsResult struct {
 	Tags []TagInfo
 }
 
+// TODO: Remove this duplication, there's an identical struct at spansquery/v1
+type Timeframe struct {
+	StartTime uint64 `json:"startTime"`
+	EndTime   uint64 `json:"endTime"`
+}
+
 type GetTagsValuesRequest struct {
 	// A list od tags to get the values of
 	Tags []string
@@ -17,11 +23,7 @@ type GetTagsValuesRequest struct {
 	// e.g: "span.attributes.http.status_code: 200"
 	Query *string
 
-	// The minimum time to search spans in
-	StartTime uint64 `json:"startTime"`
-
-	// The maximum time to search span in
-	EndTime uint64 `json:"endTime"`
+	Timeframe Timeframe `json:"timeframe"`
 
 	AutoPrefixTags *bool
 }
@@ -67,7 +69,7 @@ type GetTagsValuesResult struct {
 }
 
 func (r *GetTagsValuesRequest) Validate() error {
-	if r.EndTime < r.StartTime {
+	if r.Timeframe.EndTime < r.Timeframe.StartTime {
 		return fmt.Errorf("endTime cannot be smaller than startTime")
 	}
 

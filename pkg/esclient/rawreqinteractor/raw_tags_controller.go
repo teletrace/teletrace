@@ -130,14 +130,14 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 				{
 					"range": map[string]any{
 						"span.startTimeUnixNano": map[string]any{
-							"gte": request.StartTime,
+							"gte": request.Timeframe.StartTime,
 						},
 					},
 				},
 				{
 					"range": map[string]any{
 						"span.endTimeUnixNano": map[string]any{
-							"lte": request.EndTime,
+							"lte": request.Timeframe.EndTime,
 						},
 					},
 				},
