@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "lupa",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -13,6 +13,8 @@
     "build": "npx lerna run build",
     "build:lupa-ui": "npx lerna run --scope lupa-ui build",
     "test": "npx lerna run test",
-    "lint": "npx lerna run lint"
+    "test:lupa-ui": "npx lerna run --scope lupa-ui test",
+    "lint": "npx lerna run lint",
+    "lint:lupa-ui": "npx lerna run --scope lupa-ui lint"
   }
 }

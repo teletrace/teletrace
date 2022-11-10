@@ -17,6 +17,8 @@ The following scripts will run against the `lupa-ui` package:
 
 - `yarn start:lupa-ui`
 - `yarn build:lupa-ui`
+- `yarn test:lupa-ui`
+- `yarn lint:lupa-ui`
 
 ## Installation
 
