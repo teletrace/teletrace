@@ -165,7 +165,8 @@ func TestGetTagsValues(t *testing.T) {
 	expectedTag := "span.attributes.custom-tag"
 	expectedTag2 := "span.attributes.custom-tag2"
 	expectedTagsAmount := 2
-	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", expectedTag, expectedTag2)), nil)
+	jsonBody := []byte(fmt.Sprintf("{\"startTime\": 0, \"endTime\": %v }", time.Now().UnixNano()))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", expectedTag, expectedTag2)), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	storageMock, _ := storage.NewStorageMock()
 	srMock, _ := storageMock.CreateSpanReader()

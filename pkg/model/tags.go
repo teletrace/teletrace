@@ -1,5 +1,7 @@
 package model
 
+import "fmt"
+
 type GetAvailableTagsRequest struct {
 }
 
@@ -16,10 +18,10 @@ type GetTagsValuesRequest struct {
 	Query *string
 
 	// The minimum time to search spans in
-	StartTime uint64
+	StartTime uint64 `json:"startTime"`
 
 	// The maximum time to search span in
-	EndTime uint64
+	EndTime uint64 `json:"endTime"`
 
 	AutoPrefixTags *bool
 }
@@ -62,6 +64,14 @@ type TagValueInfo struct {
 // ```
 type GetTagsValuesResult struct {
 	Tags map[string][]TagValueInfo
+}
+
+func (r *GetTagsValuesRequest) Validate() error {
+	if r.EndTime < r.StartTime {
+		return fmt.Errorf("endTime cannot be smaller than startTime")
+	}
+
+	return nil
 }
 
 func NewGetTagsValueResult() GetTagsValuesResult {

@@ -65,7 +65,12 @@ func (api *API) getAvailableTags(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (api *API) getTagsValues(c *gin.Context) {
+func (api *API) tagsValues(c *gin.Context) {
+	var req model.GetTagsValuesRequest
+	isValidationError := api.validateRequestBody(&req, c)
+	if isValidationError {
+		return
+	}
 	tagsParam := c.Request.URL.Query().Get("tags")
 	tags := strings.Split(tagsParam, ",")
 
@@ -74,8 +79,8 @@ func (api *API) getTagsValues(c *gin.Context) {
 		model.GetTagsValuesRequest{
 			Tags:           tags,
 			Query:          nil,
-			StartTime:      0,
-			EndTime:        uint64(time.Now().UnixNano()),
+			StartTime:      req.StartTime,
+			EndTime:        req.EndTime,
 			AutoPrefixTags: &autoPrefixTags,
 		})
 	if err != nil {
