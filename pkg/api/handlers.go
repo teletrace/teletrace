@@ -69,7 +69,7 @@ func (api *API) getTagsValues(c *gin.Context) {
 	tagsParam := c.Request.URL.Query().Get("tags")
 	tags := strings.Split(tagsParam, ",")
 
-	autoPrefixTags := true
+	autoPrefixTags := false
 	res, err := (*api.spanReader).GetTagsValues(c,
 		model.GetTagsValuesRequest{
 			Tags:           tags,

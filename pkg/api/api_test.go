@@ -162,8 +162,8 @@ func TestGetAvailableTags(t *testing.T) {
 func TestGetTagsValues(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
-	expectedTag := "custom-tag"
-	expectedTag2 := "custom-tag2"
+	expectedTag := "span.attributes.custom-tag"
+	expectedTag2 := "span.attributes.custom-tag2"
 	expectedTagsAmount := 2
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", expectedTag, expectedTag2)), nil)
 	resRecorder := httptest.NewRecorder()

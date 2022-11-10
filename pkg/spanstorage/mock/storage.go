@@ -49,13 +49,13 @@ func (sr spanReader) GetAvailableTags(ctx context.Context, r model.GetAvailableT
 func (sr spanReader) GetTagsValues(ctx context.Context, r model.GetTagsValuesRequest) (*model.GetTagsValuesResult, error) {
 	getTagsValueResult := model.NewGetTagsValueResult()
 	getTagsValueResult.Tags = map[string][]model.TagValueInfo{
-		"custom-tag": {
+		"span.attributes.custom-tag": {
 			{
 				Value: "custom-value",
 				Count: 3,
 			},
 		},
-		"custom-tag2": {
+		"span.attributes.custom-tag2": {
 			{
 				Value: "custom-value2",
 				Count: 1,
