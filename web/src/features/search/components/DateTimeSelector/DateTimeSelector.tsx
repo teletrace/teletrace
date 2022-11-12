@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TimePicker, DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TextField } from "@mui/material";
+import { TextField, Popover } from "@mui/material";
 import "./DateTimeSelector.scss";
 import ErrorIcon from "@mui/icons-material/Error";
 
@@ -21,9 +20,9 @@ export const DateTimeSelector = (props: DateTimeSelectorProps) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <div className="date-time-selector" style={{ background: "#2B2D32" }}>
-        <div className="date-row">
-          <div className="label">Between</div>
+      <div>
+        <div>
+          <div>Between</div>
           <DatePicker
             className="date-picker"
             renderInput={(props) => <TextField {...props} />}
@@ -43,7 +42,6 @@ export const DateTimeSelector = (props: DateTimeSelectorProps) => {
             renderInput={(params) => <TextField {...params} />}
           />
         </div>
-
         <div className="date-row">
           <div className="label">And</div>
           <DatePicker
@@ -66,30 +64,29 @@ export const DateTimeSelector = (props: DateTimeSelectorProps) => {
             renderInput={(params) => <TextField {...params} />}
           />
         </div>
-        {isDateValid() ? (
-          <div className="error">
-            <ErrorIcon />
-            Error
-          </div>
-        ) : null}
-        {isTimeValid() ? (
-          <div className="error">
-            <ErrorIcon />
-            Error
-          </div>
-        ) : null}
-        <div className="controls">
-          <button>cancel</button>
-          <button>apply</button>
+      </div>
+
+      {isDateValid() ? (
+        <div className="error">
+          <ErrorIcon />
+          Error
         </div>
+      ) : null}
+      {isTimeValid() ? (
+        <div className="error">
+          <ErrorIcon />
+          Error
+        </div>
+      ) : null}
+      <div className="controls">
+        <button>cancel</button>
+        <button>apply</button>
       </div>
     </LocalizationProvider>
   );
 };
 
 export type DateTimeSelectorProps = {
-  label: string;
   value: Date | any;
   onChange?: (d: Date) => void;
-  //onCancel?: () => void;
 };
