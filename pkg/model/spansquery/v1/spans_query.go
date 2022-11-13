@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 )
 
@@ -27,11 +28,6 @@ type FilterValue any
 type FilterQueryString string
 type ContinuationToken string
 
-type Timeframe struct {
-	StartTime uint64 `json:"startTime"`
-	EndTime   uint64 `json:"endTime"`
-}
-
 type Sort struct {
 	Field     SortField `json:"field"`
 	Ascending bool      `json:"ascending"`
@@ -52,10 +48,10 @@ type Metadata struct {
 }
 
 type SearchRequest struct {
-	Timeframe     Timeframe      `json:"timeframe"`
-	Sort          []Sort         `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
-	SearchFilters []SearchFilter `json:"filters"`
-	Metadata      *Metadata      `json:"metadata"`
+	Timeframe     model.Timeframe `json:"timeframe"`
+	Sort          []Sort          `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
+	SearchFilters []SearchFilter  `json:"filters"`
+	Metadata      *Metadata       `json:"metadata"`
 }
 
 type SearchResponse struct {

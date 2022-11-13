@@ -2,6 +2,7 @@ package typedreqinteractor
 
 import (
 	"encoding/json"
+	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"testing"
 	"time"
@@ -87,7 +88,7 @@ func getSearchResponseMock() (map[string]any, error) {
 }
 
 func getSearchRequestMock(fs ...spansquery.SearchFilter) (spansquery.SearchRequest, error) {
-	tf := spansquery.Timeframe{
+	tf := model.Timeframe{
 		StartTime: uint64(time.Unix(0, 0).UnixNano()),
 		EndTime:   uint64(time.Now().UnixNano()),
 	}

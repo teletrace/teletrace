@@ -9,7 +9,8 @@ import { useEffect, useRef, useState } from "react";
 import { formatDateToTimeString } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/spanQuery";
+import { Timeframe } from "../../types/common";
+import { SearchFilter } from "../../types/spanQuery";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 

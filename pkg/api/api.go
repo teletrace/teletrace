@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"oss-tracing/pkg/model"
 	"path/filepath"
 	"strings"
 	"time"
@@ -14,7 +15,6 @@ import (
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/model"
 	storage "oss-tracing/pkg/spanstorage"
 )
 

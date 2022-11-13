@@ -2,10 +2,7 @@
 
 import { InternalSpan } from "@/types/span";
 
-export type Timeframe = {
-  startTime: number;
-  endTime: number;
-};
+import { Timeframe } from "./common";
 
 export type Sort = {
   field: string;

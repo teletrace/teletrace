@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
-	"strings"
+	"oss-tracing/pkg/model/tagsquery/v1"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +31,7 @@ func (api *API) search(c *gin.Context) {
 func (api *API) getTraceById(c *gin.Context) {
 	traceId := c.Param("id")
 	sr := &spansquery.SearchRequest{
-		Timeframe: spansquery.Timeframe{
+		Timeframe: model.Timeframe{
 			StartTime: 0,
 			EndTime:   uint64(time.Now().UnixNano()),
 		},
@@ -66,20 +66,22 @@ func (api *API) getAvailableTags(c *gin.Context) {
 }
 
 func (api *API) tagsValues(c *gin.Context) {
-	var req model.GetTagsValuesRequest
+	var req tagsquery.TagValuesRequest
 	isValidationError := api.validateRequestBody(&req, c)
 	if isValidationError {
 		return
 	}
-	tagsParam := c.Request.URL.Query().Get("tags")
-	tags := strings.Split(tagsParam, ",")
+	tag := c.Request.URL.Query().Get("tag")
 
 	autoPrefixTags := false
-	req.AutoPrefixTags = &autoPrefixTags
-	req.Tags = tags
-	res, err := (*api.spanReader).GetTagsValues(c, req)
+	res, err := (*api.spanReader).GetTagsValues(c, model.GetTagsValuesRequest{
+		Tags:           []string{tag},
+		Timeframe:      req.Timeframe,
+		AutoPrefixTags: &autoPrefixTags,
+	})
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, &gin.H{"message": err.Error()})
+		respondWithError(http.StatusInternalServerError, err, c)
 		return
 	}
 
