@@ -46,6 +46,25 @@ func (sr spanReader) GetAvailableTags(ctx context.Context, r model.GetAvailableT
 	}, nil
 }
 
+func (sr spanReader) GetTagsValues(ctx context.Context, r model.GetTagsValuesRequest) (*model.GetTagsValuesResult, error) {
+	getTagsValueResult := model.NewGetTagsValueResult()
+	getTagsValueResult.Tags = map[string][]model.TagValueInfo{
+		"span.attributes.custom-tag": {
+			{
+				Value: "custom-value",
+				Count: 3,
+			},
+		},
+		"span.attributes.custom-tag2": {
+			{
+				Value: "custom-value2",
+				Count: 1,
+			},
+		},
+	}
+	return &getTagsValueResult, nil
+}
+
 func (s storage) CreateSpanWriter() (spanstorage.SpanWriter, error) {
 	return spanWriter{}, nil
 }

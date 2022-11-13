@@ -32,3 +32,13 @@ func (reader *spanReader) GetAvailableTags(ctx context.Context, r model.GetAvail
 
 	return &res, nil
 }
+
+func (reader *spanReader) GetTagsValues(ctx context.Context, r model.GetTagsValuesRequest) (*model.GetTagsValuesResult, error) {
+	res, err := reader.tagsController.GetTagsValues(ctx, r)
+
+	if err != nil {
+		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
+	}
+
+	return &res, nil
+}
