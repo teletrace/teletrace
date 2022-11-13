@@ -15,10 +15,8 @@ import { Fragment, useState } from "react";
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
-
 import { useTagValues } from "../../api/tagValues";
-import { SearchRequest } from "../../types/spanQuery";
-import { TagValue } from "../../types/tagValues";
+import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
@@ -26,7 +24,7 @@ export type TagValuesSelectorProps = {
   title: string;
   value: Array<string | number>;
   searchable?: boolean;
-  query?: SearchRequest;
+  query?: TagValuesRequest;
   onChange?: (value: Array<string | number>) => void;
 };
 
@@ -39,10 +37,20 @@ export const TagValuesSelector = ({
   onChange,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
-  const { data: tagValues, isFetching, isError } = useTagValues(tag, query);
+
+  const tagValuesRequest = query ?? { 
+    timeframe: { 
+      startTime: 0,
+      endTime: new Date().valueOf()
+    },
+  } as TagValuesRequest;
+
+  const { data: tagValues, isFetching, isError } = useTagValues(tag, tagValuesRequest);
 
   const clearTags = () => onChange?.([]);
 
+  console.log(tagValues)
+  
   const tagOptions = tagValues?.pages
     .flatMap((page) => page.values)
     ?.filter((tag) => tag.value.toString().includes(search))
@@ -50,6 +58,7 @@ export const TagValuesSelector = ({
       value: tag.value,
       label: <CheckboxListLabel tag={tag} />,
     }));
+
 
   return (
     <div>
@@ -100,7 +109,7 @@ const CheckboxListLabel = ({ tag }: { tag: TagValue }) => (
   <Stack direction="row" alignItems="center" justifyContent="space-between">
     <Typography noWrap>{tag.value}</Typography>
     <Typography variant="button" color="GrayText">
-      {formatNumber(tag.occurrences)}
+      {formatNumber(tag.count)}
     </Typography>
   </Stack>
 );

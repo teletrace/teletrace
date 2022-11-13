@@ -1,34 +1,32 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { axiosClient } from "@/libs/axios";
+import { TagValuesRequest, TagValuesResponse } from "../types/tagValues";
+import { AxiosResponse } from "axios";
 
-import { SearchRequest } from "../types/spanQuery";
-import { TagValuesResponse } from "../types/tagValues";
+type FetchTagValuesParams = { tag: string, tagValuesRequest: TagValuesRequest, nextToken: string };
 
 /**
  * fetch tag values
  *
  * @param tag             the tag to fetch values for
- * @param searchRequest   optional search request to narrow down options
+ * @param tagValuesRequest   optional search request to narrow down options
  * @param nextToken       pagination token
  */
-export const fetchTagValues = (
-  tag: string,
-  searchRequest?: SearchRequest,
-  nextToken?: string
-) => {
-  console.log({ tag, searchRequest, nextToken });
-  return Promise.reject<TagValuesResponse>("not implemented");
+export const fetchTagValues = ({tag, tagValuesRequest, nextToken}: FetchTagValuesParams): Promise<TagValuesResponse> => {
+  tagValuesRequest.metadata = { nextToken: nextToken };
+  return axiosClient.post(`/v1/tags?tags=${tag}`, tagValuesRequest);
 };
 
 /**
  * react hook to fetch tag values
  *
  * @param tag            the tag to fetch values for
- * @param searchRequest  optional query to filter results by
+ * @param tagValuesRequest  optional query to filter results by
  */
-export const useTagValues = (tag: string, searchRequest?: SearchRequest) => {
+export const useTagValues = (tag: string, tagValuesRequest: TagValuesRequest) => {
   return useInfiniteQuery({
-    queryKey: ["tagValues", tag, searchRequest],
-    queryFn: ({ pageParam }) => fetchTagValues(tag, searchRequest, pageParam),
+    queryKey: ["tagValues", tag],
+    queryFn: ({ pageParam }) => fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken,
   });
 };
