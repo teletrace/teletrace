@@ -125,10 +125,22 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	}
 
 	query := map[string]any{
-		"range": map[string]any{
-			"@timestamp": map[string]any{
-				"gte": request.StartTime,
-				"lte": request.EndTime,
+		"bool": map[string]any{
+			"must": []map[string]any{
+				{
+					"range": map[string]any{
+						"span.startTimeUnixNano": map[string]any{
+							"gte": request.Timeframe.StartTime,
+						},
+					},
+				},
+				{
+					"range": map[string]any{
+						"span.endTimeUnixNano": map[string]any{
+							"lte": request.Timeframe.EndTime,
+						},
+					},
+				},
 			},
 		},
 	}
