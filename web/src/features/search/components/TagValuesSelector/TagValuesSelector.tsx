@@ -56,8 +56,6 @@ export const TagValuesSelector = ({
 
   const clearTags = () => onChange?.([]);
 
-  console.log(tagValues);
-
   const tagOptions = tagValues?.pages
     .flatMap((page) => page.values)
     ?.filter((tag) => tag.value.toString().includes(search))
