@@ -1,15 +1,14 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
-import {
-  Edge,
-  MarkerType,
-  Node,
-  useEdgesState,
-  useNodesState,
-} from "reactflow";
+import { Edge, MarkerType, Node } from "reactflow";
 
-import { EdgeData, NodeData } from "@/components/Graph/types";
+import {
+  EdgeColor,
+  EdgeData,
+  NodeColor,
+  NodeData,
+} from "@/components/Graph/types";
 import {
   BASIC_EDGE_TYPE,
   BASIC_NODE_TYPE,
@@ -31,6 +30,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "/checkout",
       image: "IoTHTTP2Protocol",
       type: "Http",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -41,6 +41,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "/invoices",
       image: "LambdaFunction",
       type: "Node.js",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -51,6 +52,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "update-subscription",
       image: "ApiGatewayEndpoint",
       type: "SNS",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -61,6 +63,7 @@ const initialNodes: Node<NodeData>[] = [
       name: "/payment",
       image: "IoTHTTP2Protocol",
       type: "Http",
+      color: NodeColor.NORMAL,
     },
     position: POSITION,
   },
@@ -73,10 +76,16 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "1",
     target: "2",
     data: { time: "20ms", count: 2 },
+    style: {
+      stroke: EdgeColor.NORMAL,
+      padding: 1,
+      cursor: "default",
+    },
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: EDGE_ARROW_SIZE,
       height: EDGE_ARROW_SIZE,
+      color: EdgeColor.NORMAL,
     },
   },
   {
@@ -85,10 +94,16 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "2",
     target: "3",
     data: { time: "20ms" },
+    style: {
+      padding: 1,
+      cursor: "default",
+      stroke: EdgeColor.NORMAL,
+    },
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: EDGE_ARROW_SIZE,
       height: EDGE_ARROW_SIZE,
+      color: EdgeColor.NORMAL,
     },
   },
   {
@@ -97,31 +112,50 @@ const initialEdges: Edge<EdgeData>[] = [
     source: "2",
     target: "4",
     data: { time: "20ms" },
+    style: {
+      stroke: EdgeColor.NORMAL,
+      padding: 1,
+      cursor: "default",
+    },
     markerEnd: {
       type: MarkerType.ArrowClosed,
       width: EDGE_ARROW_SIZE,
       height: EDGE_ARROW_SIZE,
+      color: EdgeColor.NORMAL,
     },
   },
 ];
 
+export interface TraceData {
+  nodes: Node<NodeData>[];
+  edges: Edge<EdgeData>[];
+}
+
 export const TraceView = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [selectedNode, setSelectedNode] = useState({});
+  const [traceData, setTraceData] = useState<TraceData>({
+    nodes: [],
+    edges: [],
+  });
+
   useEffect(() => {
     setTimeout(() => {
       createGraphLayout(initialNodes, initialEdges)
-        .then((els) => {
-          if (els.nodes.length > 0) {
+        .then((els: { nodes: Node<NodeData>[]; edges: Edge<EdgeData>[] }) => {
+          if (els) {
+            setTraceData(els);
             setIsLoading(false);
-            setNodes(els.nodes);
-            setEdges(els.edges);
           }
         })
         .catch(() => alert("something went wrong!!! Could not render graph"));
     }, 1000);
   }, []);
+
+  useEffect(() => {
+    console.log(selectedNode);
+  }, [selectedNode]);
+
   return (
     <>
       <Head
@@ -142,11 +176,9 @@ export const TraceView = () => {
           flex={1}
         >
           <TraceGraph
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
             isLoading={isLoading}
+            setSelectedNode={setSelectedNode}
+            traceData={traceData}
           />
           <TraceTags />
         </Stack>
