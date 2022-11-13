@@ -1,9 +1,12 @@
-import { Edge, Node, OnEdgesChange, OnNodesChange } from "reactflow";
+import { Node } from "reactflow";
+
+import { TraceData } from "@/features/trace";
 
 export interface NodeData {
   name: string;
   image: string;
   type: string;
+  color: NodeColor;
 }
 
 export interface EdgeData {
@@ -11,16 +14,23 @@ export interface EdgeData {
   count?: number;
 }
 
-export interface BasicNodeProps {
-  image: string;
-  name: string;
-  type: string;
+export interface TraceGraphParams {
+  setSelectedNode: (val: Node<NodeData> | object) => void;
+  traceData: TraceData;
+  isLoading: boolean;
 }
 
-export interface TraceGraphParams {
-  nodes: Node<NodeData>[];
-  edges: Edge<EdgeData>[];
-  onNodesChange: OnNodesChange;
-  onEdgesChange: OnEdgesChange;
-  isLoading: boolean;
+export enum EdgeColor {
+  NORMAL = "#96979E",
+  HOVER = "#FFFFFF",
+  SELECTED = "#00CDE7",
+  ERROR = "#EF5854",
+}
+
+export enum NodeColor {
+  NORMAL = "#96979E",
+  HOVER = "#FFFFFF",
+  SELECTED = "#009EB4",
+  ERR_NORMAL = "#EF5854",
+  ERR_HOVER = "#B52D29",
 }

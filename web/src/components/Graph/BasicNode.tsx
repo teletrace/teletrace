@@ -1,13 +1,15 @@
 import { Box } from "@mui/material";
+import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { BasicNodeProps } from "@/components/Graph/types";
+import { NodeData } from "@/components/Graph/types";
 import { ResourceIcon } from "@/components/ResourceIcon/ResourceIcon";
 
 import { styles } from "./styles";
 
-export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
-  const { image, name, type } = props.data;
+const BasicNodeImpl = (props: NodeProps<NodeData>) => {
+  const { image, name, type, color } = props.data;
+
   return (
     <>
       <Handle
@@ -16,7 +18,12 @@ export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
         style={{ visibility: "hidden" }}
       />
       <Box sx={styles.nodeStyle.nodeBox}>
-        <Box sx={styles.nodeStyle.nodeIconBox}>
+        <Box
+          sx={{
+            ...styles.nodeStyle.nodeIconBox,
+            borderColor: color,
+          }}
+        >
           <ResourceIcon name={image} />
         </Box>
         <Box sx={styles.nodeStyle.nodeText}>
@@ -33,3 +40,5 @@ export const BasicNode = (props: NodeProps<BasicNodeProps>) => {
     </>
   );
 };
+
+export const BasicNode = memo(BasicNodeImpl);

@@ -1,11 +1,12 @@
 import { Box } from "@mui/material";
+import { memo } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
 import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
 
 import { styles } from "./styles";
 
-export const BasicEdge = ({
+const BasicEdgeImpl = ({
   id,
   sourceX,
   sourceY,
@@ -15,6 +16,7 @@ export const BasicEdge = ({
   targetPosition,
   data,
   markerEnd,
+  style,
 }: EdgeProps) => {
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -24,11 +26,12 @@ export const BasicEdge = ({
     targetY,
     targetPosition,
   });
+
   return (
     <>
       <path
         id={id}
-        style={{ padding: 1 }}
+        style={style}
         className="react-flow__edge-path"
         d={edgePath}
         markerEnd={markerEnd}
@@ -43,10 +46,19 @@ export const BasicEdge = ({
         <Box sx={styles.edgeStyle.edgeLabelContainer}>
           <Box sx={styles.edgeStyle.timeContainer}>{data.time}</Box>
           {data?.count && (
-            <Box sx={styles.edgeStyle.counterContainer}>{data.count}</Box>
+            <Box
+              sx={{
+                ...styles.edgeStyle.counterContainer,
+                borderColor: style?.stroke,
+              }}
+            >
+              {data.count}
+            </Box>
           )}
         </Box>
       </foreignObject>
     </>
   );
 };
+
+export const BasicEdge = memo(BasicEdgeImpl);
