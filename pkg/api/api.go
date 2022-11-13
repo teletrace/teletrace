@@ -107,12 +107,12 @@ func (api *API) Start() error {
 func (api *API) validateRequestBody(req model.Request, c *gin.Context) bool {
 	parseError := c.BindJSON(req)
 	if parseError != nil {
-		c.JSON(http.StatusBadRequest, &gin.H{"message": parseError.Error()})
+		respondWithError(http.StatusBadRequest, parseError, c)
 		return true
 	}
 	validationError := req.Validate()
 	if validationError != nil {
-		c.JSON(http.StatusBadRequest, &gin.H{"message": validationError.Error()})
+		respondWithError(http.StatusBadRequest, validationError, c)
 		return true
 	}
 	return false

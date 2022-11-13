@@ -173,6 +173,11 @@ func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
 	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
+
+	var resBody *errorResponse
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody.ErrorMessage)
 }
 
 func TestRootStaticRoute(t *testing.T) {
