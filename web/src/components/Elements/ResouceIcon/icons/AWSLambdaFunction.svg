@@ -1,6 +1,3 @@
-import React from "react";
-
-const AWSLambdaFunctionIconComponent = (
   <svg
     width="44"
     height="44"
@@ -15,7 +12,3 @@ const AWSLambdaFunctionIconComponent = (
       fill="#D45B07"
     />
   </svg>
-);
-
-export const AWSLambdaFunctionIcon = AWSLambdaFunctionIconComponent;
-export default { AWSLambdaFunctionIcon };

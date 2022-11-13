@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { Drafts, Inbox } from "../Icon";
+import { Drafts, Inbox } from "../ResouceIcon";
 
 export default {
   component: List,

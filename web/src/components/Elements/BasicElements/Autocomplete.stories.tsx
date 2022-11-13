@@ -103,8 +103,7 @@ function CustomizedAutocomplete() {
         {...defaultProps}
         id="controlled-demo"
         value={value}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onChange={(_event: any, newValue: FilmOptionType | null) =>
           setValue(newValue)
         }
