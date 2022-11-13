@@ -1,6 +1,6 @@
 import React from "react";
 
-const SNS = (
+const SnsIconComponent = (
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_3003_14215)">
       <path
@@ -17,4 +17,5 @@ const SNS = (
     </defs>
   </svg>
 );
-export default SNS;
+export const SnsIcon = SnsIconComponent;
+export default { SnsIcon };

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Redis = (
+const RedisIconComponent = (
   <svg viewBox="0 0 519 443" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M498.666 341.283C470.968 355.704 327.489 414.632 296.943 430.54C266.397 446.449 249.428 446.295 225.297 434.772C201.167 423.249 48.4799 361.641 20.9749 348.509C7.22951 341.947 0 336.407 0 331.174V278.772C0 278.772 198.781 235.546 230.872 224.045C262.961 212.545 274.095 212.13 301.403 222.122C328.716 232.118 492.01 261.546 519 271.421L518.988 323.081C518.992 328.262 512.764 333.944 498.666 341.283Z"
@@ -38,4 +38,5 @@ const Redis = (
   </svg>
 );
 
-export default Redis;
+export const RedisIcon = RedisIconComponent;
+export default { RedisIcon };

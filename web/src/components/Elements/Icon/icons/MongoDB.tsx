@@ -1,6 +1,6 @@
 import React from "react";
 
-const MongoDB = (
+const MongoDBIconComponent = (
   <svg
     viewBox="0 0 679 679"
     fill="none"
@@ -27,4 +27,5 @@ const MongoDB = (
   </svg>
 );
 
-export default MongoDB;
+export const MongoDBIcon = MongoDBIconComponent;
+export default { MongoDBIcon };

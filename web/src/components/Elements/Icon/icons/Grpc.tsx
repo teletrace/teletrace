@@ -1,6 +1,6 @@
 import React from "react";
 
-const Grpc = (
+const GrpcIconComponent = (
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_2945_14388)">
       <path
@@ -23,4 +23,6 @@ const Grpc = (
     </defs>
   </svg>
 );
-export default Grpc;
+
+export const GrpcIcon = GrpcIconComponent;
+export default { GrpcIcon };

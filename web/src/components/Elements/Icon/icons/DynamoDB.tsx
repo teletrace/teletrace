@@ -1,6 +1,6 @@
 import React from "react";
 
-const DynamoDB = (
+const DynamoDBIconComponent = (
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
@@ -10,4 +10,6 @@ const DynamoDB = (
     />
   </svg>
 );
-export default DynamoDB;
+
+export const DynamoDBIcon = DynamoDBIconComponent;
+export default { DynamoDBIcon };

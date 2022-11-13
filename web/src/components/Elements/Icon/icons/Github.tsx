@@ -1,6 +1,6 @@
 import React from "react";
 
-const Github = (
+const GithubIconComponent = (
   <svg
     width="24"
     height="24"
@@ -14,4 +14,6 @@ const Github = (
     />
   </svg>
 );
-export default Github;
+
+export const GithubIcon = GithubIconComponent;
+export default { GithubIcon };

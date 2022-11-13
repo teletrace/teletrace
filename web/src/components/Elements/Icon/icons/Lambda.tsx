@@ -1,6 +1,6 @@
 import React from "react";
 
-const Lambda = (
+const LambdaIconComponent = (
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
@@ -10,4 +10,6 @@ const Lambda = (
     />
   </svg>
 );
-export default Lambda;
+
+export const LambdaIcon = LambdaIconComponent;
+export default { LambdaIcon };

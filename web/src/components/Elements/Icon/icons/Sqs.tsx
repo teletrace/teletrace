@@ -1,6 +1,6 @@
 import React from "react";
 
-const Sqs = (
+const SqsIconComponent = (
   <svg viewBox="0 3 48 42" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_3005_14223)">
       <path
@@ -39,4 +39,6 @@ const Sqs = (
     </defs>
   </svg>
 );
-export default Sqs;
+
+export const SqsIcon = SqsIconComponent;
+export default { SqsIcon };

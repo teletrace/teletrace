@@ -1,4 +1,4 @@
-import { FilterList, Height } from "@mui/icons-material";
+import { FilterList } from "@mui/icons-material";
 import { Button, Paper } from "@mui/material";
 
 export function SearchBar() {

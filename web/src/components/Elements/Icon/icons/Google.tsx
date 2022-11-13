@@ -1,6 +1,6 @@
 import React from "react";
 
-const Google = (
+const GoogleIconComponent = (
   <svg
     width="24"
     height="24"
@@ -26,4 +26,6 @@ const Google = (
     />
   </svg>
 );
-export default Google;
+
+export const GoogleIcon = GoogleIconComponent;
+export default { GoogleIcon };
