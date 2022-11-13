@@ -45,20 +45,10 @@ type FlushSettings struct {
 	Interval time.Duration `mapstructure:"interval"`
 }
 
-// RetrySettings defines settings for the HTTP request retries in the Elasticsearch exporter.
-// Failed sends are retried with exponential backoff.
 type RetrySettings struct {
-	// Enabled allows users to disable retry without having to comment out all settings.
 	Enabled bool `mapstructure:"enabled"`
 
-	// MaxRequests configures how often an HTTP request is retried before it is assumed to be failed.
-	MaxRequests int `mapstructure:"max_requests"`
-
-	// InitialInterval configures the initial waiting time if a request failed.
-	InitialInterval time.Duration `mapstructure:"initial_interval"`
-
-	// MaxInterval configures the max waiting time if consecutive requests failed.
-	MaxInterval time.Duration `mapstructure:"max_interval"`
+	MaxRetries int `mapstructure:"max_requests"`
 }
 
 var (
