@@ -1,6 +1,5 @@
 import { Timeframe } from "./common";
 
-
 export type TagValue = {
   value: string | number;
   count: number;
@@ -8,7 +7,7 @@ export type TagValue = {
 
 export type TagValuesRequest = {
   tag: string;
-  timeframe: Timeframe
+  timeframe: Timeframe;
   metadata?: { nextToken: string };
 };
 

@@ -1,6 +1,7 @@
 /** types used to query spans from the lupa backend */
 
 import { InternalSpan } from "@/types/span";
+
 import { Timeframe } from "./common";
 
 export type Sort = {

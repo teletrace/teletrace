@@ -1,9 +1,14 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { axiosClient } from "@/libs/axios";
-import { TagValuesRequest, TagValuesResponse } from "../types/tagValues";
-import { AxiosResponse } from "axios";
 
-type FetchTagValuesParams = { tag: string, tagValuesRequest: TagValuesRequest, nextToken: string };
+import { axiosClient } from "@/libs/axios";
+
+import { TagValuesRequest, TagValuesResponse } from "../types/tagValues";
+
+type FetchTagValuesParams = {
+  tag: string;
+  tagValuesRequest: TagValuesRequest;
+  nextToken: string;
+};
 
 /**
  * fetch tag values
@@ -12,7 +17,11 @@ type FetchTagValuesParams = { tag: string, tagValuesRequest: TagValuesRequest, n
  * @param tagValuesRequest   optional search request to narrow down options
  * @param nextToken       pagination token
  */
-export const fetchTagValues = ({tag, tagValuesRequest, nextToken}: FetchTagValuesParams): Promise<TagValuesResponse> => {
+export const fetchTagValues = ({
+  tag,
+  tagValuesRequest,
+  nextToken,
+}: FetchTagValuesParams): Promise<TagValuesResponse> => {
   tagValuesRequest.metadata = { nextToken: nextToken };
   return axiosClient.post(`/v1/tags?tag=${tag}`, tagValuesRequest);
 };
@@ -23,10 +32,14 @@ export const fetchTagValues = ({tag, tagValuesRequest, nextToken}: FetchTagValue
  * @param tag            the tag to fetch values for
  * @param tagValuesRequest  optional query to filter results by
  */
-export const useTagValues = (tag: string, tagValuesRequest: TagValuesRequest) => {
+export const useTagValues = (
+  tag: string,
+  tagValuesRequest: TagValuesRequest
+) => {
   return useInfiniteQuery({
     queryKey: ["tagValues", tag],
-    queryFn: ({ pageParam }) => fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
+    queryFn: ({ pageParam }) =>
+      fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken,
   });
 };

@@ -15,6 +15,7 @@ import { Fragment, useState } from "react";
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
+
 import { useTagValues } from "../../api/tagValues";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
@@ -38,19 +39,25 @@ export const TagValuesSelector = ({
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
 
-  const tagValuesRequest = query ?? { 
-    timeframe: { 
-      startTime: 0,
-      endTime: new Date().valueOf()
-    },
-  } as TagValuesRequest;
+  const tagValuesRequest =
+    query ??
+    ({
+      timeframe: {
+        startTime: 0,
+        endTime: new Date().valueOf(),
+      },
+    } as TagValuesRequest);
 
-  const { data: tagValues, isFetching, isError } = useTagValues(tag, tagValuesRequest);
+  const {
+    data: tagValues,
+    isFetching,
+    isError,
+  } = useTagValues(tag, tagValuesRequest);
 
   const clearTags = () => onChange?.([]);
 
-  console.log(tagValues)
-  
+  console.log(tagValues);
+
   const tagOptions = tagValues?.pages
     .flatMap((page) => page.values)
     ?.filter((tag) => tag.value.toString().includes(search))
@@ -58,7 +65,6 @@ export const TagValuesSelector = ({
       value: tag.value,
       label: <CheckboxListLabel tag={tag} />,
     }));
-
 
   return (
     <div>
