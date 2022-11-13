@@ -10,6 +10,9 @@ export const styles = {
       height: "fit-content",
       margin: "auto",
       fontSize: 12,
+      "&:hover": {
+        cursor: "default",
+      },
     },
 
     timeContainer: {
@@ -31,6 +34,9 @@ export const styles = {
       justifyContent: "center",
       alignItems: "center",
       margin: 1,
+      "&:hover": {
+        cursor: "pointer",
+      },
     },
     nodeIconBox: {
       display: "flex",
