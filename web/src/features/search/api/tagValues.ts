@@ -23,7 +23,7 @@ export const fetchTagValues = ({
   nextToken,
 }: FetchTagValuesParams): Promise<TagValuesResponse> => {
   tagValuesRequest.metadata = { nextToken: nextToken };
-  return axiosClient.post(`/v1/tags?tag=${tag}`, tagValuesRequest);
+  return axiosClient.post('/v1/tags', tagValuesRequest, { params: { tag } });
 };
 
 /**
