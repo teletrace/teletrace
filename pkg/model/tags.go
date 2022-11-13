@@ -9,12 +9,6 @@ type GetAvailableTagsResult struct {
 	Tags []TagInfo
 }
 
-// TODO: Remove this duplication, there's an identical struct at spansquery/v1
-type Timeframe struct {
-	StartTime uint64 `json:"startTime"`
-	EndTime   uint64 `json:"endTime"`
-}
-
 type GetTagsValuesRequest struct {
 	// A list od tags to get the values of
 	Tags []string

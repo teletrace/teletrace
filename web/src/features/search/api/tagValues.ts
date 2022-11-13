@@ -14,7 +14,7 @@ type FetchTagValuesParams = { tag: string, tagValuesRequest: TagValuesRequest, n
  */
 export const fetchTagValues = ({tag, tagValuesRequest, nextToken}: FetchTagValuesParams): Promise<TagValuesResponse> => {
   tagValuesRequest.metadata = { nextToken: nextToken };
-  return axiosClient.post(`/v1/tags?tags=${tag}`, tagValuesRequest);
+  return axiosClient.post(`/v1/tags?tag=${tag}`, tagValuesRequest);
 };
 
 /**

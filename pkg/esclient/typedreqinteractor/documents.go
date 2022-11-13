@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"oss-tracing/pkg/esclient/typedreqinteractor/querybuilder"
+	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
@@ -68,7 +69,7 @@ func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
 	return builder.Build(), nil
 }
 
-func createTimeframeFilters(tf spansquery.Timeframe) []spansquery.SearchFilter {
+func createTimeframeFilters(tf model.Timeframe) []spansquery.SearchFilter {
 	return []spansquery.SearchFilter{
 		{
 			KeyValueFilter: &spansquery.KeyValueFilter{
