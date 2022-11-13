@@ -1,5 +1,4 @@
 export type Timeframe = {
-    startTime: number;
-    endTime: number;
+  startTime: number;
+  endTime: number;
 };
-  
