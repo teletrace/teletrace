@@ -163,10 +163,8 @@ func TestTagsValues(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
 	expectedTag := "span.attributes.custom-tag"
-	expectedTag2 := "span.attributes.custom-tag2"
-	expectedTagsAmount := 2
 	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
-	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", expectedTag, expectedTag2)), bytes.NewReader(jsonBody))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tag=%v", expectedTag)), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	storageMock, _ := storage.NewStorageMock()
 	srMock, _ := storageMock.CreateSpanReader()
@@ -182,19 +180,12 @@ func TestTagsValues(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, resBody)
 	assert.NotEmpty(t, resBody.Tags)
-	assert.True(t, len(resBody.Tags) == expectedTagsAmount)
 	assert.NotNil(t, resBody.Tags[expectedTag])
 
 	expectedValue := "custom-value"
 	expectedValueCount := 3
 	assert.Equal(t, expectedValue, resBody.Tags[expectedTag][0].Value)
 	assert.Equal(t, expectedValueCount, resBody.Tags[expectedTag][0].Count)
-
-	assert.NotNil(t, resBody.Tags[expectedTag])
-	expectedValue2 := "custom-value2"
-	expectedValue2Count := 1
-	assert.Equal(t, expectedValue2, resBody.Tags[expectedTag2][0].Value)
-	assert.Equal(t, expectedValue2Count, resBody.Tags[expectedTag2][0].Count)
 }
 
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
