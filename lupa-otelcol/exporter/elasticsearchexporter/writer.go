@@ -22,7 +22,7 @@ func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.
 	data, err := json.Marshal(&doc)
 
 	if err != nil {
-		return fmt.Errorf("Could not json marshal doc %+v: %+v", doc, err)
+		return fmt.Errorf("could not json marshal doc %+v: %+v", doc, err)
 	}
 
 	body := bytes.NewReader(data)
@@ -47,18 +47,18 @@ func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.
 
 				case resp.Status == 0 && err != nil:
 					// Encoding error. We didn't even attempt to send the event
-					logger.Error("Drop docs: failed to add docs to the bulk request buffer.",
+					logger.Error("drop docs: failed to add docs to the bulk request buffer.",
 						zap.NamedError("reason", err))
 
 				case err != nil:
-					logger.Error("Drop docs: failed to index",
+					logger.Error("drop docs: failed to index",
 						zap.String("name", index),
 						zap.Int("attempt", attempts),
 						zap.Int("status", resp.Status),
 						zap.NamedError("reason", err))
 
 				default:
-					logger.Error(fmt.Sprintf("Drop dcos: failed to index: %#v", resp.Error),
+					logger.Error(fmt.Sprintf("drop docs: failed to index: %#v", resp.Error),
 						zap.Int("attempt", attempts),
 						zap.Int("status", resp.Status))
 				}
@@ -67,7 +67,7 @@ func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.
 	)
 
 	if err != nil {
-		return fmt.Errorf("Could not add doc %+v to bulk: %+v ", doc, err)
+		return fmt.Errorf("could not add doc %+v to bulk: %v ", doc, err)
 	}
 
 	return nil

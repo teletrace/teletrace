@@ -3,7 +3,6 @@ package elasticsearchexporter
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"go.uber.org/zap"
 
@@ -35,16 +34,16 @@ func newBulkIndexer(logger *zap.Logger, client *elasticsearch.Client, cfg *Confi
 		Index:         cfg.Index,
 		Client:        client,
 		NumWorkers:    cfg.WorkersCount,
-		FlushInterval: cfg.Flush.Interval * time.Second,
+		FlushInterval: cfg.Flush.Interval,
 		FlushBytes:    cfg.Flush.Bytes,
 
 		OnError: func(_ context.Context, err error) {
-			logger.Error(fmt.Sprintf("Bulk indexer error: %v", err))
+			logger.Error(fmt.Sprintf("bulk indexer error: %v", err))
 		},
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("Error creating the indexer: %+v", err)
+		return nil, fmt.Errorf("error creating the indexer: %v", err)
 	}
 
 	return bi, nil

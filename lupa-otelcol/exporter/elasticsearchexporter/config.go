@@ -2,7 +2,6 @@ package elasticsearchexporter
 
 import (
 	"errors"
-	"os"
 	"time"
 
 	"go.opentelemetry.io/collector/config"
@@ -18,11 +17,12 @@ type Config struct {
 	// WorkersCount sets the Indexer workers count
 	WorkersCount int `mapstructure:"workers_count"`
 
-	// defaults to lupa_spans
+	// Defaults to lupa_spans
 	Index string `mapstructure:"index"`
 
+	// Username is used to configure HTTP Basic Authentication.
 	// If set, password must be set as well
-	Username string `mapstructure:"user"`
+	Username string `mapstructure:"username"`
 
 	// Password is used to configure HTTP Basic Authentication.
 	Password string `mapstructure:"password"`
@@ -48,22 +48,18 @@ type FlushSettings struct {
 type RetrySettings struct {
 	Enabled bool `mapstructure:"enabled"`
 
-	MaxRetries int `mapstructure:"max_requests"`
+	MaxRetries int `mapstructure:"max_retries"`
 }
 
 var (
-	errConfigNoEndpoint    = errors.New("endpoints or cloudid must be specified")
+	errConfigNoEndpoint    = errors.New("endpoints specified")
 	errConfigEmptyEndpoint = errors.New("endpoints must not include empty entries")
 )
-
-const defaultElasticsearchEnvName = "ELASTICSEARCH_URL"
 
 // Validate validates the elasticsearch server configuration.
 func (cfg *Config) Validate() error {
 	if len(cfg.Endpoints) == 0 {
-		if os.Getenv(defaultElasticsearchEnvName) == "" {
-			return errConfigNoEndpoint
-		}
+		return errConfigNoEndpoint
 	}
 
 	for _, endpoint := range cfg.Endpoints {

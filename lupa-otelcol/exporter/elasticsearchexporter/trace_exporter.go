@@ -22,7 +22,7 @@ type elasticsearchTracesExporter struct {
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExporter, error) {
-	errMsg := "Could not create a new traces exporter: %+v"
+	errMsg := "could not create a new traces exporter: %+v"
 
 	if err := cfg.Validate(); err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExp
 
 	maxRetries := 1
 	if cfg.Retry.Enabled {
-		maxRetries = cfg.Retry.MaxRequests
+		maxRetries = cfg.Retry.MaxRetries
 	}
 
 	return &elasticsearchTracesExporter{

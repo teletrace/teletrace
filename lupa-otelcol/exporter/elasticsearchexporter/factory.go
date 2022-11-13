@@ -10,22 +10,23 @@ import (
 )
 
 const (
-	typeStr = "elasticsearch"
+	typeStr      = "elasticsearch"
+	stability    = component.StabilityLevelInDevelopment
+	defaultIndex = "lupa-traces"
 )
 
 func NewFactory() component.ExporterFactory {
 	return component.NewExporterFactory(
 		typeStr,
 		createDefaultConfig,
-		component.WithTracesExporter(createTracesExporter, component.StabilityLevelInDevelopment),
+		component.WithTracesExporter(createTracesExporter, stability),
 	)
 }
 
-// Temporary settings for build purposes
-func createDefaultConfig() config.Exporter {
+func createDefaultConfig() component.ExporterConfig {
 	return &Config{
-		ExporterSettings: config.NewExporterSettings(config.NewComponentID(typeStr)),
-		Index:            "lupa-traces",
+		ExporterSettings: config.NewExporterSettings(component.NewID(typeStr)),
+		Index:            defaultIndex,
 		WorkersCount:     1,
 		Flush: FlushSettings{
 			Interval: 30,
@@ -48,7 +49,7 @@ func createTracesExporter(
 	exporter, err := newTracesExporter(set.Logger, cfg.(*Config))
 
 	if err != nil {
-		return nil, fmt.Errorf("Could not create traces exporter: %+v", err)
+		return nil, fmt.Errorf("could not create traces exporter: %v", err)
 	}
 
 	return exporterhelper.NewTracesExporter(ctx, set, cfg,
