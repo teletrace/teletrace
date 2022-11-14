@@ -1,4 +1,3 @@
-import { Add } from "@mui/icons-material";
 import { Slider, Table, TableBody, TableCell, TableRow } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
