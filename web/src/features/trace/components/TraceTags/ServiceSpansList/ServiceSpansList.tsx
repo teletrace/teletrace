@@ -2,8 +2,7 @@ import Paper from "@mui/material/Paper";
 
 import { Span } from "../../spans-mock";
 import { ServiceSpan } from "../ServiceSpan/ServiceSpan";
-import {styles} from "./styles"
-
+import { styles } from "./styles";
 
 interface ServiceSpansListProps {
   spans: Span[];

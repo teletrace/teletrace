@@ -67,7 +67,7 @@ export const ServiceSpan = ({ span }: ServiceSpanProps) => {
           </Typography>
         </Stack>
       </AccordionSummary>
-      <AccordionDetails >
+      <AccordionDetails>
         <Typography>Add inner accordion</Typography>
       </AccordionDetails>
     </Accordion>

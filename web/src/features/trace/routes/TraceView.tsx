@@ -181,7 +181,7 @@ export const TraceView = () => {
             setSelectedNode={setSelectedNode}
             traceData={traceData}
           />
-          <ServiceSpansList spans={SPANS_MOCK}  />
+          <ServiceSpansList spans={SPANS_MOCK} />
         </Stack>
         <Stack
           direction="row"
