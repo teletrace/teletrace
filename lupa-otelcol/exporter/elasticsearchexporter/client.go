@@ -21,7 +21,7 @@ func newClient(logger *zap.Logger, cfg *Config) (*elasticsearch.Client, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("Error creating Elasticsearch Client: %+v", err)
+		return nil, fmt.Errorf("error creating Elasticsearch Client: %+v", err)
 	}
 
 	return esConfig, nil
