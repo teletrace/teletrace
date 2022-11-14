@@ -51,7 +51,7 @@ func createTracesExporter(
 
 	return exporterhelper.NewTracesExporter(
 		ctx, set, cfg,
-		exporter.pushTraceData,
+		exporter.pushTracesData,
 		exporterhelper.WithShutdown(exporter.Shutdown),
 	)
 }
