@@ -5,5 +5,5 @@ The `modeltranslator` package translates OTLP trace data to the internal model u
 ## Usage
 
 ```go
-internalSpans := modeltranslator.TranslateOTLPToInternalModel(td.(ptrace.Traces))
+internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td.(ptrace.Traces))
 ```

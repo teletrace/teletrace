@@ -62,7 +62,7 @@ func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 
 func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
 	var errs []error
-	internalSpans := modeltranslator.TranslateOTLPToInternalModel(td)
+	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
 
 	for _, span := range internalSpans {
 		err := writeSpan(ctx, e.logger, e.idx, e.bulkIndexer, span, e.maxRetries)

@@ -6,9 +6,9 @@ import (
 	"go.opentelemetry.io/collector/pdata/ptrace"
 )
 
-// TranslateOTLPToInternalModel converts traces from the OLTP format
+// TranslateOTLPToInternalSpans converts traces from the OLTP format
 // to the InternalSpan model used by the Elasticsearch exporter.
-func TranslateOTLPToInternalModel(td ptrace.Traces) []*internalspanv1.InternalSpan {
+func TranslateOTLPToInternalSpans(td ptrace.Traces) []*internalspanv1.InternalSpan {
 	var internalSpans []*internalspanv1.InternalSpan
 
 	resourceSpansSlice := td.ResourceSpans()
