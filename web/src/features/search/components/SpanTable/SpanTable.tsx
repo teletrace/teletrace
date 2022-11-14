@@ -56,7 +56,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           startTime: formatDateToTimeString(span.startTimeUnixNano),
           duration: `ms ${externalFields.duration}`,
           name: span.name,
-          status: span.status.code === 0 ? "Ok" : "Error",
+          status: span.status.code,
           serviceName:
             resource.attributes?.["service.name"] !== undefined &&
             typeof resource.attributes?.["service.name"] === "string"
