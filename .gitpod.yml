@@ -1,0 +1,43 @@
+image:
+  file: .gitpod.Dockerfile
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    addBadge: true
+
+ports:
+  - port: 3000
+    onOpen: open-preview
+    description: lupa web ui port
+
+  - port: 6006
+    onOpen: open-preview
+    description: lupa storybook port
+
+tasks:
+  - name: Install pre-commit hooks
+    command: pre-commit install
+
+  - name: Download Go modules
+    command: go mod download
+
+  - name: Dev Server
+    before: cd web
+    init: yarn
+    command: yarn start
+
+vscode:
+  extensions:
+    - golang.Go
+    - eamodio.gitlens
+    - ms-python.python
+    - esbenp.prettier-vscode
+    - ms-vscode.makefile-tools
+    - EditorConfig.EditorConfig
+    - ms-toolsai.jupyter
+    - ms-toolsai.jupyter-keymap
+    - ms-toolsai.jupyter-renderers
+    - ms-azuretools.vscode-docker
