@@ -1,39 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
-	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/service"
+	"github.com/epsagon/lupa/lupa-otelcol/collector"
 )
 
 func main() {
-	factories, err := components()
+	collector, err := collector.NewCollector()
 	if err != nil {
-		log.Fatalf("failed to build components: %v", err)
+		log.Fatalf("Failed to initialize collector: %v", err)
 	}
 
-	info := component.BuildInfo{
-		Command:     "lupa-otelcol",
-		Description: "Lupa OpenTelemetry Collector",
-		Version:     "0.0.0",
+	if err = collector.Start(); err != nil {
+		log.Fatalf("Collector stopped with an error: %v", err)
 	}
-
-	params := service.CollectorSettings{
-		BuildInfo: info,
-		Factories: factories,
-	}
-
-	if err = runInteractive(params); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func runInteractive(params service.CollectorSettings) error {
-	cmd := service.NewCommand(params)
-	if err := cmd.Execute(); err != nil {
-		return fmt.Errorf("collector server run finished with error: %w", err)
-	}
-	return nil
 }
