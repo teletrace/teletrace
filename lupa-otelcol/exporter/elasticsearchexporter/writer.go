@@ -14,7 +14,7 @@ import (
 
 var retryOnStatus = []int{500, 502, 503, 504, 429}
 
-func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.BulkIndexer, doc internalspanv1.InternalSpan, maxRetries int) error {
+func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.BulkIndexer, doc *internalspanv1.InternalSpan, maxRetries int) error {
 	var err error
 
 	attempts := 1

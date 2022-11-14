@@ -7,6 +7,7 @@ require (
 	github.com/epsagon/lupa/model v0.0.0-20221113102914-75764b031422
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/pdata v0.64.1
+	go.uber.org/multierr v1.8.0
 	go.uber.org/zap v1.23.0
 )
 
@@ -27,7 +28,6 @@ require (
 	go.opentelemetry.io/otel/metric v0.33.0 // indirect
 	go.opentelemetry.io/otel/trace v1.11.1 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
-	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
 	golang.org/x/text v0.3.7 // indirect
