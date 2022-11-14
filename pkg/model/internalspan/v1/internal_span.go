@@ -23,7 +23,7 @@ type SpanStatus struct {
 }
 
 type Resource struct {
-	Attributes             Attributes `json:"resources"`
+	Attributes             Attributes `json:"attributes"`
 	DroppedAttributesCount uint32     `json:"droppedAttributesCount"`
 }
 
@@ -53,7 +53,7 @@ type Span struct {
 }
 
 type ExternalFields struct {
-	DurationNano uint64 `json:"durationNano"`
+	DurationNano uint64 `json:"duration"`
 }
 
 type InternalSpan struct {
