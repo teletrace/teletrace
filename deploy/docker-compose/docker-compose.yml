@@ -6,6 +6,8 @@ services:
       - "4318"
     ports:
       - "8080:8080"
+    environment:
+      - ES_ENDPOINT=http://elasticsearch:9200
     build:
       dockerfile: cmd/all-in-one/Dockerfile
       context: ../../
@@ -26,7 +28,8 @@ services:
     volumes:
       - ./otel-collector.yaml:/etc/otel-collector.yaml
     depends_on:
-      - lupa-api
+      lupa-api:
+        condition: service_healthy
     networks:
       - lupa
 
