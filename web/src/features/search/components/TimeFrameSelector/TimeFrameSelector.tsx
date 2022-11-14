@@ -1,70 +1,98 @@
-import React, { useRef } from "react";
-import { ToggleButtonGroup, ToggleButton, Popover } from "@mui/material";
-import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
-
-import { useState } from "react";
 import { StringDecoder } from "string_decoder";
 
-export const TimeFrameSelector = (props: TimeFrameSelectorProps) => {
-  const [selectedTimeFrame, setSelectedTimeFrame] = useState<TimeFrame>();
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-  const buttonRef = useRef(null);
+import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import React, { useRef, useState } from "react";
+import styles from "./styles";
+import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { SettingsOverscanOutlined } from "@mui/icons-material";
+import { setEngine } from "crypto";
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+export type TimeFrameSelectorProps = {
+  //value?: TimeFrame;
+  options: TimeFrame[];
+  onChange?: (tf: TimeFrame) => void;
+};
+
+export const TimeFrameSelector = ({
+  options,
+  onChange,
+}: TimeFrameSelectorProps) => {
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const buttonRef = useRef(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [isSelected, setIsSelected] = useState<TimeFrame>(options[0]);
+  const customOption: TimeFrame = {
+    label: "Custom",
+    startTime: new Date(),
+    endTime: new Date(),
+  };
+
+  const handleCustomClick = (event: React.MouseEvent<HTMLElement>) => {
+    setOpen(true);
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleBtnClicked = (
     event: React.MouseEvent<HTMLElement>,
-    value: any
+    value: TimeFrame
   ) => {
-    setSelectedTimeFrame(value);
-    props.onChange?.(value);
+    if (value?.label === "Custom") {
+      handleCustomClick(event);
+    }
+    onChange?.(value);
     setAnchorEl(buttonRef.current);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
+    setIsSelected(value);
   };
 
   return (
     <div>
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={() => setOpen(false)}
+      >
+        <DateTimeSelector
+          value={selectedDate}
+          onChange={(d) => {
+            setSelectedDate(d);
+          }}
+        />
+      </Popover>
       <ToggleButtonGroup
         exclusive
         onChange={(e, value) => {
-          props.onChange?.(value);
+          onChange?.(value);
         }}
-        value={props.value}
       >
-        {props.options.map((value) => {
+        <ToggleButton
+          onClick={handleBtnClicked}
+          selected={isSelected?.label === customOption?.label}
+          value={customOption}
+          ref={buttonRef}
+          key={customOption.label}
+        >
+          {customOption.label}
+        </ToggleButton>
+        {options.map((tf, idx) => {
           return (
             <ToggleButton
-              selected={selectedTimeFrame?.label == value.label}
-              value={value}
               onClick={handleBtnClicked}
+              selected={isSelected?.label === tf?.label}
+              value={tf}
               ref={buttonRef}
+              key={tf.label}
             >
-              {value.label}
-              <Popover
-                open={selectedTimeFrame?.label == "Custom"}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                onClose={handleClose}
-              >
-                <DateTimeSelector
-                  value={selectedDate}
-                  onChange={(d) => {
-                    console.log(d);
-                    setSelectedDate(d);
-                  }}
-                />
-              </Popover>
+              {tf.label}
             </ToggleButton>
           );
         })}
@@ -72,8 +100,6 @@ export const TimeFrameSelector = (props: TimeFrameSelectorProps) => {
     </div>
   );
 };
-
-//export type TimeFrameLabel = TimeFrame & { label: string };
 
 type RelativeTimeFrame = {
   label: string;
@@ -93,10 +119,3 @@ type CustomeTimeFrame = {
 };
 
 export type TimeFrame = RelativeTimeFrame | CustomeTimeFrame;
-
-export type TimeFrameSelectorProps = {
-  value?: TimeFrame;
-  options: TimeFrame[];
-  //customeTimeFrame: CustomeTimeFrame;
-  onChange?: (tf: TimeFrame) => void;
-};

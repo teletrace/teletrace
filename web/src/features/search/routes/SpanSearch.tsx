@@ -1,17 +1,16 @@
-import { Divider, Stack, SliderValueLabel } from "@mui/material";
-import { Fragment } from "react";
+import AdapterDateFns from "@date-io/date-fns";
+import { LocalizationProvider } from "@mui/lab";
+import { Divider, SliderValueLabel, Stack } from "@mui/material";
+import { Fragment, useState } from "react";
 
 import { Head } from "@/components/Head";
 
+import { DateTimeSelector } from "../components/DateTimeSelector/DateTimeSelector";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
+import { TimeFrame, TimeFrameSelector } from "../components/TimeFrameSelector";
 import { Timeframe } from "../types/spanQuery";
-import { TimeFrameSelector, TimeFrame } from "../components/TimeFrameSelector";
-import { useState } from "react";
-import { DateTimeSelector } from "../components/DateTimeSelector/DateTimeSelector";
-import { LocalizationProvider } from "@mui/lab";
-import AdapterDateFns from "@date-io/date-fns";
 
 export const SpanSearch = () => {
   const [timeFrame, setTimeFrame] = useState<TimeFrame>();
@@ -29,33 +28,16 @@ export const SpanSearch = () => {
             setTimeFrame(tf);
           }}
           options={[
-            {
-              label: "Custom",
-              startTime: new Date(),
-              endTime: new Date(),
-            },
+            // {
+            //   label: "Custom",
+            //   startTime: new Date(),
+            //   endTime: new Date(),
+            // },
             { label: "1H", offsetRange: "1h", relativeTo: "now" },
             { label: "1D", offsetRange: "1d", relativeTo: "now" },
             { label: "3D", offsetRange: "3d", relativeTo: "now" },
           ]}
-          value={timeFrame}
         />
-
-        {/* <TimeFrameSelector
-        onChange={(tf) => {
-            console.log(tf);
-            setTimeFrame(tf);
-          }}
-          absoluteOptions={[
-            { label: "1H", offsetRange: "1h", relativeTo: "now" },
-            { label: "1D", offsetRange: "1d", relativeTo: "now" },
-            { label: "3D", offsetRange: "3d", relativeTo: "now" },
-          ]}
-          relativeOption = { label: "Custom", start: 0, end: 0 }
-          
-          //value={timeFrame}
-
-        /> */}
       </Stack>
       <Stack direction="row" spacing={2} sx={{ height: "100%" }}>
         <aside style={{ width: 320 }}>

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { Popover, TextField, Button } from "@mui/material";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { TimePicker, DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TextField, Popover } from "@mui/material";
+import { useState } from "react";
 import "./DateTimeSelector.scss";
 import ErrorIcon from "@mui/icons-material/Error";
 
@@ -79,8 +79,8 @@ export const DateTimeSelector = (props: DateTimeSelectorProps) => {
         </div>
       ) : null}
       <div className="controls">
-        <button>cancel</button>
-        <button>apply</button>
+        <Button>cancel</Button>
+        <Button>apply</Button>
       </div>
     </LocalizationProvider>
   );
