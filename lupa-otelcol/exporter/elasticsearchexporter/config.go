@@ -52,7 +52,7 @@ type RetrySettings struct {
 }
 
 var (
-	errConfigNoEndpoint    = errors.New("endpoints specified")
+	errConfigNoEndpoint    = errors.New("endpoints must be specified")
 	errConfigEmptyEndpoint = errors.New("endpoints must not include empty entries")
 )
 
