@@ -7,7 +7,7 @@ export type Span = {
   spanDateTime: string;
 };
 
-export const SpansMock: Span[] = [
+export const SPANS_MOCK: Span[] = [
   {
     span: {
       spanId: "spanId",

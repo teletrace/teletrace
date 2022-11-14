@@ -5,40 +5,48 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
 import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
 
-import { Span } from "../Spans";
+import { Span } from "../../spans-mock";
 import styles from "./styles";
 
-interface SpanTagsProps {
+interface ServiceSpanProps {
   span: Span;
-  selectedSpanId: string;
 }
 
-export const ServiceSpan = ({ span, selectedSpanId }: SpanTagsProps) => {
-  const [expanded, setExpanded] = useState(span.span.spanId === selectedSpanId);
+export const ServiceSpan = ({ span }: ServiceSpanProps) => {
+  // const [expanded, setExpanded] = useState(span.span.spanId === selectedSpanId);
 
-  useEffect(() => {
-    setExpanded(selectedSpanId === span.span.spanId);
-  }, [selectedSpanId, span.span.spanId]);
+  // useEffect(() => {
+  //   setExpanded(selectedSpanId === span.span.spanId);
+  // }, [selectedSpanId, span.span.spanId]);
+
+  const [expanded, setExpanded] = useState<string | false>(false);
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
 
   const X_DIVIDER = "|";
 
   return (
     <Accordion
-      expanded={expanded}
-      onChange={() => setExpanded(!expanded)}
+      // expanded={expanded === span.span.spanId}
+      onChange={handleChange(span.span.spanId)}
       disableGutters={true}
       sx={styles.mainAccordion}
     >
       <AccordionSummary
-        expandIcon={<ArrowForwardIosSharp sx={styles.accordionExpandIcon} />}
+        expandIcon={
+          <ArrowForwardIosSharp sx={styles.accordionExpandArrowIcon} />
+        }
         sx={{
-          ...(expanded ? styles.expandedRow : styles.notExpandedRow),
           ...styles.accordionSummary,
+          ...(expanded && styles.expandedRow),
         }}
       >
         <Stack sx={styles.accordionIconsBox}>
@@ -59,7 +67,7 @@ export const ServiceSpan = ({ span, selectedSpanId }: SpanTagsProps) => {
           </Typography>
         </Stack>
       </AccordionSummary>
-      <AccordionDetails>
+      <AccordionDetails >
         <Typography>Add inner accordion</Typography>
       </AccordionDetails>
     </Accordion>

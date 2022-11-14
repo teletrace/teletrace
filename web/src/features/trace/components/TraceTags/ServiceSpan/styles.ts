@@ -1,51 +1,39 @@
 const styles = {
   expandedRow: {
     backgroundColor: "#2B2D32",
-  },
-  notExpandedRow: {
-    backgroundColor: "#1B1C21",
-  },
-  mainPaper: {
-    width: "100%",
-    backgroundColor: "black",
+    height: "80px",
   },
   mainAccordion: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
     borderRadius: "8px",
     marginBottom: "8px",
+    // backgroundColor: "black",
     "&::before": {
       display: "none",
     },
   },
-  accordionExpandIcon: {
+  accordionExpandArrowIcon: {
     color: "#FFFFFF",
     fontSize: "15px",
   },
   accordionIconsBox: {
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     marginRight: "17px",
   },
-  accordionArrowIcon: { fontSize: "22px", margin: "0 8px", color: "#96979E" },
+  accordionArrowIcon: { fontSize: "16px", margin: "0 8px", color: "#96979E" },
   accordionFirstNodeIcon: { marginLeft: "23px", width: "25px", height: "22px" },
-  accordionNodeIcon: { width: "25px", height: "22px" },
+  accordionNodeIcon: { width: "22px", height: "22px" },
   accordionSummary: {
-    display: "flex",
     flexDirection: "row-reverse",
-    width: "100%",
-    height: "80px",
-    alignitems: "center",
+    height: "60px",
     borderTopLeftRadius: "8px",
     borderTopRightRadius: "8px",
+    backgroundColor: "#1B1C21",
     "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
       transform: "rotate(90deg)",
     },
   },
   accordionTitleTypography: {
-    margin: "0",
     fontWeight: "700",
     fontSize: "14px",
     lineHeight: "20px",
