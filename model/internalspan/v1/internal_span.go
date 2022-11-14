@@ -61,5 +61,5 @@ type InternalSpan struct {
 	Scope                 *InstrumentationScope `json:"scope"`
 	Span                  *Span                 `json:"span"`
 	ExternalFields        *ExternalFields       `json:"externalFields"`
-	IngestionTimeUnixNano uint64
+	IngestionTimeUnixNano uint64                `json:ingestionTimeUnixNano`
 }

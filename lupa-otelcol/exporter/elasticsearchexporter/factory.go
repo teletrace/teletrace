@@ -44,15 +44,14 @@ func createTracesExporter(
 	set component.ExporterCreateSettings,
 	cfg component.ExporterConfig,
 ) (component.TracesExporter, error) {
-	var err error
-
 	exporter, err := newTracesExporter(set.Logger, cfg.(*Config))
-
 	if err != nil {
-		return nil, fmt.Errorf("could not create traces exporter: %v", err)
+		return nil, fmt.Errorf("could not create traces exporter: %w", err)
 	}
 
-	return exporterhelper.NewTracesExporter(ctx, set, cfg,
-		exporter.writeTraceRecord,
-		exporterhelper.WithShutdown(exporter.Shutdown))
+	return exporterhelper.NewTracesExporter(
+		ctx, set, cfg,
+		exporter.pushTracesData,
+		exporterhelper.WithShutdown(exporter.Shutdown),
+	)
 }
