@@ -27,7 +27,6 @@ tasks:
 vscode:
   extensions:
     - golang.Go
-    - eamodio.gitlens
     - ms-python.python
     - esbenp.prettier-vscode
     - ms-vscode.makefile-tools
