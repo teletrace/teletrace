@@ -159,6 +159,35 @@ func TestGetAvailableTags(t *testing.T) {
 	assert.Equal(t, mockTagName, resBody.Tags[0].Name)
 }
 
+func TestTagsValues(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	expectedTag := "span.attributes.custom-tag"
+	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tag=%v", expectedTag)), bytes.NewReader(jsonBody))
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	var resBody *model.GetTagsValuesResult
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Tags)
+	assert.NotNil(t, resBody.Tags[expectedTag])
+
+	expectedValue := "custom-value"
+	expectedValueCount := 3
+	assert.Equal(t, expectedValue, resBody.Tags[expectedTag][0].Value)
+	assert.Equal(t, expectedValueCount, resBody.Tags[expectedTag][0].Count)
+}
+
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
@@ -178,6 +207,24 @@ func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
 	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
 	assert.Nil(t, err)
 	assert.NotNil(t, resBody.ErrorMessage)
+}
+
+func TestTagsValuesWithMalformedRequestBody(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	mockTag := "span.attributes.custom-tag"
+	mockTag2 := "span.attributes.custom-tag2"
+	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", mockTag, mockTag2)), bytes.NewReader(malformedBody))
+	resRecorder := httptest.NewRecorder()
+	storageMock, _ := storage.NewStorageMock()
+	srMock, _ := storageMock.CreateSpanReader()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
 }
 
 func TestRootStaticRoute(t *testing.T) {

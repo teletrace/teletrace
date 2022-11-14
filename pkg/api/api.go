@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"oss-tracing/pkg/model"
 	"path/filepath"
 	"strings"
 	"time"
@@ -14,7 +15,6 @@ import (
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/model"
 	storage "oss-tracing/pkg/spanstorage"
 )
 
@@ -95,6 +95,7 @@ func (api *API) registerRoutes() {
 	v1.POST("/search", api.search)
 	v1.GET("/trace/:id", api.getTraceById)
 	v1.GET("/tags", api.getAvailableTags)
+	v1.POST("/tags", api.tagsValues)
 }
 
 // Start runs the configured API instance.
