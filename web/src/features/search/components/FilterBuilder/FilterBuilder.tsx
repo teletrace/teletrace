@@ -57,6 +57,7 @@ export const FilterBuilderDialog = ({
     setFilter(null);
     setOperator("in");
     setValue([]);
+    setValueSelectMode(valueSelectModeByOperators.in);
     onClose();
   };
 
@@ -84,20 +85,22 @@ export const FilterBuilderDialog = ({
       }}
     >
       <DialogContent>
-        <Stack direction="row">
-          <FilterSelector filter={filter} onChange={setFilter} />
-          <OperatorSelector
-            operator={operator}
-            onChange={handleOperatorChange}
-          />
-        </Stack>
-        <Stack>
-          <ValueSelector
-            tag={filter?.name || ""}
-            value={value}
-            onChange={setValue}
-            valueInputMode={valueSelectMode}
-          />
+        <Stack spacing={2}>
+          <Stack direction="row" spacing={2}>
+            <FilterSelector filter={filter} onChange={setFilter} />
+            <OperatorSelector
+              operator={operator}
+              onChange={handleOperatorChange}
+            />
+          </Stack>
+          <Stack>
+            <ValueSelector
+              tag={filter?.name || ""}
+              value={value}
+              onChange={setValue}
+              valueInputMode={valueSelectMode}
+            />
+          </Stack>
         </Stack>
       </DialogContent>
       <Divider />
