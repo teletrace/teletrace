@@ -56,7 +56,7 @@ func (api *API) getTraceById(c *gin.Context) {
 }
 
 func (api *API) getAvailableTags(c *gin.Context) {
-	res, err := (*api.spanReader).GetAvailableTags(c, model.GetAvailableTagsRequest{})
+	res, err := (*api.spanReader).GetAvailableTags(c, tagsquery.GetAvailableTagsRequest{})
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
@@ -73,17 +73,17 @@ func (api *API) tagsValues(c *gin.Context) {
 	}
 	tag := c.Request.URL.Query().Get("tag")
 
-	autoPrefixTags := false
-	res, err := (*api.spanReader).GetTagsValues(c, model.GetTagsValuesRequest{
-		Tags:           []string{tag},
-		Timeframe:      req.Timeframe,
-		AutoPrefixTags: &autoPrefixTags,
-	})
+	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag})
 
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
 	}
 
-	c.JSON(http.StatusOK, res)
+	tagValues := res[tag]
+	if tagValues == nil {
+		c.JSON(http.StatusNoContent, nil)
+	}
+
+	c.JSON(http.StatusOK, tagValues)
 }

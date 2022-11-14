@@ -26,3 +26,20 @@ type TagValuesResponse struct {
 	Metadata *model.Metadata `json:"metadata"`
 	Values   []TagValueInfo  `json:"values"`
 }
+
+type GetAvailableTagsRequest struct {
+}
+
+type GetAvailableTagsResponse struct {
+	Tags []TagInfo
+}
+
+type TagInfo struct {
+	// The tag's name
+	// e.g "http.status_code"
+	Name string `json:"name"`
+
+	// The tag's type
+	// e.g "string"
+	Type string `json:"type"`
+}

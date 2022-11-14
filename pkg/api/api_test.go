@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/model"
 	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/pkg/model/tagsquery/v1"
 	storage "oss-tracing/pkg/spanstorage/mock"
 	"path"
 	"path/filepath"
@@ -150,11 +150,11 @@ func TestGetAvailableTags(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
 
-	var resBody *model.GetAvailableTagsResult
+	var resBody *tagsquery.GetAvailableTagsResponse
 	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
 	assert.Nil(t, err)
 	assert.NotNil(t, resBody)
-	assert.NotEmpty(t, resBody.Tags)
+	assert.NotEmpty(t, resBody)
 	const mockTagName = "custom-tag"
 	assert.Equal(t, mockTagName, resBody.Tags[0].Name)
 }
@@ -175,17 +175,16 @@ func TestTagsValues(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, resRecorder.Code)
 
-	var resBody *model.GetTagsValuesResult
+	var resBody *tagsquery.TagValuesResponse
 	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
 	assert.Nil(t, err)
 	assert.NotNil(t, resBody)
-	assert.NotEmpty(t, resBody.Tags)
-	assert.NotNil(t, resBody.Tags[expectedTag])
+	assert.NotEmpty(t, resBody.Values)
 
 	expectedValue := "custom-value"
 	expectedValueCount := 3
-	assert.Equal(t, expectedValue, resBody.Tags[expectedTag][0].Value)
-	assert.Equal(t, expectedValueCount, resBody.Tags[expectedTag][0].Count)
+	assert.Equal(t, expectedValue, resBody.Values[0].Value)
+	assert.Equal(t, expectedValueCount, resBody.Values[0].Count)
 }
 
 func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
