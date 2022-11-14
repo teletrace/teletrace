@@ -1,8 +1,7 @@
 export const styles = {
   mainPaper: {
     width: "100%",
-    backgroundColor: "#121212",
-    background: "#121212",
+    backgroundColor: "#0B0B0D",
     boxShadow: "none",
   },
 };

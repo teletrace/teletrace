@@ -2,14 +2,13 @@ const styles = {
   expandedRow: {
     backgroundColor: "#2B2D32",
     height: "80px",
+    borderRadius: "0px",
+    borderTopLeftRadius: "8px",
+    borderTopRightRadius: "8px",
   },
   mainAccordion: {
     borderRadius: "8px",
     marginBottom: "8px",
-    // backgroundColor: "black",
-    "&::before": {
-      display: "none",
-    },
   },
   accordionExpandArrowIcon: {
     color: "#FFFFFF",
@@ -21,13 +20,12 @@ const styles = {
     marginRight: "17px",
   },
   accordionArrowIcon: { fontSize: "16px", margin: "0 8px", color: "#96979E" },
-  accordionFirstNodeIcon: { marginLeft: "23px", width: "25px", height: "22px" },
+  accordionFirstNodeIcon: { marginLeft: "23px", width: "22px", height: "22px" },
   accordionNodeIcon: { width: "22px", height: "22px" },
   accordionSummary: {
     flexDirection: "row-reverse",
     height: "60px",
-    borderTopLeftRadius: "8px",
-    borderTopRightRadius: "8px",
+    borderRadius: "8px",
     backgroundColor: "#1B1C21",
     "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
       transform: "rotate(90deg)",

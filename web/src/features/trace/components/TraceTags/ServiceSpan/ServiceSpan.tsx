@@ -7,8 +7,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { ReactComponent as IoTHTTP2Protocol } from "@/styles/icons/IoTHTTP2Protocol.svg";
-import { ReactComponent as LambdaFunction } from "@/styles/icons/LambdaFunction.svg";
+import { ReactComponent as IoTHTTP2Protocol } from "@/components/Elements/ResouceIcon/icons/IoTHTTP2Protocol.svg";
+import { ReactComponent as Lambda } from "@/components/Elements/ResouceIcon/icons/Lambda.svg";
 
 import { Span } from "../../spans-mock";
 import styles from "./styles";
@@ -18,24 +18,17 @@ interface ServiceSpanProps {
 }
 
 export const ServiceSpan = ({ span }: ServiceSpanProps) => {
-  // const [expanded, setExpanded] = useState(span.span.spanId === selectedSpanId);
-
-  // useEffect(() => {
-  //   setExpanded(selectedSpanId === span.span.spanId);
-  // }, [selectedSpanId, span.span.spanId]);
-
   const [expanded, setExpanded] = useState<string | false>(false);
 
   const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
+    (spanId: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? spanId : false);
     };
 
   const X_DIVIDER = "|";
 
   return (
     <Accordion
-      // expanded={expanded === span.span.spanId}
       onChange={handleChange(span.span.spanId)}
       disableGutters={true}
       sx={styles.mainAccordion}
@@ -52,7 +45,7 @@ export const ServiceSpan = ({ span }: ServiceSpanProps) => {
         <Stack sx={styles.accordionIconsBox}>
           <IoTHTTP2Protocol style={styles.accordionFirstNodeIcon} />
           <ArrowForwardIcon style={styles.accordionArrowIcon} />
-          <LambdaFunction style={styles.accordionNodeIcon} />
+          <Lambda style={styles.accordionNodeIcon} />
         </Stack>
         <Stack>
           <Typography sx={styles.accordionTitleTypography}>
