@@ -60,7 +60,7 @@ func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 	return e.bulkIndexer.Close(ctx)
 }
 
-func (e *elasticsearchTracesExporter) pushTraceData(ctx context.Context, td ptrace.Traces) error {
+func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
 	var errs []error
 	internalSpans := modeltranslator.TranslateOTLPToInternalModel(td)
 
