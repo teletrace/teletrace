@@ -16,11 +16,8 @@ ports:
     description: lupa storybook port
 
 tasks:
-  - name: Install pre-commit hooks
-    command: pre-commit install
-
-  - name: Download Go modules
-    command: go mod download
+  - init: pre-commit install
+  - init: go mod download
 
   - name: Dev Server
     before: cd web
