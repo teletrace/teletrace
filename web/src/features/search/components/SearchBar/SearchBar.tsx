@@ -1,11 +1,13 @@
 import { FilterList } from "@mui/icons-material";
-import { Button, Paper } from "@mui/material";
+import { Button, Chip, Paper } from "@mui/material";
 import { useState } from "react";
+import { SearchFilter } from "../../types/spanQuery";
 
 import { FilterBuilderDialog } from "../FilterBuilder";
 
 export function SearchBar() {
   const [open, setOpen] = useState(false);
+  const [filters, setFilters] = useState<SearchFilter[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -15,6 +17,14 @@ export function SearchBar() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const addFilter = (filter: SearchFilter) => {
+    setFilters([...filters, filter]);
+  };
+
+  const handleFilterDelete = (filter: SearchFilter) => {
+    setFilters(filters.filter((f) => f !== filter));
   };
 
   return (
@@ -30,8 +40,15 @@ export function SearchBar() {
       <FilterBuilderDialog
         open={open}
         onClose={handleClose}
+        onApply={addFilter}
         anchorEl={anchorEl}
       />
+      {filters.map((filter) => (
+        <Chip
+          label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
+          onDelete={() => handleFilterDelete(filter)}
+        />
+      ))}
     </Paper>
   );
 }

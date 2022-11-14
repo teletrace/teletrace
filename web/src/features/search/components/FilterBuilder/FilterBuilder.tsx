@@ -12,22 +12,21 @@ import { ValueSelector } from "./ValueSelector";
 import { styles } from "./styles";
 import { useState } from "react";
 import { availableTag } from "../../types/availableTags";
-import { Operator } from "../../types/spanQuery";
-import { ValueTypes } from "../../types/spanQuery";
+import { KeyValueFilter, Operator, SearchFilter } from "../../types/spanQuery";
+import { ValueTypes, ValueInputMode } from "../../types/spanQuery";
 
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | null;
   open: boolean;
   onClose: () => void;
+  onApply: (filter: SearchFilter) => void;
 };
 
-const valueSelectModeByOperators = {
-  equals: "select",
-  not_equals: "select",
-  in: "multiSelect",
-  not_in: "multiSelect",
-  contains: "input",
-  not_contains: "input",
+const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
+  in: "select",
+  not_in: "select",
+  contains: "text",
+  not_contains: "text",
   exists: "none",
   not_exists: "none",
   gt: "numeric",
@@ -36,14 +35,18 @@ const valueSelectModeByOperators = {
   lte: "numeric",
 };
 
-export const FilterBuilderDialog = (props: FilterDialogProps) => {
+export const FilterBuilderDialog = ({
+  onClose,
+  open,
+  anchorEl,
+  onApply,
+}: FilterDialogProps) => {
   const [filter, setFilter] = useState<availableTag | null>(null);
   const [operator, setOperator] = useState<Operator>("in");
   const [value, setValue] = useState<ValueTypes>([]);
-  const [valueSelectMode, setValueSelectMode] = useState<string>(
+  const [valueSelectMode, setValueSelectMode] = useState<ValueInputMode>(
     valueSelectModeByOperators.in
   );
-  const { onClose, open, anchorEl } = props;
 
   const handleOperatorChange = (value: Operator) => {
     setValueSelectMode(valueSelectModeByOperators[value]);
@@ -51,7 +54,20 @@ export const FilterBuilderDialog = (props: FilterDialogProps) => {
   };
 
   const handleClose = () => {
+    setFilter(null);
+    setOperator("in");
+    setValue([]);
     onClose();
+  };
+
+  const handleApply = () => {
+    const newFilter: KeyValueFilter = {
+      key: filter?.name || "",
+      operator: operator,
+      value: value,
+    };
+    onApply({ keyValueFilter: newFilter });
+    handleClose();
   };
 
   return (
@@ -68,9 +84,6 @@ export const FilterBuilderDialog = (props: FilterDialogProps) => {
       }}
     >
       <DialogContent>
-        <div>{filter?.name}</div>
-        <div>{operator}</div>
-        <div>{valueSelectMode}</div>
         <Stack direction="row">
           <FilterSelector filter={filter} onChange={setFilter} />
           <OperatorSelector
@@ -80,16 +93,17 @@ export const FilterBuilderDialog = (props: FilterDialogProps) => {
         </Stack>
         <Stack>
           <ValueSelector
+            tag={filter?.name || ""}
             value={value}
             onChange={setValue}
-            selectMode={valueSelectMode}
+            valueInputMode={valueSelectMode}
           />
         </Stack>
       </DialogContent>
       <Divider />
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleClose}>Apply</Button>
+        <Button onClick={handleApply}>Apply</Button>
       </DialogActions>
     </Popover>
   );

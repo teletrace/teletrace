@@ -10,8 +10,6 @@ export type Sort = {
 };
 
 export const operatorsList = [
-  "equals",
-  "not_equals",
   "in",
   "not_in",
   "contains",
@@ -26,7 +24,9 @@ export const operatorsList = [
 
 export type Operator = typeof operatorsList[number];
 
-export type ValueTypes = string | number | string[] | number[];
+export type ValueTypes = string | number | string[];
+
+export type ValueInputMode = "select" | "text" | "none" | "numeric";
 
 export type KeyValueFilter = {
   key: string;
