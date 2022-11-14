@@ -9,7 +9,7 @@ export interface TableSpan {
   startTime: string;
   duration: string;
   name: string;
-  status: string;
+  status: number;
   serviceName: string;
 }
 
@@ -35,10 +35,11 @@ export const columns: ColumnDef<TableSpan>[] = [
     enableSorting: false,
     Cell: (mrtCell) => {
       const code = mrtCell.cell.getValue();
+      const isSuccessCode = code === 0;
       return (
         <StatusBadge
-          color={Number(code) === 2 ? "error" : "success"}
-          text={Number(code) === 2 ? "Error" : "Ok"}
+          color={isSuccessCode ? "success" : "error"}
+          text={isSuccessCode ? "Ok" : "Error"}
         />
       );
     },
