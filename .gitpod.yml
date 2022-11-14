@@ -17,7 +17,7 @@ ports:
 
 tasks:
   - init: pre-commit install
-  - init: go mod download
+  - init: go get -v -t -d ./...
 
   - name: Dev Server
     before: cd web
