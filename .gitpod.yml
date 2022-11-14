@@ -10,11 +10,9 @@ github:
 
 ports:
   - port: 3000
-    onOpen: open-preview
     description: lupa web ui port
 
   - port: 6006
-    onOpen: open-preview
     description: lupa storybook port
 
 tasks:
