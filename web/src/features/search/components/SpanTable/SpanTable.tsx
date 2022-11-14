@@ -124,6 +124,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       }}
       muiTableContainerProps={{
         ref: tableWrapperRef,
+        sx: styles.container,
       }}
       muiTablePaperProps={{ sx: styles.paper }}
     />
