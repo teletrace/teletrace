@@ -48,7 +48,7 @@ type Span struct {
 	Events                 []*SpanEvent `json:"events"`
 	DroppedEventsCount     uint32       `json:"droppedEventsCount"`
 	Links                  []*SpanLink  `json:"links"`
-	DroppedLinksCount      uint32       `json:"droppedLinksCound"`
+	DroppedLinksCount      uint32       `json:"droppedLinksCount"`
 	Status                 *SpanStatus  `json:"status"`
 }
 
@@ -61,5 +61,5 @@ type InternalSpan struct {
 	Scope                 *InstrumentationScope `json:"scope"`
 	Span                  *Span                 `json:"span"`
 	ExternalFields        *ExternalFields       `json:"externalFields"`
-	IngestionTimeUnixNano uint64                `json:ingestionTimeUnixNano`
+	IngestionTimeUnixNano uint64                `json:"ingestionTimeUnixNano"`
 }
