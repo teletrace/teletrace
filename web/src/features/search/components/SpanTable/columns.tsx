@@ -26,7 +26,7 @@ export const columns: ColumnDef<TableSpan>[] = [
   },
   {
     accessorKey: "name",
-    header: "Resource name",
+    header: "Span name",
     enableSorting: false,
   },
   {
