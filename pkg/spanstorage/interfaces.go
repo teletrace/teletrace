@@ -2,9 +2,9 @@ package storage
 
 import (
 	"context"
-	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/pkg/model/tagsquery/v1"
 )
 
 type Storage interface {
@@ -21,6 +21,6 @@ type SpanWriter interface {
 
 type SpanReader interface {
 	Search(ctx context.Context, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error)
-	GetAvailableTags(ctx context.Context, r model.GetAvailableTagsRequest) (*model.GetAvailableTagsResult, error)
-	GetTagsValues(ctx context.Context, r model.GetTagsValuesRequest) (*model.GetTagsValuesResult, error)
+	GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error)
+	GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
 }
