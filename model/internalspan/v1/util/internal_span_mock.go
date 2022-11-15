@@ -3,20 +3,20 @@ package internalspanv1util
 import (
 	"time"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/internalspanv1"
+	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
 )
 
-func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[string]any) *internalspan.InternalSpan {
-	return &internalspan.InternalSpan{
-		Resource: &internalspan.Resource{
+func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[string]any) *internalspanv1.InternalSpan {
+	return &internalspanv1.InternalSpan{
+		Resource: &internalspanv1.Resource{
 			Attributes: r_attr,
 		},
-		Scope: &internalspan.InstrumentationScope{
+		Scope: &internalspanv1.InstrumentationScope{
 			Name:       "scope",
 			Version:    "version",
 			Attributes: i_attr,
 		},
-		Span: &internalspan.Span{
+		Span: &internalspanv1.Span{
 			TraceId:         "1234567887654321",
 			SpanId:          "12345678",
 			TraceState:      "state",
@@ -24,12 +24,12 @@ func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[st
 			Kind:            1,
 			EndTimeUnixNano: uint64(time.Now().UTC().Nanosecond()),
 			Attributes:      s_attr,
-			Status: &internalspan.SpanStatus{
+			Status: &internalspanv1.SpanStatus{
 				Message: "STATUS_MESSAGE",
 				Code:    0,
 			},
 		},
-		ExternalFields: &internalspan.ExternalFields{
+		ExternalFields: &internalspanv1.ExternalFields{
 			DurationNano: 1000000000,
 		},
 	}
