@@ -7,6 +7,7 @@ import {
 } from "../../types/spanQuery";
 import {
   Autocomplete,
+  FormLabel,
   ListItem,
   Stack,
   TextField,
@@ -68,52 +69,50 @@ export const ValueSelector = ({
     );
   };
 
-  if (valueInputMode === "select")
-    return (
+  return (
+    <>
       <FormControl sx={styles.valueSelector}>
-        <Autocomplete
-          multiple
-          disableCloseOnSelect
-          value={getSelectedValues()}
-          id={"value-selector"}
-          options={tagOptions || []}
-          getOptionLabel={(option) => option.value.toString()}
-          renderOption={(props, option) => (
-            <ListItem {...props}>
-              <Stack
-                sx={{ width: "100%" }}
-                direction="row"
-                justifyContent="space-between"
-              >
-                <Typography>{option.value}</Typography>
-                <Typography>{formatNumber(option.occurrences)}</Typography>
-              </Stack>
-            </ListItem>
-          )}
-          renderInput={(params) => <TextField {...params} label="Value" />}
-          onChange={handleSelectChange}
-        ></Autocomplete>
+        <FormLabel>Value</FormLabel>
+        {valueInputMode === "select" ? (
+          <Autocomplete
+            multiple
+            disableCloseOnSelect
+            value={getSelectedValues()}
+            id={"value-selector"}
+            options={tagOptions || []}
+            getOptionLabel={(option) => option.value.toString()}
+            renderOption={(props, option) => (
+              <ListItem {...props}>
+                <Stack
+                  sx={{ width: "100%" }}
+                  direction="row"
+                  justifyContent="space-between"
+                >
+                  <Typography>{option.value}</Typography>
+                  <Typography>{formatNumber(option.occurrences)}</Typography>
+                </Stack>
+              </ListItem>
+            )}
+            renderInput={(params) => <TextField {...params} />}
+            onChange={handleSelectChange}
+          ></Autocomplete>
+        ) : null}
+        {valueInputMode === "text" ? (
+          <TextField
+            variant="outlined"
+            value={value}
+            onChange={handleInputChange}
+          />
+        ) : null}
+        {valueInputMode === "numeric" ? (
+          <TextField
+            variant="outlined"
+            type="number"
+            value={value}
+            onChange={handleInputChange}
+          />
+        ) : null}
       </FormControl>
-    );
-
-  if (valueInputMode === "text")
-    return (
-      <TextField
-        label="Value"
-        variant="outlined"
-        value={value}
-        onChange={handleInputChange}
-      />
-    );
-  if (valueInputMode === "numeric")
-    return (
-      <TextField
-        label="Value"
-        variant="outlined"
-        type="number"
-        value={value}
-        onChange={handleInputChange}
-      />
-    );
-  return null;
+    </>
+  );
 };

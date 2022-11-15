@@ -2,7 +2,7 @@ import FormControl from "@mui/material/FormControl";
 import { styles } from "./styles";
 import { useAvailableTags } from "../../api/availableTags";
 import { availableTag } from "../../types/availableTags";
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, FormLabel, TextField } from "@mui/material";
 
 interface FilterSelectorProps {
   filter: availableTag | null;
@@ -27,12 +27,13 @@ export const FilterSelector = ({ filter, onChange }: FilterSelectorProps) => {
 
   return (
     <FormControl sx={styles.filterSelector}>
+      <FormLabel>Key</FormLabel>
       <Autocomplete
         value={filter}
-        id={"filter-selector"}
+        id="filter"
         options={availableTagsOptions}
         getOptionLabel={(option) => option.name}
-        renderInput={(params) => <TextField {...params} label="Filter" />}
+        renderInput={(params) => <TextField {...params} />}
         onChange={handleChange}
         isOptionEqualToValue={(option, value) => option.name === value.name}
       ></Autocomplete>

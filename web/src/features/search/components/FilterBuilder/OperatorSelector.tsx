@@ -1,10 +1,9 @@
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { useState } from "react";
 import { styles } from "./styles";
 import { Operator, operatorsList } from "../../types/spanQuery";
+import { FormLabel } from "@mui/material";
 
 export type OperatorSelectorProps = {
   operator: string;
@@ -21,13 +20,8 @@ export const OperatorSelector = ({
 
   return (
     <FormControl sx={styles.operatorSelector}>
-      <InputLabel id="operator">Operator</InputLabel>
-      <Select
-        id="operator-selector"
-        value={operator}
-        onChange={handleChange}
-        label="operator"
-      >
+      <FormLabel>Operator</FormLabel>
+      <Select id="operator" value={operator} onChange={handleChange}>
         {operatorsList?.map((operator) => (
           <MenuItem key={operator} value={operator}>
             {operator.replaceAll("_", " ")}

@@ -93,14 +93,16 @@ export const FilterBuilderDialog = ({
               onChange={handleOperatorChange}
             />
           </Stack>
-          <Stack>
-            <ValueSelector
-              tag={filter?.name || ""}
-              value={value}
-              onChange={setValue}
-              valueInputMode={valueSelectMode}
-            />
-          </Stack>
+          {valueSelectMode !== "none" ? (
+            <Stack>
+              <ValueSelector
+                tag={filter?.name || ""}
+                value={value}
+                onChange={setValue}
+                valueInputMode={valueSelectMode}
+              />
+            </Stack>
+          ) : null}
         </Stack>
       </DialogContent>
       <Divider />
