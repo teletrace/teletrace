@@ -15,11 +15,11 @@ import {
 } from "@mui/material";
 import { useTagValues } from "../../api/tagValues";
 import { formatNumber } from "@/utils/format";
-import { TagValue } from "../../types/tagValues";
+import { TagValue, TagValuesRequest } from "../../types/tagValues";
 
 export type ValueSelectorProps = {
   tag: string;
-  query?: SearchRequest;
+  query?: TagValuesRequest;
   value: ValueTypes;
   valueInputMode: ValueInputMode;
   onChange: (value: ValueTypes) => void;
@@ -32,25 +32,34 @@ export const ValueSelector = ({
   valueInputMode,
   onChange,
 }: ValueSelectorProps) => {
-  const { data: tagValues } = useTagValues(tag, query);
+  const tagValuesRequest =
+    query ??
+    ({
+      timeframe: {
+        startTime: 0,
+        endTime: new Date().valueOf(),
+      },
+    } as TagValuesRequest);
 
-  // const tagOptions = tagValues?.pages.flatMap((page) => page.values).sort((a, b) => b.occurrences - a.occurrences);
+  const { data: tagValues } = useTagValues(tag, tagValuesRequest);
+
+  // const tagOptions = tagValues?.pages.flatMap((page) => page.values).sort((a, b) => b.count - a.count);
 
   // TODO shaqued: delete
   const tagOptions = [
     {
       value: "valA",
-      occurrences: 5,
+      count: 5,
     },
     {
       value: "valB",
-      occurrences: 10,
+      count: 10,
     },
     {
       value: "valC",
-      occurrences: 1,
+      count: 1,
     },
-  ].sort((a, b) => b.occurrences - a.occurrences);
+  ].sort((a, b) => b.count - a.count);
 
   const handleInputChange = (event: any) => {
     onChange(event?.target?.value ?? "");
@@ -89,7 +98,7 @@ export const ValueSelector = ({
                   justifyContent="space-between"
                 >
                   <Typography>{option.value}</Typography>
-                  <Typography>{formatNumber(option.occurrences)}</Typography>
+                  <Typography>{formatNumber(option.count)}</Typography>
                 </Stack>
               </ListItem>
             )}
@@ -106,6 +115,7 @@ export const ValueSelector = ({
         ) : null}
         {valueInputMode === "numeric" ? (
           <TextField
+            size="small"
             variant="outlined"
             type="number"
             value={value}
