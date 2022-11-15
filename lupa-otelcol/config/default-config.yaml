@@ -9,7 +9,7 @@ processors:
 
 exporters:
   elasticsearch:
-    endpoints: [http://localhost:9200]
+    endpoints: ["http://localhost:9200"]
 
 service:
   pipelines:
