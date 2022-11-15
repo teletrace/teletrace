@@ -20,8 +20,8 @@ interface ServiceSpanProps {
 export const ServiceSpan = ({ span }: ServiceSpanProps) => {
   const [expanded, setExpanded] = useState(false);
 
-  const handleChange = () => {
-    setExpanded(!expanded);
+  const handleChange = (_: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpanded(isExpanded);
   };
 
   const X_DIVIDER = "|";
