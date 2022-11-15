@@ -44,14 +44,14 @@ export const theme = createTheme({
       fontStyle: "normal",
       fontWeight: "normal",
       letterSpacing: "0.15px",
-      lineHeight: "17px",
+      lineHeight: "20px",
     },
     body2: {
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: "bold",
       letterSpacing: "0.5px",
-      lineHeight: "17px",
+      lineHeight: "20px",
     },
     button: {
       alignItems: "center",
@@ -139,7 +139,7 @@ export const theme = createTheme({
       fontStyle: "normal",
       fontWeight: 500,
       letterSpacing: "0.15px",
-      lineHeight: "17px",
+      lineHeight: "20px",
     },
   },
   components: {
@@ -298,6 +298,18 @@ export const theme = createTheme({
           borderRadius: "4px",
           color: greyScaleColors.grey300,
           padding: "16px",
+        },
+      },
+    },
+    MuiSlider: {
+      styleOverrides: {
+        valueLabelLabel: {
+          fontSize: "14px",
+        },
+        root: {
+          "&.Mui-disabled": {
+            color: greyScaleColors.grey500,
+          },
         },
       },
     },
