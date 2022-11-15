@@ -1,16 +1,9 @@
-import { StringDecoder } from "string_decoder";
-
 import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import React, { useRef, useState } from "react";
-import styles from "./styles";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { SettingsOverscanOutlined } from "@mui/icons-material";
-import { setEngine } from "crypto";
 
 export type TimeFrameSelectorProps = {
-  //value?: TimeFrame;
-  options: TimeFrame[];
+  options: RelativeTimeFrame[];
   onChange?: (tf: TimeFrame) => void;
 };
 
@@ -23,6 +16,11 @@ export const TimeFrameSelector = ({
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [isSelected, setIsSelected] = useState<TimeFrame>(options[0]);
+  const [custom, setCustom] = useState<CustomeTimeFrame>();
+  const [isRelative, setIsRelative] = useState<Boolean>(false);
+
+  const [absoluteTimeFrame, setAbsoluteTimeFrame] =
+    useState<AbsoluteTimeFrame>();
   const customOption: TimeFrame = {
     label: "Custom",
     startTime: new Date(),
@@ -39,8 +37,14 @@ export const TimeFrameSelector = ({
     value: TimeFrame
   ) => {
     if (value?.label === "Custom") {
+      /*  if(startTime)
+      relativeTimeFrame<RelativeTimeFrame> = {}
+      setCustom(value?.startTime, value.endTime); */
       handleCustomClick(event);
     }
+    setIsRelative(true);
+    //isRelative ? setAbsoluteTimeFrame({})
+    //setAbsoluteTimeFrame({})
     onChange?.(value);
     setAnchorEl(buttonRef.current);
     setIsSelected(value);
@@ -107,11 +111,6 @@ type RelativeTimeFrame = {
   offsetRange?: string;
 };
 
-type AbsoluteTimeFrame = {
-  start: number;
-  end: number;
-};
-
 type CustomeTimeFrame = {
   label: string;
   startTime: Date;
@@ -119,3 +118,8 @@ type CustomeTimeFrame = {
 };
 
 export type TimeFrame = RelativeTimeFrame | CustomeTimeFrame;
+
+type AbsoluteTimeFrame = {
+  start: number;
+  end: number;
+};

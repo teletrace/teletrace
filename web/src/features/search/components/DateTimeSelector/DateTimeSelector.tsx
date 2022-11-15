@@ -7,33 +7,31 @@ import "./DateTimeSelector.scss";
 import ErrorIcon from "@mui/icons-material/Error";
 
 export const DateTimeSelector = (props: DateTimeSelectorProps) => {
-  const [fromDate, setFromDate] = useState(new Date());
-  const [toDate, setToDate] = useState(new Date());
-  const [fromTime, setFromTime] = useState(new Date().getTime());
-  const [toTime, setToTime] = useState(new Date().getTime());
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [startTime, setStartTime] = useState(new Date().getTime());
+  const [endTime, setEndTime] = useState(new Date().getTime());
   const isDateValid = () => {
-    return fromDate > toDate;
+    return startDate > endDate;
   };
   const isTimeValid = () => {
-    return fromTime > toTime;
+    return startTime > endTime;
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <div>
         <div>
-          <div>Between</div>
+          <div>From</div>
           <DatePicker
-            className="date-picker"
             renderInput={(props) => <TextField {...props} />}
             onChange={(date) => {
-              setFromDate(date);
+              setStartDate(date);
               props.onChange?.(date);
             }}
             value={props.value}
           />
           <TimePicker
-            className="time-picker"
             value={props.value}
             onChange={(time) => {
               props.onChange?.(time);
@@ -42,20 +40,18 @@ export const DateTimeSelector = (props: DateTimeSelectorProps) => {
             renderInput={(params) => <TextField {...params} />}
           />
         </div>
-        <div className="date-row">
-          <div className="label">And</div>
+        <div>
+          <div>To</div>
           <DatePicker
-            className="date-picker"
             renderInput={(props) => <TextField {...props} />}
             onChange={(date) => {
-              setToDate(date);
+              setEndDate(date);
               props.onChange?.(date);
               console.log(date);
             }}
             value={props.value}
           />
           <TimePicker
-            className="time-picker"
             value={props.value}
             onChange={(time) => {
               props.onChange?.(time);
@@ -67,20 +63,20 @@ export const DateTimeSelector = (props: DateTimeSelectorProps) => {
       </div>
 
       {isDateValid() ? (
-        <div className="error">
+        <div>
           <ErrorIcon />
           Error
         </div>
       ) : null}
       {isTimeValid() ? (
-        <div className="error">
+        <div>
           <ErrorIcon />
           Error
         </div>
       ) : null}
-      <div className="controls">
-        <Button>cancel</Button>
-        <Button>apply</Button>
+      <div>
+        <Button>Cancel</Button>
+        <Button>Apply</Button>
       </div>
     </LocalizationProvider>
   );

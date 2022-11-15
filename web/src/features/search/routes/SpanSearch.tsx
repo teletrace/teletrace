@@ -24,18 +24,14 @@ export const SpanSearch = () => {
       <Stack direction="row" justifyContent="flex-end">
         <TimeFrameSelector
           onChange={(tf) => {
-            console.log(tf);
+            //console.log(tf);
             setTimeFrame(tf);
           }}
           options={[
-            // {
-            //   label: "Custom",
-            //   startTime: new Date(),
-            //   endTime: new Date(),
-            // },
             { label: "1H", offsetRange: "1h", relativeTo: "now" },
             { label: "1D", offsetRange: "1d", relativeTo: "now" },
             { label: "3D", offsetRange: "3d", relativeTo: "now" },
+            { label: "1W", offsetRange: "1w", relativeTo: "now" },
           ]}
         />
       </Stack>
