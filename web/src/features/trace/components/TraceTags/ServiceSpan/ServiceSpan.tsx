@@ -7,8 +7,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
-import { ReactComponent as IoTHTTP2Protocol } from "@/components/Elements/ResouceIcon/icons/IoTHTTP2Protocol.svg";
-import { ReactComponent as Lambda } from "@/components/Elements/ResouceIcon/icons/Lambda.svg";
+import { ReactComponent as IoTHTTP2Protocol } from "@/components/Elements/ResourceIcon/icons/IoTHTTP2Protocol.svg";
+import { ReactComponent as Lambda } from "@/components/Elements/ResourceIcon/icons/Lambda.svg";
 
 import { Span } from "../../spans-mock";
 import styles from "./styles";
@@ -18,18 +18,17 @@ interface ServiceSpanProps {
 }
 
 export const ServiceSpan = ({ span }: ServiceSpanProps) => {
-  const [expanded, setExpanded] = useState<string | false>(false);
+  const [expanded, setExpanded] = useState(false);
 
-  const handleChange =
-    (spanId: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? spanId : false);
-    };
+  const handleChange = () => {
+    setExpanded(!expanded);
+  };
 
   const X_DIVIDER = "|";
 
   return (
     <Accordion
-      onChange={handleChange(span.span.spanId)}
+      onChange={handleChange}
       disableGutters={true}
       sx={styles.mainAccordion}
     >
