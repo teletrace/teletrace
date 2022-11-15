@@ -7,10 +7,12 @@ import (
 	"go.opentelemetry.io/collector/service"
 )
 
+// Collector holds the collector settings and provides a method to start it.
 type Collector struct {
 	settings service.CollectorSettings
 }
 
+// NewCollector loads the collector components and returns a new Collector instance.
 func NewCollector() (*Collector, error) {
 	factories, err := components()
 	if err != nil {
@@ -33,10 +35,11 @@ func NewCollector() (*Collector, error) {
 	}, nil
 }
 
+// Start runs the collector and blocks the goroutine indefinitely unless an error happens.
 func (c *Collector) Start() error {
 	cmd := service.NewCommand(c.settings)
 	if err := cmd.Execute(); err != nil {
-		return fmt.Errorf("collector server run finished with error: %w", err)
+		return fmt.Errorf("collector server stopped with an error: %w", err)
 	}
 	return nil
 }
