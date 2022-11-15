@@ -2,10 +2,10 @@ package mock
 
 import (
 	"context"
-	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/pkg/model/tagsquery/v1"
 	spanstorage "oss-tracing/pkg/spanstorage"
 )
 
@@ -35,9 +35,9 @@ func (sr spanReader) Search(ctx context.Context, r *spansquery.SearchRequest) (*
 	}, nil
 }
 
-func (sr spanReader) GetAvailableTags(ctx context.Context, r model.GetAvailableTagsRequest) (*model.GetAvailableTagsResult, error) {
-	return &model.GetAvailableTagsResult{
-		Tags: []model.TagInfo{
+func (sr spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
+	return &tagsquery.GetAvailableTagsResponse{
+		Tags: []tagsquery.TagInfo{
 			{
 				Name: "custom-tag",
 				Type: "string",
@@ -46,23 +46,27 @@ func (sr spanReader) GetAvailableTags(ctx context.Context, r model.GetAvailableT
 	}, nil
 }
 
-func (sr spanReader) GetTagsValues(ctx context.Context, r model.GetTagsValuesRequest) (*model.GetTagsValuesResult, error) {
-	getTagsValueResult := model.NewGetTagsValueResult()
-	getTagsValueResult.Tags = map[string][]model.TagValueInfo{
-		"span.attributes.custom-tag": {
-			{
-				Value: "custom-value",
-				Count: 3,
+func (sr spanReader) GetTagsValues(
+	ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	res := map[string]*tagsquery.TagValuesResponse{
+		"span.attributes.custom-tag": &tagsquery.TagValuesResponse{
+			Values: []tagsquery.TagValueInfo{
+				{
+					Value: "custom-value",
+					Count: 3,
+				},
 			},
 		},
 		"span.attributes.custom-tag2": {
-			{
-				Value: "custom-value2",
-				Count: 1,
+			Values: []tagsquery.TagValueInfo{
+				{
+					Value: "custom-value2",
+					Count: 1,
+				},
 			},
 		},
 	}
-	return &getTagsValueResult, nil
+	return res, nil
 }
 
 func (s storage) CreateSpanWriter() (spanstorage.SpanWriter, error) {

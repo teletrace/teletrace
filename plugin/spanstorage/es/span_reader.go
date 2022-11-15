@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"oss-tracing/pkg/esclient/interactor"
-	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/pkg/model/tagsquery/v1"
 )
 
 type spanReader struct {
@@ -23,7 +23,7 @@ func (reader *spanReader) Search(ctx context.Context, r *spansquery.SearchReques
 	return res, nil
 }
 
-func (reader *spanReader) GetAvailableTags(ctx context.Context, r model.GetAvailableTagsRequest) (*model.GetAvailableTagsResult, error) {
+func (reader *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
 	res, err := reader.tagsController.GetAvailableTags(ctx, r)
 
 	if err != nil {
@@ -33,12 +33,13 @@ func (reader *spanReader) GetAvailableTags(ctx context.Context, r model.GetAvail
 	return &res, nil
 }
 
-func (reader *spanReader) GetTagsValues(ctx context.Context, r model.GetTagsValuesRequest) (*model.GetTagsValuesResult, error) {
-	res, err := reader.tagsController.GetTagsValues(ctx, r)
+func (reader *spanReader) GetTagsValues(
+	ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	res, err := reader.tagsController.GetTagsValues(ctx, r, tags)
 
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
 	}
 
-	return &res, nil
+	return res, nil
 }
