@@ -1,8 +1,7 @@
-package main
+package collector
 
 import (
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/exporter/otlpexporter"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 
@@ -26,9 +25,6 @@ func components() (component.Factories, error) {
 
 	exporters, err := component.MakeExporterFactoryMap(
 		elasticsearchexporter.NewFactory(),
-
-		// Temporary until ES implementation, used for build purposes
-		otlpexporter.NewFactory(),
 	)
 	if err != nil {
 		return component.Factories{}, err
