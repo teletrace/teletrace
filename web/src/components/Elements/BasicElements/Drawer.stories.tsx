@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { Mail, MoveToInbox } from "../ResouceIcon";
+import { Mail, MoveToInbox } from "../ResourceIcon";
 
 export default {
   component: Drawer,

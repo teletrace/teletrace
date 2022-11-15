@@ -10,7 +10,7 @@ import {
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { useState } from "react";
 
-import { ExpandMore } from "../ResouceIcon";
+import { ExpandMore } from "../ResourceIcon";
 
 function SimpleAccordion(args: AccordionProps) {
   return (

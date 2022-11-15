@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { Delete } from "../ResouceIcon";
+import { Delete } from "../ResourceIcon";
 
 function BasicTooltip() {
   return (
