@@ -1,6 +1,6 @@
-# ESClient
+# ElasticSearch SpanStorage Plugin
 
-The `pkg/esclient` package interacts with elasticsearch using go-elasticsearch library (with the extensible to other libraries), and exposes interfaces for various configurations/indices/documents CRUD operations.
+The `plugins/spanstorage/es` package interacts with elasticsearch using go-elasticsearch library (with the extensible to other libraries), and exposes interfaces for various configurations/indices/documents CRUD operations.
 
 ## Interactors
 

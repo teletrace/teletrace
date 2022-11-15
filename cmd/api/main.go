@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"log"
+	interactor2 "oss-tracing/plugin/spanstorage/es/interactor"
 
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/plugin/spanstorage/es"
 
@@ -25,7 +25,7 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	storage, err := es.NewStorage(context.Background(), logger, interactor.NewElasticConfig(cfg))
+	storage, err := es.NewStorage(context.Background(), logger, interactor2.NewElasticConfig(cfg))
 	if err != nil {
 		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
 	}
@@ -42,7 +42,7 @@ func main() {
 
 	ctx := context.Background()
 
-	esConfig := interactor.ElasticConfig{
+	esConfig := interactor2.ElasticConfig{
 		Endpoint:     cfg.ESEndpoints,
 		Username:     cfg.ESUsername,
 		Password:     cfg.ESPassword,

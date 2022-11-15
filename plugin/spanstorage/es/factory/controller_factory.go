@@ -1,14 +1,13 @@
-package esclient
+package factory
 
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/esclient/interactor"
-	"oss-tracing/pkg/esclient/rawreqinteractor"
-	"oss-tracing/pkg/esclient/typedreqinteractor"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
-
 	"github.com/elastic/go-elasticsearch/v8/esutil"
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/plugin/spanstorage/es/interactor"
+	"oss-tracing/plugin/spanstorage/es/interactor/rawreqinteractor"
+	"oss-tracing/plugin/spanstorage/es/interactor/typedreqinteractor"
 )
 
 type documentController struct {

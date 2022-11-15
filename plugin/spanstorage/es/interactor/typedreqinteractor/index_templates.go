@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http/httputil"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 	"strconv"
-
-	"oss-tracing/pkg/esclient/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/indices/putindextemplate"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"

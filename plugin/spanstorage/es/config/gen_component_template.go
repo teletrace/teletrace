@@ -1,7 +1,7 @@
 package config
 
 import (
-	"oss-tracing/pkg/esclient/interactor"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 
 	"github.com/creasty/defaults"
 )
