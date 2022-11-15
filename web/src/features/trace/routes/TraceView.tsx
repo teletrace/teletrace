@@ -18,8 +18,9 @@ import {
 import { createGraphLayout } from "@/components/Graph/utils/layout";
 import { Head } from "@/components/Head";
 
+import { SPANS_MOCK } from "../components/spans-mock";
 import { TraceGraph } from "../components/TraceGraph";
-import { TraceTags } from "../components/TraceTags";
+import { ServiceSpansList } from "../components/TraceTags/ServiceSpansList/ServiceSpansList";
 import { TraceTimeline } from "../components/TraceTimeline";
 
 const initialNodes: Node<NodeData>[] = [
@@ -180,9 +181,8 @@ export const TraceView = () => {
             setSelectedNode={setSelectedNode}
             traceData={traceData}
           />
-          <TraceTags />
+          <ServiceSpansList spans={SPANS_MOCK} />
         </Stack>
-
         <Stack
           direction="row"
           divider={<Divider orientation="vertical" flexItem />}
