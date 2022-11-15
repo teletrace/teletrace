@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
-import { ResourceIcon } from "@/components/Elements/ResouceIcon";
+import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { NodeData } from "@/components/Graph/types";
 
 import { styles } from "./styles";
