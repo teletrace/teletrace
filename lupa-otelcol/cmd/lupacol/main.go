@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/epsagon/lupa/lupa-otelcol/collector"
+	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
 )
 
 func main() {
