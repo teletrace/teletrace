@@ -1,12 +1,11 @@
-package esclient
+package factory
 
 import (
 	"fmt"
-	"oss-tracing/pkg/esclient/interactor"
-	"oss-tracing/pkg/esclient/rawreqinteractor"
-	"oss-tracing/pkg/esclient/typedreqinteractor"
-
 	"go.uber.org/zap"
+	"oss-tracing/plugin/spanstorage/es/interactor"
+	"oss-tracing/plugin/spanstorage/es/interactor/rawreqinteractor"
+	"oss-tracing/plugin/spanstorage/es/interactor/typedreqinteractor"
 )
 
 func NewInteractor(logger *zap.Logger, cfg interactor.ElasticConfig) (*interactor.Interactor, error) {

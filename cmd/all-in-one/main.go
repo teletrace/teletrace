@@ -5,12 +5,12 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 	"syscall"
 
 	"oss-tracing/cmd/collector/app"
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/plugin/spanstorage/es"
 

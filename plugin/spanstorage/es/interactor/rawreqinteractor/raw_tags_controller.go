@@ -5,8 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )

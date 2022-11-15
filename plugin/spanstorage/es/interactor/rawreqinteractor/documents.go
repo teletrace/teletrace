@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/esclient/interactor"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 	"time"
 
 	"github.com/elastic/go-elasticsearch/v8/esutil"

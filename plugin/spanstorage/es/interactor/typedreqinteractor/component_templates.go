@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http/httputil"
-	"oss-tracing/pkg/esclient/interactor"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/cluster/putcomponenttemplate"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"

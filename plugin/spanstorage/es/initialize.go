@@ -3,7 +3,7 @@ package es
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/esclient/interactor"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 
 	"go.uber.org/zap"
 )

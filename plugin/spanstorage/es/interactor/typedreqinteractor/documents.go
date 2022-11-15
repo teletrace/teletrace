@@ -4,16 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"oss-tracing/pkg/esclient/typedreqinteractor/querybuilder"
-	"oss-tracing/pkg/model"
-	internalspan "oss-tracing/pkg/model/internalspan/v1"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
-
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/sortorder"
 	"github.com/mitchellh/mapstructure"
+	"net/http"
+	"oss-tracing/pkg/model"
+	internalspan "oss-tracing/pkg/model/internalspan/v1"
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/plugin/spanstorage/es/interactor/typedreqinteractor/querybuilder"
 )
 
 func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {

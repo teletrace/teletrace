@@ -3,9 +3,9 @@ package es
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/esclient/interactor"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 )
 
 type spanReader struct {

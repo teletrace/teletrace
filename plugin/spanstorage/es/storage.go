@@ -3,10 +3,10 @@ package es
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/esclient"
-	"oss-tracing/pkg/esclient/config"
-	"oss-tracing/pkg/esclient/interactor"
 	spanstorage "oss-tracing/pkg/spanstorage"
+	config2 "oss-tracing/plugin/spanstorage/es/config"
+	"oss-tracing/plugin/spanstorage/es/factory"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 
 	"go.uber.org/zap"
 )
@@ -21,7 +21,7 @@ type storage struct {
 func NewStorage(ctx context.Context, logger *zap.Logger, cfg interactor.ElasticConfig) (spanstorage.Storage, error) {
 	var err error
 
-	esInteractor, err := esclient.NewInteractor(logger, cfg)
+	esInteractor, err := factory.NewInteractor(logger, cfg)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not create ES interactor: %+v", err)
@@ -35,13 +35,13 @@ func (s *storage) Initialize() error {
 
 	forceCreate := s.cfg.ForceCreate
 
-	it, err := config.NewIndexTemplate(s.cfg.Index)
+	it, err := config2.NewIndexTemplate(s.cfg.Index)
 
 	if err != nil {
 		return fmt.Errorf("Could not generate Index Template %+v", err)
 	}
 
-	ct, err := config.NewComponentTemplate()
+	ct, err := config2.NewComponentTemplate()
 
 	if err != nil {
 		return fmt.Errorf("Could not generate Component Template: %+v", err)

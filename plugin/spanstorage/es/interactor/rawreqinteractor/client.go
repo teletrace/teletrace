@@ -1,7 +1,7 @@
 package rawreqinteractor
 
 import (
-	"oss-tracing/pkg/esclient/interactor"
+	"oss-tracing/plugin/spanstorage/es/interactor"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"go.uber.org/zap"
