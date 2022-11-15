@@ -1,12 +1,14 @@
 import { Node } from "reactflow";
 
 import { TraceData } from "@/features/trace";
+import { InternalSpan } from "@/types/span";
 
 export interface NodeData {
   name: string;
   image: string;
   type: string;
   color: NodeColor;
+  span_data: InternalSpan;
 }
 
 export interface EdgeData {
@@ -34,3 +36,10 @@ export enum NodeColor {
   ERR_NORMAL = "#EF5854",
   ERR_HOVER = "#B52D29",
 }
+
+export type GraphNode = {
+  serviceName: string;
+  systemType: string;
+  systemIcon: string;
+  spans: InternalSpan[];
+};
