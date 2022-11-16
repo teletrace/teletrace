@@ -82,3 +82,9 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/epsagon/lupa/model => ./model
+
+replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
+
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./lupa-otelcol/exporter/elasticsearchexporter
