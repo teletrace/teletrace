@@ -254,6 +254,20 @@ export const theme = createTheme({
         },
       },
     },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#2B2D32",
+        },
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#2B2D32",
+        },
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
@@ -310,6 +324,14 @@ export const theme = createTheme({
           "&.Mui-disabled": {
             color: greyScaleColors.grey500,
           },
+        },
+      },
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: "white",
+          paddingBottom: "8px",
         },
       },
     },
