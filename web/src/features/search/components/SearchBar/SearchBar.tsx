@@ -47,6 +47,7 @@ export function SearchBar() {
         />
         {filters.map((filter) => (
           <Chip
+            size="small"
             label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
             onDelete={() => handleFilterDelete(filter)}
           />
