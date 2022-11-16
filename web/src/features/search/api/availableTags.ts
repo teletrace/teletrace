@@ -5,8 +5,9 @@ import { AvailableTagsResponse } from "../types/availableTags";
 /**
  * fetch available tags
  */
-export const fetchAvailableTags = (_nextToken?: string) => {
-  // TODO: lint fails on 'nextToken' since it is currently not used, underscore temporarilt solves it
+/* eslint-disable */
+export const fetchAvailableTags = (nextToken?: string) => {
+  // TODO: remove es-lint disabled once nextToken is used
   return Promise.reject<AvailableTagsResponse>("not implemented");
 };
 
