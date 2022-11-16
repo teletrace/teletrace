@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/collector/component"
-	otelcfg "go.opentelemetry.io/collector/config"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.opentelemetry.io/collector/pdata/ptrace/ptraceotlp"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
@@ -144,7 +143,7 @@ func TestReceiverConfig(t *testing.T) {
 func TestOtelHostNoopMethods(t *testing.T) {
 	host := otelHost{}
 
-	assert.Nil(t, host.GetFactory(component.KindReceiver, otelcfg.TracesDataType))
+	assert.Nil(t, host.GetFactory(component.KindReceiver, component.DataTypeTraces))
 	assert.Nil(t, host.GetExtensions())
 	assert.Nil(t, host.GetExporters())
 }
