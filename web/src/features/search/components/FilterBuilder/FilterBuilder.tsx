@@ -152,10 +152,12 @@ export const FilterBuilderDialog = ({
             ) : null}
           </Stack>
         </DialogContent>
-        <Divider />
+        <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Apply</Button>
+          <Button variant="contained" type="submit">
+            Apply
+          </Button>
         </DialogActions>
       </form>
     </Popover>
