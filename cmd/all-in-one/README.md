@@ -9,7 +9,7 @@ This package is using [config options](../../pkg/config/README.md) provided by `
 ## Development
 
 ```sh
-go run .
+go run . --config ../../lupa-otelcol/config/default-config.yaml
 ```
 
 ## Usage Examples
