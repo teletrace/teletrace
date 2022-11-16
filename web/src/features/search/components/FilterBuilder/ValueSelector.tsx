@@ -41,13 +41,13 @@ export const ValueSelector = ({
       },
     } as TagValuesRequest);
 
-  const { data: tagValues } = useTagValues(tag, tagValuesRequest);
+  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
 
   const tagOptions = tagValues?.pages
     .flatMap((page) => page.values)
     .sort((a, b) => b.count - a.count);
 
-  const errorHelperText = error ? "value is required" : "";
+  const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -79,6 +79,7 @@ export const ValueSelector = ({
           <Autocomplete
             multiple
             size="small"
+            loading={isLoading}
             disableCloseOnSelect
             value={getSelectedValues()}
             id={"value-selector"}

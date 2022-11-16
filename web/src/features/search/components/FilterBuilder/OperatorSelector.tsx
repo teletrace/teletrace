@@ -7,12 +7,12 @@ import { Operator, operatorsList } from "../../types/spanQuery";
 import { styles } from "./styles";
 
 export type OperatorSelectorProps = {
-  operator: string;
+  value: string;
   onChange: (value: Operator) => void;
 };
 
 export const OperatorSelector = ({
-  operator,
+  value,
   onChange,
 }: OperatorSelectorProps) => {
   const handleChange = (event: SelectChangeEvent) => {
@@ -22,12 +22,7 @@ export const OperatorSelector = ({
   return (
     <FormControl required sx={styles.operatorSelector}>
       <FormLabel required={false}>Operator</FormLabel>
-      <Select
-        id="operator"
-        size="small"
-        value={operator}
-        onChange={handleChange}
-      >
+      <Select id="operator" size="small" value={value} onChange={handleChange}>
         {operatorsList?.map((operator) => (
           <MenuItem key={operator} value={operator}>
             {operator.replaceAll("_", " ")}

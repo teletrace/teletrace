@@ -8,7 +8,7 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
-import { availableTag } from "../../types/availableTags";
+import { AvailableTag } from "../../types/availableTags";
 import {
   KeyValueFilter,
   Operator,
@@ -52,7 +52,7 @@ export const FilterBuilderDialog = ({
   anchorEl,
   onApply,
 }: FilterDialogProps) => {
-  const [filter, setFilter] = useState<availableTag | null>(null);
+  const [filter, setFilter] = useState<AvailableTag | null>(null);
   const [operator, setOperator] = useState<Operator>("in");
   const [value, setValue] = useState<ValueTypes>([]);
   const [valueSelectMode, setValueSelectMode] = useState<ValueInputMode>(
@@ -129,7 +129,7 @@ export const FilterBuilderDialog = ({
           <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
               <FilterSelector
-                filter={filter}
+                value={filter}
                 onChange={(value) => {
                   setFilter(value);
                   setFormErrors({ ...formErrors, filter: false });
@@ -137,7 +137,7 @@ export const FilterBuilderDialog = ({
                 error={formErrors.filter}
               />
               <OperatorSelector
-                operator={operator}
+                value={operator}
                 onChange={handleOperatorChange}
               />
             </Stack>

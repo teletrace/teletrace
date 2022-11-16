@@ -11,7 +11,7 @@ export function SearchBar() {
   const [filters, setFilters] = useState<SearchFilter[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const handleClickOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true);
     setAnchorEl(event.currentTarget);
   };
@@ -20,11 +20,11 @@ export function SearchBar() {
     setOpen(false);
   };
 
-  const addFilter = (filter: SearchFilter) => {
+  const onFilterAdded = (filter: SearchFilter) => {
     setFilters([...filters, filter]);
   };
 
-  const handleFilterDelete = (filter: SearchFilter) => {
+  const onFilterDeleted = (filter: SearchFilter) => {
     setFilters(filters.filter((f) => f !== filter));
   };
 
@@ -35,14 +35,14 @@ export function SearchBar() {
           variant="contained"
           size="small"
           startIcon={<FilterList />}
-          onClick={handleClickOpen}
+          onClick={handleOpen}
         >
           Add Filter
         </Button>
         <FilterBuilderDialog
           open={open}
           onClose={handleClose}
-          onApply={addFilter}
+          onApply={onFilterAdded}
           anchorEl={anchorEl}
         />
         {filters.map((filter) => (
@@ -50,7 +50,7 @@ export function SearchBar() {
             key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
             size="small"
             label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
-            onDelete={() => handleFilterDelete(filter)}
+            onDelete={() => onFilterDeleted(filter)}
           />
         ))}
       </Stack>

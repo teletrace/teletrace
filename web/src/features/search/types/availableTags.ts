@@ -1,13 +1,13 @@
-export type availableTag = {
+export type AvailableTag = {
   name: string;
   type: string;
 };
 
-export type availableTagsRequest = {
+export type AvailableTagsRequest = {
   metadata?: { nextToken: string };
 };
 
-export type availableTagsResponse = {
-  tags: availableTag[];
+export type AvailableTagsResponse = {
+  tags: AvailableTag[];
   metadata?: { nextToken: string };
 };

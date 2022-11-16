@@ -2,21 +2,21 @@ import { Autocomplete, FormLabel, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
 import { useAvailableTags } from "../../api/availableTags";
-import { availableTag } from "../../types/availableTags";
+import { AvailableTag } from "../../types/availableTags";
 import { styles } from "./styles";
 
-interface FilterSelectorProps {
-  filter: availableTag | null;
-  onChange: (f: availableTag | null) => void;
+export type FilterSelectorProps = {
+  value: AvailableTag | null;
+  onChange: (f: AvailableTag | null) => void;
   error: boolean;
-}
+};
 
 export const FilterSelector = ({
-  filter,
+  value,
   onChange,
   error,
 }: FilterSelectorProps) => {
-  const { data: availableTags } = useAvailableTags();
+  const { data: availableTags, isLoading } = useAvailableTags();
 
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.tags
@@ -24,7 +24,7 @@ export const FilterSelector = ({
 
   const handleChange = (
     event: React.SyntheticEvent<Element, Event>,
-    value: availableTag | null
+    value: AvailableTag | null
   ) => {
     onChange(value);
   };
@@ -33,7 +33,8 @@ export const FilterSelector = ({
     <FormControl required sx={styles.filterSelector}>
       <FormLabel required={false}>Key</FormLabel>
       <Autocomplete
-        value={filter}
+        loading={isLoading}
+        value={value}
         id="filter"
         size="small"
         options={availableTagsOptions || []}
@@ -42,7 +43,7 @@ export const FilterSelector = ({
           <TextField
             {...params}
             error={error}
-            helperText={error ? "filter is required" : ""}
+            helperText={error ? "Filter is required" : ""}
           />
         )}
         onChange={handleChange}
