@@ -1,18 +1,16 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"oss-tracing/cmd/collector/app"
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
-	"oss-tracing/plugin/spanstorage/es"
+
+	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
 
 	"go.uber.org/zap"
 )
@@ -29,34 +27,16 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	storage, err := es.NewStorage(context.Background(), logger, interactor.NewElasticConfig(cfg))
-	if err != nil {
-		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
-	}
+	// storage.SpanReader is under development - temporarily passed as nil
+	api := api.NewAPI(logger, cfg, nil)
 
-	sw, err := storage.CreateSpanWriter()
-	if err != nil {
-		logger.Fatal("Failed to create Span Writer to Storage", zap.Error(err))
-	}
-
-	sr, err := storage.CreateSpanReader()
-	if err != nil {
-		logger.Fatal("Failed to create Span Reader from Storage", zap.Error(err))
-	}
-
-	api := api.NewAPI(logger, cfg, &sr)
-
-	collector, err := app.NewCollector(cfg, logger, &sw)
+	collector, err := collector.NewCollector()
 	if err != nil {
 		logger.Fatal("Failed to initialize collector", zap.Error(err))
 	}
 
 	signalsChan := make(chan os.Signal, 1)
 	signal.Notify(signalsChan, os.Interrupt, syscall.SIGTERM)
-
-	if err := storage.Initialize(); err != nil {
-		logger.Fatal("Failed to initialize spans storage", zap.Error(err))
-	}
 
 	go startAPI(logger, api)
 	go startCollector(logger, collector)
@@ -65,19 +45,16 @@ func main() {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
 		break
 	}
-
-	collector.Stop()
-	sw.Close(context.Background())
 }
 
 func startAPI(logger *zap.Logger, api *api.API) {
 	if err := api.Start(); err != nil {
-		logger.Fatal("API server crashed", zap.Error(err))
+		logger.Fatal("API stopped with an error", zap.Error(err))
 	}
 }
 
-func startCollector(logger *zap.Logger, collector *app.Collector) {
+func startCollector(logger *zap.Logger, collector *collector.Collector) {
 	if err := collector.Start(); err != nil {
-		logger.Fatal("Failed to start collector", zap.Error(err))
+		logger.Fatal("Collector stopped with an error", zap.Error(err))
 	}
 }
