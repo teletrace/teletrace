@@ -154,8 +154,10 @@ export const FilterBuilderDialog = ({
         </DialogContent>
         <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" type="submit">
+          <Button size="small" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button size="small" variant="contained" type="submit">
             Apply
           </Button>
         </DialogActions>

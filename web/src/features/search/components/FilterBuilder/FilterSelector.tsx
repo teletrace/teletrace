@@ -31,7 +31,7 @@ export const FilterSelector = ({
   };
 
   return (
-    <FormControl error={error} required sx={styles.filterSelector}>
+    <FormControl required sx={styles.filterSelector}>
       <FormLabel required={false}>Key</FormLabel>
       <Autocomplete
         value={filter}

@@ -79,7 +79,7 @@ export const ValueSelector = ({
 
   return (
     <>
-      <FormControl required sx={styles.valueSelector} error={error}>
+      <FormControl required sx={styles.valueSelector}>
         <FormLabel required={false}>Value</FormLabel>
         {valueInputMode === "select" ? (
           <Autocomplete
