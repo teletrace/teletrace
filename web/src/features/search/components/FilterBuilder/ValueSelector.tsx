@@ -41,23 +41,10 @@ export const ValueSelector = ({
 
   const { data: tagValues } = useTagValues(tag, tagValuesRequest);
 
-  // const tagOptions = tagValues?.pages.flatMap((page) => page.values).sort((a, b) => b.count - a.count);
+  const tagOptions = tagValues?.pages
+    .flatMap((page) => page.values)
+    .sort((a, b) => b.count - a.count);
 
-  // TODO shaqued: delete
-  const tagOptions = [
-    {
-      value: "valA",
-      count: 5,
-    },
-    {
-      value: "valB",
-      count: 10,
-    },
-    {
-      value: "valC",
-      count: 1,
-    },
-  ].sort((a, b) => b.count - a.count);
   const errorHelperText = error ? "value is required" : "";
 
   const handleInputChange = (event: any) => {

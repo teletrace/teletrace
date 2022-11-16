@@ -17,14 +17,9 @@ export const FilterSelector = ({
 }: FilterSelectorProps) => {
   const { data: availableTags } = useAvailableTags();
 
-  // const availableTagsOptions = availableTags?.pages
-  //   .flatMap((page) => page.tags)
-  //   ?.filter((tag) => tag.name.includes(search));
-
-  const availableTagsOptions: availableTag[] = [
-    { name: "resource.name", type: "string" },
-    { name: "resource.type", type: "string" },
-  ];
+  const availableTagsOptions = availableTags?.pages.flatMap(
+    (page) => page.tags
+  );
 
   const handleChange = (event: any, value: availableTag | null) => {
     onChange(value);
@@ -37,7 +32,7 @@ export const FilterSelector = ({
         value={filter}
         id="filter"
         size="small"
-        options={availableTagsOptions}
+        options={availableTagsOptions || []}
         getOptionLabel={(option) => option.name}
         renderInput={(params) => (
           <TextField
