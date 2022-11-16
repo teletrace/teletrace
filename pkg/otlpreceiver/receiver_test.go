@@ -78,8 +78,8 @@ func createTracesTestSpan(spanName string) ptrace.Traces {
 }
 
 func exportTraces(grpcClient *grpc.ClientConn, td ptrace.Traces) error {
-	otlpClient := ptraceotlp.NewClient(grpcClient)
-	req := ptraceotlp.NewRequestFromTraces(td)
+	otlpClient := ptraceotlp.NewGRPCClient(grpcClient)
+	req := ptraceotlp.NewExportRequestFromTraces(td)
 	_, err := otlpClient.Export(context.Background(), req)
 	return err
 }
