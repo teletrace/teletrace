@@ -6,14 +6,20 @@ import {
   Popover,
 } from "@mui/material";
 import { Stack } from "@mui/system";
+import React, { useState } from "react";
+
+import { availableTag } from "../../types/availableTags";
+import {
+  KeyValueFilter,
+  Operator,
+  SearchFilter,
+  ValueInputMode,
+  ValueTypes,
+} from "../../types/spanQuery";
 import { FilterSelector } from "./FilterSelector";
 import { OperatorSelector } from "./OperatorSelector";
-import { ValueSelector } from "./ValueSelector";
 import { styles } from "./styles";
-import React, { useState } from "react";
-import { availableTag } from "../../types/availableTags";
-import { KeyValueFilter, Operator, SearchFilter } from "../../types/spanQuery";
-import { ValueTypes, ValueInputMode } from "../../types/spanQuery";
+import { ValueSelector } from "./ValueSelector";
 
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | null;
@@ -91,7 +97,6 @@ export const FilterBuilderDialog = ({
 
   const handleApply = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    debugger;
     const errors = validateForm();
     if (errors.filter || errors.value) {
       setFormErrors(errors);

@@ -1,6 +1,3 @@
-import FormControl from "@mui/material/FormControl";
-import { styles } from "./styles";
-import { ValueTypes, ValueInputMode } from "../../types/spanQuery";
 import {
   Autocomplete,
   FormLabel,
@@ -9,9 +6,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useTagValues } from "../../api/tagValues";
+import FormControl from "@mui/material/FormControl";
+
 import { formatNumber } from "@/utils/format";
+
+import { useTagValues } from "../../api/tagValues";
+import { ValueInputMode, ValueTypes } from "../../types/spanQuery";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
+import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
@@ -47,11 +49,16 @@ export const ValueSelector = ({
 
   const errorHelperText = error ? "value is required" : "";
 
-  const handleInputChange = (event: any) => {
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     onChange(event?.target?.value ?? "");
   };
 
-  const handleSelectChange = (event: any, value: TagValue[]) => {
+  const handleSelectChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    value: TagValue[]
+  ) => {
     onChange(value.map((v) => v.value.toString()));
   };
 

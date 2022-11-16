@@ -1,8 +1,9 @@
+import { Autocomplete, FormLabel, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import { styles } from "./styles";
+
 import { useAvailableTags } from "../../api/availableTags";
 import { availableTag } from "../../types/availableTags";
-import { Autocomplete, FormLabel, TextField } from "@mui/material";
+import { styles } from "./styles";
 
 interface FilterSelectorProps {
   filter: availableTag | null;
@@ -21,7 +22,10 @@ export const FilterSelector = ({
     (page) => page.tags
   );
 
-  const handleChange = (event: any, value: availableTag | null) => {
+  const handleChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    value: availableTag | null
+  ) => {
     onChange(value);
   };
 

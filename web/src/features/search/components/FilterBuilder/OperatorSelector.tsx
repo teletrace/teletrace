@@ -1,9 +1,10 @@
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { styles } from "./styles";
-import { Operator, operatorsList } from "../../types/spanQuery";
 import { FormLabel } from "@mui/material";
+import FormControl from "@mui/material/FormControl";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+
+import { Operator, operatorsList } from "../../types/spanQuery";
+import { styles } from "./styles";
 
 export type OperatorSelectorProps = {
   operator: string;

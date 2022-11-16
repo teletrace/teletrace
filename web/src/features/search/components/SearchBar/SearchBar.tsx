@@ -2,8 +2,8 @@ import { FilterList } from "@mui/icons-material";
 import { Button, Chip, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
-import { SearchFilter } from "../../types/spanQuery";
 
+import { SearchFilter } from "../../types/spanQuery";
 import { FilterBuilderDialog } from "../FilterBuilder";
 
 export function SearchBar() {
@@ -47,6 +47,7 @@ export function SearchBar() {
         />
         {filters.map((filter) => (
           <Chip
+            key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
             size="small"
             label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
             onDelete={() => handleFilterDelete(filter)}
