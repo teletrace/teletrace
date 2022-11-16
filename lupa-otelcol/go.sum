@@ -99,10 +99,6 @@ github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.m
 github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
 github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021/go.mod h1:AFq3mo9L8Lqqiid3OhADV3RfLJnjiw63cSpi+fDTRC0=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221115133446-f34560b74e8c h1:0GjYN8MXqFAO6862hlIGhmXJSLyYoN2Lm0ow+YAEJjk=
-github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221115133446-f34560b74e8c/go.mod h1:B2wBFMhNCtU19ogGqcVO0bGzBhxdk7s1A4+q0xb4NeA=
-github.com/epsagon/lupa/model v0.0.0-20221113102914-75764b031422 h1:tkWQiErDxmN4mm4MxYVqGZEWBTeqcUbUfe8oRpzZlYk=
-github.com/epsagon/lupa/model v0.0.0-20221113102914-75764b031422/go.mod h1:o94fVDm8rZNYEoOFA2ptD5APiV1S4XQXxR3KVHIHVU0=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/color v1.9.0/go.mod h1:eQcE1qtQxscV5RaZvpXrrb8Drkc3/DdQ+uUYCNjL+zU=
 github.com/fatih/structs v1.1.0/go.mod h1:9NiDSp5zOcgEDl+j00MP/WkGVPOlPRLejGD8Ga6PJ7M=
