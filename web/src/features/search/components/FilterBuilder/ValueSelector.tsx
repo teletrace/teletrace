@@ -1,10 +1,6 @@
 import FormControl from "@mui/material/FormControl";
 import { styles } from "./styles";
-import {
-  ValueTypes,
-  ValueInputMode,
-  SearchRequest,
-} from "../../types/spanQuery";
+import { ValueTypes, ValueInputMode } from "../../types/spanQuery";
 import {
   Autocomplete,
   FormLabel,
@@ -23,6 +19,7 @@ export type ValueSelectorProps = {
   value: ValueTypes;
   valueInputMode: ValueInputMode;
   onChange: (value: ValueTypes) => void;
+  error: boolean;
 };
 
 export const ValueSelector = ({
@@ -31,6 +28,7 @@ export const ValueSelector = ({
   value,
   valueInputMode,
   onChange,
+  error,
 }: ValueSelectorProps) => {
   const tagValuesRequest =
     query ??
@@ -60,6 +58,7 @@ export const ValueSelector = ({
       count: 1,
     },
   ].sort((a, b) => b.count - a.count);
+  const errorHelperText = error ? "value is required" : "";
 
   const handleInputChange = (event: any) => {
     onChange(event?.target?.value ?? "");
@@ -80,16 +79,24 @@ export const ValueSelector = ({
 
   return (
     <>
-      <FormControl sx={styles.valueSelector}>
-        <FormLabel>Value</FormLabel>
+      <FormControl required sx={styles.valueSelector} error={error}>
+        <FormLabel required={false}>Value</FormLabel>
         {valueInputMode === "select" ? (
           <Autocomplete
             multiple
+            size="small"
             disableCloseOnSelect
             value={getSelectedValues()}
             id={"value-selector"}
             options={tagOptions || []}
             getOptionLabel={(option) => option.value.toString()}
+            renderInput={(params) => (
+              <TextField
+                error={error}
+                helperText={errorHelperText}
+                {...params}
+              />
+            )}
             renderOption={(props, option) => (
               <ListItem {...props}>
                 <Stack
@@ -102,12 +109,14 @@ export const ValueSelector = ({
                 </Stack>
               </ListItem>
             )}
-            renderInput={(params) => <TextField {...params} />}
             onChange={handleSelectChange}
           ></Autocomplete>
         ) : null}
         {valueInputMode === "text" ? (
           <TextField
+            error={error}
+            helperText={errorHelperText}
+            size="small"
             variant="outlined"
             value={value}
             onChange={handleInputChange}
@@ -115,6 +124,8 @@ export const ValueSelector = ({
         ) : null}
         {valueInputMode === "numeric" ? (
           <TextField
+            error={error}
+            helperText={errorHelperText}
             size="small"
             variant="outlined"
             type="number"

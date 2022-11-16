@@ -19,9 +19,14 @@ export const OperatorSelector = ({
   };
 
   return (
-    <FormControl sx={styles.operatorSelector}>
-      <FormLabel>Operator</FormLabel>
-      <Select id="operator" value={operator} onChange={handleChange}>
+    <FormControl required sx={styles.operatorSelector}>
+      <FormLabel required={false}>Operator</FormLabel>
+      <Select
+        id="operator"
+        size="small"
+        value={operator}
+        onChange={handleChange}
+      >
         {operatorsList?.map((operator) => (
           <MenuItem key={operator} value={operator}>
             {operator.replaceAll("_", " ")}
