@@ -9,16 +9,11 @@ processors:
 
 exporters:
   elasticsearch:
-
-  # Temporary until ES implementation, used for build purposes
-  otlp:
-    endpoint: example:4320
-    tls:
-      insecure: true
+    endpoints: ["http://localhost:9200"]
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp]
+      exporters: [elasticsearch]

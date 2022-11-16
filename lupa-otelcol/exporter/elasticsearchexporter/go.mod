@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/elastic/go-elasticsearch/v8 v8.4.0
-	github.com/epsagon/lupa/model v0.0.0-20221113102914-75764b031422
+	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333
 	github.com/stretchr/testify v1.8.1
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/pdata v0.64.1
@@ -39,3 +39,5 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/epsagon/lupa/model => ../../../model
