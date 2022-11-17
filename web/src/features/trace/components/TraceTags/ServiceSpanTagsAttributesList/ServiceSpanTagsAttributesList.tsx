@@ -25,7 +25,12 @@ export const ServiceSpanTagsAttributesList = ({
   };
 
   return (
-    <Accordion expanded={expanded} onChange={handleChange} disableGutters={true} sx={styles.accordion}>
+    <Accordion
+      expanded={expanded}
+      onChange={handleChange}
+      disableGutters={true}
+      sx={styles.accordion}
+    >
       <AccordionSummary
         expandIcon={<ArrowRightIcon sx={styles.arrowIcon} />}
         sx={styles.accodionSummary}
