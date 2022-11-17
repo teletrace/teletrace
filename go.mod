@@ -7,18 +7,17 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
-	go.opentelemetry.io/collector v0.64.1
+	go.opentelemetry.io/collector v0.64.1 // indirect
 	go.opentelemetry.io/collector/pdata v0.64.1
-	go.opentelemetry.io/otel/trace v1.11.1
+	go.opentelemetry.io/otel/trace v1.11.1 // indirect
 	go.uber.org/zap v1.23.0
-	google.golang.org/grpc v1.50.1
+	google.golang.org/grpc v1.50.1 // indirect
 )
 
 require (
 	github.com/creasty/defaults v1.6.0
 	github.com/epsagon/lupa/lupa-otelcol v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.4.0
-	go.opentelemetry.io/collector/receiver/otlpreceiver v0.64.1
 )
 
 require (
@@ -61,6 +60,7 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/collector/processor/batchprocessor v0.64.1 // indirect
+	go.opentelemetry.io/collector/receiver/otlpreceiver v0.64.1 // indirect
 	go.opentelemetry.io/collector/semconv v0.64.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.36.4 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.36.4 // indirect
