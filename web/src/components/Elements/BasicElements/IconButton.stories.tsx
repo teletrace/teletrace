@@ -1,6 +1,7 @@
-import { theme } from "@/styles";
 import { Box, IconButton } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
+
+import { theme } from "@/styles";
 
 import { PhotoCamera } from "../ResourceIcon";
 
