@@ -1,3 +1,4 @@
+import { theme } from "@/styles";
 import { Box, IconButton } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
@@ -10,7 +11,7 @@ export default {
 
 const Template: ComponentStory<typeof IconButton> = (args) => (
   <Box>
-    <IconButton color="primary" aria-label="upload picture" {...args}>
+    <IconButton aria-label="upload picture" {...args}>
       <PhotoCamera />
     </IconButton>
   </Box>
@@ -18,6 +19,7 @@ const Template: ComponentStory<typeof IconButton> = (args) => (
 
 export const Primary = Template.bind({});
 export const Secondary = Template.bind({});
+export const FromProps = Template.bind({});
 
 Primary.args = {
   color: "primary",
@@ -25,4 +27,10 @@ Primary.args = {
 
 Secondary.args = {
   color: "secondary",
+};
+
+FromProps.args = {
+  sx: {
+    color: theme.palette.grey[200],
+  },
 };
