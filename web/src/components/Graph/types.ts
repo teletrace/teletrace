@@ -43,11 +43,10 @@ export enum NodeColor {
 export type GraphNode = {
   serviceName: string;
   systemType: string;
+  image: string;
+  hasError: boolean;
+  duration: number[];
   spansIds: string[];
   parentSpansIds: string[];
   spans: InternalSpan[];
-};
-
-export type SpanServiceMap = {
-  [spanId: string]: GraphNode;
 };
