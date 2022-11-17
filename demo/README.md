@@ -10,6 +10,8 @@ graph TD;
   otel_collector-->lupa_otel_collector;
   lupa_otel_collector-->elasticsearch;
   kibana-->elasticsearch;
+  API-->elasticsearch;
+  UI-->API;
 ```
 
 ## Usage
