@@ -16,7 +16,7 @@ export const ServiceSpanTagsAttributes = ({
     <AccordionDetails sx={styles.accordionDetails}>
       <Typography sx={styles.typography}>{title}</Typography>
       <Typography sx={{ ...styles.typography, ...styles.typographyBold }}>
-        {content}
+        {content.toString()}
       </Typography>
     </AccordionDetails>
   );
