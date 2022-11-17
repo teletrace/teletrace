@@ -4,9 +4,9 @@ services:
     build:
       dockerfile: ./cmd/all-in-one/Dockerfile
       context: ../
-    command: ["--config=/etc/default-config.yaml"]
+    command: ["--config=/etc/lupa-collector-config.yaml"]
     volumes:
-      - ../lupa-otelcol/config/default-config.yaml:/etc/default-config.yaml
+      - ./lupa-collector-config.yaml:/etc/lupa-collector-config.yaml
     ports:
       - "4317:4317"
       - "4318:4318"
@@ -35,7 +35,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4320
       - DEMO_SERVER_ENDPOINT=http://demo-server:7080/hello
     depends_on:
-      - otel-server
+      - demo-server
       - otel-collector
 
   demo-server:
