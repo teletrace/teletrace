@@ -25,7 +25,7 @@ func createOTLPTraces() ptrace.Traces {
 	for i := 0; i < 2; i++ {
 		resourceSpans := td.ResourceSpans().AppendEmpty()
 		resource := resourceSpans.Resource()
-		resource.Attributes().InsertString("attribute", fmt.Sprintf("[Resource-%d]attribute", i))
+		resource.Attributes().PutStr("attribute", fmt.Sprintf("[Resource-%d]attribute", i))
 		resource.SetDroppedAttributesCount(1)
 
 		for j := 0; j < 2; j++ {
@@ -33,20 +33,20 @@ func createOTLPTraces() ptrace.Traces {
 			scope := scopeSpans.Scope()
 			scope.SetName(fmt.Sprintf("[InstrumentationScope-%d]Name", j))
 			scope.SetVersion(fmt.Sprintf("[InstrumentationScope-%d]Version", j))
-			scope.Attributes().InsertString("attribute", fmt.Sprintf("[InstrumentationScope-%d]attribute", j))
+			scope.Attributes().PutStr("attribute", fmt.Sprintf("[InstrumentationScope-%d]attribute", j))
 			scope.SetDroppedAttributesCount(2)
 
 			for k := 0; k < 2; k++ {
 				span := scopeSpans.Spans().AppendEmpty()
-				span.SetTraceID(pcommon.NewTraceID([16]byte{1}))
-				span.SetSpanID(pcommon.NewSpanID([8]byte{2}))
-				span.SetTraceState(ptrace.TraceState(fmt.Sprintf("[Span-%d]TraceState", k)))
-				span.SetParentSpanID(pcommon.NewSpanID([8]byte{3}))
+				span.SetTraceID(pcommon.TraceID([16]byte{1}))
+				span.SetSpanID(pcommon.SpanID([8]byte{2}))
+				span.TraceState().FromRaw(fmt.Sprintf("[Span-%d]TraceState", k))
+				span.SetParentSpanID(pcommon.SpanID([8]byte{3}))
 				span.SetName(fmt.Sprintf("[Span-%d]Name", k))
 				span.SetKind(ptrace.SpanKindServer)
 				span.SetStartTimestamp(0)
 				span.SetEndTimestamp(10)
-				span.Attributes().InsertString("attribute", fmt.Sprintf("[Span-%d]attribute", k))
+				span.Attributes().PutStr("attribute", fmt.Sprintf("[Span-%d]attribute", k))
 				span.SetDroppedAttributesCount(3)
 				span.SetDroppedEventsCount(4)
 				span.SetDroppedLinksCount(5)
@@ -57,16 +57,16 @@ func createOTLPTraces() ptrace.Traces {
 					spanEvent := span.Events().AppendEmpty()
 					spanEvent.SetTimestamp(5)
 					spanEvent.SetName(fmt.Sprintf("[SpanEvent-%d]Name", l))
-					spanEvent.Attributes().InsertString("attribute", fmt.Sprintf("[SpanEvent-%d]attribute", l))
+					spanEvent.Attributes().PutStr("attribute", fmt.Sprintf("[SpanEvent-%d]attribute", l))
 					spanEvent.SetDroppedAttributesCount(6)
 				}
 
 				for m := 0; m < 2; m++ {
 					spanLink := span.Links().AppendEmpty()
-					spanLink.SetTraceID(pcommon.NewTraceID([16]byte{4}))
-					spanLink.SetSpanID(pcommon.NewSpanID([8]byte{5}))
-					spanLink.SetTraceState(ptrace.TraceState(fmt.Sprintf("[SpanLink-%d]TraceState", m)))
-					spanLink.Attributes().InsertString("attribute", fmt.Sprintf("[SpanLink-%d]attribute", m))
+					spanLink.SetTraceID(pcommon.TraceID([16]byte{4}))
+					spanLink.SetSpanID(pcommon.SpanID([8]byte{5}))
+					spanLink.TraceState().FromRaw(fmt.Sprintf("[SpanLink-%d]TraceState", m))
+					spanLink.Attributes().PutStr("attribute", fmt.Sprintf("[SpanLink-%d]attribute", m))
 					spanLink.SetDroppedAttributesCount(7)
 				}
 			}
@@ -89,8 +89,8 @@ func createExpectedInternalSpans() []*v1.InternalSpan {
 			DroppedAttributesCount: 6,
 		})
 		spanLinks = append(spanLinks, &v1.SpanLink{
-			TraceId:    pcommon.NewTraceID([16]byte{4}).HexString(),
-			SpanId:     pcommon.NewSpanID([8]byte{5}).HexString(),
+			TraceId:    pcommon.TraceID([16]byte{4}).HexString(),
+			SpanId:     pcommon.SpanID([8]byte{5}).HexString(),
 			TraceState: fmt.Sprintf("[SpanLink-%d]TraceState", i),
 			Attributes: v1.Attributes{
 				"attribute": fmt.Sprintf("[SpanLink-%d]attribute", i),
@@ -118,10 +118,10 @@ func createExpectedInternalSpans() []*v1.InternalSpan {
 			DroppedAttributesCount: 2,
 		})
 		spans = append(spans, &v1.Span{
-			TraceId:           pcommon.NewTraceID([16]byte{1}).HexString(),
-			SpanId:            pcommon.NewSpanID([8]byte{2}).HexString(),
+			TraceId:           pcommon.TraceID([16]byte{1}).HexString(),
+			SpanId:            pcommon.SpanID([8]byte{2}).HexString(),
 			TraceState:        fmt.Sprintf("[Span-%d]TraceState", i),
-			ParentSpanId:      pcommon.NewSpanID([8]byte{3}).HexString(),
+			ParentSpanId:      pcommon.SpanID([8]byte{3}).HexString(),
 			Name:              fmt.Sprintf("[Span-%d]Name", i),
 			Kind:              2, // SERVER
 			StartTimeUnixNano: 0,

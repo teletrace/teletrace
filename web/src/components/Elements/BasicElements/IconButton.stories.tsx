@@ -1,7 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
-import { PhotoCamera } from "../ResouceIcon";
+import { PhotoCamera } from "../ResourceIcon";
 
 export default {
   component: IconButton,

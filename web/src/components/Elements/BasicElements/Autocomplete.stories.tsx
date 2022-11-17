@@ -54,6 +54,15 @@ function CustomizedAutocomplete() {
       />
       <Autocomplete
         {...defaultProps}
+        size="small"
+        disablePortal
+        id="combo-box-small"
+        options={top100Films}
+        sx={{ width: 300 }}
+        renderInput={(params) => <TextField {...params} label="Movie Small" />}
+      />
+      <Autocomplete
+        {...defaultProps}
         id="disable-close-on-select"
         disableCloseOnSelect
         renderInput={(params) => (

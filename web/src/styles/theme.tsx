@@ -7,22 +7,13 @@ import "@fontsource/inter/600.css";
 
 import {
   errorActionColors,
-  greyScaleColors,
   primaryActionColors,
   secondaryActionColors,
   statusColors,
 } from "./colors";
 
-export const theme = createTheme({
+let theme = createTheme({
   palette: {
-    background: {
-      default: "#0B0B0D",
-      paper: "#0B0B0D",
-    },
-    error: {
-      contrastText: "#0B0B0D",
-      main: statusColors.errorLight,
-    },
     mode: "dark",
     primary: {
       contrastText: "#0B0B0D",
@@ -32,10 +23,34 @@ export const theme = createTheme({
       contrastText: "#0B0B0D",
       main: secondaryActionColors.secondary,
     },
+    error: {
+      contrastText: "#0B0B0D",
+      main: statusColors.errorLight,
+    },
     success: {
       main: statusColors.success,
     },
+    grey: {
+      50: "#F1F2FA",
+      100: "#E9EAF1",
+      200: "#D9DAE1",
+      300: "#B6B7BE",
+      400: "#96979E",
+      500: "#6E6F75",
+      600: "#5A5B61",
+      700: "#3B3C42",
+      800: "#2B2D32",
+      900: "#1B1C21",
+      A100: "#0B0B0D",
+    },
+    background: {
+      default: "#0B0B0D",
+      paper: "#0B0B0D",
+    },
   },
+});
+
+theme = createTheme(theme, {
   typography: {
     fontFamily: ['"Inter"', "sans-serif"].join(","),
     fontSize: 12,
@@ -44,14 +59,14 @@ export const theme = createTheme({
       fontStyle: "normal",
       fontWeight: "normal",
       letterSpacing: "0.15px",
-      lineHeight: "17px",
+      lineHeight: "20px",
     },
     body2: {
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: "bold",
       letterSpacing: "0.5px",
-      lineHeight: "17px",
+      lineHeight: "20px",
     },
     button: {
       alignItems: "center",
@@ -139,7 +154,7 @@ export const theme = createTheme({
       fontStyle: "normal",
       fontWeight: 500,
       letterSpacing: "0.15px",
-      lineHeight: "17px",
+      lineHeight: "20px",
     },
   },
   components: {
@@ -164,7 +179,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: "0px",
-          background: greyScaleColors.grey900,
+          background: theme.palette.grey[900],
         },
       },
     },
@@ -252,8 +267,12 @@ export const theme = createTheme({
             padding: "8px 16px 12px 4px",
           },
         },
+        paper: {
+          backgroundColor: theme.palette.grey[800],
+        },
       },
     },
+
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
@@ -262,7 +281,7 @@ export const theme = createTheme({
           margin: "0px 4px",
         },
         notchedOutline: {
-          border: `1px solid ${greyScaleColors.grey400}`,
+          border: `1px solid ${theme.palette.grey[400]}`,
           borderRadius: "8px",
         },
         root: {
@@ -280,7 +299,7 @@ export const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: greyScaleColors.grey900,
+          backgroundColor: theme.palette.grey[900],
           backgroundImage: "none",
           borderRadius: "8px",
           fontFamily: "Inter, sans-serif",
@@ -291,15 +310,44 @@ export const theme = createTheme({
     MuiTooltip: {
       styleOverrides: {
         arrow: {
-          color: greyScaleColors.grey800,
+          color: theme.palette.grey[800],
         },
         tooltip: {
-          backgroundColor: greyScaleColors.grey800,
+          backgroundColor: theme.palette.grey[800],
           borderRadius: "4px",
-          color: greyScaleColors.grey300,
+          color: theme.palette.grey[300],
           padding: "16px",
+        },
+      },
+    },
+    MuiSlider: {
+      styleOverrides: {
+        valueLabelLabel: {
+          fontSize: "14px",
+        },
+        root: {
+          "&.Mui-disabled": {
+            color: theme.palette.grey[500],
+          },
+        },
+      },
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: "white",
+          paddingBottom: "8px",
+        },
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: theme.palette.grey[800],
         },
       },
     },
   },
 });
+
+export { theme };

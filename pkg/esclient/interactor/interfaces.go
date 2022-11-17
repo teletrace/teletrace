@@ -2,8 +2,8 @@ package interactor
 
 import (
 	"context"
-	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/pkg/model/tagsquery/v1"
 )
 
 type Doc any
@@ -63,10 +63,10 @@ type DocumentController interface {
 
 type TagsController interface {
 	// Get all available tags
-	GetAvailableTags(ctx context.Context, request model.GetAvailableTagsRequest) (model.GetAvailableTagsResult, error)
+	GetAvailableTags(ctx context.Context, request tagsquery.GetAvailableTagsRequest) (tagsquery.GetAvailableTagsResponse, error)
 
 	// Get the values and appearance count of all tags as specified by request.Tags
-	GetTagsValues(ctx context.Context, request model.GetTagsValuesRequest) (model.GetTagsValuesResult, error)
+	GetTagsValues(ctx context.Context, request tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
 }
 
 type Interactor struct {
