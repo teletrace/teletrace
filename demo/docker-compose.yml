@@ -17,7 +17,7 @@ services:
 
   otel-collector:
     image: otel/opentelemetry-collector-contrib-dev:latest
-    command: ["--config=/etc/collector-config.yaml"]
+    command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     ports:
@@ -35,6 +35,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4320
       - DEMO_SERVER_ENDPOINT=http://demo-server:7080/hello
     depends_on:
+      - otel-server
       - otel-collector
 
   demo-server:
