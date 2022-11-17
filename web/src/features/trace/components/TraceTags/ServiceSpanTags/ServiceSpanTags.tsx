@@ -7,15 +7,19 @@ import ServiceSpanTagsAttributesList from "../ServiceSpanTagsAttributesList";
 import { styles } from "./styles";
 
 export const ServiceSpanTags = ({ span }: ServiceSpanProps) => {
+  const BASIC_TITLE = "Basic";
+  const ATTRIBUTES_TITLE = "Attributes";
+
   const record: Attributes = { application: "blog-site-prod" };
+
   return (
     <AccordionDetails sx={styles.accordionDetails}>
       <ServiceSpanTagsAttributesList
-        tagsTitle="Basic"
+        tagsTitle={BASIC_TITLE}
         tagsContent={record}
       />
       <ServiceSpanTagsAttributesList
-        tagsTitle="Attributes"
+        tagsTitle={ATTRIBUTES_TITLE}
         tagsContent={span.span.attributes}
       />
     </AccordionDetails>
