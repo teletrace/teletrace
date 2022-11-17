@@ -39,7 +39,7 @@ export const TraceView = () => {
             setIsLoading(false);
           }
         })
-        .catch((e) => console.log(e));
+        .catch(() => alert("something went wrong!!! Could not render graph"));
     }, 1000);
   }, []);
 
