@@ -1,4 +1,4 @@
-import { colors, OutlinedInputProps } from "@mui/material";
+import { colors } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import "@fontsource/inter/300.css";
 import "@fontsource/inter/400.css";

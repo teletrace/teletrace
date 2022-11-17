@@ -1,4 +1,3 @@
-import { theme } from "@/styles";
 import { Box, IconButton } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
