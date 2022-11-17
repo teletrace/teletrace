@@ -1,4 +1,4 @@
-import { Checkbox, Stack } from "@mui/material";
+import { Box, Checkbox, Stack } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };

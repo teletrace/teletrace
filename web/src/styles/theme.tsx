@@ -1,4 +1,4 @@
-import { colors } from "@mui/material";
+import { colors, OutlinedInputProps } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import "@fontsource/inter/300.css";
 import "@fontsource/inter/400.css";
@@ -370,6 +370,13 @@ theme = createTheme(theme, {
         },
       },
     },
+    // MuiInputLabel: {
+    //   styleOverrides: {
+    //     fontSize: "14px",
+    //     fontWeight: "normal",
+    //     margin: "0px 4px",
+    //   }
+    // },
     MuiPopover: {
       styleOverrides: {
         paper: {
