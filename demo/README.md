@@ -8,7 +8,7 @@ graph TD;
   demo_client-->otel_collector;
   otel_collector-->lupa_otel_collector;
   lupa_otel_collector-->elasticsearch;
-  elasticsearch-->kibana;
+  kibana-->elasticsearch;
 ```
 
 ## Usage
@@ -17,5 +17,6 @@ graph TD;
 docker compose up -d
 ```
 
-- UI is available at http://localhost:8080/
-- Use Kibana (http://localhost:5601/) to access the ingested spans.
+- UI - http://localhost:8080/
+- API - http://localhost:8080/v1/ping
+- Kibana (for accessing ingested traces) - http://localhost:5601/
