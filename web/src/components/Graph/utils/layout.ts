@@ -5,6 +5,8 @@ import { Edge, MarkerType, Node, Position } from "reactflow";
 import {
   EdgeColor,
   EdgeData,
+  GraphNode,
+  GraphNodeData,
   NodeColor,
   NodeData,
 } from "@/components/Graph/types";
@@ -70,84 +72,126 @@ export const createGraphLayout = async (
 };
 
 export const spansToGraphData = (spans: InternalSpan[]) => {
-  return spanArrayToGraphTree(spans);
+  const graphNodes = groupGraphNodesBySystemName(spanToGraphNodes(spans));
+  return graphNodesToGraphTree(graphNodes);
 };
 
-const getServiceType = (attr: Attributes, span_name: string) => {
-  const nodeData = {
+const span_service_map = new Map<string, GraphNodeData>();
+
+const spanServiceMap = (span_id: string, nodeData: GraphNodeData) => {
+  span_service_map.set(span_id, nodeData);
+};
+
+const createGraphNode = (s: InternalSpan): GraphNode => {
+  const nodeData = getGraphNodeData({
+    ...s.span.attributes,
+    ...s.resource.attributes,
+  });
+  const span_id = s.span.spanId;
+  spanServiceMap(span_id, nodeData);
+  return {
+    serviceName: nodeData.name,
+    systemType: nodeData.type,
+    spansIds: [span_id],
+    parentSpansIds: s.span.parentSpanId ? [s.span.parentSpanId] : [""],
+    spans: [{ ...s }],
+  };
+};
+
+const spanToGraphNodes = (spans: InternalSpan[]): GraphNode[] => {
+  const graphNodes: GraphNode[] = [];
+  spans.forEach((s) => {
+    graphNodes.push(createGraphNode(s));
+  });
+  return graphNodes;
+};
+
+const groupGraphNodesBySystemName = (graphNodes: GraphNode[]) => {
+  return graphNodes.reduce((m: GraphNode[], o: GraphNode) => {
+    const found = m.find(
+      (p) => p.systemType === o.systemType && p.serviceName === o.serviceName
+    );
+    if (found) {
+      found.spans = [...found.spans, ...o.spans];
+      found.spansIds = [...found.spansIds, ...o.spansIds];
+      found.parentSpansIds = [...found.parentSpansIds, ...o.parentSpansIds];
+    } else {
+      m.push(o);
+    }
+    return m;
+  }, []);
+};
+
+const getGraphNodeData = (attr: Attributes, span_name = ""): GraphNodeData => {
+  const graphNodeData = {
     name: span_name,
     image: "",
     type: "",
   };
   if (typeof attr["db.system"] === "string") {
     if (typeof attr["db.name"] === "string") {
-      nodeData.name = attr["db.name"];
+      graphNodeData.name = attr["db.name"];
     }
-    nodeData.image = attr["db.system"];
-    nodeData.type = attr["db.system"];
+    graphNodeData.image = attr["db.system"];
+    graphNodeData.type = attr["db.system"];
   } else if (typeof attr["messaging.system"] === "string") {
     if (typeof attr["messaging.destination"] === "string") {
-      nodeData.name = attr["messaging.destination"];
+      graphNodeData.name = attr["messaging.destination"];
     }
-    nodeData.image = attr["messaging.system"];
-    nodeData.type = attr["messaging.system"];
+    graphNodeData.image = attr["messaging.system"];
+    graphNodeData.type = attr["messaging.system"];
   } else if (typeof attr["rpc.system"] === "string") {
     if (typeof attr["rpc.service"] === "string") {
-      nodeData.name = attr["rpc.service"];
+      graphNodeData.name = attr["rpc.service"];
     }
-    nodeData.image = attr["rpc.system"];
-    nodeData.type = attr["rpc.system"];
+    graphNodeData.image = attr["rpc.system"];
+    graphNodeData.type = attr["rpc.system"];
   } else if (typeof attr["faas.trigger"] === "string") {
     if (typeof attr["faas.name"] === "string") {
-      nodeData.name = attr["faas.name"];
+      graphNodeData.name = attr["faas.name"];
     }
-    nodeData.image = "lambda";
-    nodeData.type = attr["faas.trigger"];
+    graphNodeData.image = "lambda";
+    graphNodeData.type = attr["faas.trigger"];
   } else if (typeof attr["service.name"] === "string") {
     if (typeof attr["telemetry.sdk.language"] === "string") {
-      nodeData.image = attr["telemetry.sdk.language"];
+      graphNodeData.image = attr["telemetry.sdk.language"];
     }
-    nodeData.type = attr["service.name"];
+    graphNodeData.type = attr["service.name"];
   }
-  return nodeData;
+  return graphNodeData;
 };
 
 const hasError = (status: SpanStatus): boolean => status.code !== 0;
 
-const createGraphNode = (s: InternalSpan): Node<NodeData> => {
-  const attr = { ...s.span.attributes, ...s.resource.attributes };
-  const nodeData = getServiceType(attr, s.span.name);
-  console.log(nodeData);
+const createNode = (g: GraphNode): Node<NodeData> => {
+  const node_id = `${g.serviceName}${g.systemType}`;
   return {
-    id: s.span.spanId,
+    id: node_id,
     type: BASIC_NODE_TYPE,
     data: {
-      ...nodeData,
-      color: hasError(s.span.status) ? NodeColor.ERR_NORMAL : NodeColor.NORMAL,
-      span_data: { ...s },
+      name: g.serviceName,
+      type: g.systemType,
+      image: "",
+      color: NodeColor.NORMAL,
+      graph_node: { ...g },
     },
     position: POSITION,
   };
 };
 
-const createGraphEdge = (s: InternalSpan): Edge<EdgeData> => {
-  const span = { ...s.span };
-  const time = Math.trunc(
-    (span.endTimeUnixNano - span.startTimeUnixNano) / 1000000
-  );
-  const edgeColor = hasError(s.span.status)
-    ? EdgeColor.ERROR
-    : EdgeColor.NORMAL;
+const createEdge = (node_id: string, parent_name: string): Edge<EdgeData> => {
+  const edge_id = `${node_id}${parent_name}`;
   return {
-    id: `${span.parentSpanId}-${span.spanId}`,
+    id: edge_id,
     type: BASIC_EDGE_TYPE,
-    source: span.parentSpanId ? span.parentSpanId : "",
-    target: span.spanId,
+    source: parent_name,
+    target: node_id,
     data: {
-      time: `${time}ms`,
+      time: `1ms`,
+      count: 0,
     },
     style: {
-      stroke: edgeColor,
+      stroke: EdgeColor.NORMAL,
       padding: 1,
       cursor: "default",
     },
@@ -155,27 +199,48 @@ const createGraphEdge = (s: InternalSpan): Edge<EdgeData> => {
       type: MarkerType.ArrowClosed,
       width: EDGE_ARROW_SIZE,
       height: EDGE_ARROW_SIZE,
-      color: edgeColor,
+      color: EdgeColor.NORMAL,
     },
   };
 };
 
-const isRoot = (parentId: string): boolean => parentId === "";
+const updateEdge = (old_edge: Edge<EdgeData>): Edge<EdgeData> => {
+  if (old_edge.data) {
+    const old_data = { ...old_edge.data };
+    const count = old_data.count + 1;
+    return {
+      ...old_edge,
+      data: {
+        ...old_data,
+        count: count,
+      },
+    };
+  }
+  return old_edge;
+};
 
-export const spanArrayToGraphTree = (
-  spans: InternalSpan[],
-  parentId = "",
-  initialNodes: Node<NodeData>[] = [],
-  initialEdges: Edge<EdgeData>[] = []
-) => {
-  spans.forEach((s: InternalSpan) => {
-    if (s.span.parentSpanId === parentId) {
-      initialNodes.push(createGraphNode(s));
-      if (!isRoot(parentId)) {
-        initialEdges.push(createGraphEdge(s));
+const isRoot = (obj: object): boolean => Object.keys(obj).length === 0;
+
+export const graphNodesToGraphTree = (graphNodes: GraphNode[] = []) => {
+  const initialNodes: Node<NodeData>[] = [];
+  const added_edges = new Map<string, Edge<EdgeData>>();
+  graphNodes.forEach((g: GraphNode) => {
+    initialNodes.push(createNode(g));
+    g.parentSpansIds.forEach((parent_id) => {
+      const parent_node_ref = { ...span_service_map.get(parent_id) };
+      if (!isRoot(parent_node_ref)) {
+        const node_id = `${g.serviceName}${g.systemType}`;
+        const parent_name = `${parent_node_ref.name}${parent_node_ref.type}`;
+        const edge_id = `${node_id}${parent_name}`;
+        const e = added_edges.get(edge_id);
+        if (e) {
+          added_edges.set(edge_id, updateEdge(e));
+        } else {
+          added_edges.set(edge_id, createEdge(node_id, parent_name));
+        }
       }
-      spanArrayToGraphTree(spans, s.span.spanId, initialNodes, initialEdges);
-    }
+    });
   });
+  const initialEdges: Edge<EdgeData>[] = [...added_edges.values()];
   return { nodes: initialNodes, edges: initialEdges };
 };

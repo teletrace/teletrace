@@ -3,17 +3,20 @@ import { Node } from "reactflow";
 import { TraceData } from "@/features/trace";
 import { InternalSpan } from "@/types/span";
 
-export interface NodeData {
+export interface NodeData extends GraphNodeData {
+  color: NodeColor;
+  graph_node: GraphNode;
+}
+
+export interface GraphNodeData {
   name: string;
   image: string;
   type: string;
-  color: NodeColor;
-  span_data: InternalSpan;
 }
 
 export interface EdgeData {
   time: string;
-  count?: number;
+  count: number;
 }
 
 export interface TraceGraphParams {
@@ -40,6 +43,11 @@ export enum NodeColor {
 export type GraphNode = {
   serviceName: string;
   systemType: string;
-  systemIcon: string;
+  spansIds: string[];
+  parentSpansIds: string[];
   spans: InternalSpan[];
+};
+
+export type SpanServiceMap = {
+  [spanId: string]: GraphNode;
 };
