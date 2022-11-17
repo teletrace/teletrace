@@ -6,6 +6,9 @@ services:
       - "4318"
     ports:
       - "8080:8080"
+    command: ["--config=/etc/lupa-collector-config.yaml"]
+    volumes:
+      - ./lupa-otelcol/config/lupa-collector-config.yaml:/etc/lupa-collector-config.yaml
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
     build:
