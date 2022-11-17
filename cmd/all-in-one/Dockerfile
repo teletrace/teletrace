@@ -2,14 +2,10 @@ FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.19-alpine3.16 as backend-
 
 WORKDIR /app
 
-
-# COPY go.mod, go.sum and download the dependencies
-COPY go.* ./
-RUN go mod download
-
 # COPY All things inside the project and build
 COPY . .
 RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /app/build/bin ./cmd/all-in-one
+
 
 FROM node:18-alpine3.16 AS ui-builder
 ENV NODE_ENV production
