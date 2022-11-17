@@ -17,12 +17,6 @@ const (
 	apiPortEnvName = "API_PORT"
 	apiPortDefault = 8080
 
-	grpcEndpointEnvName = "GRPC_ENDPOINT"
-	grpcEndpointDefault = "0.0.0.0:4317"
-
-	httpEndpointEnvName = "HTTP_ENDPOINT"
-	httpEndpointDefault = "0.0.0.0:4318"
-
 	otlpQueueSizeEnvName = "OTLP_QUEUE_SIZE"
 	otlpQueueSizeDefault = 1000
 
@@ -71,16 +65,14 @@ const (
 
 // Config defines global configurations used throughout the application.
 type Config struct {
-	Debug                            bool   `mapstructure:"debug"`
-	APIPort                          int    `mapstructure:"api_port"`
-	GRPCEndpoint                     string `mapstructure:"grpc_endpoint"`
-	HTTPEndpoint                     string `mapstructure:"http_endpoint"`
-	OTLPQueueSize                    int    `mapstructure:"otlp_queue_size"`
-	OTLPQueueWorkersCount            int    `mapstructure:"otlp_queue_workers_count"`
-	OTLPQueueShutdownTimeoutSeconds  int    `mapstructure:"otlp_queue_shutdown_timeout_seconds"`
-	SpansQueueSize                   int    `mapstructure:"spans_queue_size"`
-	SpansQueueWorkersCount           int    `mapstructure:"spans_queue_workers_count"`
-	SpansQueueShutdownTimeoutSeconds int    `mapstructure:"spans_queue_shutdown_timeout_seconds"`
+	Debug                            bool `mapstructure:"debug"`
+	APIPort                          int  `mapstructure:"api_port"`
+	OTLPQueueSize                    int  `mapstructure:"otlp_queue_size"`
+	OTLPQueueWorkersCount            int  `mapstructure:"otlp_queue_workers_count"`
+	OTLPQueueShutdownTimeoutSeconds  int  `mapstructure:"otlp_queue_shutdown_timeout_seconds"`
+	SpansQueueSize                   int  `mapstructure:"spans_queue_size"`
+	SpansQueueWorkersCount           int  `mapstructure:"spans_queue_workers_count"`
+	SpansQueueShutdownTimeoutSeconds int  `mapstructure:"spans_queue_shutdown_timeout_seconds"`
 
 	// Elasticsearch configs
 	ESEndpoints                    string `mapstructure:"es_endpoint"`
@@ -127,8 +119,6 @@ func NewConfig() (Config, error) {
 func setDefaults(v *viper.Viper) {
 	v.SetDefault(debugEnvName, debugDefault)
 	v.SetDefault(apiPortEnvName, apiPortDefault)
-	v.SetDefault(grpcEndpointEnvName, grpcEndpointDefault)
-	v.SetDefault(httpEndpointEnvName, httpEndpointDefault)
 	v.SetDefault(otlpQueueSizeEnvName, otlpQueueSizeDefault)
 	v.SetDefault(otlpQueueWorkersCountEnvName, otlpQueueWorkersCountDefault)
 	v.SetDefault(otlpQueueShutdownTimeoutSecondsEnvName, otlpQueueShutdownTimeoutSecondsDefault)
