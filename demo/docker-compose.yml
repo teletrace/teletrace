@@ -36,7 +36,6 @@ services:
       - DEMO_SERVER_ENDPOINT=http://demo-server:7080/hello
     depends_on:
       - demo-server
-      - otel-collector
 
   demo-server:
     build:
