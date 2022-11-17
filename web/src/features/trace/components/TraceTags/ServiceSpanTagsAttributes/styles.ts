@@ -1,9 +1,8 @@
 export const styles = {
   accordionDetails: {
-    padding: "0px 55px",
+    padding: "0px 30px",
     display: "flex",
     height: "40px",
-    // alignItems: "center",
   },
   typography: {
     width: "50%",
