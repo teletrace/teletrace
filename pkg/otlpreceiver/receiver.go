@@ -8,7 +8,6 @@ import (
 	"oss-tracing/pkg/config"
 
 	"go.opentelemetry.io/collector/component"
-	otelcfg "go.opentelemetry.io/collector/config"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
@@ -89,15 +88,15 @@ func (h *otelHost) ReportFatalError(err error) {
 	h.logger.Fatal("OTLP receiver error", zap.Error(err))
 }
 
-func (*otelHost) GetFactory(_ component.Kind, _ otelcfg.Type) component.Factory {
+func (*otelHost) GetFactory(_ component.Kind, _ component.Type) component.Factory {
 	return nil
 }
 
-func (*otelHost) GetExtensions() map[otelcfg.ComponentID]component.Extension {
+func (*otelHost) GetExtensions() map[component.ID]component.Extension {
 	return nil
 }
 
-func (*otelHost) GetExporters() map[otelcfg.DataType]map[otelcfg.ComponentID]component.Exporter {
+func (*otelHost) GetExporters() map[component.DataType]map[component.ID]component.Exporter {
 	return nil
 }
 
