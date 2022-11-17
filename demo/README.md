@@ -6,6 +6,7 @@ Relays on the [official OTel collector demo](https://github.com/open-telemetry/o
 graph TD;
   demo_server-->otel_collector;
   demo_client-->otel_collector;
+  demo_client-->demo_server;
   otel_collector-->lupa_otel_collector;
   lupa_otel_collector-->elasticsearch;
   kibana-->elasticsearch;
