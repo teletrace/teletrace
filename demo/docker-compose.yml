@@ -63,7 +63,7 @@ services:
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
       - xpack.security.enabled=false
     volumes:
-      - es_data_4:/usr/share/elasticsearch/data
+      - es_data:/usr/share/elasticsearch/data
     ports:
       - target: 9200
         published: 9200
@@ -82,5 +82,5 @@ services:
       - elasticsearch
 
 volumes:
-  es_data_4:
+  es_data:
     driver: local
