@@ -1,4 +1,5 @@
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
+import { Switch, FormGroup, FormControlLabel } from "@mui/material";
 import MaterialReactTable, {
   MRT_ShowHideColumnsButton as ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
@@ -29,7 +30,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const columnSort = sorting.find(
-    (coulmnSort) => coulmnSort.id === DEFAULT_SORT_FIELD
+    (columnSort) => columnSort.id === DEFAULT_SORT_FIELD
   );
 
   const searchRequest = {
