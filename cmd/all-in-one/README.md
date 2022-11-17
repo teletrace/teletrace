@@ -36,11 +36,25 @@ Alternatively, using docker CLI:
 
 ```sh
 docker build -f cmd/all-in-one/Dockerfile -t oss-tracing:latest .
-docker run -p 8080:8080 -p 4317:4317 -p 4318:4318 oss-tracing:latest
+docker run \
+    -v $(pwd)/lupa-otelcol/config/default-config.yaml:/etc/config.yaml \
+    -p 8080:8080 \
+    -p 4317:4317 \
+    -p 4318:4318 \
+    oss-tracing:latest \
+    --config /etc/config.yaml
 ```
 
 In case you want to run docker file with environment variables:
 
 ```sh
-docker run -p 9090:9090 -e API_PORT=9090 -e DEBUG=false oss-tracing:latest
+docker run \
+    -v $(pwd)/lupa-otelcol/config/default-config.yaml:/etc/config.yaml \
+    -p 9090:9090 \
+    -p 4317:4317 \
+    -p 4318:4318 \
+    -e API_PORT=9090 \
+    -e DEBUG=false \
+    oss-tracing:latest \
+    --config /etc/config.yaml
 ```
