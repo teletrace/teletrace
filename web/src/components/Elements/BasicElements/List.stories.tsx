@@ -19,10 +19,7 @@ export default {
 const Template: ComponentStory<typeof List> = () => (
   <Box
     sx={{
-      width: "100%",
       maxWidth: 360,
-      bgcolor: "background.paper",
-      color: "white",
     }}
   >
     <nav aria-label="main mailbox folders">

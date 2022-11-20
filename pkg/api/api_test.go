@@ -11,7 +11,7 @@ import (
 	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
-	storage "oss-tracing/pkg/spanstorage/mock"
+	spanreader "oss-tracing/pkg/spanreader/mock"
 	"path"
 	"path/filepath"
 	"testing"
@@ -30,8 +30,7 @@ func TestLoggerMiddleware(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodGet, pingRoute, nil)
 	resRecorder := httptest.NewRecorder()
 
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 	api.router.ServeHTTP(resRecorder, req)
@@ -50,8 +49,7 @@ func TestRecoveryLoggerMiddleware(t *testing.T) {
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, panicRoute, nil)
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 	api.router.GET(panicRoute, func(c *gin.Context) {
@@ -78,8 +76,7 @@ func TestPingRoute(t *testing.T) {
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, "/ping"), nil)
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 
@@ -95,8 +92,7 @@ func TestSearchRoute(t *testing.T) {
 	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/search"), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 
@@ -119,8 +115,7 @@ func TestGetTraceById(t *testing.T) {
 	expectedTraceId := spanformatutiltests.GenInternalSpan(nil, nil, nil).Span.TraceId
 	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, fmt.Sprintf("/trace/%v", expectedTraceId)), nil)
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 
@@ -141,8 +136,7 @@ func TestGetAvailableTags(t *testing.T) {
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, path.Join(apiPrefix, "/tags"), nil)
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 
@@ -166,8 +160,7 @@ func TestTagsValues(t *testing.T) {
 	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tag=%v", expectedTag)), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 
@@ -193,8 +186,7 @@ func TestSearchRouteWithMalformedRequestBody(t *testing.T) {
 	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/search"), bytes.NewReader(malformedBody))
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 
@@ -216,8 +208,7 @@ func TestTagsValuesWithMalformedRequestBody(t *testing.T) {
 	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", mockTag, mockTag2)), bytes.NewReader(malformedBody))
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 
@@ -242,8 +233,7 @@ func runStaticFilesRouteTest(t *testing.T, testedRoute string) {
 	cfg := config.Config{Debug: false}
 	req, _ := http.NewRequest(http.MethodGet, testedRoute, nil)
 	resRecorder := httptest.NewRecorder()
-	storageMock, _ := storage.NewStorageMock()
-	srMock, _ := storageMock.CreateSpanReader()
+	srMock, _ := spanreader.NewSpanReaderMock()
 
 	api := NewAPI(fakeLogger, cfg, &srMock)
 	api.router.ServeHTTP(resRecorder, req)
