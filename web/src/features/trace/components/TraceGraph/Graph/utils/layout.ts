@@ -224,19 +224,17 @@ export const graphNodesToGraphTree = (graphNodes: GraphNode[]) => {
   graphNodes.forEach((g: GraphNode) => {
     nodes.push(createNode(g));
     g.spans.forEach((s: InternalSpan) => {
-      const parent_id = s.span.parentSpanId;
-      if (parent_id) {
-        const p = spanServiceMap.get(parent_id);
-        if (p) {
-          const edge_id = `${g.id}${p.id}`;
-          const e = edges_map.get(edge_id);
-          e
-            ? edges_map.set(edge_id, updateEdge(e))
-            : edges_map.set(
-                edge_id,
-                createEdge(g.id, p.id, g.hasError, g.duration)
-              );
-        }
+      const parent_id = s.span.parentSpanId || "";
+      const p = spanServiceMap.get(parent_id);
+      if (p) {
+        const edge_id = `${g.id}${p.id}`;
+        const e = edges_map.get(edge_id);
+        e
+          ? edges_map.set(edge_id, updateEdge(e))
+          : edges_map.set(
+              edge_id,
+              createEdge(g.id, p.id, g.hasError, g.duration)
+            );
       }
     });
   });
