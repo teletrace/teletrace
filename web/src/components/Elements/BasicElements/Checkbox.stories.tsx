@@ -23,6 +23,7 @@ const Template: ComponentStory<typeof Checkbox> = (args) => (
     <Stack direction="row" spacing={1}>
       <Checkbox {...label} disabled size="small" {...args} />
       <Checkbox {...label} disabled {...args} />
+      <Checkbox {...label} disabled defaultChecked {...args} />
     </Stack>
   </Stack>
 );
