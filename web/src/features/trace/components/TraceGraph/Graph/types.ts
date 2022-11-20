@@ -44,12 +44,11 @@ export enum NodeColor {
 }
 
 export type GraphNode = {
+  id: string;
   serviceName: string;
   systemType: string;
   image: string;
   hasError: boolean;
-  duration: number[];
-  spansIds: string[];
-  parentSpansIds: string[];
+  duration: number;
   spans: InternalSpan[];
 };
