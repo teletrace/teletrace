@@ -3,9 +3,9 @@ import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
-import { NodeData } from "@/features/trace/components/TraceGraph/Graph/types";
 
 import { styles } from "./styles";
+import { NodeData } from "./types";
 
 const BasicNodeImpl = (props: NodeProps<NodeData>) => {
   const { image, name, type, color } = props.data;

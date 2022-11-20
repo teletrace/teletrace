@@ -2,6 +2,8 @@ import Elk, { ElkNode } from "elkjs";
 import { ElkExtendedEdge } from "elkjs/lib/elk-api";
 import { Edge, MarkerType, Node, Position } from "reactflow";
 
+import { Attributes, InternalSpan } from "@/types/span";
+
 import {
   EdgeColor,
   EdgeData,
@@ -9,7 +11,7 @@ import {
   GraphNodeData,
   NodeColor,
   NodeData,
-} from "@/features/trace/components/TraceGraph/Graph/types";
+} from "../types";
 import {
   BASIC_EDGE_TYPE,
   BASIC_NODE_TYPE,
@@ -17,8 +19,7 @@ import {
   DEFAULT_NODE_WIDTH,
   EDGE_ARROW_SIZE,
   POSITION,
-} from "@/features/trace/components/TraceGraph/Graph/utils/global";
-import { Attributes, InternalSpan } from "@/types/span";
+} from "./global";
 
 export const createGraphLayout = async (
   nodes: Node<NodeData>[],

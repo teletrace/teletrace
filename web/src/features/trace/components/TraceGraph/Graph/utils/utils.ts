@@ -1,11 +1,6 @@
 import { Edge, Node } from "reactflow";
 
-import {
-  EdgeColor,
-  EdgeData,
-  NodeColor,
-  NodeData,
-} from "@/features/trace/components/TraceGraph/Graph/types";
+import { EdgeColor, EdgeData, NodeColor, NodeData } from "../types";
 
 export const applySelectedNodeStyle = (
   node: Node<NodeData>
