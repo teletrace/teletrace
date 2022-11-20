@@ -407,10 +407,6 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           borderRadius: "8px",
-          backgroundColor: theme.palette.secondary,
-          "&:hover": {
-            backgroundColor: theme.palette.secondary.light,
-          },
         },
         label: {
           padding: "8px",
@@ -423,6 +419,29 @@ theme = createTheme(theme, {
         labelMedium: {
           dontSize: "14px",
           lineHeight: "20px",
+        },
+        icon: {
+          color: "#FFFFFF",
+        },
+        deleteIcon: {
+          color: "#FFFFFF",
+        },
+        avatar: {
+          color: "#FFFFFF",
+        },
+        filled: {
+          backgroundColor: secondaryActionColors.secondaryClicked,
+          "&:hover": {
+            backgroundColor: secondaryActionColors.secondaryHovered,
+          },
+        },
+        outlined: {
+          "&.MuiChip-colorDefault": {
+            borderColor: secondaryActionColors.secondaryHovered,
+          },
+          "&&:hover": {
+            backgroundColor: secondaryActionColors.secondaryDisabled,
+          },
         },
       },
     },

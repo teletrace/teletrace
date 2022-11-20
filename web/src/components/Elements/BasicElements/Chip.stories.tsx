@@ -1,21 +1,18 @@
 import {
-  Stack,
+  Avatar,
   Chip,
+  IconButton,
+  Snackbar,
+  Stack,
   Table,
   TableBody,
-  TableRow,
   TableCell,
-  Grid,
-  Box,
-  Typography,
-  Avatar,
-  Alert,
-  Snackbar,
-  IconButton,
+  TableRow,
 } from "@mui/material";
-import { Delete, Done, Face, Close, CloseOutlined } from "../ResourceIcon";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { useState } from "react";
+
+import { Close, Delete, Face } from "../ResourceIcon";
 
 export default {
   component: Chip,
@@ -36,7 +33,7 @@ const Template: ComponentStory<typeof Chip> = (args) => {
     setOpen(true);
   };
 
-  const handleClose = (event: React.SyntheticEvent | Event) => {
+  const handleClose = () => {
     setOpen(false);
   };
 
@@ -152,7 +149,7 @@ const Template: ComponentStory<typeof Chip> = (args) => {
             <TableCell>No Text</TableCell>
             <TableCell sx={{ width: "100%" }}>
               <Stack direction="row" alignItems="center" spacing={4}>
-                <Chip icon={<Delete />} {...args} />
+                <Chip sx={{ display: "flex" }} icon={<Face />} {...args} />
               </Stack>
             </TableCell>
           </TableRow>
