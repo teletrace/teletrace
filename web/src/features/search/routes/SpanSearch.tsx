@@ -28,8 +28,6 @@ export const SpanSearch = () => {
         <TimeFrameSelector
           onChange={(absoluteTimeFrame) => {
             setTimeFrame(absoluteTimeFrame);
-            console.log("Start time: " + absoluteTimeFrame?.start);
-            console.log("End time: " + absoluteTimeFrame?.end);
           }}
         />
       </Stack>

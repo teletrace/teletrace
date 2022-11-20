@@ -17,7 +17,7 @@ export const TagSidebar = () => {
   return (
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
       <Stack spacing="2px" sx={styles.sideTagBar}>
-        {/* <TagValuesSelector
+        <TagValuesSelector
           title="Status"
           tag="span.status"
           value={statusCodes}
@@ -57,7 +57,7 @@ export const TagSidebar = () => {
           tag="instrumentation.library"
           value={instumentationLibs}
           onChange={setInstrumentationLibs}
-        /> */}
+        />
       </Stack>
     </Paper>
   );
