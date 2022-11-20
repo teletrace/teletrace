@@ -1,4 +1,4 @@
-import { Box, TextField } from "@mui/material";
+import { Box, Stack, TextField } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
@@ -34,13 +34,8 @@ const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
 );
 
 const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
-  <Box
-    component="form"
-    sx={{
-      "& .MuiTextField-root": { m: 1, width: "25ch" },
-    }}
-  >
-    <div>
+  <Stack spacing={4}>
+    <Stack direction="row" spacing={2}>
       <TextField
         required
         id="outlined-required"
@@ -60,6 +55,7 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         label="Password"
         type="password"
         autoComplete="current-password"
+        size="small"
         {...args}
       />
       <TextField
@@ -94,8 +90,8 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         helperText="Some important text"
         {...args}
       />
-    </div>
-    <div>
+    </Stack>
+    <Stack direction="row" spacing={2}>
       <TextField
         required
         id="filled-required"
@@ -155,8 +151,8 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         variant="filled"
         {...args}
       />
-    </div>
-    <div>
+    </Stack>
+    <Stack direction="row" spacing={2}>
       <TextField
         required
         id="standard-required"
@@ -216,8 +212,8 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         variant="standard"
         {...args}
       />
-    </div>
-  </Box>
+    </Stack>
+  </Stack>
 );
 
 export const Primary = Template.bind({});
