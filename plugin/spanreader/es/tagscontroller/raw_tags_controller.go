@@ -1,26 +1,27 @@
-package rawreqinteractor
+package tagscontroller
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/model/tagsquery/v1"
 
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"go.uber.org/zap"
 )
 
 type rawTagsController struct {
-	client *Client
+	client *elasticsearch.Client
 	idx    string
 }
 
-func NewTagsController(client *Client, idx string) interactor.TagsController {
+func NewTagsController(logger *zap.Logger, client *elasticsearch.Client, idx string) (TagsController, error) {
 	return &rawTagsController{
 		client: client,
 		idx:    idx,
-	}
+	}, nil
 }
 
 func (r *rawTagsController) prefixTag(tag string) string {
@@ -33,15 +34,14 @@ func (r *rawTagsController) GetAvailableTags(
 	ctx context.Context,
 	request tagsquery.GetAvailableTagsRequest,
 ) (tagsquery.GetAvailableTagsResponse, error) {
-	client := r.client.Client
 	result := tagsquery.GetAvailableTagsResponse{
 		Tags: make([]tagsquery.TagInfo, 0),
 	}
 
-	res, err := client.Indices.GetFieldMapping(
+	res, err := r.client.Indices.GetFieldMapping(
 		[]string{r.prefixTag("*")},
-		client.Indices.GetFieldMapping.WithContext(ctx),
-		client.Indices.GetFieldMapping.WithIndex(r.idx),
+		r.client.Indices.GetFieldMapping.WithContext(ctx),
+		r.client.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
 
 	if err != nil {
@@ -102,8 +102,6 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	request tagsquery.TagValuesRequest,
 	tags []string,
 ) (map[string]any, error) {
-	client := r.client.Client
-
 	aggs := make(map[string]any, len(tags))
 	for _, field := range tags {
 
@@ -149,11 +147,11 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	}
 
 	searchOptions := []func(*esapi.SearchRequest){
-		client.Search.WithIndex(r.idx),
-		client.Search.WithBody(buffer),
+		r.client.Search.WithIndex(r.idx),
+		r.client.Search.WithBody(buffer),
 	}
 
-	res, err := client.Search(searchOptions...)
+	res, err := r.client.Search(searchOptions...)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to perform search: %s", err)

@@ -1,4 +1,4 @@
-package rawreqinteractor
+package tagscontroller
 
 import (
 	"bytes"

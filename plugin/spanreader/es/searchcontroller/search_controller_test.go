@@ -1,4 +1,4 @@
-package typedreqinteractor
+package searchcontroller
 
 import (
 	"encoding/json"
@@ -126,7 +126,7 @@ func TestBuildSearchRequest_NoFilters(t *testing.T) {
 	assert.Nil(t, err)
 
 	//nolint:ineffassign
-	_, err = buildSearchRequest(&searchReq)
+	_, err = buildSearchRequest(searchReq)
 
 	assert.Nil(t, err)
 }

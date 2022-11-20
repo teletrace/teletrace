@@ -1,4 +1,4 @@
-package querybuilder
+package searchcontroller
 
 import (
 	"encoding/json"
