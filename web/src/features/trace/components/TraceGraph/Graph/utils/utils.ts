@@ -5,7 +5,7 @@ import {
   EdgeData,
   NodeColor,
   NodeData,
-} from "@/components/Graph/types";
+} from "@/features/trace/components/TraceGraph/Graph/types";
 
 export const applySelectedNodeStyle = (
   node: Node<NodeData>

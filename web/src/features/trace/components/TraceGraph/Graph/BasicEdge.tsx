@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import { memo } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
-import { FOREIGN_OBJECT_SIZE } from "@/components/Graph/utils/global";
+import { FOREIGN_OBJECT_SIZE } from "@/features/trace/components/TraceGraph/Graph/utils/global";
 
 import { styles } from "./styles";
 

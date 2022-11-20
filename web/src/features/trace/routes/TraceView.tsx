@@ -6,7 +6,7 @@ import { Head } from "@/components/Head";
 import { InternalSpan } from "@/types/span";
 
 import { SPANS_MOCK } from "../components/spans-mock";
-import { TraceGraph } from "../components/TraceGraph";
+import { TraceGraph } from "../components/TraceGraph/TraceGraph";
 import { ServiceSpansList } from "../components/TraceTags/ServiceSpansList/ServiceSpansList";
 import { TraceTimeline } from "../components/TraceTimeline";
 import { trace_res } from "../types/TraceViewMock";

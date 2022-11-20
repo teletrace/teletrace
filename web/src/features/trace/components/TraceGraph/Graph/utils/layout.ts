@@ -9,7 +9,7 @@ import {
   GraphNodeData,
   NodeColor,
   NodeData,
-} from "@/components/Graph/types";
+} from "@/features/trace/components/TraceGraph/Graph/types";
 import {
   BASIC_EDGE_TYPE,
   BASIC_NODE_TYPE,
@@ -17,7 +17,7 @@ import {
   DEFAULT_NODE_WIDTH,
   EDGE_ARROW_SIZE,
   POSITION,
-} from "@/components/Graph/utils/global";
+} from "@/features/trace/components/TraceGraph/Graph/utils/global";
 import { Attributes, InternalSpan } from "@/types/span";
 
 export const createGraphLayout = async (

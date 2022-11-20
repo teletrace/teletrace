@@ -3,7 +3,7 @@ import { memo } from "react";
 import { Handle, NodeProps, Position } from "reactflow";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
-import { NodeData } from "@/components/Graph/types";
+import { NodeData } from "@/features/trace/components/TraceGraph/Graph/types";
 
 import { styles } from "./styles";
 

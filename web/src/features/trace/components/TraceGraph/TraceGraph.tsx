@@ -15,18 +15,18 @@ import {
   useNodesState,
 } from "reactflow";
 
-import { BasicEdge } from "@/components/Graph/BasicEdge";
-import { BasicNode } from "@/components/Graph/BasicNode";
+import { BasicEdge } from "@/features/trace/components/TraceGraph/Graph/BasicEdge";
+import { BasicNode } from "@/features/trace/components/TraceGraph/Graph/BasicNode";
 import {
   EdgeData,
   NodeData,
   TraceData,
   TraceGraphParams,
-} from "@/components/Graph/types";
+} from "@/features/trace/components/TraceGraph/Graph/types";
 import {
   createGraphLayout,
   spansToGraphData,
-} from "@/components/Graph/utils/layout";
+} from "@/features/trace/components/TraceGraph/Graph/utils/layout";
 import {
   applyHoverEdgeStyle,
   applyHoveredNodeStyle,
@@ -34,7 +34,7 @@ import {
   applyNormalNodeStyle,
   applySelectedEdgeStyle,
   applySelectedNodeStyle,
-} from "@/components/Graph/utils/utils";
+} from "@/features/trace/components/TraceGraph/Graph/utils/utils";
 
 import "reactflow/dist/style.css";
 
