@@ -370,13 +370,6 @@ theme = createTheme(theme, {
         },
       },
     },
-    // MuiInputLabel: {
-    //   styleOverrides: {
-    //     fontSize: "14px",
-    //     fontWeight: "normal",
-    //     margin: "0px 4px",
-    //   }
-    // },
     MuiPopover: {
       styleOverrides: {
         paper: {
