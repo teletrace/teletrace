@@ -5,6 +5,8 @@ services:
       dockerfile: ./cmd/all-in-one/Dockerfile
       context: ../
     command: ["--config=/etc/lupa-collector-config.yaml"]
+    environment:
+      - ES_ENDPOINT=http://elasticsearch:9200
     volumes:
       - ./lupa-collector-config.yaml:/etc/lupa-collector-config.yaml
     ports:
