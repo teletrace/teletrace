@@ -9,11 +9,15 @@ import { DateTimeSelector } from "../components/DateTimeSelector/DateTimeSelecto
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
-import { TimeFrame, TimeFrameSelector } from "../components/TimeFrameSelector";
+import {
+  AbsoluteTimeFrame,
+  TimeFrame,
+  TimeFrameSelector,
+} from "../components/TimeFrameSelector";
 import { Timeframe } from "../types/spanQuery";
 
 export const SpanSearch = () => {
-  const [timeFrame, setTimeFrame] = useState<TimeFrame>();
+  const [timeFrame, setTimeFrame] = useState<AbsoluteTimeFrame>();
 
   return (
     <Fragment>
@@ -23,16 +27,11 @@ export const SpanSearch = () => {
       />
       <Stack direction="row" justifyContent="flex-end">
         <TimeFrameSelector
-          onChange={(tf) => {
-            //console.log(tf);
-            setTimeFrame(tf);
+          onChange={(absoluteTimeFrame) => {
+            setTimeFrame(absoluteTimeFrame);
+            console.log("Start time: " + absoluteTimeFrame?.start);
+            console.log("End time: " + absoluteTimeFrame?.end);
           }}
-          options={[
-            { label: "1H", offsetRange: "1h", relativeTo: "now" },
-            { label: "1D", offsetRange: "1d", relativeTo: "now" },
-            { label: "3D", offsetRange: "3d", relativeTo: "now" },
-            { label: "1W", offsetRange: "1w", relativeTo: "now" },
-          ]}
         />
       </Stack>
       <Stack direction="row" spacing={2} sx={{ height: "100%" }}>

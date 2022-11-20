@@ -3,33 +3,65 @@ import React, { useRef, useState } from "react";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
-  options: RelativeTimeFrame[];
-  onChange?: (tf: TimeFrame) => void;
+  onChange: (absoluteTimeFrame: AbsoluteTimeFrame) => void;
 };
 
-export const TimeFrameSelector = ({
-  options,
-  onChange,
-}: TimeFrameSelectorProps) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const buttonRef = useRef(null);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const [open, setOpen] = useState(false);
-  const [isSelected, setIsSelected] = useState<TimeFrame>(options[0]);
-  const [custom, setCustom] = useState<CustomeTimeFrame>();
-  const [isRelative, setIsRelative] = useState<Boolean>(false);
+export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
+  const options: RelativeTimeFrame[] = [
+    { label: "1H", offsetRange: "1h", relativeTo: "now" },
+    { label: "1D", offsetRange: "1d", relativeTo: "now" },
+    { label: "3D", offsetRange: "3d", relativeTo: "now" },
+    { label: "1W", offsetRange: "1w", relativeTo: "now" },
+  ];
 
-  const [absoluteTimeFrame, setAbsoluteTimeFrame] =
-    useState<AbsoluteTimeFrame>();
-  const customOption: TimeFrame = {
+  const customOption: CustomTimeFrame = {
     label: "Custom",
     startTime: new Date(),
     endTime: new Date(),
   };
 
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const buttonRef = useRef(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [isSelected, setIsSelected] = useState<TimeFrame>(options[0]);
+
+  const [absoluteTimeFrame, setAbsoluteTimeFrame] =
+    useState<AbsoluteTimeFrame>();
+
   const handleCustomClick = (event: React.MouseEvent<HTMLElement>) => {
     setOpen(true);
     setAnchorEl(event.currentTarget);
+  };
+
+  function instanceOfRelativeTimeFrame(
+    object: any
+  ): object is RelativeTimeFrame {
+    return "offsetRange" in object;
+  }
+
+  function instanceOfCustomTimeFrame(object: any): object is CustomTimeFrame {
+    return "startTime" in object;
+  }
+
+  const calcAbsoluteTimeFrame = (timeFrame: TimeFrame) => {
+    let startTimeNumber = 0;
+    let endTimeNumber = 0;
+    if (instanceOfRelativeTimeFrame(timeFrame)) {
+      startTimeNumber = new Date().getTime();
+      let endTime = new Date();
+      let offset = timeFrame.offsetRange;
+      if (offset === "1h") endTime.setHours(endTime.getHours() - 1);
+      else if (offset === "1d") endTime.setDate(endTime.getDate() - 1);
+      else if (offset === "3d") endTime.setDate(endTime.getDate() - 3);
+      else if (offset === "1w") endTime.setDate(endTime.getDate() - 7);
+      endTimeNumber = endTime.getTime();
+    } else if (instanceOfCustomTimeFrame(timeFrame)) {
+      startTimeNumber = timeFrame.startTime.getTime();
+      endTimeNumber = timeFrame.endTime.getTime();
+    }
+
+    setAbsoluteTimeFrame({ start: startTimeNumber, end: endTimeNumber });
   };
 
   const handleBtnClicked = (
@@ -37,15 +69,10 @@ export const TimeFrameSelector = ({
     value: TimeFrame
   ) => {
     if (value?.label === "Custom") {
-      /*  if(startTime)
-      relativeTimeFrame<RelativeTimeFrame> = {}
-      setCustom(value?.startTime, value.endTime); */
       handleCustomClick(event);
     }
-    setIsRelative(true);
-    //isRelative ? setAbsoluteTimeFrame({})
-    //setAbsoluteTimeFrame({})
-    onChange?.(value);
+    calcAbsoluteTimeFrame(value);
+    onChange(absoluteTimeFrame!);
     setAnchorEl(buttonRef.current);
     setIsSelected(value);
   };
@@ -66,9 +93,8 @@ export const TimeFrameSelector = ({
         onClose={() => setOpen(false)}
       >
         <DateTimeSelector
-          value={selectedDate}
           onChange={(d) => {
-            setSelectedDate(d);
+            setAbsoluteTimeFrame(d);
           }}
         />
       </Popover>
@@ -107,19 +133,19 @@ export const TimeFrameSelector = ({
 
 type RelativeTimeFrame = {
   label: string;
-  relativeTo?: string;
-  offsetRange?: string;
+  relativeTo: string;
+  offsetRange: string;
 };
 
-type CustomeTimeFrame = {
+type CustomTimeFrame = {
   label: string;
   startTime: Date;
   endTime: Date;
 };
 
-export type TimeFrame = RelativeTimeFrame | CustomeTimeFrame;
+export type TimeFrame = RelativeTimeFrame | CustomTimeFrame;
 
-type AbsoluteTimeFrame = {
-  start: number;
-  end: number;
+export type AbsoluteTimeFrame = {
+  start: Number;
+  end: Number;
 };
