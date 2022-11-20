@@ -1,7 +1,11 @@
-import { Node } from "reactflow";
+import { Edge, Node } from "reactflow";
 
-import { TraceData } from "@/features/trace";
 import { InternalSpan } from "@/types/span";
+
+export interface TraceData {
+  nodes: Node<NodeData>[];
+  edges: Edge<EdgeData>[];
+}
 
 export interface NodeData extends GraphNodeData {
   color: NodeColor;
@@ -21,8 +25,7 @@ export interface EdgeData {
 
 export interface TraceGraphParams {
   setSelectedNode: (val: Node<NodeData> | object) => void;
-  traceData: TraceData;
-  isLoading: boolean;
+  spans: InternalSpan[];
 }
 
 export enum EdgeColor {

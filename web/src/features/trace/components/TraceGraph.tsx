@@ -1,5 +1,10 @@
 import { CircularProgress, Paper, Stack } from "@mui/material";
-import { MouseEvent as ReactMouseEvent, memo, useEffect } from "react";
+import {
+  MouseEvent as ReactMouseEvent,
+  memo,
+  useEffect,
+  useState,
+} from "react";
 import {
   Controls,
   Edge,
@@ -12,7 +17,16 @@ import {
 
 import { BasicEdge } from "@/components/Graph/BasicEdge";
 import { BasicNode } from "@/components/Graph/BasicNode";
-import { EdgeData, NodeData, TraceGraphParams } from "@/components/Graph/types";
+import {
+  EdgeData,
+  NodeData,
+  TraceData,
+  TraceGraphParams,
+} from "@/components/Graph/types";
+import {
+  createGraphLayout,
+  spansToGraphData,
+} from "@/components/Graph/utils/layout";
 import {
   applyHoverEdgeStyle,
   applyHoveredNodeStyle,
@@ -27,13 +41,26 @@ import "reactflow/dist/style.css";
 const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
-const TraceGraphImpl = ({
-  isLoading,
-  traceData,
-  setSelectedNode,
-}: TraceGraphParams) => {
+const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [traceData, setTraceData] = useState<TraceData>({
+    nodes: [],
+    edges: [],
+  });
+
+  useEffect(() => {
+    const { nodes, edges } = spansToGraphData(spans);
+    createGraphLayout(nodes, edges)
+      .then((els: { nodes: Node<NodeData>[]; edges: Edge<EdgeData>[] }) => {
+        if (els) {
+          setTraceData(els);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => alert("something went wrong!!! Could not render graph"));
+  }, [spans]);
 
   useEffect(() => {
     setNodes(traceData.nodes);
