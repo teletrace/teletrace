@@ -26,15 +26,28 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
     end: new Date().getTime(),
   });
 
+  const combineDateAndTimeIntoRange = (date: Date) => {
+    let timeRange = new Date(
+      date!.setHours(date!.getHours(), date!.getMinutes())
+    ).getTime();
+    return timeRange;
+  };
   const calcRange = () => {
     let startRange = new Date(
       startDate!.setHours(startTime!.getHours(), startTime!.getMinutes())
     ).getTime();
+    console.log("long:    + " + startRange);
+    // let startRange = combineDateAndTimeIntoRange(startTime!);
+    let sr = combineDateAndTimeIntoRange(startTime!);
+    console.log("sr " + sr);
     let endRange = new Date(
       endDate!.setHours(endTime!.getHours(), endTime!.getMinutes())
     ).getTime();
+    // let endRange = combineDateAndTimeIntoRange(endTime!);
 
     setDateTimeRange({ start: startRange, end: endRange });
+    console.log(startRange);
+    console.log(endRange);
     return { start: startRange, end: endRange };
   };
 
@@ -55,6 +68,7 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
         From
         <Stack direction="row">
           <DatePicker
+            inputFormat="dd-MM-yyyy"
             onChange={(startDate) => {
               setStartDate(startDate);
               console.log(startDate);
@@ -75,6 +89,7 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
         To
         <Stack direction="row">
           <DatePicker
+            inputFormat="dd-MM-yyyy"
             renderInput={(props) => <TextField {...props} />}
             onChange={(endDate) => {
               setEndDate(endDate);
