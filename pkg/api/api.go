@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap"
 
 	"oss-tracing/pkg/config"
-	storage "oss-tracing/pkg/spanstorage"
+	"oss-tracing/pkg/spanreader"
 )
 
 const apiPrefix = "/v1"
@@ -28,11 +28,11 @@ type API struct {
 	logger     *zap.Logger
 	config     config.Config
 	router     *gin.Engine
-	spanReader *storage.SpanReader
+	spanReader *spanreader.SpanReader
 }
 
 // NewAPI creates and returns a new API instance.
-func NewAPI(logger *zap.Logger, config config.Config, sr *storage.SpanReader) *API {
+func NewAPI(logger *zap.Logger, config config.Config, sr *spanreader.SpanReader) *API {
 	router := newRouter(logger, config)
 	api := &API{
 		logger:     logger,
