@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"oss-tracing/pkg/esclient/interactor"
-	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/model/tagsquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
@@ -28,15 +28,14 @@ func (r *rawTagsController) prefixTag(tag string) string {
 }
 
 // Get available tags.
-//
 // Use elastic's GetFieldMapping api
 func (r *rawTagsController) GetAvailableTags(
 	ctx context.Context,
-	request model.GetAvailableTagsRequest,
-) (model.GetAvailableTagsResult, error) {
+	request tagsquery.GetAvailableTagsRequest,
+) (tagsquery.GetAvailableTagsResponse, error) {
 	client := r.client.Client
-	result := model.GetAvailableTagsResult{
-		Tags: make([]model.TagInfo, 0),
+	result := tagsquery.GetAvailableTagsResponse{
+		Tags: make([]tagsquery.TagInfo, 0),
 	}
 
 	res, err := client.Indices.GetFieldMapping(
@@ -72,7 +71,7 @@ func (r *rawTagsController) GetAvailableTags(
 		}
 
 		for _, valueData := range mappingData {
-			result.Tags = append(result.Tags, model.TagInfo{
+			result.Tags = append(result.Tags, tagsquery.TagInfo{
 				Name: fieldMapping["full_name"].(string),
 				Type: valueData.(map[string]any)["type"].(string),
 			})
@@ -84,38 +83,31 @@ func (r *rawTagsController) GetAvailableTags(
 
 func (r *rawTagsController) GetTagsValues(
 	ctx context.Context,
-	request model.GetTagsValuesRequest,
-) (model.GetTagsValuesResult, error) {
+	request tagsquery.TagValuesRequest,
+	tags []string,
+) (map[string]*tagsquery.TagValuesResponse, error) {
 
-	body, err := r.performGetTagsValuesRequest(ctx, request)
+	body, err := r.performGetTagsValuesRequest(ctx, request, tags)
 
 	if err != nil {
-		return model.NewGetTagsValueResult(), err
+		return map[string]*tagsquery.TagValuesResponse{}, err
 	}
 
 	return r.parseGetTagsValuesResponseBody(body)
 }
 
-// Perform search and return the response' body
+// Perform search and return the response body
 func (r *rawTagsController) performGetTagsValuesRequest(
 	ctx context.Context,
-	request model.GetTagsValuesRequest,
+	request tagsquery.TagValuesRequest,
+	tags []string,
 ) (map[string]any, error) {
-
-	if request.AutoPrefixTags == nil {
-		autoPrefixTags := true
-		request.AutoPrefixTags = &autoPrefixTags
-	}
-
 	client := r.client.Client
 
-	aggs := make(map[string]any, len(request.Tags))
-	for _, field := range request.Tags {
+	aggs := make(map[string]any, len(tags))
+	for _, field := range tags {
 
 		aggregationKey := field
-		if *request.AutoPrefixTags {
-			field = r.prefixTag(field)
-		}
 
 		aggs[aggregationKey] = map[string]any{
 			"terms": map[string]any{
@@ -125,10 +117,22 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	}
 
 	query := map[string]any{
-		"range": map[string]any{
-			"@timestamp": map[string]any{
-				"gte": request.StartTime,
-				"lte": request.EndTime,
+		"bool": map[string]any{
+			"must": []map[string]any{
+				{
+					"range": map[string]any{
+						"span.startTimeUnixNano": map[string]any{
+							"gte": request.Timeframe.StartTime,
+						},
+					},
+				},
+				{
+					"range": map[string]any{
+						"span.endTimeUnixNano": map[string]any{
+							"lte": request.Timeframe.EndTime,
+						},
+					},
+				},
 			},
 		},
 	}
@@ -147,10 +151,6 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 	searchOptions := []func(*esapi.SearchRequest){
 		client.Search.WithIndex(r.idx),
 		client.Search.WithBody(buffer),
-	}
-
-	if request.Query != nil {
-		searchOptions = append(searchOptions, client.Search.WithQuery(*request.Query))
 	}
 
 	res, err := client.Search(searchOptions...)
@@ -174,13 +174,13 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 
 func (r *rawTagsController) parseGetTagsValuesResponseBody(
 	body map[string]any,
-) (model.GetTagsValuesResult, error) {
+) (map[string]*tagsquery.TagValuesResponse, error) {
 
 	// To get an idea of how the response looks like, check the unit test at raw_tags_controller_test.go
 
-	result := model.NewGetTagsValueResult()
+	result := map[string]*tagsquery.TagValuesResponse{}
 	aggregations := body["aggregations"].(map[string]any)
-	tagValueInfos := make(map[string]map[any]model.TagValueInfo)
+	tagValueInfos := make(map[string]map[any]tagsquery.TagValueInfo)
 
 	// the aggregation key is the tag's name because that's how we defined the query.
 	// traverse the returned aggregations, bucket by bucket and update the value counts
@@ -188,7 +188,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 		aggregation := v.(map[string]any)
 
 		if _, found := tagValueInfos[tag]; !found {
-			tagValueInfos[tag] = make(map[any]model.TagValueInfo)
+			tagValueInfos[tag] = make(map[any]tagsquery.TagValueInfo)
 		}
 
 		for _, v := range aggregation["buckets"].([]any) {
@@ -197,7 +197,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 			count := int(bucket["doc_count"].(float64))
 
 			if info, found := tagValueInfos[tag][value]; !found {
-				tagValueInfos[tag][value] = model.TagValueInfo{
+				tagValueInfos[tag][value] = tagsquery.TagValueInfo{
 					Value: value,
 					Count: count,
 				}
@@ -210,12 +210,17 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 
 	// populate the result
 	for tag, valueInfoMap := range tagValueInfos {
-		result.Tags[tag] = []model.TagValueInfo{}
+		var currentTagValues []tagsquery.TagValueInfo
 		for value, info := range valueInfoMap {
-			result.Tags[tag] = append(result.Tags[tag], model.TagValueInfo{
+			currentTagValues = append(currentTagValues, tagsquery.TagValueInfo{
 				Value: value,
 				Count: info.Count,
 			})
+		}
+		if currentTagValues != nil {
+			result[tag] = &tagsquery.TagValuesResponse{
+				Values: currentTagValues,
+			}
 		}
 	}
 

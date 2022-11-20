@@ -6,6 +6,8 @@ services:
       - "4318"
     ports:
       - "8080:8080"
+    environment:
+      - ES_ENDPOINT=http://elasticsearch:9200
     build:
       dockerfile: cmd/all-in-one/Dockerfile
       context: ../../
@@ -16,15 +18,52 @@ services:
       retries: 3
     networks:
       - lupa
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
 
   otel-collector:
     image: otel/opentelemetry-collector:${OTEL_COLLECTOR_VERSION}
     command: ["--config=/etc/otel-collector.yaml"]
     volumes:
       - ./otel-collector.yaml:/etc/otel-collector.yaml
+    depends_on:
+      lupa-api:
+        condition: service_healthy
     networks:
       - lupa
 
+  elasticsearch:
+    image: elasticsearch:8.4.2
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    expose:
+      - "9200"
+    networks:
+      - lupa
+    healthcheck:
+      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 50
+
+  kibana:
+    image: kibana:8.4.2
+    ports:
+      - "5601:5601"
+    networks:
+      - lupa
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+volumes:
+  es_data:
+    driver: local
 networks:
   lupa:
     internal: false

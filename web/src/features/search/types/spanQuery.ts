@@ -2,33 +2,35 @@
 
 import { InternalSpan } from "@/types/span";
 
-export type Timeframe = {
-  startTime: number;
-  endTime: number;
-};
+import { Timeframe } from "./common";
 
 export type Sort = {
   field: string;
   ascending: boolean;
 };
 
-export type Operator =
-  | "equals"
-  | "not_equals"
-  | "in"
-  | "not_in"
-  | "contains"
-  | "not_contains"
-  | "exists"
-  | "not_exists"
-  | "gt"
-  | "gte"
-  | "lt"
-  | "lte";
+export const operatorsList = [
+  "in",
+  "not_in",
+  "contains",
+  "not_contains",
+  "exists",
+  "not_exists",
+  "gt",
+  "gte",
+  "lt",
+  "lte",
+] as const;
+
+export type Operator = typeof operatorsList[number];
+
+export type ValueTypes = string | number | string[];
+
+export type ValueInputMode = "select" | "text" | "none" | "numeric";
 
 export type KeyValueFilter = {
   key: string;
-  value: string;
+  value: ValueTypes;
   operator: Operator;
 };
 

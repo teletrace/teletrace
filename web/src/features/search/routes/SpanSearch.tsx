@@ -11,10 +11,9 @@ import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import {
   AbsoluteTimeFrame,
-  TimeFrame,
   TimeFrameSelector,
 } from "../components/TimeFrameSelector";
-import { Timeframe } from "../types/spanQuery";
+//import { Timeframe } from "../types/spanQuery";
 
 export const SpanSearch = () => {
   const [timeFrame, setTimeFrame] = useState<AbsoluteTimeFrame>();
@@ -34,8 +33,13 @@ export const SpanSearch = () => {
           }}
         />
       </Stack>
-      <Stack direction="row" spacing={2} sx={{ height: "100%" }}>
-        <aside style={{ width: 320 }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="flex-start"
+        sx={{ height: "100%" }}
+      >
+        <aside style={{ display: "flex", maxHeight: "100%" }}>
           <TagSidebar />
         </aside>
 

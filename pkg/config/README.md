@@ -6,10 +6,10 @@ Its main purpose is loading config options from multiple sources (default values
 ## Supported Options
 
 ```
-DEBUG - (default: true) Whether to run in debug (development) mode for extra debug info
-API_PORT - (default: 8080) API server port
-GRPC_ENDPOINT - (default: 0.0.0.0:4317) OTLP/gRPC collector receiver port
-HTTP_ENDPOINT - (default: 0.0.0.0:4318) OTLP/HTTP collector receiver port
+| Option                               | Default       | Description                                                                     |
+| ------------------------------------ | ------------- | ------------------------------------------------------------------------------- |
+| DEBUG                                | true          | Whether to run in debug mode for extra debug info                               |
+| API_PORT                             | 8080          | API server port                                                                 |
 ```
 
 ## Config Sources

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"oss-tracing/pkg/esclient/typedreqinteractor/querybuilder"
+	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
@@ -55,7 +56,7 @@ func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
 
 	timeframeFilters := createTimeframeFilters(r.Timeframe)
 
-	filters := append(r.SearchFilter, timeframeFilters...)
+	filters := append(r.SearchFilters, timeframeFilters...)
 
 	if builder, err = buildQuery(builder, filters...); err != nil {
 		return nil, fmt.Errorf("Could not build query for search request: %+v. err: %+v", r, err)
@@ -68,7 +69,7 @@ func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
 	return builder.Build(), nil
 }
 
-func createTimeframeFilters(tf spansquery.Timeframe) []spansquery.SearchFilter {
+func createTimeframeFilters(tf model.Timeframe) []spansquery.SearchFilter {
 	return []spansquery.SearchFilter{
 		{
 			KeyValueFilter: &spansquery.KeyValueFilter{

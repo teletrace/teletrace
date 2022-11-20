@@ -3,7 +3,7 @@ package rawreqinteractor
 import (
 	"bytes"
 	"encoding/json"
-	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/model/tagsquery/v1"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -93,40 +93,61 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	}
 
 	// Assert
-	assert.Len(t, result.Tags, 3)
-	assert.Contains(t, result.Tags, "http.method.keyword")
-	assert.Contains(t, result.Tags, "http.flavor.keyword")
-	assert.Contains(t, result.Tags, "http.status_code")
+	assert.Len(t, result, 3)
+	assert.Contains(t, result, "http.method.keyword")
+	assert.Contains(t, result, "http.flavor.keyword")
+	assert.Contains(t, result, "http.status_code")
 
-	assertTag := func(tag string, expectedInfos []model.TagValueInfo) {
-		assert.Contains(t, result.Tags, tag)
-		assert.ElementsMatch(t, result.Tags[tag], expectedInfos)
+	assertTag := func(tag string, expectedInfos tagsquery.TagValuesResponse) {
+		assert.Contains(t, result, tag)
+		assert.ElementsMatch(t, result[tag].Values, expectedInfos.Values)
 	}
 
-	assertTag("http.method.keyword", []model.TagValueInfo{{
-		Value: "GET",
-		Count: 4,
-	}, {
-		Value: "POST",
-		Count: 1,
-	}, {
-		Value: "DELETE",
-		Count: 1,
-	}})
+	assertTag(
+		"http.method.keyword",
+		tagsquery.TagValuesResponse{
+			Values: []tagsquery.TagValueInfo{{
+				Value: "GET",
+				Count: 4,
+			}, {
+				Value: "POST",
+				Count: 1,
+			}, {
+				Value: "DELETE",
+				Count: 1,
+			}},
+		},
+	)
 
-	assertTag("http.flavor.keyword", []model.TagValueInfo{{
-		Value: "1.0",
-		Count: 6,
-	}})
+	assertTag(
+		"http.flavor.keyword",
+		tagsquery.TagValuesResponse{
+			Values: []tagsquery.TagValueInfo{
+				{
+					Value: "1.0",
+					Count: 6,
+				},
+			},
+		},
+	)
 
-	assertTag("http.status_code", []model.TagValueInfo{{
-		Value: float64(200),
-		Count: 3,
-	}, {
-		Value: float64(404),
-		Count: 2,
-	}, {
-		Value: float64(500),
-		Count: 1,
-	}})
+	assertTag(
+		"http.status_code",
+		tagsquery.TagValuesResponse{
+			Values: []tagsquery.TagValueInfo{
+				{
+					Value: float64(200),
+					Count: 3,
+				},
+				{
+					Value: float64(404),
+					Count: 2,
+				},
+				{
+					Value: float64(500),
+					Count: 1,
+				},
+			},
+		},
+	)
 }

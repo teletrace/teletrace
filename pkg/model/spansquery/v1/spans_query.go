@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 )
 
@@ -26,11 +28,6 @@ type FilterValue any
 type FilterQueryString string
 type ContinuationToken string
 
-type Timeframe struct {
-	StartTime uint64 `json:"startTime"`
-	EndTime   uint64 `json:"endTime"`
-}
-
 type Sort struct {
 	Field     SortField `json:"field"`
 	Ascending bool      `json:"ascending"`
@@ -51,13 +48,21 @@ type Metadata struct {
 }
 
 type SearchRequest struct {
-	Timeframe    Timeframe      `json:"timeframe"`
-	Sort         []Sort         `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
-	SearchFilter []SearchFilter `json:"searchFilter"`
-	Metadata     *Metadata      `json:"metadata"`
+	Timeframe     model.Timeframe `json:"timeframe"`
+	Sort          []Sort          `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
+	SearchFilters []SearchFilter  `json:"filters"`
+	Metadata      *Metadata       `json:"metadata"`
 }
 
 type SearchResponse struct {
 	Metadata *Metadata                    `json:"metadata"`
 	Spans    []*internalspan.InternalSpan `json:"spans"`
+}
+
+func (sr *SearchRequest) Validate() error {
+	if sr.Timeframe.EndTime < sr.Timeframe.StartTime {
+		return fmt.Errorf("endTime cannot be smaller than startTime")
+	}
+
+	return nil
 }

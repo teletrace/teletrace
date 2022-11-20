@@ -1,12 +1,59 @@
 import { FilterList } from "@mui/icons-material";
-import { Button, Paper } from "@mui/material";
+import { Button, Chip, Paper } from "@mui/material";
+import { Stack } from "@mui/system";
+import { useState } from "react";
+
+import { SearchFilter } from "../../types/spanQuery";
+import { FilterBuilderDialog } from "../FilterBuilder";
 
 export function SearchBar() {
+  const [open, setOpen] = useState(false);
+  const [filters, setFilters] = useState<SearchFilter[]>([]);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setOpen(true);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const onFilterAdded = (filter: SearchFilter) => {
+    setFilters([...filters, filter]);
+  };
+
+  const onFilterDeleted = (filter: SearchFilter) => {
+    setFilters(filters.filter((f) => f !== filter));
+  };
+
   return (
-    <Paper>
-      <Button variant="contained" startIcon={<FilterList />}>
-        Add Filter
-      </Button>
+    <Paper sx={{ height: "40px", padding: "8px" }}>
+      <Stack direction="row" spacing={0.5}>
+        <Button
+          variant="contained"
+          size="small"
+          startIcon={<FilterList />}
+          onClick={handleOpen}
+        >
+          Add Filter
+        </Button>
+        <FilterBuilderDialog
+          open={open}
+          onClose={handleClose}
+          onApply={onFilterAdded}
+          anchorEl={anchorEl}
+        />
+        {filters.map((filter) => (
+          <Chip
+            key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
+            size="small"
+            label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
+            onDelete={() => onFilterDeleted(filter)}
+          />
+        ))}
+      </Stack>
     </Paper>
   );
 }
