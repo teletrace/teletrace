@@ -54,7 +54,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           traceId: span.traceId,
           spanId: span.spanId,
           startTime: formatDateToTimeString(span.startTimeUnixNano),
-          duration: `ms ${externalFields.duration}`,
+          duration: `${externalFields.duration} ms`,
           name: span.name,
           status: span.status.code,
           serviceName:
