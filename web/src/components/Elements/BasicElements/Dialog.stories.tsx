@@ -46,7 +46,7 @@ const Template: ComponentStory<typeof Dialog> = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleClose} variant="contained" autoFocus>
             Agree
           </Button>
         </DialogActions>

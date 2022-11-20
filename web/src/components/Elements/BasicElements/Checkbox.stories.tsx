@@ -1,4 +1,4 @@
-import { Box, Checkbox } from "@mui/material";
+import { Checkbox, Stack } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -9,16 +9,23 @@ export default {
 } as ComponentMeta<typeof Checkbox>;
 
 const Template: ComponentStory<typeof Checkbox> = (args) => (
-  <Box>
-    <Checkbox {...label} defaultChecked size="small" {...args} />
-    <Checkbox {...label} defaultChecked {...args} />
-    <Checkbox
-      {...label}
-      defaultChecked
-      sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
-      {...args}
-    />
-  </Box>
+  <Stack spacing={2}>
+    <Stack direction="row" spacing={1}>
+      <Checkbox {...label} defaultChecked size="small" {...args} />
+      <Checkbox {...label} defaultChecked {...args} />
+      <Checkbox
+        {...label}
+        defaultChecked
+        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+        {...args}
+      />
+    </Stack>
+    <Stack direction="row" spacing={1}>
+      <Checkbox {...label} disabled size="small" {...args} />
+      <Checkbox {...label} disabled {...args} />
+      <Checkbox {...label} disabled defaultChecked {...args} />
+    </Stack>
+  </Stack>
 );
 
 export const Primary = Template.bind({});
