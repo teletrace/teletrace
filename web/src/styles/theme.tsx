@@ -441,6 +441,8 @@ theme = createTheme(theme, {
           "&.MuiChip-colorDefault": {
             borderColor: secondaryActionColors.secondaryHovered,
           },
+          //  mui oulined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
+          //  so in order to override default hover we need to use two `&` for the specificity to match
           "&&:hover": {
             backgroundColor: secondaryActionColors.secondaryDisabled,
           },
