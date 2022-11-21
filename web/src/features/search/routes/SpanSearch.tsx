@@ -8,8 +8,6 @@ import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { SearchFilter, Timeframe } from "../types/common";
 
-export type filterValues = Array<number | string>;
-
 export type FiltersState = {
   filters: Array<SearchFilter>;
   timeframe: Timeframe;
@@ -50,7 +48,6 @@ export const SpanSearch = () => {
             newFilters.push(entry);
           }
         }
-        console.log({ timeframe: prevState.timeframe, filters: newFilters });
         return { timeframe: prevState.timeframe, filters: newFilters };
       });
     },

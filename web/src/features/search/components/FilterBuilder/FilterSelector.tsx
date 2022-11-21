@@ -19,7 +19,7 @@ export const FilterSelector = ({
   const { data: availableTags, isLoading } = useAvailableTags();
 
   const availableTagsOptions = availableTags?.pages.flatMap(
-    (page) => page.tags
+    (page) => page.Tags
   );
 
   const handleChange = (
