@@ -1,14 +1,16 @@
 import {
+  DialogContent,
   Popover,
   ToggleButton,
   ToggleButtonGroup,
-  DialogContent,
+  Tooltip,
 } from "@mui/material";
 import React, { useRef, useState } from "react";
+import { Timeframe } from "../../types/common";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
-  onChange: (absoluteTimeFrame: AbsoluteTimeFrame) => void;
+  onChange: (timeframe: Timeframe) => void;
 };
 
 export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
@@ -28,10 +30,9 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
   const buttonRef = useRef(null);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
-  const [isSelected, setIsSelected] = useState<TimeFrame>(options[0]);
+  const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
 
-  const [absoluteTimeFrame, setAbsoluteTimeFrame] =
-    useState<AbsoluteTimeFrame>();
+  const [timeframe, setTimeFrame] = useState<Timeframe>();
 
   const handleCustomClick = (event: React.MouseEvent<HTMLElement>) => {
     setOpen(true);
@@ -48,42 +49,42 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
     return "startTime" in object;
   }
 
-  const setAbsuloteFromRelative = (timeFrame: RelativeTimeFrame) => {
-    let startTime = new Date();
-    let endTimeNumber = new Date().getTime();
-    let offset = timeFrame.offsetRange;
+  const setTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
+    const startTime = new Date();
+    const endTimeNumber = new Date().getTime();
+    const offset = timeFrame.offsetRange;
     if (offset === "1h") startTime.setHours(startTime.getHours() - 1);
     else if (offset === "1d") startTime.setDate(startTime.getDate() - 1);
     else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
     else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
-    let startTimeNumber = startTime.getTime();
-    setAbsoluteTimeFrame({ start: startTimeNumber, end: endTimeNumber });
-    return { start: startTimeNumber, end: endTimeNumber };
+    const startTimeNumber = startTime.getTime();
+    setTimeFrame({ startTime: startTimeNumber, endTime: endTimeNumber });
+    return { startTime: startTimeNumber, endTime: endTimeNumber };
   };
 
-  const setAbsoluteFromCustom = (timeFrame: CustomTimeFrame) => {
-    setAbsoluteTimeFrame({
-      start: timeFrame.startTime.getTime(),
-      end: timeFrame.endTime.getTime(),
+  const setTimeframeFromCustom = (timeFrame: CustomTimeFrame) => {
+    setTimeFrame({
+      startTime: timeFrame.startTime.getTime(),
+      endTime: timeFrame.endTime.getTime(),
     });
   };
 
-  const calcAbsoluteTimeFrame = (timeFrame: TimeFrame) => {
+  const calcTimeFrame = (timeFrame: TimeFrameTypes) => {
     if (instanceOfRelativeTimeFrame(timeFrame)) {
-      return setAbsuloteFromRelative(timeFrame);
+      return setTimeframeFromRelative(timeFrame);
     } else if (instanceOfCustomTimeFrame(timeFrame)) {
-      return setAbsoluteFromCustom(timeFrame);
+      return setTimeframeFromCustom(timeFrame);
     }
   };
 
   const handleBtnClicked = (
     event: React.MouseEvent<HTMLElement>,
-    value: TimeFrame
+    value: TimeFrameTypes
   ) => {
     if (value?.label === "Custom") {
       handleCustomClick(event);
     }
-    let timeFrame = calcAbsoluteTimeFrame(value);
+    const timeFrame = calcTimeFrame(value);
     onChange(timeFrame!);
     setAnchorEl(buttonRef.current);
     setIsSelected(value);
@@ -106,18 +107,14 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
       >
         <DialogContent>
           <DateTimeSelector
-            onChange={(absTimeFrame) => {
-              setAbsoluteTimeFrame(absTimeFrame);
+            onChange={(timeframe) => {
+              setTimeFrame(timeframe);
+              onChange(timeframe);
             }}
           />
         </DialogContent>
       </Popover>
-      <ToggleButtonGroup
-        exclusive
-        onChange={(e, value) => {
-          onChange?.(value);
-        }}
-      >
+      <ToggleButtonGroup exclusive>
         <ToggleButton
           onClick={handleBtnClicked}
           selected={isSelected?.label === customOption?.label}
@@ -157,9 +154,9 @@ type CustomTimeFrame = {
   endTime: Date;
 };
 
-export type TimeFrame = RelativeTimeFrame | CustomTimeFrame;
+export type TimeFrameTypes = RelativeTimeFrame | CustomTimeFrame;
 
-export type AbsoluteTimeFrame = {
-  start: Number;
-  end: Number;
-};
+// export type AbsoluteTimeFrame = {
+//   start: number;
+//   end: number;
+// };

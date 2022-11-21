@@ -9,14 +9,11 @@ import { DateTimeSelector } from "../components/DateTimeSelector/DateTimeSelecto
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
-import {
-  AbsoluteTimeFrame,
-  TimeFrameSelector,
-} from "../components/TimeFrameSelector";
-//import { Timeframe } from "../types/spanQuery";
+import { TimeFrameSelector } from "../components/TimeFrameSelector";
+import { Timeframe } from "../types/common";
 
 export const SpanSearch = () => {
-  const [timeFrame, setTimeFrame] = useState<AbsoluteTimeFrame>();
+  const [timeframe, setTimeFrame] = useState<Timeframe>();
 
   return (
     <Fragment>
@@ -26,8 +23,10 @@ export const SpanSearch = () => {
       />
       <Stack direction="row" justifyContent="flex-end">
         <TimeFrameSelector
-          onChange={(absoluteTimeFrame) => {
-            setTimeFrame(absoluteTimeFrame);
+          onChange={(timeframe) => {
+            setTimeFrame(timeframe);
+            console.log("start time: " + timeframe.startTime);
+            console.log("end time: " + timeframe.endTime);
           }}
         />
       </Stack>

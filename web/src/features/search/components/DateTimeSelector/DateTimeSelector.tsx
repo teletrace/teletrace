@@ -1,16 +1,12 @@
-import { TextField, Button, Alert, Stack, DialogContent } from "@mui/material";
+import { Alert, Button, DialogContent, Stack, TextField } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
+import { Timeframe } from "../../types/common";
 
 export type DateTimeSelectorProps = {
-  onChange: (dateTimeRange: DateTimeRange) => void;
-};
-
-export type DateTimeRange = {
-  start: Number;
-  end: Number;
+  onChange: (timeframe: Timeframe) => void;
 };
 
 export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
@@ -21,30 +17,28 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
   );
   const [endTime, setEndTime] = useState<Date | null>(new Date());
   const [timeValid, setTimeValid] = useState<boolean>(true);
-  const [dateTimeRange, setDateTimeRange] = useState<DateTimeRange>({
-    start: new Date().setHours(new Date().getHours() - 1),
-    end: new Date().getTime(),
+  const [timeframe, setTimeframe] = useState<Timeframe>({
+    startTime: new Date().setHours(new Date().getHours() - 1),
+    endTime: new Date().getTime(),
   });
 
   const calcRange = () => {
-    let startRange = new Date(
+    const startRange = new Date(
       startDate!.setHours(startTime!.getHours(), startTime!.getMinutes())
     ).getTime();
-    let endRange = new Date(
+    const endRange = new Date(
       endDate!.setHours(endTime!.getHours(), endTime!.getMinutes())
     ).getTime();
-    // let endRange = combineDateAndTimeIntoRange(endTime!);
+    setTimeframe({ startTime: startRange, endTime: endRange });
 
-    setDateTimeRange({ start: startRange, end: endRange });
-
-    return { start: startRange, end: endRange };
+    return { startTime: startRange, endTime: endRange };
   };
 
-  const applyTime = () => {
-    let timeRange = calcRange();
-    let isTimeValid = timeRange.start < timeRange.end;
+  const handleApply = () => {
+    const timeRange = calcRange();
+    const isTimeValid = timeRange.startTime < timeRange.endTime;
     setTimeValid(isTimeValid);
-    onChange(dateTimeRange);
+    onChange(timeRange);
   };
 
   return (
@@ -95,8 +89,8 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
         </Stack>
       ) : null}
       <Stack direction="row" justifyContent="flex-end">
-        <Button onClick={applyTime}>Cancel</Button>
-        <Button onClick={applyTime}>Apply</Button>
+        <Button onClick={handleApply}>Cancel</Button>
+        <Button onClick={handleApply}>Apply</Button>
       </Stack>
     </LocalizationProvider>
   );
