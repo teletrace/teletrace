@@ -1,4 +1,4 @@
-import { Timeframe } from "./common";
+import { SearchFilter, Timeframe } from "./common";
 
 export type TagValue = {
   value: string | number;
@@ -6,7 +6,7 @@ export type TagValue = {
 };
 
 export type TagValuesRequest = {
-  tag: string;
+  filters: SearchFilter[];
   timeframe: Timeframe;
   metadata?: { nextToken: string };
 };
