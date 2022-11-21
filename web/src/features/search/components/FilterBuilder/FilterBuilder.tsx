@@ -10,12 +10,12 @@ import React, { useState } from "react";
 
 import { AvailableTag } from "../../types/availableTags";
 import {
+  FilterValueTypes,
   KeyValueFilter,
   Operator,
   SearchFilter,
   ValueInputMode,
-  ValueTypes,
-} from "../../types/spanQuery";
+} from "../../types/common";
 import { FilterSelector } from "./FilterSelector";
 import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
@@ -54,7 +54,7 @@ export const FilterBuilderDialog = ({
 }: FilterDialogProps) => {
   const [filter, setFilter] = useState<AvailableTag | null>(null);
   const [operator, setOperator] = useState<Operator>("in");
-  const [value, setValue] = useState<ValueTypes>([]);
+  const [value, setValue] = useState<FilterValueTypes>([]);
   const [valueSelectMode, setValueSelectMode] = useState<ValueInputMode>(
     valueSelectModeByOperators.in
   );

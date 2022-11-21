@@ -158,7 +158,7 @@ func TestTagsValues(t *testing.T) {
 	cfg := config.Config{Debug: false}
 	expectedTag := "span.attributes.custom-tag"
 	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
-	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tag=%v", expectedTag)), bytes.NewReader(jsonBody))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags/%v", expectedTag)), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	srMock, _ := spanreader.NewSpanReaderMock()
 
@@ -206,7 +206,7 @@ func TestTagsValuesWithMalformedRequestBody(t *testing.T) {
 	mockTag := "span.attributes.custom-tag"
 	mockTag2 := "span.attributes.custom-tag2"
 	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
-	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", mockTag, mockTag2)), bytes.NewReader(malformedBody))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags/%v,%v", mockTag, mockTag2)), bytes.NewReader(malformedBody))
 	resRecorder := httptest.NewRecorder()
 	srMock, _ := spanreader.NewSpanReaderMock()
 

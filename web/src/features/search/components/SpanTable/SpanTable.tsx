@@ -9,8 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatDateToTimeString } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { Timeframe } from "../../types/common";
-import { SearchFilter } from "../../types/spanQuery";
+import { SearchFilter, Timeframe } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
@@ -53,8 +52,10 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
-          startTime: formatDateToTimeString(span.startTimeUnixNano),
-          duration: `${externalFields.duration} ms`,
+          startTime: formatDateToTimeString(
+            span.startTimeUnixNano / (1000 * 1000)
+          ),
+          duration: `${externalFields.duration / (1000 * 1000)} ms`,
           name: span.name,
           status: span.status.code,
           serviceName:
