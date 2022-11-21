@@ -4,13 +4,22 @@ import "@fontsource/inter/300.css";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
-
+import { TextFieldProps } from "@mui/material";
 import {
   errorActionColors,
   primaryActionColors,
   secondaryActionColors,
   statusColors,
 } from "./colors";
+
+const props: TextFieldProps = {
+  InputProps: {
+    error: true,
+    classes: {
+      inputSizeSmall: "",
+    },
+  },
+};
 
 let theme = createTheme({
   palette: {
@@ -302,6 +311,13 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiOutlined: {
+      styleOverrides: {
+        sizeSmall: {
+          height: "32px",
+        },
+      },
+    },
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
@@ -326,6 +342,9 @@ theme = createTheme(theme, {
             borderColor: primaryActionColors.primaryHovered,
           },
           borderColor: primaryActionColors.primaryHovered,
+        },
+        sizeSmall: {
+          height: "32px",
         },
       },
     },
@@ -441,7 +460,7 @@ theme = createTheme(theme, {
           "&.MuiChip-colorDefault": {
             borderColor: secondaryActionColors.secondaryHovered,
           },
-          //  mui oulined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
+          //  mui outlined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
           //  so in order to override default hover we need to use two `&` for the specificity to match
           "&&:hover": {
             backgroundColor: secondaryActionColors.secondaryDisabled,
@@ -452,19 +471,14 @@ theme = createTheme(theme, {
     MuiTextField: {
       defaultProps: {
         size: "small",
-        inputProps: {
-          size: "small",
+        classes: {
+          input: {
+            fontSize: "50px",
+          },
         },
       },
       styleOverrides: {
-        root: {
-          // "& .MuiInputLabel-sizeSmall": {
-          //   height: "32px",
-          // },
-          "& .MuiInputBase-sizeSmall": {
-            height: "32px",
-          },
-        },
+        root: {},
       },
     },
   },
