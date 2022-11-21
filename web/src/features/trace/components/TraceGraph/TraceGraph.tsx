@@ -34,9 +34,9 @@ const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [traceData, setTraceData] = useState<TraceData>({
     nodes: [],
     edges: [],
@@ -46,7 +46,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
     const { nodes, edges } = spansToGraphData(spans);
     createGraphLayout(nodes, edges)
       .then((els: { nodes: Node<NodeData>[]; edges: Edge<EdgeData>[] }) => {
-        if (els) {
+        if (els.nodes.length > 0) {
           setTraceData(els);
           setIsLoading(false);
         }

@@ -2,7 +2,7 @@ import Elk, { ElkNode } from "elkjs";
 import { ElkExtendedEdge } from "elkjs/lib/elk-api";
 import { Edge, MarkerType, Node, Position } from "reactflow";
 
-import { Attributes, InternalSpan } from "@/types/span";
+import { InternalSpan } from "@/types/span";
 
 import {
   EdgeColor,
@@ -96,10 +96,7 @@ const createGraphNode = (
 const spanToGraphNodes = (spans: InternalSpan[]): GraphNode[] => {
   const graphNodes: GraphNode[] = [];
   spans.forEach((s: InternalSpan) => {
-    const nodeData = getGraphNodeData({
-      ...s.span.attributes,
-      ...s.resource.attributes,
-    });
+    const nodeData = getGraphNodeData(s);
     graphNodes.push(createGraphNode(s, nodeData));
   });
   return graphNodes;
@@ -123,30 +120,29 @@ const groupGraphNodesBySystemName = (graphNodes: GraphNode[]) => {
   }, []);
 };
 
-const getGraphNodeData = (attr: Attributes): GraphNodeData => {
-  const graphNodeData = {
-    name:
-      typeof attr["net.peer.name"] === "string" ? attr["net.peer.name"] : "",
+const getGraphNodeData = (s: InternalSpan): GraphNodeData => {
+  const attr = { ...s.resource.attributes, ...s.span.attributes };
+  const typeNameMap = new Map<string, string[]>([
+    ["db.system", ["db.name", "net.peer.name"]],
+    ["messaging.system", ["messaging.destination"]],
+    ["service.name", ["telemetry.sdk.language", "net.peer.name"]],
+  ]);
+  const graphNodeData: GraphNodeData = {
+    name: "",
     image: "",
     type: "service",
   };
-  if (typeof attr["db.system"] === "string") {
-    graphNodeData.image = attr["db.system"];
-    graphNodeData.type = attr["db.system"];
-    if (typeof attr["db.name"] === "string") {
-      graphNodeData.name = attr["db.name"];
-    }
-  } else if (typeof attr["messaging.system"] === "string") {
-    graphNodeData.image = attr["messaging.system"];
-    graphNodeData.type = attr["messaging.system"];
-    if (typeof attr["messaging.destination"] === "string") {
-      graphNodeData.name = attr["messaging.destination"];
-    }
-  } else if (typeof attr["service.name"] === "string") {
-    graphNodeData.name = attr["service.name"];
-    graphNodeData.image = "http";
-    if (typeof attr["telemetry.sdk.language"] === "string") {
-      graphNodeData.image = attr["telemetry.sdk.language"];
+  for (const [key, value] of Object.entries(attr)) {
+    const names = typeNameMap.get(key);
+    if (names) {
+      graphNodeData.type = value.toString();
+      graphNodeData.image = value.toString();
+      names.forEach((n) => {
+        if (attr[n]) {
+          graphNodeData.name = attr[n].toString();
+          return;
+        }
+      });
     }
   }
   return graphNodeData;
@@ -181,7 +177,7 @@ const createEdge = (
     target: node_id,
     data: {
       time: `${duration / 1000000}ms`,
-      count: 0,
+      count: 1,
     },
     style: {
       stroke: hasError ? EdgeColor.ERROR : EdgeColor.NORMAL,
@@ -197,19 +193,11 @@ const createEdge = (
   };
 };
 
-const updateEdge = (oldEdge: Edge<EdgeData>): Edge<EdgeData> => {
-  if (oldEdge.data) {
-    const old_data = { ...oldEdge.data };
-    const count = old_data.count + 1;
-    return {
-      ...oldEdge,
-      data: {
-        ...old_data,
-        count: count,
-      },
-    };
+const updateEdge = (e: Edge<EdgeData>): Edge<EdgeData> => {
+  if (e.data) {
+    e.data.count += 1;
   }
-  return oldEdge;
+  return e;
 };
 
 export const graphNodesToGraphTree = (graphNodes: GraphNode[]) => {
