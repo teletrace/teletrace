@@ -109,7 +109,7 @@ func (r *rawTagsController) performGetTagsValuesRequest(
 
 		aggs[aggregationKey] = map[string]any{
 			"terms": map[string]any{
-				"field": field,
+				"field": fmt.Sprintf("%s.keyword", field),
 			},
 		}
 	}
