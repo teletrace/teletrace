@@ -449,6 +449,24 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiTextField: {
+      defaultProps: {
+        size: "small",
+        inputProps: {
+          size: "small",
+        },
+      },
+      styleOverrides: {
+        root: {
+          // "& .MuiInputLabel-sizeSmall": {
+          //   height: "32px",
+          // },
+          "& .MuiInputBase-sizeSmall": {
+            height: "32px",
+          },
+        },
+      },
+    },
   },
 });
 
