@@ -132,7 +132,16 @@ export interface TraceData {
   edges: Edge<EdgeData>[];
 }
 
+// interface TimelineTraceData {
+//   duration: number
+//   traceID: string
+//   spans: ITransformedSingleSpan[]
+//   startTime: number
+//   endTime: number
+// }
+
 export const TraceView = () => {
+  const [trace, setTrace] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState({});
   const [traceData, setTraceData] = useState<TraceData>({
@@ -152,6 +161,10 @@ export const TraceView = () => {
         .catch(() => alert("something went wrong!!! Could not render graph"));
     }, 1000);
   }, []);
+
+  // useEffect(() => {
+  // create temporary trace
+  // }, []);
 
   useEffect(() => {
     console.log(selectedNode);
@@ -189,7 +202,7 @@ export const TraceView = () => {
           spacing={2}
           flex={1}
         >
-          <TraceTimeline />
+          <TraceTimeline trace={trace} />
         </Stack>
       </Stack>
     </>
