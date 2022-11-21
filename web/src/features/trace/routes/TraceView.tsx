@@ -134,7 +134,7 @@ export interface TraceData {
 }
 
 export const TraceView = () => {
-  const { _traceId } = useParams();
+  const { _ } = useParams(); // trace ID
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState({});
   const [traceData, setTraceData] = useState<TraceData>({
