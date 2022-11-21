@@ -53,6 +53,9 @@ theme = createTheme(theme, {
       paper: theme.palette.grey.A100,
     },
   },
+});
+
+theme = createTheme(theme, {
   typography: {
     fontFamily: ['"Inter"', "sans-serif"].join(","),
     fontSize: 12,
@@ -343,6 +346,7 @@ theme = createTheme(theme, {
           color: theme.palette.grey[800],
         },
         tooltip: {
+          fontSize: "0.75rem",
           backgroundColor: theme.palette.grey[800],
           borderRadius: "4px",
           color: theme.palette.grey[300],
@@ -352,7 +356,8 @@ theme = createTheme(theme, {
     },
     MuiSlider: {
       styleOverrides: {
-        valueLabelLabel: {
+        valueLabel: {
+          backgroundColor: theme.palette.grey[800],
           fontSize: "14px",
         },
         root: {
@@ -395,6 +400,52 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           backgroundColor: theme.palette.grey[700],
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px",
+        },
+        label: {
+          padding: "8px",
+          fontWeight: 500,
+        },
+        labelSmall: {
+          fontSize: "12px",
+          lineHeight: "16px",
+        },
+        labelMedium: {
+          dontSize: "14px",
+          lineHeight: "20px",
+        },
+        icon: {
+          color: "#FFFFFF",
+        },
+        deleteIcon: {
+          color: "#FFFFFF",
+        },
+        avatar: {
+          color: "#FFFFFF",
+        },
+        filled: {
+          "&.MuiChip-colorDefault": {
+            backgroundColor: secondaryActionColors.secondaryClicked,
+          },
+          "&:hover": {
+            backgroundColor: secondaryActionColors.secondaryHovered,
+          },
+        },
+        outlined: {
+          "&.MuiChip-colorDefault": {
+            borderColor: secondaryActionColors.secondaryHovered,
+          },
+          //  mui oulined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
+          //  so in order to override default hover we need to use two `&` for the specificity to match
+          "&&:hover": {
+            backgroundColor: secondaryActionColors.secondaryDisabled,
+          },
         },
       },
     },
