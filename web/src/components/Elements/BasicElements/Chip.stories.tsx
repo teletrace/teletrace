@@ -81,6 +81,26 @@ const Template: ComponentStory<typeof Chip> = (args) => {
             </TableCell>
           </TableRow>
           <TableRow>
+            <TableCell>Hovered</TableCell>
+            <TableCell sx={{ width: "100%" }}>
+              <Stack direction="row" spacing={4} alignItems="center">
+                <Chip
+                  label="Hovered"
+                  id="hovered"
+                  size="small"
+                  onClick={handleClick}
+                  {...args}
+                />
+                <Chip
+                  id="hovered"
+                  label="Hovered"
+                  onClick={handleClick}
+                  {...args}
+                />
+              </Stack>
+            </TableCell>
+          </TableRow>
+          <TableRow>
             <TableCell>Clickable and Deletable</TableCell>
             <TableCell sx={{ width: "100%" }}>
               <Stack direction="row" spacing={4} alignItems="center">
@@ -161,6 +181,16 @@ const Template: ComponentStory<typeof Chip> = (args) => {
 
 export const Filled = Template.bind({});
 export const Outlined = Template.bind({});
+
+const parameters = {
+  pseudo: {
+    hover: ["#hovered"],
+  },
+};
+
+Outlined.parameters = parameters;
+
+Filled.parameters = parameters;
 
 Filled.args = {
   variant: "filled",

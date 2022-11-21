@@ -430,7 +430,9 @@ theme = createTheme(theme, {
           color: "#FFFFFF",
         },
         filled: {
-          backgroundColor: secondaryActionColors.secondaryClicked,
+          "&.MuiChip-colorDefault": {
+            backgroundColor: secondaryActionColors.secondaryClicked,
+          },
           "&:hover": {
             backgroundColor: secondaryActionColors.secondaryHovered,
           },
