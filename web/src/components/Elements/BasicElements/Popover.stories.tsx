@@ -72,18 +72,9 @@ const Template: ComponentStory<typeof Popover> = (args, context) => {
   );
 };
 
-export const Primary = Template.bind({});
-export const Secondary = Template.bind({});
-export const WithDialog = Template.bind({});
+export const Text = Template.bind({});
+export const Dialog = Template.bind({});
 
-Primary.args = {
-  color: "primary",
-};
-
-Secondary.args = {
-  color: "secondary",
-};
-
-WithDialog.parameters = {
+Dialog.parameters = {
   isDialog: true,
 };
