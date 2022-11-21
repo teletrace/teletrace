@@ -1,6 +1,7 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Edge, MarkerType, Node } from "reactflow";
 
 import {
@@ -133,6 +134,7 @@ export interface TraceData {
 }
 
 export const TraceView = () => {
+  const { traceId } = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState({});
   const [traceData, setTraceData] = useState<TraceData>({
