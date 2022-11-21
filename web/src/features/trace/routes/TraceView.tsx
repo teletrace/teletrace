@@ -134,7 +134,8 @@ export interface TraceData {
 }
 
 export const TraceView = () => {
-  const { _ } = useParams(); // trace ID
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { traceId } = useParams(); // trace ID
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState({});
   const [traceData, setTraceData] = useState<TraceData>({
