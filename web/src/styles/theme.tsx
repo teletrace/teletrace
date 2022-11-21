@@ -302,13 +302,6 @@ theme = createTheme(theme, {
         },
       },
     },
-    MuiOutlined: {
-      styleOverrides: {
-        sizeSmall: {
-          height: "32px",
-        },
-      },
-    },
     MuiOutlinedInput: {
       styleOverrides: {
         input: {
