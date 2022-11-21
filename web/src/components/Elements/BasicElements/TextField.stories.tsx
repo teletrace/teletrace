@@ -1,4 +1,4 @@
-import { Box, Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
