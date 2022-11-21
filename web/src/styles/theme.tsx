@@ -12,15 +12,6 @@ import {
   statusColors,
 } from "./colors";
 
-const props: TextFieldProps = {
-  InputProps: {
-    error: true,
-    classes: {
-      inputSizeSmall: "",
-    },
-  },
-};
-
 let theme = createTheme({
   palette: {
     mode: "dark",
@@ -348,6 +339,13 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiInputLabel: {
+      styleOverrides: {
+        sizeSmall: {
+          lineHeight: "15px",
+        },
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -471,14 +469,6 @@ theme = createTheme(theme, {
     MuiTextField: {
       defaultProps: {
         size: "small",
-        classes: {
-          input: {
-            fontSize: "50px",
-          },
-        },
-      },
-      styleOverrides: {
-        root: {},
       },
     },
   },

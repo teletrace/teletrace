@@ -7,15 +7,13 @@ export default {
 } as ComponentMeta<typeof TextField>;
 
 const Template: ComponentStory<typeof TextField> = (args) => (
-  <div>
+  <Stack spacing={2} sx={{ width: "20%" }}>
     <Typography variant="subtitle1" gutterBottom>
       Default Text Field size is small
     </Typography>
-    <Stack spacing={2} sx={{ width: "20%" }}>
-      <TextField label="default textfield" {...args} />
-      <TextField size="medium" label="medium textfield" {...args} />
-    </Stack>
-  </div>
+    <TextField label="default textfield" {...args} />
+    <TextField size="medium" label="medium textfield" {...args} />
+  </Stack>
 );
 
 const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
