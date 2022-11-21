@@ -36,7 +36,7 @@ const (
 	esForceCreateConfigDefault = false
 
 	esIndexEnvName = "ES_INDEX"
-	esIndexDefault = "lupa-spans"
+	esIndexDefault = "lupa-traces"
 
 	esIndexerWorkersCountEnvName = "ES_INDEXER_WORKERS_COUNT"
 	esIndexerWorkersCountDefault = 5

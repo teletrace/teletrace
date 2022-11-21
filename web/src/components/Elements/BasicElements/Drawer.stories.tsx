@@ -1,14 +1,15 @@
-import MailIcon from "@mui/icons-material/Mail";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import { Inbox, Mail } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import * as React from "react";
 
@@ -48,7 +49,7 @@ function TemporaryDrawer() {
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index % 2 === 0 ? <Inbox /> : <Mail />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
@@ -61,7 +62,7 @@ function TemporaryDrawer() {
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index % 2 === 0 ? <Inbox /> : <Mail />}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>

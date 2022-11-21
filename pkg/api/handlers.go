@@ -20,7 +20,7 @@ func (api *API) search(c *gin.Context) {
 	if isValidationError {
 		return
 	}
-	res, err := (*api.spanReader).Search(c, &req)
+	res, err := (*api.spanReader).Search(c, req)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
@@ -46,7 +46,7 @@ func (api *API) getTraceById(c *gin.Context) {
 		},
 	}
 
-	res, err := (*api.spanReader).Search(c, sr)
+	res, err := (*api.spanReader).Search(c, *sr)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
