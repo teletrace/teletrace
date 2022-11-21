@@ -35,9 +35,9 @@ func (api *API) getTraceById(c *gin.Context) {
 			StartTime: 0,
 			EndTime:   uint64(time.Now().UnixNano()),
 		},
-		SearchFilters: []spansquery.SearchFilter{
+		SearchFilters: []model.SearchFilter{
 			{
-				KeyValueFilter: &spansquery.KeyValueFilter{
+				KeyValueFilter: &model.KeyValueFilter{
 					Key:      "span.traceId",
 					Operator: spansquery.OPERATOR_EQUALS,
 					Value:    traceId,
@@ -71,7 +71,7 @@ func (api *API) tagsValues(c *gin.Context) {
 	if isValidationError {
 		return
 	}
-	tag := c.Request.URL.Query().Get("tag")
+	tag := c.Param("tag")
 
 	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag})
 

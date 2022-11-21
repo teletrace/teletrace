@@ -3,7 +3,7 @@ import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-import { Operator, operatorsList } from "../../types/spanQuery";
+import { Operator, operatorsList } from "../../types/common";
 import { styles } from "./styles";
 
 export type OperatorSelectorProps = {
