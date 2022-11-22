@@ -1,6 +1,7 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
 import { InternalSpan } from "@/types/span";
@@ -12,6 +13,8 @@ import { TraceTimeline } from "../components/TraceTimeline";
 import { trace_res } from "../types/TraceViewMock";
 
 export const TraceView = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { traceId } = useParams(); // trace ID
   const [selectedNode, setSelectedNode] = useState({});
   const [spans, setSpans] = useState<InternalSpan[]>([]);
 

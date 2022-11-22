@@ -11,16 +11,16 @@ import FormControl from "@mui/material/FormControl";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValues } from "../../api/tagValues";
-import { ValueInputMode, ValueTypes } from "../../types/spanQuery";
+import { FilterValueTypes, ValueInputMode } from "../../types/common";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
   query?: TagValuesRequest;
-  value: ValueTypes;
+  value: FilterValueTypes;
   valueInputMode: ValueInputMode;
-  onChange: (value: ValueTypes) => void;
+  onChange: (value: FilterValueTypes) => void;
   error: boolean;
 };
 
@@ -35,9 +35,10 @@ export const ValueSelector = ({
   const tagValuesRequest =
     query ??
     ({
+      filters: [],
       timeframe: {
-        startTime: 0,
-        endTime: new Date().valueOf(),
+        startTimeUnixNanoSec: 0,
+        endTimeUnixNanoSec: new Date().valueOf(),
       },
     } as TagValuesRequest);
 

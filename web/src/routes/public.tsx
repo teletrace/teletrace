@@ -14,6 +14,10 @@ export const publicRoutes: PublicRouteProps[] = [
     element: <TraceView />,
   },
   {
+    path: "/trace/:traceId",
+    element: <TraceView />,
+  },
+  {
     path: "/search",
     element: <SpanSearch />,
   },
