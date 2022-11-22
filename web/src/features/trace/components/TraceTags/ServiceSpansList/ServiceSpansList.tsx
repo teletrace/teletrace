@@ -1,4 +1,4 @@
-import Paper from "@mui/material/Paper";
+import { Box } from "@mui/material";
 
 import { Span } from "../../spans-mock";
 import { ServiceSpan } from "../ServiceSpan/ServiceSpan";
@@ -10,10 +10,10 @@ interface ServiceSpansListProps {
 
 export const ServiceSpansList = ({ spans }: ServiceSpansListProps) => {
   return (
-    <Paper sx={styles.mainPaper}>
+    <Box sx={styles.container}>
       {spans.map((span) => (
         <ServiceSpan key={span.span.spanId} span={span} />
       ))}
-    </Paper>
+    </Box>
   );
 };

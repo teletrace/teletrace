@@ -1,4 +1,4 @@
-import { CircularProgress, Paper, Stack } from "@mui/material";
+import { Box, CircularProgress, Stack } from "@mui/material";
 import {
   MouseEvent as ReactMouseEvent,
   memo,
@@ -121,7 +121,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
   };
 
   return (
-    <Paper sx={{ width: "100%" }}>
+    <Box sx={{ flex: 1 }}>
       {isLoading ? (
         <Stack alignItems="center" justifyContent="center" height="100%">
           <CircularProgress />
@@ -148,7 +148,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
           No data to display
         </Stack>
       )}
-    </Paper>
+    </Box>
   );
 };
 
