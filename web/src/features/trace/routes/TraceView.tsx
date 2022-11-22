@@ -17,8 +17,10 @@ import {
 } from "@/components/Graph/utils/global";
 import { createGraphLayout } from "@/components/Graph/utils/layout";
 import { Head } from "@/components/Head";
+import { InternalSpan } from "@/types/span";
 
 import { SPANS_MOCK } from "../components/spans-mock";
+import { TRACE_MOCK } from "../components/trace-mock";
 import { TraceGraph } from "../components/TraceGraph";
 import { ServiceSpansList } from "../components/TraceTags/ServiceSpansList/ServiceSpansList";
 import { TraceTimeline } from "../components/TraceTimeline";
@@ -132,16 +134,8 @@ export interface TraceData {
   edges: Edge<EdgeData>[];
 }
 
-// interface TimelineTraceData {
-//   duration: number
-//   traceID: string
-//   spans: ITransformedSingleSpan[]
-//   startTime: number
-//   endTime: number
-// }
-
 export const TraceView = () => {
-  const [trace, setTrace] = useState(null);
+  const [trace, setTrace] = useState<InternalSpan[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState({});
   const [traceData, setTraceData] = useState<TraceData>({
@@ -162,9 +156,9 @@ export const TraceView = () => {
     }, 1000);
   }, []);
 
-  // useEffect(() => {
-  // create temporary trace
-  // }, []);
+  useEffect(() => {
+    setTrace(TRACE_MOCK);
+  }, []);
 
   useEffect(() => {
     console.log(selectedNode);
@@ -196,13 +190,8 @@ export const TraceView = () => {
           />
           <ServiceSpansList spans={SPANS_MOCK} />
         </Stack>
-        <Stack
-          direction="row"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={2}
-          flex={1}
-        >
-          <TraceTimeline trace={trace} />
+        <Stack divider={<Divider orientation="vertical" flexItem />} flex={1}>
+          {trace && <TraceTimeline trace={trace} />}
         </Stack>
       </Stack>
     </>

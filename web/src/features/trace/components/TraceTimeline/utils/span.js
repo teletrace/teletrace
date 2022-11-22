@@ -70,6 +70,9 @@ export const transformSpan = (span) => {
     parentSpanId: span.span.parentSpanId,
     traceId: span.span.traceId,
     error: span.span.status,
+    operationName: span.span.name,
+    process: {
+      serviceName: span.resource.attributes["service.name"],
+    },
   };
 };
-

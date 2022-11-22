@@ -36,14 +36,14 @@ export default function Scrubber({
         <rect
           x={xPercent}
           className="Scrubber--handle"
-          fill={active || isDragging ? "#fff" : theme.grey[900]}
+          fill={active || isDragging ? "#fff" : theme.palette.grey[900]}
           style={{ transform: `translate(-1.5px)` }}
           width="2"
           height={active || isDragging ? "100%" : "20px"}
         />
       </g>
       <line
-        fill={active || isDragging ? "#fff" : theme.grey[900]}
+        fill={active || isDragging ? "#fff" : theme.palette.grey[900]}
         className="Scrubber--line"
         y2="100%"
         x1={xPercent}

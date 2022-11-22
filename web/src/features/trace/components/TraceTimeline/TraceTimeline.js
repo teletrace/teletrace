@@ -99,7 +99,7 @@ export function TraceTimeline({ trace }) {
   return (
     <TimelineViewer
       trace={traceData}
-      activeSpan={selectedSpan?.span.spanId}
+      activeSpan={selectedSpan?.spanID}
       setActiveTimelineState={setSelectedSpan}
       setColumnWidth={setColumnWidth}
       removeHoverIndentGuideId={removeHoverIndentGuideId}

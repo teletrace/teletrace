@@ -50,13 +50,15 @@ export const TREE_ROOT_ID = "__root__";
  * @return {TreeNode}    A tree of spanIDs derived from the relationships
  *                       between spans in the trace.
  */
-export function getTraceSpanIdsAsTree(trace) {
+export function getTraceSpanIdsAsTree(transformedSpans) {
   const nodesById = new Map(
-    trace.map((span) => [span.spanID, new TreeNode(span.spanID)])
+    transformedSpans.map((span) => [span.spanID, new TreeNode(span.spanID)])
   );
-  const spansById = new Map(trace.map((span) => [span.spanID, span]));
+  const spansById = new Map(
+    transformedSpans.map((span) => [span.spanID, span])
+  );
   const root = new TreeNode(TREE_ROOT_ID);
-  trace.forEach((span) => {
+  transformedSpans.forEach((span) => {
     const node = nodesById.get(span.spanID);
     if (span.parentSpanId) {
       const parent = nodesById.get(span.parentSpanId) || root;
@@ -70,7 +72,7 @@ export function getTraceSpanIdsAsTree(trace) {
     const b = spansById.get(nodeB.value);
     return +(a.startTime > b.startTime) || +(a.startTime === b.startTime) - 1;
   };
-  trace.forEach((span) => {
+  transformedSpans.forEach((span) => {
     const node = nodesById.get(span.spanID);
     if (node.children.length > 1) {
       node.children.sort(comparator);
@@ -246,8 +248,10 @@ export function transformTraceData(trace) {
   }
   // tree is necessary to sort the spans, so children follow parents, and
   // siblings are sorted by start time
-  const tree = getTraceSpanIdsAsTree(trace);
+  const tree = getTraceSpanIdsAsTree(transformedSpans);
   const spans = [];
+  const svcCounts = {};
+  let traceName = "";
 
   tree.walk((spanID, node, depth = 0) => {
     if (spanID === "__root__") {
@@ -257,7 +261,16 @@ export function transformTraceData(trace) {
     if (!span) {
       return;
     }
-
+    const { process } = span;
+    if (process) {
+      const { serviceName } = process;
+      if (serviceName) {
+        svcCounts[serviceName] = (svcCounts[serviceName] || 0) + 1;
+        if (!span.references || !span.references.length) {
+          traceName = `${serviceName}: ${span.operationName}`;
+        }
+      }
+    }
     span.relativeStartTime = span.startTime - traceStartTime;
     span.depth = depth - 1;
     span.hasChildren = node.children.length > 0;
@@ -274,11 +287,18 @@ export function transformTraceData(trace) {
     spans.push(span);
   });
 
+  const services = Object.keys(svcCounts).map((name) => ({
+    name,
+    numberOfSpans: svcCounts[name],
+  }));
+
   return {
     startTime: traceStartTime,
     endTime: traceEndTime,
     duration: traceEndTime - traceStartTime,
     spans,
-    traceID: spans[0].traceId,
+    services,
+    traceID: traceName,
+    traceName,
   };
 }

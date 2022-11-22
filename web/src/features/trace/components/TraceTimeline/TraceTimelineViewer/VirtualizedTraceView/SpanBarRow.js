@@ -47,7 +47,7 @@ export default class SpanBarRow extends React.PureComponent {
       activeSpan,
     } = this.props;
     const { duration, hasChildren: isParent, operationName, process } = span;
-    const serviceName = span.hasChildren ? process.serviceName : span.name;
+    const serviceName = process.serviceName;
     const label = formatDuration(duration);
     const viewBounds = getViewedBounds(
       span.startTime,
@@ -55,9 +55,9 @@ export default class SpanBarRow extends React.PureComponent {
     );
     const viewStart = viewBounds.start;
     const viewEnd = viewBounds.end;
-    const icon = ResourceIcon();
+    const icon = <ResourceIcon name="DefaultResourceIcon" />;
 
-    const labelDetail = `${serviceName}::${operationName}`;
+    const labelDetail = `${process.serviceName}::${operationName}`;
     let longLabel;
     let hintSide;
     if (viewStart > 1 - viewEnd) {
