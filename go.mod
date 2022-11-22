@@ -15,9 +15,9 @@ require (
 )
 
 require (
-	github.com/creasty/defaults v1.6.0
 	github.com/epsagon/lupa/lupa-otelcol v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.4.0
+	golang.org/x/exp v0.0.0-20221114191408-850992195362
 )
 
 require (
@@ -108,7 +108,7 @@ require (
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect
-	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

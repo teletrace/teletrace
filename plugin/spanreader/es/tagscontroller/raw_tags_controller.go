@@ -12,6 +12,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const TAG_PREFIX = "span.attributes."
+
 type rawTagsController struct {
 	client *elasticsearch.Client
 	idx    string
@@ -25,7 +27,11 @@ func NewTagsController(logger *zap.Logger, client *elasticsearch.Client, idx str
 }
 
 func (r *rawTagsController) prefixTag(tag string) string {
-	return fmt.Sprint("span.attributes.", tag)
+	return fmt.Sprint(TAG_PREFIX, tag)
+}
+
+func (r *rawTagsController) removePrefixTag(tag string) string {
+	return tag[len(TAG_PREFIX):]
 }
 
 // Get available tags.
@@ -34,28 +40,46 @@ func (r *rawTagsController) GetAvailableTags(
 	ctx context.Context,
 	request tagsquery.GetAvailableTagsRequest,
 ) (tagsquery.GetAvailableTagsResponse, error) {
+	var err error
 	result := tagsquery.GetAvailableTagsResponse{
 		Tags: make([]tagsquery.TagInfo, 0),
 	}
 
+	result.Tags, err = r.getTagsMappings(ctx, []string{"*"})
+	if err != nil {
+		return result, fmt.Errorf("Could not get available tags: %v", err)
+	}
+
+	return result, nil
+}
+
+func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
+	var result []tagsquery.TagInfo
+
+	var prefixedTags []string
+
+	for _, tag := range tags {
+		prefixedTags = append(prefixedTags, r.prefixTag(tag))
+	}
+
 	res, err := r.client.Indices.GetFieldMapping(
-		[]string{r.prefixTag("*")},
+		prefixedTags,
 		r.client.Indices.GetFieldMapping.WithContext(ctx),
 		r.client.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
 
 	if err != nil {
-		return result, fmt.Errorf("failed to get field mapping: %v", err)
+		return nil, fmt.Errorf("failed to get field mapping: %v", err)
 	}
 
 	defer res.Body.Close()
 	if err := SummarizeResponseError(res); err != nil {
-		return result, err
+		return nil, err
 	}
 
 	var body map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
-		return result, fmt.Errorf("failed to decode body: %v", err)
+		return nil, fmt.Errorf("failed to decode body: %v", err)
 	}
 
 	// { "lupa-index": { "mappings": { ... }}}
@@ -66,15 +90,17 @@ func (r *rawTagsController) GetAvailableTags(
 
 		mappingData := fieldMapping["mapping"].(map[string]any)
 		if len(mappingData) > 1 {
-			return result, fmt.Errorf(
+			return nil, fmt.Errorf(
 				"unknown scenario - mapping data contains more than one entry: %v", mappingData)
 		}
 
 		for _, valueData := range mappingData {
-			result.Tags = append(result.Tags, tagsquery.TagInfo{
-				Name: fieldMapping["full_name"].(string),
-				Type: valueData.(map[string]any)["type"].(string),
-			})
+			if _, ok := mappingData["keyword"]; !ok {
+				result = append(result, tagsquery.TagInfo{
+					Name: fieldMapping["full_name"].(string),
+					Type: valueData.(map[string]any)["type"].(string),
+				})
+			}
 		}
 	}
 
@@ -87,7 +113,12 @@ func (r *rawTagsController) GetTagsValues(
 	tags []string,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 
-	body, err := r.performGetTagsValuesRequest(ctx, request, tags)
+	tagsMappings, err := r.getTagsMappings(ctx, tags)
+	if err != nil {
+		return nil, fmt.Errorf("Could not get values for tags: %v", tags)
+	}
+
+	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings)
 
 	if err != nil {
 		return map[string]*tagsquery.TagValuesResponse{}, err
@@ -100,18 +131,27 @@ func (r *rawTagsController) GetTagsValues(
 func (r *rawTagsController) performGetTagsValuesRequest(
 	ctx context.Context,
 	request tagsquery.TagValuesRequest,
-	tags []string,
+	tagsMappings []tagsquery.TagInfo,
 ) (map[string]any, error) {
-	aggs := make(map[string]any, len(tags))
-	for _, field := range tags {
+	aggs := make(map[string]any, len(tagsMappings))
+	for _, mapping := range tagsMappings {
 
-		aggregationKey := field
+		aggregationKey := mapping.Name
 
-		aggs[aggregationKey] = map[string]any{
-			"terms": map[string]any{
-				"field": fmt.Sprintf("%s.keyword", field),
-			},
+		if mapping.Type == "text" {
+			aggs[aggregationKey] = map[string]any{
+				"terms": map[string]any{
+					"field": fmt.Sprintf("%s.keyword", aggregationKey),
+				},
+			}
+		} else {
+			aggs[aggregationKey] = map[string]any{
+				"terms": map[string]any{
+					"field": aggregationKey,
+				},
+			}
 		}
+
 	}
 
 	query := map[string]any{
@@ -216,7 +256,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 			})
 		}
 		if currentTagValues != nil {
-			result[tag] = &tagsquery.TagValuesResponse{
+			result[r.removePrefixTag(tag)] = &tagsquery.TagValuesResponse{
 				Values: currentTagValues,
 			}
 		}
