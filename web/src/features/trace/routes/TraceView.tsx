@@ -1,6 +1,7 @@
 import { Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Edge, MarkerType, Node } from "reactflow";
 
 import {
@@ -135,6 +136,8 @@ export interface TraceData {
 }
 
 export const TraceView = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { traceId } = useParams(); // trace ID
   const [trace, setTrace] = useState<InternalSpan[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState({});

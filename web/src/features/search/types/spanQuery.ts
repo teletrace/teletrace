@@ -2,40 +2,11 @@
 
 import { InternalSpan } from "@/types/span";
 
-import { Timeframe } from "./common";
+import { SearchFilter, Timeframe } from "./common";
 
 export type Sort = {
   field: string;
   ascending: boolean;
-};
-
-export const operatorsList = [
-  "in",
-  "not_in",
-  "contains",
-  "not_contains",
-  "exists",
-  "not_exists",
-  "gt",
-  "gte",
-  "lt",
-  "lte",
-] as const;
-
-export type Operator = typeof operatorsList[number];
-
-export type ValueTypes = string | number | string[];
-
-export type ValueInputMode = "select" | "text" | "none" | "numeric";
-
-export type KeyValueFilter = {
-  key: string;
-  value: ValueTypes;
-  operator: Operator;
-};
-
-export type SearchFilter = {
-  keyValueFilter: KeyValueFilter;
 };
 
 export type SearchRequest = {

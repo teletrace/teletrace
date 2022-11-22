@@ -8,6 +8,6 @@ export type AvailableTagsRequest = {
 };
 
 export type AvailableTagsResponse = {
-  tags: AvailableTag[];
+  Tags: AvailableTag[];
   metadata?: { nextToken: string };
 };

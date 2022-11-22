@@ -1,4 +1,4 @@
-package typedreqinteractor
+package searchcontroller
 
 import (
 	"encoding/json"
@@ -87,7 +87,7 @@ func getSearchResponseMock() (map[string]any, error) {
 	return res, nil
 }
 
-func getSearchRequestMock(fs ...spansquery.SearchFilter) (spansquery.SearchRequest, error) {
+func getSearchRequestMock(fs ...model.SearchFilter) (spansquery.SearchRequest, error) {
 	tf := model.Timeframe{
 		StartTime: uint64(time.Unix(0, 0).UnixNano()),
 		EndTime:   uint64(time.Now().UnixNano()),
@@ -126,7 +126,7 @@ func TestBuildSearchRequest_NoFilters(t *testing.T) {
 	assert.Nil(t, err)
 
 	//nolint:ineffassign
-	_, err = buildSearchRequest(&searchReq)
+	_, err = buildSearchRequest(searchReq)
 
 	assert.Nil(t, err)
 }

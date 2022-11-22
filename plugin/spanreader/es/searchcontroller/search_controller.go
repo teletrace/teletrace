@@ -1,22 +1,32 @@
-package typedreqinteractor
+package searchcontroller
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"oss-tracing/pkg/esclient/typedreqinteractor/querybuilder"
 	"oss-tracing/pkg/model"
 	internalspan "oss-tracing/pkg/model/internalspan/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/sortorder"
 	"github.com/mitchellh/mapstructure"
+	"go.uber.org/zap"
 )
 
-func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+type searchController struct {
+	client *elasticsearch.TypedClient
+	idx    string
+}
+
+func NewSearchController(logger *zap.Logger, client *elasticsearch.TypedClient, idx string) (*searchController, error) {
+	return &searchController{client: client, idx: idx}, nil
+}
+
+func (sc *searchController) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
 	var err error
 
 	req, err := buildSearchRequest(r)
@@ -25,8 +35,8 @@ func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchReque
 		return nil, fmt.Errorf("Could not build search request: %+v", err)
 	}
 
-	search := c.Client.API.Search()
-	res, err := search.Request(req).Index(idx).Do(ctx)
+	search := sc.client.API.Search()
+	res, err := search.Request(req).Index(sc.idx).Do(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
@@ -49,7 +59,7 @@ func Search(ctx context.Context, c Client, idx string, r *spansquery.SearchReque
 	return searchResp, nil
 }
 
-func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
+func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 	var err error
 
 	builder := search.NewRequestBuilder()
@@ -69,17 +79,17 @@ func buildSearchRequest(r *spansquery.SearchRequest) (*search.Request, error) {
 	return builder.Build(), nil
 }
 
-func createTimeframeFilters(tf model.Timeframe) []spansquery.SearchFilter {
-	return []spansquery.SearchFilter{
+func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
+	return []model.SearchFilter{
 		{
-			KeyValueFilter: &spansquery.KeyValueFilter{
+			KeyValueFilter: &model.KeyValueFilter{
 				Key:      "span.startTimeUnixNano",
 				Operator: spansquery.OPERATOR_GTE,
 				Value:    tf.StartTime,
 			},
 		},
 		{
-			KeyValueFilter: &spansquery.KeyValueFilter{
+			KeyValueFilter: &model.KeyValueFilter{
 				Key:      "span.endTimeUnixNano",
 				Operator: spansquery.OPERATOR_LTE,
 				Value:    tf.EndTime,
@@ -89,18 +99,18 @@ func createTimeframeFilters(tf model.Timeframe) []spansquery.SearchFilter {
 
 }
 
-func buildQuery(b *search.RequestBuilder, fs ...spansquery.SearchFilter) (*search.RequestBuilder, error) {
+func buildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.RequestBuilder, error) {
 	var err error
 	query := types.NewQueryContainerBuilder()
 
-	var kvFilters []spansquery.KeyValueFilter
+	var kvFilters []model.KeyValueFilter
 
 	for _, f := range fs {
 		if f.KeyValueFilter != nil {
 			kvFilters = append(kvFilters, *f.KeyValueFilter)
 		}
 	}
-	query, err = querybuilder.BuildFilters(query, kvFilters...)
+	query, err = BuildFilters(query, kvFilters...)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not build filters: %+v", err)
