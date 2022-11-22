@@ -2,11 +2,14 @@ package mock
 
 import (
 	"context"
-	internalspan "oss-tracing/pkg/model/internalspan/v1"
-	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
+
+	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
+
+	spanformatutiltests "github.com/epsagon/lupa/model/internalspan/v1/util"
 )
 
 type spanReader struct{}
