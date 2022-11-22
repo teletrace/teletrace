@@ -13,6 +13,7 @@ export interface NodeData extends GraphNodeData {
 }
 
 export interface GraphNodeData {
+  id: string;
   name: string;
   image: string;
   type: string;

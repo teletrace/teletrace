@@ -73,9 +73,7 @@ export const createGraphLayout = async (
 };
 
 export const spansToGraphData = (spans: InternalSpan[]) => {
-  return graphNodesToGraphTree(
-    groupGraphNodesBySystemName(spanToGraphNodes(spans))
-  );
+  return graphNodesToGraphTree(spanToGraphNodes(spans));
 };
 
 const createGraphNode = (
@@ -94,30 +92,25 @@ const createGraphNode = (
 };
 
 const spanToGraphNodes = (spans: InternalSpan[]): GraphNode[] => {
-  const graphNodes: GraphNode[] = [];
+  const idGraphNodeMap = new Map<string, GraphNode>();
   spans.forEach((s: InternalSpan) => {
     const nodeData = getGraphNodeData(s);
-    graphNodes.push(createGraphNode(s, nodeData));
+    const graphNode = idGraphNodeMap.get(nodeData.id);
+    graphNode
+      ? idGraphNodeMap.set(nodeData.id, updateGraphNode(graphNode, s))
+      : idGraphNodeMap.set(nodeData.id, createGraphNode(s, nodeData));
   });
-  return graphNodes;
+  return [...idGraphNodeMap.values()];
 };
 
-const groupGraphNodesBySystemName = (graphNodes: GraphNode[]) => {
-  return graphNodes.reduce((graphNodes: GraphNode[], graphNode: GraphNode) => {
-    const sameService = graphNodes.find(
-      (g: GraphNode) =>
-        g.systemType === graphNode.systemType &&
-        g.serviceName === graphNode.serviceName
-    );
-    if (sameService) {
-      sameService.spans = [...sameService.spans, ...graphNode.spans];
-      sameService.hasError = sameService.hasError || graphNode.hasError;
-      sameService.duration = sameService.duration + graphNode.duration;
-    } else {
-      graphNodes.push(graphNode);
-    }
-    return graphNodes;
-  }, []);
+const updateGraphNode = (
+  g: GraphNode,
+  internalSpan: InternalSpan
+): GraphNode => {
+  g.spans.push({ ...internalSpan });
+  g.hasError = g.hasError || internalSpan.span.status.code !== 0;
+  g.duration = g.duration + internalSpan.externalFields.duration;
+  return g;
 };
 
 const getGraphNodeData = (s: InternalSpan): GraphNodeData => {
@@ -125,12 +118,12 @@ const getGraphNodeData = (s: InternalSpan): GraphNodeData => {
   const typeNameMap = new Map<string, string[]>([
     ["db.system", ["db.name", "net.peer.name"]],
     ["messaging.system", ["messaging.destination"]],
-    ["service.name", ["telemetry.sdk.language", "net.peer.name"]],
   ]);
   const graphNodeData: GraphNodeData = {
+    id: "",
     name: "",
     image: "",
-    type: "service",
+    type: "",
   };
   for (const [key, value] of Object.entries(attr)) {
     const names = typeNameMap.get(key);
@@ -143,8 +136,12 @@ const getGraphNodeData = (s: InternalSpan): GraphNodeData => {
           return;
         }
       });
+    } else {
+      graphNodeData.name = attr["service.name"].toString();
+      graphNodeData.type = "service";
     }
   }
+  graphNodeData.id = `${graphNodeData.name}${graphNodeData.type}`;
   return graphNodeData;
 };
 
@@ -153,6 +150,7 @@ const createNode = (g: GraphNode): Node<NodeData> => {
     id: g.id,
     type: BASIC_NODE_TYPE,
     data: {
+      id: g.id,
       name: g.serviceName,
       type: g.systemType,
       image: g.image,
