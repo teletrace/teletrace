@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
