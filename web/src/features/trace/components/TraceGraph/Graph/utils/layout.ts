@@ -86,7 +86,7 @@ const createGraphNode = (
     systemType: nodeData.type,
     image: nodeData.image,
     hasError: internalSpan.span.status.code !== 0,
-    duration: internalSpan.externalFields.duration,
+    duration: internalSpan.externalFields.durationNano,
     spans: [{ ...internalSpan }],
   };
 };
@@ -109,7 +109,7 @@ const updateGraphNode = (
 ): void => {
   g.spans.push({ ...internalSpan });
   g.hasError = g.hasError || internalSpan.span.status.code !== 0;
-  g.duration = g.duration + internalSpan.externalFields.duration;
+  g.duration = g.duration + internalSpan.externalFields.durationNano;
 };
 
 const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {

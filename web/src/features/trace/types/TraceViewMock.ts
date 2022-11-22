@@ -90,7 +90,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 1715000000,
+        durationNano: 1715000000,
       },
     },
     {
@@ -174,7 +174,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 144000000,
+        durationNano: 144000000,
       },
     },
     {
@@ -258,7 +258,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 161000000,
+        durationNano: 161000000,
       },
     },
     {
@@ -342,7 +342,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 26000000,
+        durationNano: 26000000,
       },
     },
     {
@@ -426,7 +426,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 8000000,
+        durationNano: 8000000,
       },
     },
     {
@@ -510,7 +510,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 120000000,
+        durationNano: 120000000,
       },
     },
     {
@@ -594,7 +594,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 55000000,
+        durationNano: 55000000,
       },
     },
     {
@@ -678,7 +678,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 143000000,
+        durationNano: 143000000,
       },
     },
     {
@@ -762,7 +762,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 189000000,
+        durationNano: 189000000,
       },
     },
     {
@@ -846,7 +846,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 288000000,
+        durationNano: 288000000,
       },
     },
     {
@@ -930,7 +930,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 5000000,
+        durationNano: 5000000,
       },
     },
     {
@@ -1014,7 +1014,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 35000000,
+        durationNano: 35000000,
       },
     },
     {
@@ -1098,7 +1098,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 91000000,
+        durationNano: 91000000,
       },
     },
     {
@@ -1182,7 +1182,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 267000000,
+        durationNano: 267000000,
       },
     },
     {
@@ -1266,7 +1266,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 227000000,
+        durationNano: 227000000,
       },
     },
     {
@@ -1350,7 +1350,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 251000000,
+        durationNano: 251000000,
       },
     },
     {
@@ -1434,7 +1434,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 212000000,
+        durationNano: 212000000,
       },
     },
     {
@@ -1518,7 +1518,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 60000000,
+        durationNano: 60000000,
       },
     },
     {
@@ -1602,7 +1602,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 144000000,
+        durationNano: 144000000,
       },
     },
     {
@@ -1686,7 +1686,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 126000000,
+        durationNano: 126000000,
       },
     },
     {
@@ -1770,7 +1770,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 153000000,
+        durationNano: 153000000,
       },
     },
     {
@@ -1854,7 +1854,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 105000000,
+        durationNano: 105000000,
       },
     },
     {
@@ -1938,7 +1938,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 169000000,
+        durationNano: 169000000,
       },
     },
     {
@@ -2022,7 +2022,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 289000000,
+        durationNano: 289000000,
       },
     },
     {
@@ -2106,7 +2106,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 148000000,
+        durationNano: 148000000,
       },
     },
     {
@@ -2190,7 +2190,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 286000000,
+        durationNano: 286000000,
       },
     },
     {
@@ -2274,7 +2274,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 102000000,
+        durationNano: 102000000,
       },
     },
     {
@@ -2358,7 +2358,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 207000000,
+        durationNano: 207000000,
       },
     },
     {
@@ -2442,7 +2442,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 133000000,
+        durationNano: 133000000,
       },
     },
     {
@@ -2526,7 +2526,7 @@ export const trace_res: SearchResponse = {
         },
       },
       externalFields: {
-        duration: 123000000,
+        durationNano: 123000000,
       },
     },
   ],

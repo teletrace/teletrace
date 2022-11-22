@@ -45,7 +45,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       },
     },
     externalFields: {
-      duration: 69504877,
+      durationNano: 69504877,
     },
   },
   {
@@ -99,7 +99,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       },
     },
     externalFields: {
-      duration: 69013148,
+      durationNano: 69013148,
     },
   },
   {
@@ -164,7 +164,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       },
     },
     externalFields: {
-      duration: 61939765,
+      durationNano: 61939765,
     },
   },
 ];
