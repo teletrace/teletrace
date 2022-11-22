@@ -2,8 +2,8 @@ import {
   Box,
   Button,
   Divider,
-  Grid,
   IconButton,
+  Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -48,95 +48,53 @@ function PositionedTooltips() {
         <Typography variant="subtitle1" sx={{ color: "primary.dark" }}>
           Positioned tooltips
         </Typography>
-        <Box>
-          <Grid container justifyContent="center">
-            <Grid item>
-              <Tooltip title="Add" placement="top-start">
-                <span>
-                  <Button>top-start</Button>
-                </span>
+        <Box sx={{ width: 500 }}>
+          <Stack direction="row" justifyContent="center">
+            <Tooltip title="Add" placement="top-start">
+              <Button>tooltip top-start</Button>
+            </Tooltip>
+            <Tooltip title="Add" placement="top">
+              <Button>tooltip top</Button>
+            </Tooltip>
+            <Tooltip title="Add" placement="top-end">
+              <Button>tooltip top-end</Button>
+            </Tooltip>
+          </Stack>
+          <Stack direction="row" justifyContent="space-between">
+            <Stack spacing={2}>
+              <Tooltip title="Add" placement="left-start">
+                <Button>left-start</Button>
               </Tooltip>
-              <Tooltip title="Add" placement="top">
-                <span>
-                  <Button>top</Button>
-                </span>
+              <Tooltip title="Add" placement="left">
+                <Button>left</Button>
               </Tooltip>
-              <Tooltip title="Add" placement="top-end">
-                <span>
-                  <Button>top-end</Button>
-                </span>
+              <Tooltip title="Add" placement="left-end">
+                <Button>left-end</Button>
               </Tooltip>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent="center">
-            <Grid item xs={6}>
+            </Stack>
+            <Stack alignItems="flex-end" spacing={2}>
               <Tooltip title="Add" placement="right-start">
-                <span>
-                  <Button sx={{ display: "inline-block" }}>right-start</Button>
-                </span>
+                <Button>right-start</Button>
               </Tooltip>
-              <br />
               <Tooltip title="Add" placement="right">
-                <span>
-                  <Button sx={{ display: "inline-block" }}>right</Button>
-                </span>
+                <Button>right</Button>
               </Tooltip>
-              <br />
               <Tooltip title="Add" placement="right-end">
-                <span>
-                  <Button sx={{ display: "inline-block" }}>right-end</Button>
-                </span>
+                <Button>right-end</Button>
               </Tooltip>
-            </Grid>
-            <Grid
-              item
-              container
-              xs={6}
-              alignItems="flex-end"
-              direction="column"
-            >
-              <Grid item>
-                <Tooltip title="Add" placement="left-start">
-                  <span>
-                    <Button>left-start</Button>
-                  </span>
-                </Tooltip>
-              </Grid>
-              <Grid item>
-                <Tooltip title="Add" placement="left">
-                  <span>
-                    <Button>left</Button>
-                  </span>
-                </Tooltip>
-              </Grid>
-              <Grid item>
-                <Tooltip title="Add" placement="left-end">
-                  <span>
-                    <Button>left-end</Button>
-                  </span>
-                </Tooltip>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid container justifyContent="center">
-            <Grid item>
-              <Tooltip title="Add" placement="bottom-start">
-                <span>
-                  <Button>bottom-start</Button>
-                </span>
-              </Tooltip>
-              <Tooltip title="Add" placement="bottom">
-                <span>
-                  <Button>bottom</Button>
-                </span>
-              </Tooltip>
-              <Tooltip title="Add" placement="bottom-end">
-                <span>
-                  <Button>bottom-end</Button>
-                </span>
-              </Tooltip>
-            </Grid>
-          </Grid>
+            </Stack>
+          </Stack>
+          <Stack direction="row" justifyContent="center">
+            <Tooltip title="Add" placement="bottom-start">
+              <Button>tooltip bottom-start</Button>
+            </Tooltip>
+            <Tooltip title="Add" placement="bottom">
+              <Button>tooltip bottom</Button>
+            </Tooltip>
+            <Tooltip title="Add" placement="bottom-end">
+              <Button>tooltip bottom-end</Button>
+            </Tooltip>
+          </Stack>
         </Box>
       </Box>
     </Box>

@@ -22,9 +22,6 @@ const (
 )
 
 type SortField string
-type FilterOperator string
-type FilterKey string
-type FilterValue any
 type FilterQueryString string
 type ContinuationToken string
 
@@ -33,15 +30,6 @@ type Sort struct {
 	Ascending bool      `json:"ascending"`
 }
 
-type KeyValueFilter struct {
-	Key      FilterKey      `json:"key"`
-	Operator FilterOperator `json:"operator"`
-	Value    FilterValue    `json:"value"`
-}
-
-type SearchFilter struct {
-	KeyValueFilter *KeyValueFilter `json:"keyValueFilter"` // Optional, we might want other filter kinds in the future
-}
 
 type Metadata struct {
 	NextToken ContinuationToken `json:"nextToken"`
@@ -50,7 +38,7 @@ type Metadata struct {
 type SearchRequest struct {
 	Timeframe     model.Timeframe `json:"timeframe"`
 	Sort          []Sort          `json:"sort" default:"[{\"Field\": \"TimestampNano\", \"Ascending\": false}]"`
-	SearchFilters []SearchFilter  `json:"filters"`
+	SearchFilters []model.SearchFilter  `json:"filters"`
 	Metadata      *Metadata       `json:"metadata"`
 }
 

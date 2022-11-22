@@ -7,6 +7,7 @@ import (
 
 type TagValuesRequest struct {
 	Timeframe model.Timeframe `json:"timeframe"`
+	SearchFilters []model.SearchFilter  `json:"filters"`
 }
 
 func (r *TagValuesRequest) Validate() error {
