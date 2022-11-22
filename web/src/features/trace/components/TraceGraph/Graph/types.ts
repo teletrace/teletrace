@@ -45,7 +45,7 @@ export enum NodeColor {
 }
 
 export type GraphNode = {
-  id: string;
+  readonly id: string;
   serviceName: string;
   systemType: string;
   image: string;

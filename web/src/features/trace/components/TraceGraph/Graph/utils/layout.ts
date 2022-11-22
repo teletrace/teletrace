@@ -77,8 +77,8 @@ export const spansToGraphData = (spans: InternalSpan[]) => {
 };
 
 const createGraphNode = (
-  internalSpan: InternalSpan,
-  nodeData: GraphNodeData
+  internalSpan: Readonly<InternalSpan>,
+  nodeData: Readonly<GraphNodeData>
 ): GraphNode => {
   return {
     id: `${nodeData.name}${nodeData.type}`,
@@ -91,29 +91,28 @@ const createGraphNode = (
   };
 };
 
-const spanToGraphNodes = (spans: InternalSpan[]): GraphNode[] => {
-  const idGraphNodeMap = new Map<string, GraphNode>();
-  spans.forEach((s: InternalSpan) => {
+const spanToGraphNodes = (spans: Readonly<InternalSpan[]>): GraphNode[] => {
+  const graphNodeMap = new Map<string, GraphNode>();
+  spans.forEach((s: Readonly<InternalSpan>) => {
     const nodeData = getGraphNodeData(s);
-    const graphNode = idGraphNodeMap.get(nodeData.id);
+    const graphNode = graphNodeMap.get(nodeData.id);
     graphNode
-      ? idGraphNodeMap.set(nodeData.id, updateGraphNode(graphNode, s))
-      : idGraphNodeMap.set(nodeData.id, createGraphNode(s, nodeData));
+      ? updateGraphNode(graphNode, s)
+      : graphNodeMap.set(nodeData.id, createGraphNode(s, nodeData));
   });
-  return [...idGraphNodeMap.values()];
+  return [...graphNodeMap.values()];
 };
 
 const updateGraphNode = (
   g: GraphNode,
-  internalSpan: InternalSpan
-): GraphNode => {
+  internalSpan: Readonly<InternalSpan>
+): void => {
   g.spans.push({ ...internalSpan });
   g.hasError = g.hasError || internalSpan.span.status.code !== 0;
   g.duration = g.duration + internalSpan.externalFields.duration;
-  return g;
 };
 
-const getGraphNodeData = (s: InternalSpan): GraphNodeData => {
+const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
   const attr = { ...s.resource.attributes, ...s.span.attributes };
   const typeNameMap = new Map<string, string[]>([
     ["db.system", ["db.name", "net.peer.name"]],
@@ -145,7 +144,7 @@ const getGraphNodeData = (s: InternalSpan): GraphNodeData => {
   return graphNodeData;
 };
 
-const createNode = (g: GraphNode): Node<NodeData> => {
+const createNode = (g: Readonly<GraphNode>): Node<NodeData> => {
   return {
     id: g.id,
     type: BASIC_NODE_TYPE,
@@ -191,32 +190,31 @@ const createEdge = (
   };
 };
 
-const updateEdge = (e: Edge<EdgeData>): Edge<EdgeData> => {
+const updateEdge = (e: Edge<EdgeData>): void => {
   if (e.data) {
     e.data.count += 1;
   }
-  return e;
 };
 
-export const graphNodesToGraphTree = (graphNodes: GraphNode[]) => {
+export const graphNodesToGraphTree = (graphNodes: Readonly<GraphNode[]>) => {
   const nodes: Node<NodeData>[] = [];
   const edges_map = new Map<string, Edge<EdgeData>>();
   const spanServiceMap = new Map<string, GraphNode>();
-  graphNodes.forEach((g: GraphNode) => {
-    g.spans.forEach((s: InternalSpan) => {
+  graphNodes.forEach((g: Readonly<GraphNode>) => {
+    g.spans.forEach((s: Readonly<InternalSpan>) => {
       spanServiceMap.set(s.span.spanId, { ...g });
     });
   });
-  graphNodes.forEach((g: GraphNode) => {
+  graphNodes.forEach((g: Readonly<GraphNode>) => {
     nodes.push(createNode(g));
-    g.spans.forEach((s: InternalSpan) => {
+    g.spans.forEach((s: Readonly<InternalSpan>) => {
       const parent_id = s.span.parentSpanId || "";
       const p = spanServiceMap.get(parent_id);
       if (p) {
         const edge_id = `${g.id}${p.id}`;
         const e = edges_map.get(edge_id);
         e
-          ? edges_map.set(edge_id, updateEdge(e))
+          ? updateEdge(e)
           : edges_map.set(
               edge_id,
               createEdge(g.id, p.id, g.hasError, g.duration)
