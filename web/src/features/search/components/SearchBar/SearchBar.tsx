@@ -3,17 +3,19 @@ import { Button, Chip, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
-import { SearchFilter } from "../../types/common";
+import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
+  timeframe: Timeframe;
   onFilterAdded: (entry: SearchFilter) => void;
   onFilterDeleted: (entry: SearchFilter) => void;
 };
 
 export function SearchBar({
   filters,
+  timeframe,
   onFilterAdded,
   onFilterDeleted,
 }: SearchBarProps) {
@@ -41,6 +43,7 @@ export function SearchBar({
           Add Filter
         </Button>
         <FilterBuilderDialog
+          timeframe={timeframe}
           open={open}
           onClose={handleClose}
           onApply={onFilterAdded}

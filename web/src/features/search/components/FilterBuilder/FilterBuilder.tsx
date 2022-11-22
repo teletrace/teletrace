@@ -14,6 +14,7 @@ import {
   KeyValueFilter,
   Operator,
   SearchFilter,
+  Timeframe,
   ValueInputMode,
 } from "../../types/common";
 import { FilterSelector } from "./FilterSelector";
@@ -26,6 +27,7 @@ export type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
+  timeframe: Timeframe;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -47,44 +49,42 @@ export type FormErrors = {
 };
 
 export const FilterBuilderDialog = ({
+  timeframe,
   onClose,
   open,
   anchorEl,
   onApply,
 }: FilterDialogProps) => {
-  const [filter, setFilter] = useState<AvailableTag | null>(null);
+  const [tag, setTag] = useState<AvailableTag | null>(null);
   const [operator, setOperator] = useState<Operator>("in");
   const [value, setValue] = useState<FilterValueTypes>([]);
-  const [valueSelectMode, setValueSelectMode] = useState<ValueInputMode>(
-    valueSelectModeByOperators.in
-  );
   const initialFormErrors: FormErrors = {
     filter: false,
     value: false,
   };
   const [formErrors, setFormErrors] = useState<FormErrors>(initialFormErrors);
-
+  const valueInputMode = valueSelectModeByOperators[operator];
   const handleOperatorChange = (value: Operator) => {
-    setValueSelectMode(valueSelectModeByOperators[value]);
     setOperator(value);
     setFormErrors({ filter: formErrors.filter, value: false });
   };
 
   const handleClose = () => {
-    setFilter(null);
+    setTag(null);
     setOperator("in");
     setValue([]);
-    setValueSelectMode(valueSelectModeByOperators.in);
     setFormErrors(initialFormErrors);
     onClose();
   };
 
   const validateForm = (): FormErrors => {
     const errors: FormErrors = initialFormErrors;
-    if (filter === null || filter.name === "") {
+    if (tag === null || tag.name === "") {
       errors.filter = true;
     }
-    if (
+    if (valueInputMode == "none") {
+      errors.value = false;
+    } else if (
       value === null ||
       (typeof value === "string" && value.trim() === "") ||
       (value instanceof Array && value.length === 0)
@@ -103,7 +103,7 @@ export const FilterBuilderDialog = ({
       return;
     }
     const newFilter: KeyValueFilter = {
-      key: filter?.name || "",
+      key: tag?.name || "",
       operator: operator,
       value: value,
     };
@@ -129,9 +129,9 @@ export const FilterBuilderDialog = ({
           <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
               <FilterSelector
-                value={filter}
+                value={tag}
                 onChange={(value) => {
-                  setFilter(value);
+                  setTag(value);
                   setFormErrors({ ...formErrors, filter: false });
                 }}
                 error={formErrors.filter}
@@ -141,16 +141,17 @@ export const FilterBuilderDialog = ({
                 onChange={handleOperatorChange}
               />
             </Stack>
-            {valueSelectMode !== "none" ? (
+            {valueInputMode !== "none" ? (
               <Stack>
                 <ValueSelector
-                  tag={filter?.name || ""}
+                  timeframe={timeframe}
+                  tag={tag?.name || ""}
                   value={value}
                   onChange={(v) => {
                     setValue(v);
                     setFormErrors({ ...formErrors, value: false });
                   }}
-                  valueInputMode={valueSelectMode}
+                  valueInputMode={valueInputMode}
                   error={formErrors.value}
                 />
               </Stack>
