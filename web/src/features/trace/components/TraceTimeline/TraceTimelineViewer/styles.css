@@ -1,0 +1,26 @@
+.flex-row {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: row;
+}
+.Ticks {
+  pointer-events: none;
+}
+.Ticks--tick {
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background: #000000;
+}
+.Ticks--tick:last-child {
+  width: 0;
+}
+.Ticks--tickLabel {
+  left: 0.25rem;
+  position: absolute;
+  font-size: 12px;
+}
+.Ticks--tickLabel.isEndAnchor {
+  left: initial;
+  right: 0.25rem;
+}

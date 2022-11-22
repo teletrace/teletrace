@@ -13,7 +13,6 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript",
   ],
-  overrides: [],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: "latest",
@@ -72,4 +71,12 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ["src/features/trace/components/TraceTimeline/**/*.js"],
+      rules: {
+        "react/prop-types": 0,
+      },
+    },
+  ],
 };

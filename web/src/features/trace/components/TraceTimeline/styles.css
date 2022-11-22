@@ -1,0 +1,143 @@
+.Tracepage--headerSection {
+  position: absolute;
+  width: 100%;
+  z-index: 3;
+}
+.BreakableText {
+  display: inline-block;
+  white-space: pre;
+}
+.u-width-100 {
+  width: 100%;
+}
+.u-flex-1 {
+  flex: 1;
+}
+.u-mt-vast {
+  margin-top: 13rem;
+}
+.u-cursor-pointer {
+  cursor: pointer;
+}
+.u-tx-muted {
+  color: #aaa;
+}
+.u-tx-inherit {
+  color: inherit;
+}
+.u-tx-ellipsis {
+  text-overflow: ellipsis;
+}
+.u-align-icon {
+  margin: -0.2rem 0.25rem 0 0;
+}
+.u-simple-card {
+  background-color: #f5f5f5;
+  border: 1px solid #e6e6e6;
+  padding: 1rem;
+}
+/* simple-scrollbars */
+.u-simple-scrollbars::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 8px;
+  height: 8px;
+}
+.u-simple-scrollbars::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+.u-simple-scrollbars::-webkit-scrollbar-track:vertical {
+  border-left: 1px solid rgba(0, 0, 0, 0.13);
+}
+.u-simple-scrollbars::-webkit-scrollbar-track:horizontal {
+  border-top: 1px solid rgba(0, 0, 0, 0.13);
+}
+.u-simple-scrollbars::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+.u-simple-scrollbars:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.35);
+}
+.u-simple-scrollbars::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(0, 0, 0, 0.15);
+}
+.ErrorMessage {
+  position: relative;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+.ErrorMessage--msg {
+  color: #c00;
+  margin: 0;
+  padding-bottom: 1rem;
+}
+.ErrorMessage--details {
+  background: #f5f5f5;
+  border: 1px solid #e6e6e6;
+  overflow: auto;
+}
+.ErrorMessage--detailsTable {
+  min-width: 100%;
+}
+.ErrorMessage--detailItem:nth-child(2n) > .ErrorMessage--attr,
+.ErrorMessage--detailItem:nth-child(2n) > .ErrorMessage--value {
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #e8e8e8;
+  border-top: 1px solid #e8e8e8;
+}
+/* dont have extra borders on the bottom row */
+.ErrorMessage--detailItem:last-child > .ErrorMessage--attr,
+.ErrorMessage--detailItem:last-child > .ErrorMessage--value {
+  border-bottom: none;
+}
+.ErrorMessage--attr {
+  color: rgba(0, 0, 0, 0.45);
+  padding: 0.5em;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.ErrorMessage--value {
+  color: rgba(0, 0, 0, 0.8);
+  font-family: monospace;
+  padding: 0.5em;
+  white-space: pre;
+}
+.LabeledList {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.LabeledList--item {
+  display: inline-block;
+}
+.LabeledList--label {
+  margin-right: 0.25rem;
+}
+@keyframes LoadingIndicator--colorAnim {
+  /*
+   rgb(0, 128, 128) == teal
+   rgba(0, 128, 128, 0.3) == #bedfdf
+   */
+  from {
+    color: #bedfdf;
+  }
+  to {
+    color: teal;
+  }
+}
+.LoadingIndicator {
+  animation: LoadingIndicator--colorAnim 1s infinite alternate;
+  font-size: 36px;
+  /* outline / stroke the loading indicator */
+  text-shadow: -0.5px 0 rgba(0, 128, 128, 0.6), 0 0.5px rgba(0, 128, 128, 0.6),
+    0.5px 0 rgba(0, 128, 128, 0.6), 0 -0.5px rgba(0, 128, 128, 0.6);
+}
+.LoadingIndicator.is-centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.LoadingIndicator.is-small {
+  font-size: 0.7em;
+}
