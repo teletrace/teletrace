@@ -8,6 +8,7 @@ import {
 import React, { useRef, useState } from "react";
 import { Timeframe } from "../../types/common";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
+import { formatDateToTimeString } from "@/utils/format";
 
 export type TimeFrameSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
@@ -37,6 +38,7 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
   const handleCustomClick = (event: React.MouseEvent<HTMLElement>) => {
     setOpen(true);
     setAnchorEl(event.currentTarget);
+    console.log(event.currentTarget);
   };
 
   function instanceOfRelativeTimeFrame(
@@ -49,7 +51,7 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
     return "startTime" in object;
   }
 
-  const setTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
+  const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
     const startTime = new Date();
     const endTimeNumber = new Date().getTime();
     const offset = timeFrame.offsetRange;
@@ -58,22 +60,21 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
     else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
     else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
     const startTimeNumber = startTime.getTime();
-    setTimeFrame({ startTime: startTimeNumber, endTime: endTimeNumber });
     return { startTime: startTimeNumber, endTime: endTimeNumber };
   };
 
-  const setTimeframeFromCustom = (timeFrame: CustomTimeFrame) => {
-    setTimeFrame({
+  const toTimeframeFromCustom = (timeFrame: CustomTimeFrame) => {
+    return {
       startTime: timeFrame.startTime.getTime(),
       endTime: timeFrame.endTime.getTime(),
-    });
+    };
   };
 
   const calcTimeFrame = (timeFrame: TimeFrameTypes) => {
     if (instanceOfRelativeTimeFrame(timeFrame)) {
-      return setTimeframeFromRelative(timeFrame);
+      return toTimeframeFromRelative(timeFrame);
     } else if (instanceOfCustomTimeFrame(timeFrame)) {
-      return setTimeframeFromCustom(timeFrame);
+      return toTimeframeFromCustom(timeFrame);
     }
   };
 
@@ -85,10 +86,15 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
       handleCustomClick(event);
     }
     const timeFrame = calcTimeFrame(value);
+    setTimeFrame(timeFrame);
     onChange(timeFrame!);
-    setAnchorEl(buttonRef.current);
     setIsSelected(value);
   };
+
+  const getTooltipTitle = (): string =>
+    `${formatDateToTimeString(
+      timeframe?.startTime || 0
+    )} -> ${formatDateToTimeString(timeframe?.endTime || 0)}`;
 
   return (
     <div>
@@ -122,10 +128,17 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
           ref={buttonRef}
           key={customOption.label}
         >
-          {customOption.label}
+          {isSelected?.label === customOption?.label
+            ? getTooltipTitle()
+            : customOption.label}
         </ToggleButton>
-        {options.map((tf, idx) => {
-          return (
+
+        {options.map((tf, idx) => (
+          <Tooltip
+            title={isSelected?.label === tf?.label ? getTooltipTitle() : ""}
+            placement="top-end"
+            arrow
+          >
             <ToggleButton
               onClick={handleBtnClicked}
               selected={isSelected?.label === tf?.label}
@@ -135,8 +148,8 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
             >
               {tf.label}
             </ToggleButton>
-          );
-        })}
+          </Tooltip>
+        ))}
       </ToggleButtonGroup>
     </div>
   );
