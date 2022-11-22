@@ -1,5 +1,10 @@
 import { CircularProgress, Paper, Stack } from "@mui/material";
-import { MouseEvent as ReactMouseEvent, memo, useEffect } from "react";
+import {
+  MouseEvent as ReactMouseEvent,
+  memo,
+  useEffect,
+  useState,
+} from "react";
 import {
   Controls,
   Edge,
@@ -10,9 +15,10 @@ import {
   useNodesState,
 } from "reactflow";
 
-import { BasicEdge } from "@/components/Graph/BasicEdge";
-import { BasicNode } from "@/components/Graph/BasicNode";
-import { EdgeData, NodeData, TraceGraphParams } from "@/components/Graph/types";
+import { BasicEdge } from "./Graph/BasicEdge";
+import { BasicNode } from "./Graph/BasicNode";
+import { EdgeData, NodeData, TraceData, TraceGraphParams } from "./Graph/types";
+import { createGraphLayout, spansToGraphData } from "./Graph/utils/layout";
 import {
   applyHoverEdgeStyle,
   applyHoveredNodeStyle,
@@ -20,20 +26,33 @@ import {
   applyNormalNodeStyle,
   applySelectedEdgeStyle,
   applySelectedNodeStyle,
-} from "@/components/Graph/utils/utils";
+} from "./Graph/utils/utils";
 
 import "reactflow/dist/style.css";
 
 const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
-const TraceGraphImpl = ({
-  isLoading,
-  traceData,
-  setSelectedNode,
-}: TraceGraphParams) => {
+const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
+  const [traceData, setTraceData] = useState<TraceData>({
+    nodes: [],
+    edges: [],
+  });
+
+  useEffect(() => {
+    const { nodes, edges } = spansToGraphData(spans);
+    createGraphLayout(nodes, edges)
+      .then((els: { nodes: Node<NodeData>[]; edges: Edge<EdgeData>[] }) => {
+        if (els.nodes.length > 0) {
+          setTraceData(els);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => alert("something went wrong!!! Could not render graph"));
+  }, [spans]);
 
   useEffect(() => {
     setNodes(traceData.nodes);
