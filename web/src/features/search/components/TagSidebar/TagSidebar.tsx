@@ -32,7 +32,7 @@ export const TagSidebar = ({
     { title: "Status", tag: "span.status.code", isSearchable: false },
     {
       title: "Service Name",
-      tag: "resource.resources.service.name",
+      tag: "resource.attributes.service.name",
       isSearchable: true,
     },
     {
@@ -50,7 +50,7 @@ export const TagSidebar = ({
       tag: "span.attributes.http.status_code",
       isSearchable: true,
     },
-    { title: "Instumentation Library", tag: "scope.name", isSearchable: true },
+    { title: "Instrumentation Library", tag: "scope.name", isSearchable: true },
   ];
 
   return (
