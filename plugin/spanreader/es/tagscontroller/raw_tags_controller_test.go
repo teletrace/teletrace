@@ -168,9 +168,7 @@ func Test_RemoveDuplicatedTextTags_RemoveTextDuplicates(t *testing.T) {
 		},
 	}
 
-	uut := rawTagsController{}
-
-	tagsResult := uut.removeDuplicatedTextTags(tagsMock)
+	tagsResult := removeDuplicatedTextTags(tagsMock)
 
 	assert.Len(t, tagsResult, 2)
 
