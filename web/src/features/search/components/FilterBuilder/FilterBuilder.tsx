@@ -44,7 +44,7 @@ const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
 };
 
 export type FormErrors = {
-  filter: boolean;
+  tag: boolean;
   value: boolean;
 };
 
@@ -62,9 +62,10 @@ export const FilterBuilderDialog = ({
   anchorEl,
   onApply,
 }: FilterDialogProps) => {
+  const initialFormErrors: FormErrors = { tag: false, value: false };
   const initialState: FilterBuilderDialogState = {
     tag: null,
-    formError: { filter: false, value: false },
+    formError: initialFormErrors,
     value: [],
     operator: "in",
   };
@@ -74,20 +75,20 @@ export const FilterBuilderDialog = ({
 
   const onOperatorChange = (operator: Operator) => {
     setDialogState((prevState) => {
-      const newState = { ...prevState };
-      newState.operator = operator;
-      newState.value = [];
-      newState.formError = { ...prevState.formError, value: false };
-      return newState;
+      return {
+        ...prevState,
+        operator,
+        value: [],
+        formError: { ...prevState.formError, value: false },
+      };
     });
   };
 
   const onTagChange = (tag: AvailableTag | null) => {
     setDialogState((prevState) => {
-      const newState = { ...prevState };
-      newState.tag = tag;
-      newState.value = [];
-      if (prevState.formError.filter) {
+      const newState = { ...prevState, tag, value: [] };
+      // we want only to clear errors on tag changes and have new errors only on apply
+      if (prevState.formError.tag) {
         newState.formError = { ...validateForm(newState), value: false };
       }
       return newState;
@@ -96,8 +97,8 @@ export const FilterBuilderDialog = ({
 
   const onValueChange = (value: FilterValueTypes) => {
     setDialogState((prevState) => {
-      const newState = { ...prevState };
-      newState.value = value;
+      const newState = { ...prevState, value };
+      // we want only to clear errors on value changes and have new errors only on apply
       if (prevState.formError.value) {
         newState.formError = {
           ...prevState.formError,
@@ -114,10 +115,10 @@ export const FilterBuilderDialog = ({
   };
 
   const validateForm = (state: FilterBuilderDialogState): FormErrors => {
-    const errors: FormErrors = { filter: false, value: false };
+    const errors: FormErrors = { ...initialFormErrors };
     const stateInputMode = valueSelectModeByOperators[state.operator];
     if (state.tag === null || state.tag.name === "") {
-      errors.filter = true;
+      errors.tag = true;
     }
     if (stateInputMode == "none") {
       errors.value = false;
@@ -134,7 +135,8 @@ export const FilterBuilderDialog = ({
   const handleApply = (event: React.SyntheticEvent) => {
     event.preventDefault();
     const errors = validateForm(dialogState);
-    if (errors.filter || errors.value) {
+    if (errors.tag || errors.value) {
+      // notify about form errors
       setDialogState((prevState) => {
         const newState = { ...prevState };
         newState.formError = validateForm(prevState);
@@ -172,7 +174,7 @@ export const FilterBuilderDialog = ({
               <FilterSelector
                 value={dialogState.tag}
                 onChange={onTagChange}
-                error={dialogState.formError.filter}
+                error={dialogState.formError.tag}
               />
               <OperatorSelector
                 value={dialogState.operator}

@@ -42,7 +42,6 @@ const getOptions = (tag: string, timeframe: Timeframe) => {
     tagValues?.pages
       .flatMap((page) => page.values)
       ?.filter((tag) => tag?.value)
-      // .filter(values => values != undefined)
       .sort((a, b) => b.count - a.count) || [];
   return { isLoading, tagOptions };
 };
