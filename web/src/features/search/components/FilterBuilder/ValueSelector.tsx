@@ -11,12 +11,17 @@ import FormControl from "@mui/material/FormControl";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValues } from "../../api/tagValues";
-import { FilterValueTypes, ValueInputMode } from "../../types/common";
+import {
+  FilterValueTypes,
+  Timeframe,
+  ValueInputMode,
+} from "../../types/common";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
+  timeframe: Timeframe;
   query?: TagValuesRequest;
   value: FilterValueTypes;
   valueInputMode: ValueInputMode;
@@ -24,30 +29,32 @@ export type ValueSelectorProps = {
   error: boolean;
 };
 
+const getOptions = (tag: string, timeframe: Timeframe) => {
+  if (!tag) {
+    return { isLoading: false, tagOptions: [] };
+  }
+  const tagValuesRequest = {
+    filters: [],
+    timeframe: timeframe,
+  } as TagValuesRequest;
+  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
+  const tagOptions =
+    tagValues?.pages
+      .flatMap((page) => page.values)
+      ?.filter((tag) => tag?.value)
+      .sort((a, b) => b.count - a.count) || [];
+  return { isLoading, tagOptions };
+};
+
 export const ValueSelector = ({
   tag,
-  query,
+  timeframe,
   value,
   valueInputMode,
   onChange,
   error,
 }: ValueSelectorProps) => {
-  const tagValuesRequest =
-    query ??
-    ({
-      filters: [],
-      timeframe: {
-        startTimeUnixNanoSec: 0,
-        endTimeUnixNanoSec: new Date().valueOf(),
-      },
-    } as TagValuesRequest);
-
-  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
-
-  const tagOptions = tagValues?.pages
-    .flatMap((page) => page.values)
-    .sort((a, b) => b.count - a.count);
-
+  const { isLoading, tagOptions } = getOptions(tag, timeframe);
   const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (
@@ -66,12 +73,12 @@ export const ValueSelector = ({
   const getSelectedValues = () => {
     const valueArray = value instanceof Array ? value : [value.toString()];
     return (
-      tagOptions?.filter((tagOption) =>
-        valueArray.includes(tagOption.value.toString())
+      tagOptions?.filter(
+        (tagOption) =>
+          tagOption && valueArray.includes(tagOption?.value.toString())
       ) || []
     );
   };
-
   return (
     <>
       <FormControl required sx={styles.valueSelector}>
