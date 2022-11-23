@@ -1,0 +1,286 @@
+.VirtualizedTraceView--spans {
+  padding-top: 24px;
+}
+.VirtualizedTraceView--rowsWrapper {
+  width: 100%;
+}
+.VirtualizedTraceView--row {
+  width: 100%;
+  background: #1b1c21;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: inset 0 -1px 0 #000000;
+}
+.VirtualizedTraceView--row:hover {
+  background: #3b3c42;
+}
+.VirtualizedTraceView--row > .span-row {
+  height: 100%;
+}
+.span-row.is-matching-filter {
+  background-color: #fffce4;
+}
+.span-name-column {
+  position: relative;
+  white-space: nowrap;
+  z-index: 1;
+}
+.span-name-column:hover {
+  z-index: 1;
+  height: 100%;
+}
+.span-name-wrapper {
+  line-height: 30px;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  box-shadow: inset -1px 0 0 0 #000;
+}
+.span-name-wrapper.is-matching-filter {
+  background-color: #fffce4;
+}
+.span-name-wrapper:hover {
+  float: left;
+  min-width: 100%;
+  overflow: visible;
+}
+.span-row.is-matching-filter:hover .span-name-wrapper {
+  background: linear-gradient(90deg, #fff5e1, #fff5e1 75%, #ffe6c9);
+}
+.span-row.is-expanded .span-name-wrapper {
+  background: #f0f0f0;
+  box-shadow: 0 3px 0 #ddd;
+}
+.span-row.is-expanded .span-name-wrapper.is-matching-filter {
+  background: #fff3d7;
+}
+.span-row.is-active {
+  box-shadow: inset 0 0 0 1px #00cde7;
+}
+.span-row.is-active .span-name:hover {
+  border-top: 1px solid #00cde7;
+  border-bottom: 1px solid #00cde7;
+}
+.span-name {
+  color: #fff;
+  cursor: pointer;
+  flex: 1 1 auto;
+  outline: none;
+  overflow: hidden;
+  padding-right: 0.25em;
+  position: relative;
+}
+.span-name.is-detail-expanded::before {
+  bottom: 0;
+}
+/* This is so the hit area of the span-name extends the rest of the width of the span-name column */
+.span-name::after {
+  background: transparent;
+  bottom: 0;
+  content: " ";
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 1000px;
+}
+.span-name:focus {
+  text-decoration: none;
+}
+.endpoint-name {
+  color: #b6b7be;
+}
+.span-name:hover {
+  display: flex;
+  background: #3b3c42;
+  align-items: center;
+  box-shadow: inset -1px -1px 0 0 #000;
+}
+.span-name:hover .endpoint-name {
+  color: #b6b7be;
+}
+.span-name:hover .truncated-span-resource-name {
+  display: none !important;
+}
+.truncated-span-resource-name {
+  padding: 0 0.25rem;
+  font-size: 1.05em;
+}
+.span-svc-name {
+  padding: 0 0.25rem 0 0.25rem;
+  font-size: 1.05em;
+}
+.span-svc-name.is-children-collapsed {
+  font-weight: bold;
+  font-style: italic;
+}
+.span-icon {
+  float: left;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+}
+.span-icon .MuiSvgIcon-root {
+  font-size: 15px;
+}
+.span-icon img {
+  margin-top: -5px;
+  width: 22px;
+}
+.span-view {
+  position: relative;
+}
+.SpanBarRow--errorIcon {
+  margin-left: 2px;
+  vertical-align: top;
+  padding-top: 6px;
+}
+.SpanBarRow--rpcColorMarker {
+  border-radius: 6.5px;
+  display: inline-block;
+  font-size: 0.85em;
+  height: 1em;
+  margin-right: 0.25rem;
+  padding: 1px;
+  width: 1em;
+  vertical-align: middle;
+}
+.SpanBar--wrapper {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+.span-row.is-expanded .SpanBar--wrapper,
+.span-row:hover .SpanBar--wrapper {
+  opacity: 1;
+}
+.SpanBar--bar {
+  border-radius: 3px;
+  min-width: 2px;
+  position: absolute;
+  height: 8px;
+}
+.SpanBar--rpc {
+  position: absolute;
+  top: 35%;
+  bottom: 35%;
+  z-index: 1;
+}
+.SpanBar--label {
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  padding: 0 0.5em;
+  position: absolute;
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 15px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 1px;
+  bottom: 0;
+  top: 0;
+}
+.SpanBar--label.is-right {
+  left: 100%;
+}
+.SpanBar--label.is-left {
+  right: 100%;
+}
+.span-row.is-expanded .SpanBar--label,
+.span-row:hover .SpanBar--label {
+  /*color: #000;*/
+}
+.SpanBar--logMarker {
+  background-color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  height: 60%;
+  min-width: 1px;
+  position: absolute;
+  top: 20%;
+}
+.SpanBar--logMarker:hover {
+  background-color: #000;
+}
+.SpanBar--logMarker::before,
+.SpanBar--logMarker::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  border: 1px solid transparent;
+}
+.SpanBar--logMarker::after {
+  left: 0;
+}
+.SpanBar--logHint {
+  pointer-events: none;
+}
+/* Tweak the popover aesthetics - unfortunate but necessary */
+.SpanBar--logHint .ant-popover-inner-content {
+  padding: 0.25rem;
+}
+.detail-row-expanded-accent {
+  cursor: pointer;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  border-bottom: 1px solid;
+}
+.detail-row-expanded-accent::before {
+  border-left: 3px solid;
+  pointer-events: none;
+  width: 1000px;
+}
+.detail-row-expanded-accent::after {
+  border-right: 1000px solid;
+  border-color: inherit;
+  cursor: pointer;
+  opacity: 0.2;
+}
+/* border-color inherit must come AFTER other border declarations for accent */
+.detail-row-expanded-accent::before,
+.detail-row-expanded-accent::after {
+  border-color: inherit;
+  content: " ";
+  position: absolute;
+  height: 100%;
+}
+.detail-row-expanded-accent:hover::after {
+  opacity: 0.35;
+}
+.SpanTreeOffset {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.SpanTreeOffset.is-parent:hover {
+  cursor: pointer;
+}
+.SpanTreeOffset--indentGuide {
+  /* The size of the indentGuide is based off of the iconWrapper */
+  padding-right: calc(1rem + 16px);
+  height: 100%;
+  display: inline-flex;
+}
+.SpanTreeOffset--indentGuide.is-active {
+  /* The size of the indentGuide is based off of the iconWrapper */
+  padding-right: calc(1rem + 16px);
+  border-left: 0;
+  position: relative;
+  left: 1px;
+}
+.SpanTreeOffset--iconWrapper {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 0.25rem;
+}

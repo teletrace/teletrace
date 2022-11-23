@@ -26,28 +26,28 @@ type ReactSVGComponent = React.FunctionComponent<
 type IconTypes = { [name: string]: ReactSVGComponent };
 
 const iconTypes: IconTypes = {
-  ApiGatewayEndpoint: ApiGatewayEndpoint,
-  DefaultResourceIcon: DefaultResourceIcon,
-  IoTHTTP2Protocol: IoTHTTP2Protocol,
-  AWSLambdaFunction: AWSLambdaFunction,
-  LambdaFunction: AWSLambdaFunction,
-  Lambda: Lambda,
-  Custom: Custom,
-  DynamoDB: DynamoDB,
-  Grpc: Grpc,
-  Http: Http,
-  MongoDB: MongoDB,
-  NodeJS: NodeJS,
-  Python: Python,
-  RabbitMQ: RabbitMQ,
-  Redis: Redis,
-  SNS: SNS,
-  SQS: SQS,
+  apigatewayendpoint: ApiGatewayEndpoint,
+  defaultresourceicon: DefaultResourceIcon,
+  iothttp2protocol: IoTHTTP2Protocol,
+  awslambdafunction: AWSLambdaFunction,
+  lambdafunction: AWSLambdaFunction,
+  lambda: Lambda,
+  custom: Custom,
+  dynamodb: DynamoDB,
+  grpc: Grpc,
+  http: Http,
+  mongodb: MongoDB,
+  nodejs: NodeJS,
+  python: Python,
+  rabbitmq: RabbitMQ,
+  redis: Redis,
+  sns: SNS,
+  sqs: SQS,
 };
 
 export const ResourceIcon = (data: IconComponentProps) => {
   const { name } = data;
-  const Icon = iconTypes[name] || iconTypes["DefaultResourceIcon"];
+  const Icon = iconTypes[name] || iconTypes["defaultresourceicon"];
   return <Icon height={30} width={30} />;
 };
 

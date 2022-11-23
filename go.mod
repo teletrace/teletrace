@@ -16,6 +16,7 @@ require (
 
 require (
 	github.com/epsagon/lupa/lupa-otelcol v0.0.0-00010101000000-000000000000
+	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333
 	github.com/gin-contrib/cors v1.4.0
 )
 
@@ -25,7 +26,6 @@ require (
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333 // indirect
-	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect

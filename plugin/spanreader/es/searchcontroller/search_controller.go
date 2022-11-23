@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"oss-tracing/pkg/model"
-	internalspan "oss-tracing/pkg/model/internalspan/v1"
+
+	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8"

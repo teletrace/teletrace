@@ -1,0 +1,9 @@
+export const FETCH_DONE = "FETCH_DONE";
+export const FETCH_ERROR = "FETCH_ERROR";
+export const FETCH_LOADING = "FETCH_LOADING";
+
+export const FETCHED_STATE = {
+  DONE: FETCH_DONE,
+  ERROR: FETCH_ERROR,
+  LOADING: FETCH_LOADING,
+};

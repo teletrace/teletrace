@@ -1,4 +1,4 @@
-import { Box, Stack, TextField } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
@@ -7,16 +7,17 @@ export default {
 } as ComponentMeta<typeof TextField>;
 
 const Template: ComponentStory<typeof TextField> = (args) => (
-  <TextField {...args} />
+  <Stack spacing={2} sx={{ width: "20%" }}>
+    <Typography variant="subtitle1" gutterBottom>
+      Default Text Field size is small
+    </Typography>
+    <TextField label="default textfield" {...args} />
+    <TextField size="medium" label="medium textfield" {...args} />
+  </Stack>
 );
 
 const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
-  <Box
-    component="form"
-    sx={{
-      "& .MuiTextField-root": { m: 1, width: "25ch" },
-    }}
-  >
+  <Stack spacing={2} sx={{ width: "20%" }}>
     <TextField
       id="outlined-basic"
       label="Outlined"
@@ -30,7 +31,7 @@ const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
       variant="standard"
       {...args}
     />
-  </Box>
+  </Stack>
 );
 
 const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
