@@ -21,7 +21,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		 "total": 1
 		},
 		"aggregations": {
-		 "http.flavor.keyword": {
+		 "span.attributes.http.flavor.keyword": {
 		  "buckets": [
 		   {
 			"doc_count": 6,
@@ -31,7 +31,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		  "doc_count_error_upper_bound": 0,
 		  "sum_other_doc_count": 0
 		 },
-		 "http.method.keyword": {
+		 "span.attributes.http.method.keyword": {
 		  "buckets": [
 		   {
 			"doc_count": 4,
@@ -49,7 +49,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		  "doc_count_error_upper_bound": 0,
 		  "sum_other_doc_count": 0
 		 },
-		 "http.status_code": {
+		 "span.attributes.http.status_code": {
 		  "buckets": [
 		   {
 			"doc_count": 3,
@@ -150,4 +150,33 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 			},
 		},
 	)
+}
+
+func Test_RemoveDuplicatedTextTags_RemoveTextDuplicates(t *testing.T) {
+	tagsMock := []tagsquery.TagInfo{
+		{
+			Name: "http.method.keyword",
+			Type: "keyword",
+		},
+		{
+			Name: "http.method",
+			Type: "text",
+		},
+		{
+			Name: "http.method.not_keyword",
+			Type: "keyword",
+		},
+	}
+
+	tagsResult := removeDuplicatedTextTags(tagsMock)
+
+	assert.Len(t, tagsResult, 2)
+
+	var tagsNames []string
+	for _, tag := range tagsResult {
+		tagsNames = append(tagsNames, tag.Name)
+	}
+
+	assert.Contains(t, tagsNames, "http.method")
+	assert.Contains(t, tagsNames, "http.method.not_keyword")
 }
