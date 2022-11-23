@@ -126,7 +126,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
         <Stack alignItems="center" justifyContent="center" height="100%">
           <CircularProgress />
         </Stack>
-      ) : nodes.length > 0 ? (
+      ) : (
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -143,10 +143,6 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
         >
           <Controls />
         </ReactFlow>
-      ) : (
-        <Stack alignItems="center" justifyContent="center" height="100%">
-          No data to display
-        </Stack>
       )}
     </Box>
   );

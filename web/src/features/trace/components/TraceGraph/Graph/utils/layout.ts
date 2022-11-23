@@ -108,7 +108,7 @@ const updateGraphNode = (
   internalSpan: Readonly<InternalSpan>
 ): void => {
   g.spans.push({ ...internalSpan });
-  g.hasError = g.hasError || internalSpan.span.status.code !== 0;
+  g.hasError = g.hasError || internalSpan.span.status.code === 2;
   g.duration = g.duration + internalSpan.externalFields.durationNano;
 };
 
@@ -140,7 +140,7 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
       graphNodeData.type = "service";
     }
   }
-  graphNodeData.id = `${graphNodeData.name}${graphNodeData.type}`;
+  graphNodeData.id = `${graphNodeData.name}-${graphNodeData.type}`;
   return graphNodeData;
 };
 
@@ -166,14 +166,14 @@ const createEdge = (
   hasError: boolean,
   duration: number
 ): Edge<EdgeData> => {
-  const edge_id = `${node_id}${parent_name}`;
+  const edge_id = `${node_id}->${parent_name}`;
   return {
     id: edge_id,
     type: BASIC_EDGE_TYPE,
     source: parent_name,
     target: node_id,
     data: {
-      time: `${duration / 1000000}ms`,
+      time: `${Math.round(duration / 1000000)}ms`,
       count: 1,
     },
     style: {
@@ -211,14 +211,17 @@ export const graphNodesToGraphTree = (graphNodes: Readonly<GraphNode[]>) => {
       const parent_id = s.span.parentSpanId || "";
       const p = spanServiceMap.get(parent_id);
       if (p) {
-        const edge_id = `${g.id}${p.id}`;
-        const e = edges_map.get(edge_id);
-        e
-          ? updateEdge(e)
-          : edges_map.set(
-              edge_id,
-              createEdge(g.id, p.id, g.hasError, g.duration)
-            );
+        if (g.id !== p.id) {
+          // check if is not loop
+          const edge_id = `${g.id}->${p.id}`;
+          const e = edges_map.get(edge_id);
+          e
+            ? updateEdge(e)
+            : edges_map.set(
+                edge_id,
+                createEdge(g.id, p.id, g.hasError, g.duration)
+              );
+        }
       }
     });
   });
