@@ -5,12 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"oss-tracing/pkg/model/tagsquery/v1"
+	"strings"
+
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"strings"
 )
 
 const TAG_PREFIX = "span.attributes."
@@ -25,14 +26,6 @@ func NewTagsController(logger *zap.Logger, client *elasticsearch.Client, idx str
 		client: client,
 		idx:    idx,
 	}, nil
-}
-
-func prefixTag(tag string) string {
-	return fmt.Sprint(TAG_PREFIX, tag)
-}
-
-func removePrefixTag(tag string) string {
-	return tag[len(TAG_PREFIX):]
 }
 
 // Get available tags.
@@ -80,14 +73,8 @@ func (r *rawTagsController) GetTagsValues(
 func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
 	var result []tagsquery.TagInfo
 
-	var prefixedTags []string
-
-	for _, tag := range tags {
-		prefixedTags = append(prefixedTags, prefixTag(tag))
-	}
-
 	res, err := r.client.Indices.GetFieldMapping(
-		prefixedTags,
+		tags,
 		r.client.Indices.GetFieldMapping.WithContext(ctx),
 		r.client.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
@@ -260,7 +247,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 			})
 		}
 		if currentTagValues != nil {
-			result[removePrefixTag(tag)] = &tagsquery.TagValuesResponse{
+			result[tag] = &tagsquery.TagValuesResponse{
 				Values: currentTagValues,
 			}
 		}
