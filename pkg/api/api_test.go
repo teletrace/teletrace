@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
-	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	spanreader "oss-tracing/pkg/spanreader/mock"
@@ -16,6 +15,8 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+
+	spanformatutiltests "github.com/epsagon/lupa/model/internalspan/v1/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -158,7 +159,7 @@ func TestTagsValues(t *testing.T) {
 	cfg := config.Config{Debug: false}
 	expectedTag := "span.attributes.custom-tag"
 	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
-	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tag=%v", expectedTag)), bytes.NewReader(jsonBody))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags/%v", expectedTag)), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	srMock, _ := spanreader.NewSpanReaderMock()
 
@@ -206,7 +207,7 @@ func TestTagsValuesWithMalformedRequestBody(t *testing.T) {
 	mockTag := "span.attributes.custom-tag"
 	mockTag2 := "span.attributes.custom-tag2"
 	malformedBody := []byte("{\"timeframe\": { startTime\": 0, \"endTime\": }}")
-	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags?tags=%v,%v", mockTag, mockTag2)), bytes.NewReader(malformedBody))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags/%v,%v", mockTag, mockTag2)), bytes.NewReader(malformedBody))
 	resRecorder := httptest.NewRecorder()
 	srMock, _ := spanreader.NewSpanReaderMock()
 

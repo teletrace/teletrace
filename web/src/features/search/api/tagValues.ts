@@ -23,7 +23,7 @@ export const fetchTagValues = ({
   nextToken,
 }: FetchTagValuesParams): Promise<TagValuesResponse> => {
   tagValuesRequest.metadata = { nextToken: nextToken };
-  return axiosClient.post("/v1/tags", tagValuesRequest, { params: { tag } });
+  return axiosClient.post(`/v1/tags/${tag}`, tagValuesRequest);
 };
 
 /**
@@ -37,7 +37,13 @@ export const useTagValues = (
   tagValuesRequest: TagValuesRequest
 ) => {
   return useInfiniteQuery({
-    queryKey: ["tagValues", tag],
+    queryKey: [
+      "tagValues",
+      tag,
+      tagValuesRequest.timeframe.startTimeUnixNanoSec,
+      tagValuesRequest.timeframe.endTimeUnixNanoSec,
+      tagValuesRequest.filters,
+    ],
     queryFn: ({ pageParam }) =>
       fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken,

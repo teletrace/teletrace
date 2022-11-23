@@ -3,13 +3,14 @@ package searchcontroller
 import (
 	"encoding/json"
 	"fmt"
+	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
-func BuildFilters(b *types.QueryContainerBuilder, fs ...spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
-	type filterCreator func(spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error)
+func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
+	type filterCreator func(model.KeyValueFilter) (*types.QueryContainerBuilder, error)
 
 	type Filter struct {
 		Builder filterCreator
@@ -94,7 +95,7 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...spansquery.KeyValueFilte
 
 }
 
-func createEqualsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
+func createEqualsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
 	qc := types.NewQueryContainerBuilder()
 
 	m := map[types.Field]*types.MatchPhraseQueryBuilder{}
@@ -104,7 +105,7 @@ func createEqualsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuild
 	return qc.MatchPhrase(m), nil
 }
 
-func createInFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
+func createInFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
 	var shouldQueriesArray []map[types.Field]*types.MatchPhraseQueryBuilder
 
 	jsVal, err := json.Marshal(f.Value)
@@ -137,7 +138,7 @@ func createInFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, 
 	return types.NewQueryContainerBuilder().Bool(types.NewBoolQueryBuilder().Should(qcSlice)), nil
 }
 
-func createContainsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
+func createContainsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
 	qc := types.NewQueryContainerBuilder()
 
 	m := map[types.Field]*types.WildcardQueryBuilder{}
@@ -147,13 +148,13 @@ func createContainsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBui
 	return qc.Wildcard(m), nil
 }
 
-func createExistsFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) {
+func createExistsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
 	qc := types.NewQueryContainerBuilder()
 
 	return qc.Exists(types.NewExistsQueryBuilder().Field(types.Field(f.Key))), nil
 }
 
-func createRangeFilter(f spansquery.KeyValueFilter) (*types.QueryContainerBuilder, error) { // also handle GTE / GT / LTE / LT
+func createRangeFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) { // also handle GTE / GT / LTE / LT
 	qc := types.NewQueryContainerBuilder()
 
 	m := map[types.Field]*types.RangeQueryBuilder{}

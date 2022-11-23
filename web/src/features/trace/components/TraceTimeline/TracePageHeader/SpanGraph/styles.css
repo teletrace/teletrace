@@ -1,0 +1,33 @@
+.CanvasSpanGraph {
+  height: 60px;
+  position: absolute;
+  width: 100%;
+}
+.GraphTick {
+  stroke: #000000;
+  stroke-width: 1px;
+}
+.TickLabels {
+  background-color: #2b2d32;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  grid-template-columns: repeat(4, 25%);
+  height: 24px;
+}
+.TickLabels--label {
+  user-select: none;
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  display: flex;
+  align-items: center;
+  letter-spacing: 0.4px;
+  color: #ffffff;
+  box-shadow: inset 0px -1px 0px #000000, inset -1px 0px 0px #000000;
+  padding: 0 16px;
+  height: 100%;
+}

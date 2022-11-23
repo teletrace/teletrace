@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"oss-tracing/pkg/model"
-	internalspan "oss-tracing/pkg/model/internalspan/v1"
+
+	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8"
@@ -79,17 +81,17 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 	return builder.Build(), nil
 }
 
-func createTimeframeFilters(tf model.Timeframe) []spansquery.SearchFilter {
-	return []spansquery.SearchFilter{
+func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
+	return []model.SearchFilter{
 		{
-			KeyValueFilter: &spansquery.KeyValueFilter{
+			KeyValueFilter: &model.KeyValueFilter{
 				Key:      "span.startTimeUnixNano",
 				Operator: spansquery.OPERATOR_GTE,
 				Value:    tf.StartTime,
 			},
 		},
 		{
-			KeyValueFilter: &spansquery.KeyValueFilter{
+			KeyValueFilter: &model.KeyValueFilter{
 				Key:      "span.endTimeUnixNano",
 				Operator: spansquery.OPERATOR_LTE,
 				Value:    tf.EndTime,
@@ -99,11 +101,11 @@ func createTimeframeFilters(tf model.Timeframe) []spansquery.SearchFilter {
 
 }
 
-func buildQuery(b *search.RequestBuilder, fs ...spansquery.SearchFilter) (*search.RequestBuilder, error) {
+func buildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.RequestBuilder, error) {
 	var err error
 	query := types.NewQueryContainerBuilder()
 
-	var kvFilters []spansquery.KeyValueFilter
+	var kvFilters []model.KeyValueFilter
 
 	for _, f := range fs {
 		if f.KeyValueFilter != nil {

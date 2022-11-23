@@ -1,10 +1,10 @@
 import { colors } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+
 import "@fontsource/inter/300.css";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
-
 import {
   errorActionColors,
   primaryActionColors,
@@ -327,6 +327,16 @@ theme = createTheme(theme, {
           },
           borderColor: primaryActionColors.primaryHovered,
         },
+        sizeSmall: {
+          height: "32px",
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        sizeSmall: {
+          lineHeight: "15px",
+        },
       },
     },
     MuiPaper: {
@@ -441,12 +451,17 @@ theme = createTheme(theme, {
           "&.MuiChip-colorDefault": {
             borderColor: secondaryActionColors.secondaryHovered,
           },
-          //  mui oulined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
+          //  mui outlined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
           //  so in order to override default hover we need to use two `&` for the specificity to match
           "&&:hover": {
             backgroundColor: secondaryActionColors.secondaryDisabled,
           },
         },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        size: "small",
       },
     },
   },
