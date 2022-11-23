@@ -17,5 +17,6 @@ export const useTraceQuery = (traceId: string) => {
     queryKey: ["trace", traceId],
     queryFn: () => fetchTrace(traceId),
     select: (traceResponse) => traceResponse.spans,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
