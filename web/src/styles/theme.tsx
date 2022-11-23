@@ -464,6 +464,30 @@ theme = createTheme(theme, {
         size: "small",
       },
     },
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          "&.MuiTableRow-head": {
+            backgroundColor: theme.palette.grey[800],
+          },
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          "&.MuiTableCell-head": {
+            color: theme.palette.grey[300],
+            fontFamily: ['"Inter"', "sans-serif"].join(","),
+            fontWeight: 500,
+          },
+          "&.MuiTableCell-body": {
+            fontFamily: ['"Inter"', "sans-serif"].join(","),
+            fontWeight: "normal",
+          },
+        },
+      },
+    },
   },
 });
 
