@@ -74,14 +74,12 @@ export const FilterBuilderDialog = ({
   const valueInputMode = valueSelectModeByOperators[dialogState.operator];
 
   const onOperatorChange = (operator: Operator) => {
-    setDialogState((prevState) => {
-      return {
-        ...prevState,
-        operator,
-        value: [],
-        formError: { ...prevState.formError, value: false },
-      };
-    });
+    setDialogState((prevState) => ({
+      ...prevState,
+      operator,
+      value: [],
+      formError: { ...prevState.formError, value: false },
+    }));
   };
 
   const onTagChange = (tag: AvailableTag | null) => {
@@ -137,12 +135,10 @@ export const FilterBuilderDialog = ({
     const errors = validateForm(dialogState);
     if (errors.tag || errors.value) {
       // notify about form errors
-      setDialogState((prevState) => {
-        const newState = { ...prevState };
-        newState.formError = validateForm(prevState);
-        return newState;
-      });
-
+      setDialogState((prevState) => ({
+        ...prevState,
+        formError: validateForm(prevState),
+      }));
       return;
     }
     const newFilter: KeyValueFilter = {
