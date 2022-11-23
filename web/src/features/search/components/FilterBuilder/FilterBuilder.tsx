@@ -48,6 +48,13 @@ export type FormErrors = {
   value: boolean;
 };
 
+type FilterBuilderDialogState = {
+  tag: AvailableTag | null;
+  formError: FormErrors;
+  value: FilterValueTypes;
+  operator: Operator;
+};
+
 export const FilterBuilderDialog = ({
   timeframe,
   onClose,
@@ -55,57 +62,91 @@ export const FilterBuilderDialog = ({
   anchorEl,
   onApply,
 }: FilterDialogProps) => {
-  const [tag, setTag] = useState<AvailableTag | null>(null);
-  const [operator, setOperator] = useState<Operator>("in");
-  const [value, setValue] = useState<FilterValueTypes>([]);
-  const initialFormErrors: FormErrors = {
-    filter: false,
-    value: false,
+  const initialState: FilterBuilderDialogState = {
+    tag: null,
+    formError: { filter: false, value: false },
+    value: [],
+    operator: "in",
   };
-  const [formErrors, setFormErrors] = useState<FormErrors>(initialFormErrors);
-  const valueInputMode = valueSelectModeByOperators[operator];
-  const handleOperatorChange = (value: Operator) => {
-    setOperator(value);
-    setFormErrors({ filter: formErrors.filter, value: false });
+  const [dialogState, setDialogState] =
+    useState<FilterBuilderDialogState>(initialState);
+  const valueInputMode = valueSelectModeByOperators[dialogState.operator];
+
+  const onOperatorChange = (operator: Operator) => {
+    setDialogState((prevState) => {
+      const newState = { ...prevState };
+      newState.operator = operator;
+      newState.value = [];
+      newState.formError = { ...prevState.formError, value: false };
+      return newState;
+    });
+  };
+
+  const onTagChange = (tag: AvailableTag | null) => {
+    setDialogState((prevState) => {
+      const newState = { ...prevState };
+      newState.tag = tag;
+      newState.value = [];
+      if (prevState.formError.filter) {
+        newState.formError = { ...validateForm(newState), value: false };
+      }
+      return newState;
+    });
+  };
+
+  const onValueChange = (value: FilterValueTypes) => {
+    setDialogState((prevState) => {
+      const newState = { ...prevState };
+      newState.value = value;
+      if (prevState.formError.value) {
+        newState.formError = {
+          ...prevState.formError,
+          value: validateForm(newState).value,
+        };
+      }
+      return newState;
+    });
   };
 
   const handleClose = () => {
-    setTag(null);
-    setOperator("in");
-    setValue([]);
-    setFormErrors(initialFormErrors);
+    setDialogState(initialState);
     onClose();
   };
 
-  const validateForm = (): FormErrors => {
-    const errors: FormErrors = initialFormErrors;
-    if (tag === null || tag.name === "") {
+  const validateForm = (state: FilterBuilderDialogState): FormErrors => {
+    const errors: FormErrors = { filter: false, value: false };
+    const stateInputMode = valueSelectModeByOperators[state.operator];
+    if (state.tag === null || state.tag.name === "") {
       errors.filter = true;
     }
-    if (valueInputMode == "none") {
+    if (stateInputMode == "none") {
       errors.value = false;
     } else if (
-      value === null ||
-      (typeof value === "string" && value.trim() === "") ||
-      (value instanceof Array && value.length === 0)
+      state.value === null ||
+      (typeof state.value === "string" && state.value.trim() === "") ||
+      (state.value instanceof Array && state.value.length === 0)
     ) {
       errors.value = true;
     }
-
     return errors;
   };
 
   const handleApply = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    const errors = validateForm();
+    const errors = validateForm(dialogState);
     if (errors.filter || errors.value) {
-      setFormErrors(errors);
+      setDialogState((prevState) => {
+        const newState = { ...prevState };
+        newState.formError = validateForm(prevState);
+        return newState;
+      });
+
       return;
     }
     const newFilter: KeyValueFilter = {
-      key: tag?.name || "",
-      operator: operator,
-      value: value,
+      key: dialogState.tag?.name || "",
+      operator: dialogState.operator,
+      value: dialogState.value,
     };
     onApply({ keyValueFilter: newFilter });
     handleClose();
@@ -129,30 +170,24 @@ export const FilterBuilderDialog = ({
           <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
               <FilterSelector
-                value={tag}
-                onChange={(value) => {
-                  setTag(value);
-                  setFormErrors({ ...formErrors, filter: false });
-                }}
-                error={formErrors.filter}
+                value={dialogState.tag}
+                onChange={onTagChange}
+                error={dialogState.formError.filter}
               />
               <OperatorSelector
-                value={operator}
-                onChange={handleOperatorChange}
+                value={dialogState.operator}
+                onChange={onOperatorChange}
               />
             </Stack>
             {valueInputMode !== "none" ? (
               <Stack>
                 <ValueSelector
                   timeframe={timeframe}
-                  tag={tag?.name || ""}
-                  value={value}
-                  onChange={(v) => {
-                    setValue(v);
-                    setFormErrors({ ...formErrors, value: false });
-                  }}
+                  tag={dialogState.tag?.name || ""}
+                  value={dialogState.value}
+                  onChange={onValueChange}
                   valueInputMode={valueInputMode}
-                  error={formErrors.value}
+                  error={dialogState.formError.value}
                 />
               </Stack>
             ) : null}
