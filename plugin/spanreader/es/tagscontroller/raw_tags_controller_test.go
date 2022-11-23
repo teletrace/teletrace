@@ -21,7 +21,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		 "total": 1
 		},
 		"aggregations": {
-		 "http.flavor.keyword": {
+		 "span.attributes.http.flavor.keyword": {
 		  "buckets": [
 		   {
 			"doc_count": 6,
@@ -31,7 +31,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		  "doc_count_error_upper_bound": 0,
 		  "sum_other_doc_count": 0
 		 },
-		 "http.method.keyword": {
+		 "span.attributes.http.method.keyword": {
 		  "buckets": [
 		   {
 			"doc_count": 4,
@@ -49,7 +49,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		  "doc_count_error_upper_bound": 0,
 		  "sum_other_doc_count": 0
 		 },
-		 "http.status_code": {
+		 "span.attributes.http.status_code": {
 		  "buckets": [
 		   {
 			"doc_count": 3,

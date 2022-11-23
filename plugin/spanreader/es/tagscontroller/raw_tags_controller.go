@@ -6,10 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"go.uber.org/zap"
+	"golang.org/x/exp/slices"
 )
 
 const TAG_PREFIX = "span.attributes."
@@ -34,6 +36,40 @@ func (r *rawTagsController) removePrefixTag(tag string) string {
 	return tag[len(TAG_PREFIX):]
 }
 
+func (r *rawTagsController) removeDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
+	tagsNamesToTypes := make(map[string]string, len(tags))
+	var tagsNames []string
+
+	var validTags []tagsquery.TagInfo
+
+	for _, tag := range tags {
+		tagsNamesToTypes[tag.Name] = tag.Type
+	}
+
+	for tagName, _ := range tagsNamesToTypes {
+		tagsNames = append(tagsNames, tagName)
+	}
+
+	for _, tag := range tags {
+		if tag.Type == "keyword" {
+			if strings.Contains(tag.Name, ".keyword") {
+				strippedName := tag.Name[:len(tag.Name)-len(".keyword")]
+				// If there exists a duplication for the same tag, as text and as keyword
+				// This happens then the index is using the default elasticsearch mapping.
+				if !(slices.Contains(tagsNames, strippedName) && (tagsNamesToTypes[strippedName] == "text")) {
+					validTags = append(validTags, tag)
+				}
+			} else {
+				validTags = append(validTags, tag)
+			}
+		} else {
+			validTags = append(validTags, tag)
+		}
+	}
+
+	return validTags
+}
+
 // Get available tags.
 // Use elastic's GetFieldMapping api
 func (r *rawTagsController) GetAvailableTags(
@@ -46,6 +82,8 @@ func (r *rawTagsController) GetAvailableTags(
 	}
 
 	result.Tags, err = r.getTagsMappings(ctx, []string{"*"})
+	// mappingData["keyword"]
+
 	if err != nil {
 		return result, fmt.Errorf("Could not get available tags: %v", err)
 	}
@@ -95,14 +133,14 @@ func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) 
 		}
 
 		for _, valueData := range mappingData {
-			if _, ok := mappingData["keyword"]; !ok {
-				result = append(result, tagsquery.TagInfo{
-					Name: fieldMapping["full_name"].(string),
-					Type: valueData.(map[string]any)["type"].(string),
-				})
-			}
+			result = append(result, tagsquery.TagInfo{
+				Name: fieldMapping["full_name"].(string),
+				Type: valueData.(map[string]any)["type"].(string),
+			})
 		}
 	}
+
+	result = r.removeDuplicatedTextTags(result)
 
 	return result, nil
 }
