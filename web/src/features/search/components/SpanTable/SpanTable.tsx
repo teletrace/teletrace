@@ -120,9 +120,6 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         sorting,
       }}
       virtualizerInstanceRef={virtualizerInstanceRef}
-      muiTableHeadProps={{
-        sx: styles.header,
-      }}
       muiTableContainerProps={{
         ref: tableWrapperRef,
         sx: styles.container,
