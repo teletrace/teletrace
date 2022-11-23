@@ -208,31 +208,33 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 	// To get an idea of how the response looks like, check the unit test at raw_tags_controller_test.go
 
 	result := map[string]*tagsquery.TagValuesResponse{}
-	aggregations := body["aggregations"].(map[string]any)
+
 	tagValueInfos := make(map[string]map[any]tagsquery.TagValueInfo)
 
-	// the aggregation key is the tag's name because that's how we defined the query.
-	// traverse the returned aggregations, bucket by bucket and update the value counts
-	for tag, v := range aggregations {
-		aggregation := v.(map[string]any)
+	if aggregations, ok := body["aggregations"].(map[string]any); ok {
+		// the aggregation key is the tag's name because that's how we defined the query.
+		// traverse the returned aggregations, bucket by bucket and update the value counts
+		for tag, v := range aggregations {
+			aggregation := v.(map[string]any)
 
-		if _, found := tagValueInfos[tag]; !found {
-			tagValueInfos[tag] = make(map[any]tagsquery.TagValueInfo)
-		}
+			if _, found := tagValueInfos[tag]; !found {
+				tagValueInfos[tag] = make(map[any]tagsquery.TagValueInfo)
+			}
 
-		for _, v := range aggregation["buckets"].([]any) {
-			bucket := v.(map[string]any)
-			value := bucket["key"]
-			count := int(bucket["doc_count"].(float64))
+			for _, v := range aggregation["buckets"].([]any) {
+				bucket := v.(map[string]any)
+				value := bucket["key"]
+				count := int(bucket["doc_count"].(float64))
 
-			if info, found := tagValueInfos[tag][value]; !found {
-				tagValueInfos[tag][value] = tagsquery.TagValueInfo{
-					Value: value,
-					Count: count,
+				if info, found := tagValueInfos[tag][value]; !found {
+					tagValueInfos[tag][value] = tagsquery.TagValueInfo{
+						Value: value,
+						Count: count,
+					}
+				} else {
+					info.Count += count
+					tagValueInfos[tag][value] = info
 				}
-			} else {
-				info.Count += count
-				tagValueInfos[tag][value] = info
 			}
 		}
 	}
