@@ -14,8 +14,6 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-const TAG_PREFIX = "span.attributes."
-
 type rawTagsController struct {
 	client *elasticsearch.Client
 	idx    string
