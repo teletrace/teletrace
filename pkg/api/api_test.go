@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
-	spanformatutiltests "oss-tracing/pkg/model/internalspan/v1/util"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	spanreader "oss-tracing/pkg/spanreader/mock"
@@ -16,6 +15,8 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+
+	spanformatutiltests "github.com/epsagon/lupa/model/internalspan/v1/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
