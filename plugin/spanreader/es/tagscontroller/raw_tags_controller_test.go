@@ -21,7 +21,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		 "total": 1
 		},
 		"aggregations": {
-		 "http.flavor.keyword": {
+		 "span.attributes.http.flavor.keyword": {
 		  "buckets": [
 		   {
 			"doc_count": 6,
@@ -31,7 +31,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		  "doc_count_error_upper_bound": 0,
 		  "sum_other_doc_count": 0
 		 },
-		 "http.method.keyword": {
+		 "span.attributes.http.method.keyword": {
 		  "buckets": [
 		   {
 			"doc_count": 4,
@@ -49,7 +49,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		  "doc_count_error_upper_bound": 0,
 		  "sum_other_doc_count": 0
 		 },
-		 "http.status_code": {
+		 "span.attributes.http.status_code": {
 		  "buckets": [
 		   {
 			"doc_count": 3,
@@ -94,9 +94,9 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 
 	// Assert
 	assert.Len(t, result, 3)
-	assert.Contains(t, result, "http.method.keyword")
-	assert.Contains(t, result, "http.flavor.keyword")
-	assert.Contains(t, result, "http.status_code")
+	assert.Contains(t, result, "span.attributes.http.method.keyword")
+	assert.Contains(t, result, "span.attributes.http.flavor.keyword")
+	assert.Contains(t, result, "span.attributes.http.status_code")
 
 	assertTag := func(tag string, expectedInfos tagsquery.TagValuesResponse) {
 		assert.Contains(t, result, tag)
@@ -104,7 +104,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	}
 
 	assertTag(
-		"http.method.keyword",
+		"span.attributes.http.method.keyword",
 		tagsquery.TagValuesResponse{
 			Values: []tagsquery.TagValueInfo{{
 				Value: "GET",
@@ -120,7 +120,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	)
 
 	assertTag(
-		"http.flavor.keyword",
+		"span.attributes.http.flavor.keyword",
 		tagsquery.TagValuesResponse{
 			Values: []tagsquery.TagValueInfo{
 				{
@@ -132,7 +132,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	)
 
 	assertTag(
-		"http.status_code",
+		"span.attributes.http.status_code",
 		tagsquery.TagValuesResponse{
 			Values: []tagsquery.TagValueInfo{
 				{
@@ -150,4 +150,33 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 			},
 		},
 	)
+}
+
+func Test_RemoveDuplicatedTextTags_RemoveTextDuplicates(t *testing.T) {
+	tagsMock := []tagsquery.TagInfo{
+		{
+			Name: "span.attributes.http.method.keyword",
+			Type: "keyword",
+		},
+		{
+			Name: "span.attributes.http.method",
+			Type: "text",
+		},
+		{
+			Name: "span.attributes.http.method.not_keyword",
+			Type: "keyword",
+		},
+	}
+
+	tagsResult := removeDuplicatedTextTags(tagsMock)
+
+	assert.Len(t, tagsResult, 2)
+
+	var tagsNames []string
+	for _, tag := range tagsResult {
+		tagsNames = append(tagsNames, tag.Name)
+	}
+
+	assert.Contains(t, tagsNames, "span.attributes.http.method")
+	assert.Contains(t, tagsNames, "span.attributes.http.method.not_keyword")
 }
