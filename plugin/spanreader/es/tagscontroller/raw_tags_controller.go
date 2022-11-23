@@ -46,7 +46,7 @@ func (r *rawTagsController) removeDuplicatedTextTags(tags []tagsquery.TagInfo) [
 		tagsNamesToTypes[tag.Name] = tag.Type
 	}
 
-	for tagName, _ := range tagsNamesToTypes {
+	for tagName := range tagsNamesToTypes {
 		tagsNames = append(tagsNames, tagName)
 	}
 
