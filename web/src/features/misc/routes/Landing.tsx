@@ -53,7 +53,7 @@ export const Landing = () => {
               <Typography color="text.secondary">Search</Typography>
             </Link>
             <Divider orientation="vertical" flexItem />
-            <Link component={RouterLink} to="/trace-view" underline="none">
+            <Link component={RouterLink} to="/trace" underline="none">
               <Typography color="text.secondary">Trace View</Typography>
             </Link>
           </Stack>
