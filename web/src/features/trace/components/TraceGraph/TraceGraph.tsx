@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Stack } from "@mui/material";
+import { Box } from "@mui/material";
 import {
   MouseEvent as ReactMouseEvent,
   memo,
@@ -34,7 +34,6 @@ const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
-  const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
   const [traceData, setTraceData] = useState<TraceData>({
@@ -48,7 +47,6 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
       .then((els: { nodes: Node<NodeData>[]; edges: Edge<EdgeData>[] }) => {
         if (els.nodes.length > 0) {
           setTraceData(els);
-          setIsLoading(false);
         }
       })
       .catch(() => alert("something went wrong!!! Could not render graph"));
@@ -122,32 +120,22 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
 
   return (
     <Box sx={{ flex: 1 }}>
-      {isLoading ? (
-        <Stack alignItems="center" justifyContent="center" height="100%">
-          <CircularProgress />
-        </Stack>
-      ) : nodes.length > 0 ? (
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onNodeClick={onNodeClick}
-          onPaneClick={onPaneClick}
-          onNodeMouseEnter={onNodeMouseEnter}
-          onNodeMouseLeave={onNodeMouseLeave}
-          selectNodesOnDrag={false}
-          fitView
-        >
-          <Controls />
-        </ReactFlow>
-      ) : (
-        <Stack alignItems="center" justifyContent="center" height="100%">
-          No data to display
-        </Stack>
-      )}
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
+        onNodeMouseEnter={onNodeMouseEnter}
+        onNodeMouseLeave={onNodeMouseLeave}
+        selectNodesOnDrag={false}
+        fitView
+      >
+        <Controls />
+      </ReactFlow>
     </Box>
   );
 };
