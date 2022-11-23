@@ -5,13 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"strings"
-
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
+	"oss-tracing/pkg/model/tagsquery/v1"
+	"strings"
 )
 
 const TAG_PREFIX = "span.attributes."
@@ -28,46 +27,12 @@ func NewTagsController(logger *zap.Logger, client *elasticsearch.Client, idx str
 	}, nil
 }
 
-func (r *rawTagsController) prefixTag(tag string) string {
+func prefixTag(tag string) string {
 	return fmt.Sprint(TAG_PREFIX, tag)
 }
 
-func (r *rawTagsController) removePrefixTag(tag string) string {
+func removePrefixTag(tag string) string {
 	return tag[len(TAG_PREFIX):]
-}
-
-func (r *rawTagsController) removeDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
-	tagsNamesToTypes := make(map[string]string, len(tags))
-	var tagsNames []string
-
-	var validTags []tagsquery.TagInfo
-
-	for _, tag := range tags {
-		tagsNamesToTypes[tag.Name] = tag.Type
-	}
-
-	for tagName := range tagsNamesToTypes {
-		tagsNames = append(tagsNames, tagName)
-	}
-
-	for _, tag := range tags {
-		if tag.Type == "keyword" {
-			if strings.Contains(tag.Name, ".keyword") {
-				strippedName := tag.Name[:len(tag.Name)-len(".keyword")]
-				// If there exists a duplication for the same tag, as text and as keyword
-				// This happens then the index is using the default elasticsearch mapping.
-				if !(slices.Contains(tagsNames, strippedName) && (tagsNamesToTypes[strippedName] == "text")) {
-					validTags = append(validTags, tag)
-				}
-			} else {
-				validTags = append(validTags, tag)
-			}
-		} else {
-			validTags = append(validTags, tag)
-		}
-	}
-
-	return validTags
 }
 
 // Get available tags.
@@ -91,13 +56,34 @@ func (r *rawTagsController) GetAvailableTags(
 	return result, nil
 }
 
+func (r *rawTagsController) GetTagsValues(
+	ctx context.Context,
+	request tagsquery.TagValuesRequest,
+	tags []string,
+) (map[string]*tagsquery.TagValuesResponse, error) {
+
+	tagsMappings, err := r.getTagsMappings(ctx, tags)
+	if err != nil {
+		return nil, fmt.Errorf("Could not get values for tags: %v", tags)
+	}
+
+	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings)
+
+	if err != nil {
+		return map[string]*tagsquery.TagValuesResponse{}, err
+	}
+
+	return r.parseGetTagsValuesResponseBody(body)
+}
+
+// Get elasticsearch mappings for specific tags
 func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
 	var result []tagsquery.TagInfo
 
 	var prefixedTags []string
 
 	for _, tag := range tags {
-		prefixedTags = append(prefixedTags, r.prefixTag(tag))
+		prefixedTags = append(prefixedTags, prefixTag(tag))
 	}
 
 	res, err := r.client.Indices.GetFieldMapping(
@@ -140,29 +126,9 @@ func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) 
 		}
 	}
 
-	result = r.removeDuplicatedTextTags(result)
+	result = removeDuplicatedTextTags(result)
 
 	return result, nil
-}
-
-func (r *rawTagsController) GetTagsValues(
-	ctx context.Context,
-	request tagsquery.TagValuesRequest,
-	tags []string,
-) (map[string]*tagsquery.TagValuesResponse, error) {
-
-	tagsMappings, err := r.getTagsMappings(ctx, tags)
-	if err != nil {
-		return nil, fmt.Errorf("Could not get values for tags: %v", tags)
-	}
-
-	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings)
-
-	if err != nil {
-		return map[string]*tagsquery.TagValuesResponse{}, err
-	}
-
-	return r.parseGetTagsValuesResponseBody(body)
 }
 
 // Perform search and return the response body
@@ -294,11 +260,46 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 			})
 		}
 		if currentTagValues != nil {
-			result[r.removePrefixTag(tag)] = &tagsquery.TagValuesResponse{
+			result[removePrefixTag(tag)] = &tagsquery.TagValuesResponse{
 				Values: currentTagValues,
 			}
 		}
 	}
 
 	return result, nil
+}
+
+// Remove keyword tags that are a duplication of an elasticsearch text field
+func removeDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
+	tagsNamesToTypes := make(map[string]string, len(tags))
+	var tagsNames []string
+
+	var validTags []tagsquery.TagInfo
+
+	for _, tag := range tags {
+		tagsNamesToTypes[tag.Name] = tag.Type
+	}
+
+	for tagName := range tagsNamesToTypes {
+		tagsNames = append(tagsNames, tagName)
+	}
+
+	for _, tag := range tags {
+		if tag.Type == "keyword" {
+			if strings.Contains(tag.Name, ".keyword") {
+				strippedName := tag.Name[:len(tag.Name)-len(".keyword")]
+				// If there exists a duplication for the same tag, as text and as keyword
+				// This happens then the index is using the default elasticsearch mapping.
+				if !(slices.Contains(tagsNames, strippedName) && (tagsNamesToTypes[strippedName] == "text")) {
+					validTags = append(validTags, tag)
+				}
+			} else {
+				validTags = append(validTags, tag)
+			}
+		} else {
+			validTags = append(validTags, tag)
+		}
+	}
+
+	return validTags
 }

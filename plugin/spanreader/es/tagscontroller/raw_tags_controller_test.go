@@ -151,3 +151,34 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		},
 	)
 }
+
+func Test_RemoveDuplicatedTextTags_RemoveTextDuplicates(t *testing.T) {
+	tagsMock := []tagsquery.TagInfo{
+		{
+			Name: "http.method.keyword",
+			Type: "keyword",
+		},
+		{
+			Name: "http.method",
+			Type: "text",
+		},
+		{
+			Name: "http.method.not_keyword",
+			Type: "keyword",
+		},
+	}
+
+	uut := rawTagsController{}
+
+	tagsResult := uut.removeDuplicatedTextTags(tagsMock)
+
+	assert.Len(t, tagsResult, 2)
+
+	var tagsNames []string
+	for _, tag := range tagsResult {
+		tagsNames = append(tagsNames, tag.Name)
+	}
+
+	assert.Contains(t, tagsNames, "http.method")
+	assert.Contains(t, tagsNames, "http.method.not_keyword")
+}
