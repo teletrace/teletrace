@@ -4,9 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-
 	"go.opentelemetry.io/collector/pdata/ptrace"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -22,6 +20,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 	}
 
 	db, err := sql.Open("sqlite3", "embedded_spans_db")
+	InitDatabase(db)
 
 	if err != nil {
 		return nil, fmt.Errorf("could not create sqlite exporter: %+v", err)
@@ -42,9 +41,5 @@ func (e *sqliteTracesExporter) Shutdown(ctx context.Context) error {
 }
 
 func (e *sqliteTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	var errs []error
-
-	e.logger.Info("'pushTracesData' Not yet implemented, ignoring traces")
-
-	return multierr.Combine(errs...)
+	return writeSpan(ctx, e.logger, td, e.db)
 }
