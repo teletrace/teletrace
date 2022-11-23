@@ -55,7 +55,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           startTime: formatDateToTimeString(
             span.startTimeUnixNano / (1000 * 1000)
           ),
-          duration: `${externalFields.duration / (1000 * 1000)} ms`,
+          duration: `${externalFields.durationNano / (1000 * 1000)} ms`,
           name: span.name,
           status: span.status.code,
           serviceName:

@@ -54,7 +54,7 @@ export type RawSpan = {
 };
 
 export type ExternalFields = {
-  duration: number;
+  durationNano: number;
 };
 
 export type InternalSpan = {
