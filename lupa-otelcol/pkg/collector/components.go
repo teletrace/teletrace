@@ -1,12 +1,12 @@
 package collector
 
 import (
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
 
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
 )
 
 func components() (component.Factories, error) {
