@@ -28,14 +28,14 @@ func InitDatabase(db *sql.DB) {
 			span_status_message TEXT NOT NULL,
 			span_status_code TEXT NOT NULL,
 			dropped_resource_attributes_count INTEGER NOT NULL,
-			dropped_events_count INTEGER NOT NULL, 
+			dropped_events_count INTEGER NOT NULL,
 			dropped_links_count INTEGER NOT NULL,
 			duration INTEGER NOT NULL,
 			ingestion_time_unix_nano INTEGER NOT NULL,
 			instrumentation_scope_id INTEGER NOT NULL,
 			resource_id TEXT NOT NULL,
 			FOREIGN KEY(instrumentation_scope_id) REFERENCES scopes(id)
-		);	
+		);
     `)
 
 	runStatement(db, `
@@ -52,7 +52,7 @@ func InitDatabase(db *sql.DB) {
 	runStatement(db, `
 		CREATE TABLE IF NOT EXISTS links (
 		    id INTEGER PRIMARY KEY AUTOINCREMENT,
-		    span_id TEXT NOT NULL,		    
+		    span_id TEXT NOT NULL,
 		    trace_state TEXT,
 		    dropped_attributes_count INTEGER NOT NULL,
 			FOREIGN KEY(span_id) REFERENCES spans(span_id)
@@ -65,7 +65,7 @@ func InitDatabase(db *sql.DB) {
 		    key TEXT NOT NULL,
 		    value BLOB,
 		    type TEXT,
-		    FOREIGN KEY(scope_id) REFERENCES scopes(id)                               
+		    FOREIGN KEY(scope_id) REFERENCES scopes(id)
 	  	);
 	`)
 
@@ -75,7 +75,7 @@ func InitDatabase(db *sql.DB) {
 		    key TEXT NOT NULL,
 		    value BLOB,
 		    type TEXT,
-		    FOREIGN KEY(span_id) REFERENCES spans(span_id)                               
+		    FOREIGN KEY(span_id) REFERENCES spans(span_id)
 	  	);
 	`)
 
@@ -85,7 +85,7 @@ func InitDatabase(db *sql.DB) {
 		    key TEXT NOT NULL,
 		    value BLOB,
 		    type TEXT,
-		    FOREIGN KEY(resource_id) REFERENCES spans(resource_id)                               
+		    FOREIGN KEY(resource_id) REFERENCES spans(resource_id)
 	  	);
 	`)
 
@@ -95,7 +95,7 @@ func InitDatabase(db *sql.DB) {
 		    key TEXT NOT NULL,
 		    value BLOB,
 		    type TEXT,
-		    FOREIGN KEY(event_id) REFERENCES events(id)                               
+		    FOREIGN KEY(event_id) REFERENCES events(id)
 	  	);
 	`)
 
@@ -105,7 +105,7 @@ func InitDatabase(db *sql.DB) {
 		    key TEXT NOT NULL,
 		    value BLOB,
 		    type TEXT,
-		    FOREIGN KEY(link_id) REFERENCES links(id)                               
+		    FOREIGN KEY(link_id) REFERENCES links(id)
 	  	);
 	`)
 }
