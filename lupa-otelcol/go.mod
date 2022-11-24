@@ -81,3 +81,5 @@ require (
 replace github.com/epsagon/lupa/model => ../model
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./exporter/elasticsearchexporter
+
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter
