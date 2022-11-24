@@ -2,7 +2,6 @@ import { ArrowForwardIosSharp } from "@mui/icons-material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Box, Stack } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
@@ -11,9 +10,10 @@ import { ReactComponent as IoTHTTP2Protocol } from "@/components/Elements/Resour
 import { ReactComponent as Lambda } from "@/components/Elements/ResourceIcon/icons/Lambda.svg";
 
 import { Span } from "../../spans-mock";
+import ServiceSpanTags from "../ServiceSpanTags";
 import styles from "./styles";
 
-interface ServiceSpanProps {
+export interface ServiceSpanProps {
   span: Span;
 }
 
@@ -59,9 +59,7 @@ export const ServiceSpan = ({ span }: ServiceSpanProps) => {
           </Typography>
         </Stack>
       </AccordionSummary>
-      <AccordionDetails>
-        <Typography>Add inner accordion</Typography>
-      </AccordionDetails>
+      <ServiceSpanTags span={span} />
     </Accordion>
   );
 };

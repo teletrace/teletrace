@@ -37,7 +37,7 @@ export const SPANS_MOCK: Span[] = [
       startTimeUnixNano: 5,
       endTimeUnixNano: 6,
       traceState: "traceState",
-      attributes: { string: "string", number: 1, bool: true },
+      attributes: { string: "string", number: 1, bool: false },
       droppedAttributesCount: 8,
       droppedEventsCount: 0,
       droppedLinksCount: 0,
