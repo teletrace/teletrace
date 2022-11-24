@@ -8,6 +8,8 @@ import (
 	"go.uber.org/zap"
 )
 
+import _ "github.com/mattn/go-sqlite3"
+
 type sqliteTracesExporter struct {
 	logger *zap.Logger
 
