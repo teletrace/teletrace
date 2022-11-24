@@ -14,10 +14,10 @@ type writer struct {
 	db     *sql.DB
 }
 
-func (w *writer) writeSpan(ctx context.Context, td ptrace.Traces) error {
+func (w *writer) writeTraces(ctx context.Context, td ptrace.Traces) error {
 	tx, err := w.db.Begin()
 	if err != nil {
-		return fmt.Errorf("Failed to begin transaction: %+v\n", err)
+		return fmt.Errorf("failed to begin transaction: %+v\n", err)
 	}
 
 	resourceSpansSlice := td.ResourceSpans()
@@ -28,15 +28,23 @@ func (w *writer) writeSpan(ctx context.Context, td ptrace.Traces) error {
 			scopeSpans := scopeSpansSlice.At(j)
 			scope := scopeSpans.Scope()
 			scopeId, err := w.insertScope(tx, scope)
-			if err != nil {
+			if err != nil || scopeId == nil {
 				if err := tx.Rollback(); err != nil {
-					panic(fmt.Errorf("Failed to rollback transaction: %+v\n", err))
+					w.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+					// TODO: Should there be a panic here?
+					panic(fmt.Errorf("failed to rollback transaction: %+v\n", err))
 				}
-				w.logger.Error(err.Error())
+				w.logger.Error("could not insert scope",
+					zap.NamedError("reason", err),
+				)
 			}
 
 			fmt.Printf("scopeId: %v\n", scopeId)
 		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		w.logger.Error("failed to commit transaction", zap.NamedError("reason", err))
 	}
 
 	return nil
@@ -44,7 +52,7 @@ func (w *writer) writeSpan(ctx context.Context, td ptrace.Traces) error {
 
 func (w *writer) insertScope(tx *sql.Tx, scope pcommon.InstrumentationScope) (*int64, error) {
 	insertScopeStmt, err := tx.Prepare(
-		"INSERT INTO scopes (name, version, dropped_attributes_count) VALUES ('?', '?', ?)",
+		"INSERT INTO scopes (name, version, dropped_attributes_count) VALUES (?, ?, ?)",
 	)
 	if err != nil {
 		return nil, fmt.Errorf("could not prepare statement: %+v\n", err)
