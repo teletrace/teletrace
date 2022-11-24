@@ -13,8 +13,6 @@ import { SearchFilter, Timeframe } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
-const DEFAULT_SORT_FIELD = "startTime";
-
 interface SpanTableProps {
   filters?: SearchFilter[];
   timeframe: Timeframe;
@@ -28,17 +26,13 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columnSort = sorting.find(
-    (coulmnSort) => coulmnSort.id === DEFAULT_SORT_FIELD
-  );
-
   const searchRequest = {
     filters: filters,
     timeframe: timeframe,
-    sort:
-      columnSort === undefined
-        ? undefined
-        : { field: columnSort.id, ascending: !columnSort.desc },
+    sort: sorting?.map((columnSort) => ({
+      field: columnSort.id,
+      ascending: !columnSort.desc,
+    })),
     metadata: undefined,
   };
 
