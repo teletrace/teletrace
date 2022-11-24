@@ -28,7 +28,7 @@ func InitDatabase(db *sql.DB) {
 			span_status_message TEXT NOT NULL,
 			span_status_code TEXT NOT NULL,
 			dropped_resource_attributes_count INTEGER NOT NULL,
-			dropped_events_count INTEGER NOT NULL,
+			dropped_events_count INTEGER NOT NULL, 
 			dropped_links_count INTEGER NOT NULL,
 			duration INTEGER NOT NULL,
 			ingestion_time_unix_nano INTEGER NOT NULL,

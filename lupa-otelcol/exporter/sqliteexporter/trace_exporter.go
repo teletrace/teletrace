@@ -20,11 +20,10 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 	}
 
 	db, err := sql.Open("sqlite3", "embedded_spans_db")
-	InitDatabase(db)
-
 	if err != nil {
 		return nil, fmt.Errorf("could not create sqlite exporter: %+v", err)
 	}
+	InitDatabase(db)
 
 	return &sqliteTracesExporter{
 		logger: logger,
