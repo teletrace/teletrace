@@ -11,9 +11,7 @@ import (
 import _ "github.com/mattn/go-sqlite3"
 
 type sqliteTracesExporter struct {
-	logger *zap.Logger
-
-	db *sql.DB
+	writer *writer
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, error) {
@@ -28,19 +26,21 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 	InitDatabase(db)
 
 	return &sqliteTracesExporter{
-		logger: logger,
-		db:     db,
+		writer: &writer{
+			logger: logger,
+			db:     db,
+		},
 	}, nil
 
 }
 
 func (e *sqliteTracesExporter) Shutdown(ctx context.Context) error {
-	if err := e.db.Close(); err != nil {
+	if err := e.writer.db.Close(); err != nil {
 		return fmt.Errorf("could not shut down sqlite exporter: %+v", err)
 	}
 	return nil
 }
 
 func (e *sqliteTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	return writeSpan(ctx, e.logger, td, e.db)
+	return e.writer.writeSpan(ctx, td)
 }
