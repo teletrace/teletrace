@@ -13,7 +13,7 @@ export type SearchRequest = {
   timeframe: Timeframe;
 
   filters?: SearchFilter[];
-  sort?: Sort;
+  sort?: Sort[];
   metadata?: { nextToken: string };
 };
 
