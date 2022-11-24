@@ -6,6 +6,8 @@ import (
 )
 
 func InitDatabase(db *sql.DB) {
+	runStatement(db, "PRAGMA foreign_keys = ON;")
+
 	runStatement(db, `
 		CREATE TABLE IF NOT EXISTS scopes (
 		    id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -114,7 +116,7 @@ func runStatement(db *sql.DB, queryString string) {
 	createTableStatement, err := db.Prepare(queryString)
 
 	if err != nil {
-		fmt.Printf("failed to prepare statement: %v\n", err)
+		fmt.Printf("could not prepare statement: %v\n", err)
 	}
 
 	if _, err = createTableStatement.Exec(); err != nil {
