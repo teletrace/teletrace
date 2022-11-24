@@ -121,3 +121,4 @@ replace github.com/epsagon/lupa/model => ./model
 replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./lupa-otelcol/exporter/elasticsearchexporter
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./lupa-otelcol/exporter/sqliteexporter
