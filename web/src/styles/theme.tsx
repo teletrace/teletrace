@@ -53,14 +53,17 @@ theme = createTheme(theme, {
       paper: theme.palette.grey.A100,
     },
   },
+  typography: {
+    fontFamily: ['"Inter"', "sans-serif"].join(","),
+  },
 });
 
 theme = createTheme(theme, {
   typography: {
-    fontFamily: ['"Inter"', "sans-serif"].join(","),
+    // fontFamily: ['"Inter"', "sans-serif"].join(","),
     fontSize: 12,
     h1: {
-      fontFamily: "Inter, sans-serif",
+      fontFamily: theme.typography.fontFamily,
       fontSize: "96px",
       fontStyle: "normal",
       fontWeight: 300,
@@ -68,6 +71,7 @@ theme = createTheme(theme, {
       lineHeight: "116px",
     },
     h2: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "60px",
       fontStyle: "normal",
       fontWeight: 300,
@@ -75,6 +79,7 @@ theme = createTheme(theme, {
       lineHeight: "73px",
     },
     h3: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "48px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -82,6 +87,7 @@ theme = createTheme(theme, {
       lineHeight: "58px",
     },
     h4: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "34px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -89,6 +95,7 @@ theme = createTheme(theme, {
       lineHeight: "41px",
     },
     h5: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "24px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -96,7 +103,7 @@ theme = createTheme(theme, {
       lineHeight: "29px",
     },
     h6: {
-      fontFamily: "Inter, sans-serif",
+      fontFamily: theme.typography.fontFamily,
       fontSize: "20px",
       fontStyle: "normal",
       fontWeight: 500,
@@ -104,6 +111,7 @@ theme = createTheme(theme, {
       lineHeight: "24px",
     },
     subtitle1: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "16px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -111,6 +119,7 @@ theme = createTheme(theme, {
       lineHeight: "19px",
     },
     subtitle2: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: 500,
@@ -118,6 +127,7 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     body1: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -125,6 +135,7 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     body2: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: "bold",
@@ -132,6 +143,7 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     button: {
+      fontFamily: theme.typography.fontFamily,
       alignItems: "center",
       display: "flex",
       fontSize: "14px",
@@ -140,13 +152,14 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     caption: {
+      fontFamily: theme.typography.fontFamily,
       fontStyle: "normal",
       fontWeight: 500,
       letterSpacing: "0.4px",
       lineHeight: "15px",
     },
     overline: {
-      fontFamily: "Inter, sans-serif",
+      fontFamily: theme.typography.fontFamily,
       fontSize: "10px",
       fontStyle: "normal",
       fontWeight: 500,
@@ -478,11 +491,9 @@ theme = createTheme(theme, {
         root: {
           "&.MuiTableCell-head": {
             color: theme.palette.grey[300],
-            fontFamily: ['"Inter"', "sans-serif"].join(","),
             fontWeight: 500,
           },
           "&.MuiTableCell-body": {
-            fontFamily: ['"Inter"', "sans-serif"].join(","),
             fontWeight: "normal",
           },
         },
