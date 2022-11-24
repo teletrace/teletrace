@@ -30,27 +30,7 @@ func (w *writer) writeTraces(ctx context.Context, td ptrace.Traces) error {
 		scopeSpansSlice := resourceSpans.ScopeSpans()
 		for j := 0; j < scopeSpansSlice.Len(); j++ {
 			scopeSpans := scopeSpansSlice.At(j)
-			scope := scopeSpans.Scope()
-			scopeId, err := w.insertScope(tx, scope)
-			if err != nil || scopeId == nil {
-				if err := tx.Rollback(); err != nil {
-					w.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
-					// TODO: Should there be a panic here?
-					panic(fmt.Errorf("failed to rollback transaction: %+v\n", err))
-				}
-				w.logger.Error("could not insert scope",
-					zap.NamedError("reason", err),
-				)
-			}
-
-			fmt.Printf("scopeId: %v\n", scopeId)
-			spanSlice := scopeSpans.Spans()
-			for k := 0; k < spanSlice.Len(); k++ {
-				span := spanSlice.At(k)
-				if err := w.insertSpan(tx, span, droppedResourceAttributesCount, resourceId, *scopeId); err != nil {
-					return err
-				}
-			}
+			w.writeScope(scopeSpans, tx, droppedResourceAttributesCount, resourceId)
 		}
 	}
 
@@ -61,8 +41,95 @@ func (w *writer) writeTraces(ctx context.Context, td ptrace.Traces) error {
 	return nil
 }
 
+func (w *writer) writeScope(
+	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId uuid.UUID) {
+	scope := scopeSpans.Scope()
+	scopeId, err := w.insertScope(tx, scope)
+	if err != nil || scopeId == nil {
+		if err := tx.Rollback(); err != nil {
+			w.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+		}
+		w.logger.Error("could not insert scope", zap.NamedError("reason", err))
+	}
+
+	fmt.Printf("scopeId: %v\n", scopeId)
+	spanSlice := scopeSpans.Spans()
+	for k := 0; k < spanSlice.Len(); k++ {
+		span := spanSlice.At(k)
+		w.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, scopeId)
+	}
+}
+
+func (w *writer) writeSpan(
+	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uuid.UUID, scopeId *int64) {
+	spanId := span.SpanID().HexString()
+	if err := w.insertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceId, *scopeId); err != nil {
+		if err := tx.Rollback(); err != nil {
+			w.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+		}
+		w.logger.Error("could not insert span", zap.NamedError("reason", err))
+	}
+
+	spanEventSlice := span.Events()
+	for i := 0; i < spanEventSlice.Len(); i++ {
+		spanEvent := spanEventSlice.At(i)
+		if err := w.insertEvent(tx, spanEvent, spanId); err != nil {
+			if err := tx.Rollback(); err != nil {
+				w.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+			}
+			w.logger.Error("could not insert event", zap.NamedError("reason", err))
+		}
+	}
+
+	spanLinkSlice := span.Links()
+	for i := 0; i < spanLinkSlice.Len(); i++ {
+		spanLink := spanLinkSlice.At(i)
+		if err := w.insertLink(tx, spanLink, spanId); err != nil {
+			if err := tx.Rollback(); err != nil {
+				w.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+			}
+			w.logger.Error("could not insert event", zap.NamedError("reason", err))
+		}
+	}
+}
+
+func (w *writer) insertLink(tx *sql.Tx, link ptrace.SpanLink, spanId string) error {
+	insertLinkStmt, err := tx.Prepare(
+		"INSERT INTO links (span_id, trace_state, dropped_attributes_count) VALUES (?, ?, ?)",
+	)
+
+	if err != nil {
+		return fmt.Errorf("could not prepare statement: %+v\n", err)
+	}
+
+	if _, err := insertLinkStmt.Exec(spanId, link.TraceState().AsRaw(), link.DroppedAttributesCount()); err != nil {
+		return fmt.Errorf("could not execute statement: %v\n", err)
+	}
+
+	return nil
+}
+
+func (w *writer) insertEvent(tx *sql.Tx, event ptrace.SpanEvent, spanId string) error {
+	insertEventStmt, err := tx.Prepare(
+		"INSERT INTO events (span_id, name, time_unix_nano, dropped_attributes_count) VALUES (?, ?, ?, ?)",
+	)
+
+	if err != nil {
+		return fmt.Errorf("could not prepare statement: %+v\n", err)
+	}
+
+	if _, err := insertEventStmt.Exec(
+		spanId, event.Name(), uint64(event.Timestamp()), event.DroppedAttributesCount()); err != nil {
+		return fmt.Errorf("could not execute statement: %v\n", err)
+	}
+
+	return nil
+}
+
 func (w *writer) insertSpan(
-	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uuid.UUID, scopeId int64) error {
+	tx *sql.Tx, span ptrace.Span, spanId string, droppedResourceAttributesCount uint32, resourceId uuid.UUID,
+	scopeId int64,
+) error {
 	insertSpanStmt, err := tx.Prepare(`
 		INSERT INTO spans (
 			span_id, trace_id, trace_state, 
@@ -80,7 +147,7 @@ func (w *writer) insertSpan(
 	duration := span.EndTimestamp() - span.StartTimestamp()
 	ingestionTimeUnixNano := uint64(time.Now().UTC().Nanosecond()) //  TODO: Check if this is a duration or a timestamp
 	if _, err := insertSpanStmt.Exec(
-		span.SpanID().HexString(), span.TraceID().HexString(), span.TraceState().AsRaw(),
+		spanId, span.TraceID().HexString(), span.TraceState().AsRaw(),
 		span.ParentSpanID().HexString(), span.Name(), int32(span.Kind()), uint64(span.StartTimestamp()),
 		uint64(span.EndTimestamp()), span.DroppedAttributesCount(), span.DroppedEventsCount(), span.DroppedLinksCount(),
 		span.Status().Message(), span.Status().Code(), droppedResourceAttributesCount, duration,
