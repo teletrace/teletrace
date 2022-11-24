@@ -60,7 +60,6 @@ theme = createTheme(theme, {
 
 theme = createTheme(theme, {
   typography: {
-    // fontFamily: ['"Inter"', "sans-serif"].join(","),
     fontSize: 12,
     h1: {
       fontFamily: theme.typography.fontFamily,
