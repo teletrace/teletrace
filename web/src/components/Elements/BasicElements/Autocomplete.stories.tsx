@@ -52,7 +52,7 @@ function CustomizedAutocomplete() {
         id="combo-box-demo"
         options={topFilms}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Movie" />}
+        renderInput={(params) => <TextField {...params} />}
       />
       <Autocomplete
         {...defaultProps}
