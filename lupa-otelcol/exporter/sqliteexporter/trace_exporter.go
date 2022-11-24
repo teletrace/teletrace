@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/dbinit"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 )
@@ -23,7 +24,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 	if err != nil {
 		return nil, fmt.Errorf("could not create sqlite exporter: %+v", err)
 	}
-	InitDatabase(db)
+	dbinit.InitDatabase(db)
 
 	return &sqliteTracesExporter{
 		writer: &writer{

@@ -1,4 +1,4 @@
-package sqliteexporter
+package dbinit
 
 import (
 	"database/sql"
