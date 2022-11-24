@@ -42,3 +42,4 @@ yarn-error.log*
 out/
 
 .idea/
+/lupa-otelcol/embedded_spans_db
