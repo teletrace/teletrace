@@ -9,7 +9,6 @@ builds:
     goos:
       - linux
       - windows
-      - darwin
     goarch:
       - amd64
       - arm
@@ -34,11 +33,14 @@ dockers:
     goarch: amd64
     goos: linux
     extra_files:
-      - go.mod
-      - go.sum
-      - cmd
-      - web
-      - pkg
+      - "go.mod"
+      - "go.sum"
+      - "cmd"
+      - "lupa-otelcol"
+      - "model"
+      - "web"
+      - "pkg"
+      - "plugin"
   - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
       - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
@@ -51,11 +53,14 @@ dockers:
     goarch: arm64
     goos: linux
     extra_files:
-      - go.mod
-      - go.sum
-      - cmd
-      - web
-      - pkg
+      - "go.mod"
+      - "go.sum"
+      - "cmd"
+      - "lupa-otelcol"
+      - "model"
+      - "web"
+      - "pkg"
+      - "plugin"
   - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-armv6"
       - "epsagon/all-in-one:v{{ .Major }}-armv6"
@@ -69,11 +74,14 @@ dockers:
     goarm: 6
     goos: linux
     extra_files:
-      - go.mod
-      - go.sum
-      - cmd
-      - web
-      - pkg
+      - "go.mod"
+      - "go.sum"
+      - "cmd"
+      - "lupa-otelcol"
+      - "model"
+      - "web"
+      - "pkg"
+      - "plugin"
   - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-armv7"
       - "epsagon/all-in-one:v{{ .Major }}-armv7"
@@ -87,11 +95,14 @@ dockers:
     goarm: 7
     goos: linux
     extra_files:
-      - go.mod
-      - go.sum
-      - cmd
-      - web
-      - pkg
+      - "go.mod"
+      - "go.sum"
+      - "cmd"
+      - "lupa-otelcol"
+      - "model"
+      - "web"
+      - "pkg"
+      - "plugin"
 
 docker_manifests:
   - name_template: "epsagon/all-in-one:{{ .Tag }}"
@@ -121,7 +132,6 @@ docker_manifests:
 
 archives:
   - replacements:
-      darwin: Darwin
       linux: Linux
       windows: Windows
       386: i386
