@@ -1,4 +1,6 @@
-export type Attributes = Record<string, number | string | boolean>;
+export type AttributeKey = string;
+export type AttributeValue = number | string | boolean;
+export type Attributes = Record<AttributeKey, AttributeValue>;
 
 export type Resource = {
   attributes: Attributes;
