@@ -154,7 +154,7 @@ const createNode = (g: Readonly<GraphNode>): Node<NodeData> => {
       type: g.systemType,
       image: g.image,
       color: g.hasError ? NodeColor.ERR_NORMAL : NodeColor.NORMAL,
-      graph_node: { ...g },
+      graphNode: { ...g },
     },
     position: POSITION,
   };

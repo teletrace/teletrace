@@ -9,7 +9,7 @@ export interface TraceData {
 
 export interface NodeData extends GraphNodeData {
   color: NodeColor;
-  graph_node: GraphNode;
+  graphNode: GraphNode;
 }
 
 export interface GraphNodeData {
