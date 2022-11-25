@@ -67,7 +67,7 @@ const ProductionTraceView = () => {
           flex={1}
         >
           <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
-          <SpanDetailsList spans={TRACE_MOCK} />
+          <SpanDetailsList spans={selectedNode?.spans} />
         </Stack>
         <Stack divider={<Divider orientation="vertical" flexItem />} flex={1}>
           <TraceTimeline trace={trace} />
