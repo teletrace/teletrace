@@ -15,7 +15,7 @@ export const SpanDetailsList = ({ spans }: SpanDetailsListProps) => {
       {spans ? (
         spans.map((span) => <SpanDetails key={span.span.spanId} span={span} />)
       ) : (
-        <Typography>Select graph node to explore spans details</Typography>
+        <Typography>Select graph node to explore spans</Typography>
       )}
     </Box>
   );
