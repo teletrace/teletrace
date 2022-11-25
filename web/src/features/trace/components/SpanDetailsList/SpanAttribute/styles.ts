@@ -1,3 +1,8 @@
+const ellipsisOverflow = {
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+};
+
 export const styles = {
   container: {
     display: "flex",
@@ -7,11 +12,13 @@ export const styles = {
     },
   },
   key: {
-    flex: 1,
+    flex: "0 0 45%",
     fontWeight: "400",
+    marginRight: "10px",
+    ...ellipsisOverflow,
   },
   value: {
-    flex: 1,
     fontWeight: "700",
+    ...ellipsisOverflow,
   },
 };
