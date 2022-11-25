@@ -25,7 +25,7 @@ export interface EdgeData {
 }
 
 export interface TraceGraphParams {
-  setSelectedNode: (val: Node<NodeData> | object) => void;
+  setSelectedNode: React.Dispatch<React.SetStateAction<GraphNode | null>>;
   spans: InternalSpan[];
 }
 
