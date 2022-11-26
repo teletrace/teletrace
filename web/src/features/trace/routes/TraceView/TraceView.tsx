@@ -60,16 +60,16 @@ const ProductionTraceView = () => {
         sx={{ height: "100%" }}
       >
         <Stack
-          direction="row"
-          divider={<Divider orientation="vertical" flexItem />}
+          flex={3}
           spacing={2}
-          justifyContent="space-between"
-          flex={1}
+          direction="row"
+          sx={styles.graphSpanDetailsContainer}
+          divider={<Divider orientation="vertical" flexItem />}
         >
           <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
           <SpanDetailsList spans={selectedNode?.spans} />
         </Stack>
-        <Stack divider={<Divider orientation="vertical" flexItem />} flex={1}>
+        <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
           <TraceTimeline trace={trace} />
         </Stack>
       </Stack>
