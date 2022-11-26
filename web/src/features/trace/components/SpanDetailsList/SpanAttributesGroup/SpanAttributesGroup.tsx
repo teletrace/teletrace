@@ -15,13 +15,15 @@ import { styles } from "./styles";
 interface SpanAttributesGroupProps {
   title: string;
   attributes: Attributes;
+  startExpanded?: boolean;
 }
 
 export const SpanAttributesGroup = ({
   title,
   attributes,
+  startExpanded = false,
 }: SpanAttributesGroupProps) => {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(startExpanded);
 
   const handleChange = (_: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded);
