@@ -7,10 +7,9 @@ import { Head } from "@/components/Head";
 import { InternalSpan } from "@/types/span";
 
 import { useTraceQuery } from "../../api/traceQuery";
-import { SPANS_MOCK } from "../../components/spans-mock";
+import { SpanDetailsList } from "../../components/SpanDetailsList";
 import { TRACE_MOCK } from "../../components/trace-mock";
 import { TraceGraph } from "../../components/TraceGraph";
-import { ServiceSpansList } from "../../components/TraceTags/ServiceSpansList/ServiceSpansList";
 import { TraceTimeline } from "../../components/TraceTimeline";
 import { trace_res } from "../../types/TraceViewMock";
 import { styles } from "./styles";
@@ -68,7 +67,7 @@ const ProductionTraceView = () => {
           flex={1}
         >
           <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
-          <ServiceSpansList spans={SPANS_MOCK} />
+          <SpanDetailsList spans={TRACE_MOCK} />
         </Stack>
         <Stack divider={<Divider orientation="vertical" flexItem />} flex={1}>
           <TraceTimeline trace={trace} />
@@ -117,7 +116,7 @@ const MockDataTraceView = () => {
           flex={1}
         >
           <TraceGraph setSelectedNode={setSelectedNode} spans={spans} />
-          <ServiceSpansList spans={SPANS_MOCK} />
+          <SpanDetailsList spans={TRACE_MOCK} />
         </Stack>
         <Stack divider={<Divider orientation="vertical" flexItem />} flex={1}>
           {trace && <TraceTimeline trace={trace} />}
