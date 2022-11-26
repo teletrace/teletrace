@@ -1,5 +1,5 @@
 const nanoSecToMs = (nanoSec: number) => {
-  return nanoSec / (10000 * 1000);
+  return nanoSec / (1000 * 1000);
 };
 
 export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
