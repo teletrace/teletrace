@@ -8,7 +8,8 @@ import MaterialReactTable, {
 import { useEffect, useRef, useState } from "react";
 
 import {
-  formatDateToTimeString,
+  formatDateAsDateTime,
+  nanoSecToMs,
   roundNanoToTwoDecimalMs,
 } from "@/utils/format";
 
@@ -50,9 +51,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
-          startTime: formatDateToTimeString(
-            span.startTimeUnixNano / (1000 * 1000)
-          ),
+          startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
           duration: `${roundNanoToTwoDecimalMs(externalFields.durationNano)}ms`,
           name: span.name,
           status: span.status.code,
