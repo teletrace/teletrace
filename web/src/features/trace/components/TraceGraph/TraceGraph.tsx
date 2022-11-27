@@ -33,7 +33,11 @@ import "reactflow/dist/style.css";
 const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
-const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
+const TraceGraphImpl = ({
+  setSelectedNode,
+  spans,
+  selectedSpanId,
+}: TraceGraphParams) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
@@ -57,6 +61,32 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
   useEffect(() => {
     setNodes(traceData.nodes);
     setEdges(traceData.edges);
+  }, [traceData]);
+
+  useEffect(() => {
+    traceData.nodes.map((node) =>
+      node.data.graphNode.spans.map((span) => {
+        if (span.span.spanId === selectedSpanId) {
+          setSelectedNode(node.data.graphNode);
+          const connectedEdges = getConnectedEdges([node], traceData.edges);
+          setNodes(
+            traceData.nodes.map((n: Node<NodeData>) =>
+              n.id === node.id
+                ? applySelectedNodeStyle(n)
+                : applyNormalNodeStyle(n)
+            )
+          );
+          setEdges(
+            traceData.edges.map((e: Edge<EdgeData>) =>
+              connectedEdges.includes(e)
+                ? applySelectedEdgeStyle(e)
+                : applyNormalEdgeStyle(e)
+            )
+          );
+          return;
+        }
+      })
+    );
   }, [traceData]);
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {

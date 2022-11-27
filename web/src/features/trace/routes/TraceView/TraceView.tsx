@@ -56,7 +56,11 @@ export const TraceView = () => {
           sx={styles.graphSpanDetailsContainer}
           divider={<Divider orientation="vertical" flexItem />}
         >
-          <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
+          <TraceGraph
+            setSelectedNode={setSelectedNode}
+            spans={trace}
+            selectedSpanId={spanId}
+          />
           <SpanDetailsList
             spans={selectedNode?.spans}
             selectedSpanId={spanId}
