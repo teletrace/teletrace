@@ -6,7 +6,10 @@ import MaterialReactTable, {
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
 
-import { formatDateToTimeString } from "@/utils/format";
+import {
+  formatDateToTimeString,
+  roundNanoToTwoDecimalMs,
+} from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
@@ -49,7 +52,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           startTime: formatDateToTimeString(
             span.startTimeUnixNano / (1000 * 1000)
           ),
-          duration: `${externalFields.durationNano / (1000 * 1000)} ms`,
+          duration: `${roundNanoToTwoDecimalMs(externalFields.durationNano)}ms`,
           name: span.name,
           status: span.status.code,
           serviceName:
