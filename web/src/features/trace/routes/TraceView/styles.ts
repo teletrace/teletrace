@@ -5,4 +5,7 @@ export const styles = {
     justifyContent: "center",
     alignItems: "center",
   },
+  graphSpanDetailsContainer: {
+    overflow: "auto",
+  },
 };
