@@ -10,6 +10,7 @@ import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
 import { TRACE_MOCK } from "../../components/trace-mock";
 import { TraceGraph } from "../../components/TraceGraph";
+import { GraphNode } from "../../components/TraceGraph/Graph/types";
 import { TraceTimeline } from "../../components/TraceTimeline";
 import { trace_res } from "../../types/TraceViewMock";
 import { styles } from "./styles";
@@ -30,8 +31,7 @@ export const TraceView = () => {
 const ProductionTraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
   const { isLoading, data: trace, error } = useTraceQuery(traceId);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedNode, setSelectedNode] = useState({});
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
 
   if (isLoading) {
     return (
@@ -67,7 +67,7 @@ const ProductionTraceView = () => {
           flex={1}
         >
           <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
-          <SpanDetailsList spans={TRACE_MOCK} />
+          <SpanDetailsList spans={selectedNode?.spans} />
         </Stack>
         <Stack divider={<Divider orientation="vertical" flexItem />} flex={1}>
           <TraceTimeline trace={trace} />
@@ -79,7 +79,7 @@ const ProductionTraceView = () => {
 
 const MockDataTraceView = () => {
   const [trace, setTrace] = useState<InternalSpan[] | null>(null);
-  const [selectedNode, setSelectedNode] = useState({});
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [spans, setSpans] = useState<InternalSpan[]>([]);
 
   useEffect(() => {
