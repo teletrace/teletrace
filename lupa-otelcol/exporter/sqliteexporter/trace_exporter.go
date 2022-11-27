@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/trace_writer"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/tracewriter"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 )
@@ -16,7 +16,7 @@ const driverName = "sqlite3"
 const dbName = "embedded_spans_db"
 
 type sqliteTracesExporter struct {
-	traceWriter trace_writer.TraceWriter
+	traceWriter tracewriter.TraceWriter
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, error) {
@@ -31,7 +31,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 	repository.InitDatabase(db)
 
 	return &sqliteTracesExporter{
-		trace_writer.NewTraceWriter(logger, db),
+		tracewriter.NewTraceWriter(logger, db),
 	}, nil
 
 }

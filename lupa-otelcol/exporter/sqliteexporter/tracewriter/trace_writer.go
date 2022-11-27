@@ -1,4 +1,4 @@
-package trace_writer
+package tracewriter
 
 import (
 	"database/sql"
