@@ -12,9 +12,6 @@ import (
 
 import _ "github.com/mattn/go-sqlite3"
 
-const driverName = "sqlite3"
-const dbName = "embedded_spans_db"
-
 type sqliteTracesExporter struct {
 	traceWriter tracewriter.TraceWriter
 }
@@ -24,11 +21,16 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 		return nil, err
 	}
 
-	db, err := sql.Open(driverName, dbName)
+	dbName := "embedded_spans"
+
+	if err := repository.Migrate(dbName); err != nil {
+		return nil, fmt.Errorf("could not migrate DB: %+v", err)
+	}
+
+	db, err := sql.Open("sqlite3", fmt.Sprintf("%s.db", "embedded_spans.db"))
 	if err != nil {
 		return nil, fmt.Errorf("could not create sqlite exporter: %+v", err)
 	}
-	repository.InitDatabase(db)
 
 	return &sqliteTracesExporter{
 		tracewriter.NewTraceWriter(logger, db),
