@@ -6,7 +6,6 @@ import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
 
-
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
   timeframe: Timeframe;
