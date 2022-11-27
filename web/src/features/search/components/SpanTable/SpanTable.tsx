@@ -1,12 +1,16 @@
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
+  MRT_Row as Row,
   MRT_ShowHideColumnsButton as ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
 
-import { formatDateToTimeString } from "@/utils/format";
+import {
+  formatDateToTimeString,
+  roundNanoToTwoDecimalMs,
+} from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
@@ -49,7 +53,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           startTime: formatDateToTimeString(
             span.startTimeUnixNano / (1000 * 1000)
           ),
-          duration: `${externalFields.durationNano / (1000 * 1000)} ms`,
+          duration: `${roundNanoToTwoDecimalMs(externalFields.durationNano)}ms`,
           name: span.name,
           status: span.status.code,
           serviceName:
@@ -74,6 +78,10 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       fetchMoreOnBottomReached(tableWrapper);
     });
   }, [fetchMoreOnBottomReached, tableWrapper]);
+
+  const onClick = (row: Row<TableSpan>) => {
+    window.open(`${window.location.origin}/trace/${row.original.traceId}`);
+  };
 
   return (
     <MaterialReactTable
@@ -119,6 +127,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         sx: styles.container,
       }}
       muiTablePaperProps={{ sx: styles.paper }}
+      muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
     />
   );
 }
