@@ -167,6 +167,13 @@ theme = createTheme(theme, {
     },
   },
   components: {
+    MuiAutocomplete: {
+      styleOverrides: {
+        paper: {
+          display: "inline-block",
+        },
+      },
+    },
     MuiAccordion: {
       styleOverrides: {
         root: {
@@ -321,6 +328,9 @@ theme = createTheme(theme, {
           fontWeight: "normal",
           margin: "0px 4px",
         },
+        inputSizeSmall: {
+          position: "relative",
+        },
         notchedOutline: {
           border: `1px solid ${theme.palette.grey[400]}`,
           borderRadius: "8px",
@@ -341,6 +351,7 @@ theme = createTheme(theme, {
         },
         sizeSmall: {
           height: "32px",
+          alignContent: "center",
         },
       },
     },
