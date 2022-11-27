@@ -6,7 +6,10 @@ import MaterialReactTable, {
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
 
-import { formatDateToTimeString, roundNanoToTwoDecimalMs } from "@/utils/format";
+import {
+  formatDateToTimeString,
+  roundNanoToTwoDecimalMs,
+} from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
