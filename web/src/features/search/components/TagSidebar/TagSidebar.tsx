@@ -35,7 +35,8 @@ export const TagSidebar = ({
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
-      render: value => value === StatusCode.UNSET || value === StatusCode.OK ? 'Ok' : 'Error',
+      render: value =>
+        value === StatusCode.UNSET || value === StatusCode.OK ? 'Ok' : 'Error',
     },
     {
       title: "Service Name",

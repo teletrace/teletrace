@@ -110,7 +110,13 @@ export const TagValuesSelector = ({
   );
 };
 
-const CheckboxListLabel = ({ tag, render }: { tag: TagValue, render?: (value: string | number) => React.ReactNode}) => (
+const CheckboxListLabel = ({
+  tag,
+  render,
+}: {
+  tag: TagValue,
+  render?: (value: string | number) => React.ReactNode
+}) => (
   <Stack direction="row" alignItems="center" justifyContent="space-between">
     <Typography noWrap>{render ? render(tag.value) : tag.value}</Typography>
     <Typography variant="button" color="GrayText">
