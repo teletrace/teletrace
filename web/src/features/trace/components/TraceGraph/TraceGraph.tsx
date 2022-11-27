@@ -67,35 +67,24 @@ const TraceGraphImpl = ({
     traceData.nodes.map((node) =>
       node.data.graphNode.spans.map((span) => {
         if (span.span.spanId === selectedSpanId) {
-          setSelectedNode(node.data.graphNode);
-          const connectedEdges = getConnectedEdges([node], traceData.edges);
-          setNodes(
-            traceData.nodes.map((n: Node<NodeData>) =>
-              n.id === node.id
-                ? applySelectedNodeStyle(n)
-                : applyNormalNodeStyle(n)
-            )
-          );
-          setEdges(
-            traceData.edges.map((e: Edge<EdgeData>) =>
-              connectedEdges.includes(e)
-                ? applySelectedEdgeStyle(e)
-                : applyNormalEdgeStyle(e)
-            )
-          );
-          return;
+          markSelected(traceData.nodes, traceData.edges, node);
         }
       })
     );
   }, [traceData]);
 
-  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    setSelectedNode(node.data.graphNode);
-    const connectedEdges = getConnectedEdges([node], edges);
+  const markSelected = (
+    nodes: Node<NodeData>[],
+    edges: Edge<EdgeData>[],
+    selectedNode: Node<NodeData>
+  ) => {
+    setSelectedNode(selectedNode.data.graphNode);
+    const connectedEdges = getConnectedEdges([selectedNode], edges);
     setNodes(
       nodes.map((n: Node<NodeData>) =>
-        n.id === node.id ? applySelectedNodeStyle(n) : applyNormalNodeStyle(n)
+        n.id === selectedNode.id
+          ? applySelectedNodeStyle(n)
+          : applyNormalNodeStyle(n)
       )
     );
     setEdges(
@@ -105,6 +94,11 @@ const TraceGraphImpl = ({
           : applyNormalEdgeStyle(e)
       )
     );
+  };
+
+  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
+    event.stopPropagation();
+    markSelected(nodes, edges, node);
   };
 
   const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {
