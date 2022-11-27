@@ -16,15 +16,15 @@ builds:
       - 6
       - 7
     main: ./cmd/all-in-one/main.go
-    binary: all-in-one
-    id: all-in-one
+    binary: lupa
+    id: lupa
 
 dockers:
   - image_templates:
-      - "epsagon/all-in-one:{{ .Tag }}-amd64"
-      - "epsagon/all-in-one:v{{ .Major }}-amd64"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
-      - "epsagon/all-in-one:latest-amd64"
+      - "epsagon/lupa:{{ .Tag }}-amd64"
+      - "epsagon/lupa:v{{ .Major }}-amd64"
+      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "epsagon/lupa:latest-amd64"
     dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
@@ -41,10 +41,10 @@ dockers:
       - "pkg"
       - "plugin"
   - image_templates:
-      - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
-      - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
-      - "epsagon/all-in-one:latest-arm64v8"
+      - "epsagon/lupa:{{ .Tag }}-arm64v8"
+      - "epsagon/lupa:v{{ .Major }}-arm64v8"
+      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "epsagon/lupa:latest-arm64v8"
     dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
@@ -61,10 +61,10 @@ dockers:
       - "pkg"
       - "plugin"
   - image_templates:
-      - "epsagon/all-in-one:{{ .Tag }}-armv7"
-      - "epsagon/all-in-one:v{{ .Major }}-armv7"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
-      - "epsagon/all-in-one:latest-armv7"
+      - "epsagon/lupa:{{ .Tag }}-armv7"
+      - "epsagon/lupa:v{{ .Major }}-armv7"
+      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-armv7"
+      - "epsagon/lupa:latest-armv7"
     dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
@@ -83,26 +83,26 @@ dockers:
       - "plugin"
 
 docker_manifests:
-  - name_template: "epsagon/all-in-one:{{ .Tag }}"
+  - name_template: "epsagon/lupa:{{ .Tag }}"
     image_templates:
-      - "epsagon/all-in-one:{{ .Tag }}-amd64"
-      - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
-      - "epsagon/all-in-one:{{ .Tag }}-armv7"
-  - name_template: "epsagon/all-in-one:v{{ .Major }}"
+      - "epsagon/lupa:{{ .Tag }}-amd64"
+      - "epsagon/lupa:{{ .Tag }}-arm64v8"
+      - "epsagon/lupa:{{ .Tag }}-armv7"
+  - name_template: "epsagon/lupa:v{{ .Major }}"
     image_templates:
-      - "epsagon/all-in-one:v{{ .Major }}-amd64"
-      - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
-      - "epsagon/all-in-one:v{{ .Major }}-armv7"
-  - name_template: "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}"
+      - "epsagon/lupa:v{{ .Major }}-amd64"
+      - "epsagon/lupa:v{{ .Major }}-arm64v8"
+      - "epsagon/lupa:v{{ .Major }}-armv7"
+  - name_template: "epsagon/lupa:v{{ .Major }}.{{ .Minor }}"
     image_templates:
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
-  - name_template: "epsagon/all-in-one:latest"
+      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-armv7"
+  - name_template: "epsagon/lupa:latest"
     image_templates:
-      - "epsagon/all-in-one:latest-amd64"
-      - "epsagon/all-in-one:latest-arm64v8"
-      - "epsagon/all-in-one:latest-armv7"
+      - "epsagon/lupa:latest-amd64"
+      - "epsagon/lupa:latest-arm64v8"
+      - "epsagon/lupa:latest-armv7"
 
 archives:
   - replacements:
