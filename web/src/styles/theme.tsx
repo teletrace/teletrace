@@ -493,6 +493,9 @@ theme = createTheme(theme, {
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
+          "&.MuiTableRow-hover": {
+            cursor: "pointer",
+          },
         },
       },
     },
