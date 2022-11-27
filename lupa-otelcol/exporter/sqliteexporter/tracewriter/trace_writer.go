@@ -62,9 +62,7 @@ func (tw *traceWriter) writeScope(
 	scope := scopeSpans.Scope()
 	scopeId, err := repository.InsertScope(tx, scope)
 	if err != nil || scopeId == nil {
-		if err := tx.Rollback(); err != nil {
-			tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
-		}
+		tw.rollbackTransaction(tx)
 		tw.logger.Error("could not insert scope", zap.NamedError("reason", err))
 	}
 
@@ -81,9 +79,7 @@ func (tw *traceWriter) writeSpan(
 	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uuid.UUID, scopeId *int64) {
 	spanId := span.SpanID().HexString()
 	if err := repository.InsertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceId, *scopeId); err != nil {
-		if err := tx.Rollback(); err != nil {
-			tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
-		}
+		tw.rollbackTransaction(tx)
 		tw.logger.Error("could not insert span", zap.NamedError("reason", err))
 	}
 
@@ -94,9 +90,7 @@ func (tw *traceWriter) writeSpan(
 		spanEvent := spanEventSlice.At(i)
 		eventId, err := repository.InsertEvent(tx, spanEvent, spanId)
 		if err != nil || eventId == nil {
-			if err := tx.Rollback(); err != nil {
-				tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
-			}
+			tw.rollbackTransaction(tx)
 			tw.logger.Error("could not insert event", zap.NamedError("reason", err))
 		}
 
@@ -108,9 +102,7 @@ func (tw *traceWriter) writeSpan(
 		spanLink := spanLinkSlice.At(i)
 		linkId, err := repository.InsertLink(tx, spanLink, spanId)
 		if err != nil {
-			if err := tx.Rollback(); err != nil {
-				tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
-			}
+			tw.rollbackTransaction(tx)
 			tw.logger.Error("could not insert event", zap.NamedError("reason", err))
 		}
 
@@ -128,9 +120,7 @@ func (tw *traceWriter) writeAttributes(tx *sql.Tx, attributes pcommon.Map, attri
 		}
 
 		if err := repository.InsertAttribute(tx, attributeKind, id, key, finalValue, value.Type().String()); err != nil {
-			if err := tx.Rollback(); err != nil {
-				tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
-			}
+			tw.rollbackTransaction(tx)
 			tw.logger.Error(
 				"could not insert attribute",
 				zap.String("attributeKind", string(attributeKind)),
@@ -138,5 +128,11 @@ func (tw *traceWriter) writeAttributes(tx *sql.Tx, attributes pcommon.Map, attri
 				zap.String("attributeValue", value.AsString()),
 				zap.NamedError("reason", err))
 		}
+	}
+}
+
+func (tw *traceWriter) rollbackTransaction(tx *sql.Tx) {
+	if err := tx.Rollback(); err != nil {
+		tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
 	}
 }
