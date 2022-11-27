@@ -83,10 +83,10 @@ func InsertSpan(
 
 	_, err := performInsert(tx, `
 		INSERT INTO spans (
-			span_id, trace_id, trace_state, 
-		    parent_span_id, name, kind, start_time_unix_nano, 
-		    end_time_unix_nano, dropped_span_attributes_count, dropped_events_count, dropped_links_count, 
-		    span_status_message, span_status_code, dropped_resource_attributes_count, duration, 
+			span_id, trace_id, trace_state,
+		    parent_span_id, name, kind, start_time_unix_nano,
+		    end_time_unix_nano, dropped_span_attributes_count, dropped_events_count, dropped_links_count,
+		    span_status_message, span_status_code, dropped_resource_attributes_count, duration,
 		    ingestion_time_unix_nano, instrumentation_scope_id, resource_id
 		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,	?, ?, ?, ?)
 	`,
