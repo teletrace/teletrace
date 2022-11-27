@@ -86,6 +86,7 @@ export const ValueSelector = ({
         {valueInputMode === "select" ? (
           <Autocomplete
             multiple
+            openOnFocus
             size="small"
             loading={isLoading}
             disableCloseOnSelect
