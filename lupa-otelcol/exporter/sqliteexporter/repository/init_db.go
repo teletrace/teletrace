@@ -1,4 +1,4 @@
-package dbinit
+package repository
 
 import (
 	"database/sql"
@@ -86,8 +86,7 @@ func InitDatabase(db *sql.DB) {
 		    resource_id TEXT NOT NULL,
 		    key TEXT NOT NULL,
 		    value BLOB,
-		    type TEXT NOT NULL,
-		    FOREIGN KEY(resource_id) REFERENCES spans(resource_id)
+		    type TEXT NOT NULL
 	  	);
 	`)
 
