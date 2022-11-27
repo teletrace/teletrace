@@ -1,7 +1,6 @@
 package sqliteexporter
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
@@ -16,13 +15,13 @@ type writer struct {
 	db     *sql.DB
 }
 
-func (w *writer) writeTraces(ctx context.Context, td ptrace.Traces) error {
+func (w *writer) writeTraces(traces ptrace.Traces) error {
 	tx, err := w.db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %+v\n", err)
 	}
 
-	resourceSpansSlice := td.ResourceSpans()
+	resourceSpansSlice := traces.ResourceSpans()
 	for i := 0; i < resourceSpansSlice.Len(); i++ {
 		resourceSpans := resourceSpansSlice.At(i)
 		resourceId := uuid.New() // Generating a resource identifier to store with each span
