@@ -2,7 +2,6 @@ import { GitHub } from "@mui/icons-material";
 import {
   Box,
   Container,
-  Divider,
   Link,
   Stack,
   Typography,
@@ -52,12 +51,7 @@ export const Landing = () => {
             <Link component={RouterLink} to="/search" underline="none">
               <Typography color="text.secondary">Search</Typography>
             </Link>
-            <Divider orientation="vertical" flexItem />
-            <Link component={RouterLink} to="/trace-view" underline="none">
-              <Typography color="text.secondary">Trace View</Typography>
-            </Link>
           </Stack>
-
           <Stack
             sx={{ pt: 4 }}
             direction="row"

@@ -6,9 +6,8 @@ import (
 
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/esclient/interactor"
 	"oss-tracing/pkg/logs"
-	"oss-tracing/plugin/spanstorage/es"
+	spanreaderes "oss-tracing/plugin/spanreader/es"
 
 	"go.uber.org/zap"
 )
@@ -25,36 +24,13 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	storage, err := es.NewStorage(context.Background(), logger, interactor.NewElasticConfig(cfg))
+	sr, err := spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
 	if err != nil {
-		logger.Fatal("Failed to initialize ES storage", zap.Error(err))
-	}
-
-	sr, err := storage.CreateSpanReader()
-	if err != nil {
-		logger.Fatal("Failed to create Span Reader from Storage", zap.Error(err))
+		logger.Fatal("Failed to create Span Reader for Elasticsearch", zap.Error(err))
 	}
 
 	api := api.NewAPI(logger, cfg, &sr)
 	if err := api.Start(); err != nil {
 		logger.Fatal("API server crashed", zap.Error(err))
-	}
-
-	ctx := context.Background()
-
-	esConfig := interactor.ElasticConfig{
-		Endpoint:     cfg.ESEndpoints,
-		Username:     cfg.ESUsername,
-		Password:     cfg.ESPassword,
-		ApiKey:       cfg.ESAPIKey,
-		ServiceToken: cfg.ESServiceToken,
-		ForceCreate:  cfg.ESForceCreateConfig,
-		Index:        cfg.ESIndex,
-	}
-
-	_, err = es.NewStorage(ctx, logger, esConfig)
-
-	if err != nil {
-		log.Fatalf("Failed to initialize span writer: %+v", err)
 	}
 }

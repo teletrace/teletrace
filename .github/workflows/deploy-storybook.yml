@@ -6,7 +6,7 @@ on:
       - main
 
 concurrency:
-  group: ${{ github.head_ref }}
+  group: storybook
   cancel-in-progress: true
 
 jobs:

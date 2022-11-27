@@ -23,7 +23,7 @@ type SpanStatus struct {
 }
 
 type Resource struct {
-	Attributes             Attributes `json:"resources"`
+	Attributes             Attributes `json:"attributes"`
 	DroppedAttributesCount uint32     `json:"droppedAttributesCount"`
 }
 

@@ -1,20 +1,59 @@
 import { Divider, Stack } from "@mui/material";
-import { Fragment } from "react";
+import { Fragment, useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
 
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
-import { Timeframe } from "../types/common";
+import { SearchFilter, Timeframe } from "../types/common";
+
+export type FiltersState = {
+  filters: Array<SearchFilter>;
+  timeframe: Timeframe;
+};
 
 export const SpanSearch = () => {
   const now = new Date().valueOf();
   const hourInMillis = 60 * 60 * 1000;
-  const defaultTimeframe: Timeframe = {
-    startTime: now - hourInMillis,
-    endTime: now,
-  };
+  const [filtersState, setFiltersState] = useState<FiltersState>({
+    filters: [],
+    timeframe: {
+      startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
+      endTimeUnixNanoSec: now * 1000 * 1000,
+    },
+  });
+
+  const onFilterChange = useCallback(
+    (entry: SearchFilter, isDelete = false) => {
+      return setFiltersState((prevState: FiltersState) => {
+        const shouldRemoveFilter =
+          isDelete ||
+          (["in", "not_in"].includes(entry.keyValueFilter.operator) &&
+            Array.isArray(entry.keyValueFilter.value) &&
+            entry.keyValueFilter.value.length == 0);
+        const newFilters = [...prevState.filters];
+        const existIndex = newFilters.findIndex(
+          (f) =>
+            f.keyValueFilter.key === entry.keyValueFilter.key &&
+            f.keyValueFilter.operator === entry.keyValueFilter.operator
+        );
+        if (shouldRemoveFilter) {
+          if (existIndex > -1) {
+            newFilters.splice(existIndex, 1);
+          }
+        } else {
+          if (existIndex > -1) {
+            newFilters[existIndex] = entry;
+          } else {
+            newFilters.push(entry);
+          }
+        }
+        return { timeframe: prevState.timeframe, filters: newFilters };
+      });
+    },
+    [setFiltersState]
+  );
 
   return (
     <Fragment>
@@ -30,7 +69,11 @@ export const SpanSearch = () => {
         sx={{ height: "100%" }}
       >
         <aside style={{ display: "flex", maxHeight: "100%" }}>
-          <TagSidebar />
+          <TagSidebar
+            onChange={onFilterChange}
+            filters={filtersState.filters}
+            timeframe={filtersState.timeframe}
+          />
         </aside>
 
         <Stack
@@ -39,8 +82,16 @@ export const SpanSearch = () => {
           spacing={1}
           sx={{ height: "100%" }}
         >
-          <SearchBar />
-          <SpanTable timeframe={defaultTimeframe} />
+          <SearchBar
+            timeframe={filtersState.timeframe}
+            filters={filtersState.filters}
+            onFilterAdded={onFilterChange}
+            onFilterDeleted={(filter) => onFilterChange(filter, true)}
+          />
+          <SpanTable
+            timeframe={filtersState.timeframe}
+            filters={filtersState.filters}
+          />
         </Stack>
       </Stack>
     </Fragment>

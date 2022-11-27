@@ -1,63 +1,98 @@
 import { Paper, Stack } from "@mui/material";
-import { useState } from "react";
 
+import { StatusCode } from "@/types/span";
+
+import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
 
-export const TagSidebar = () => {
-  type TagValues = Array<number | string>;
+export type TagSidebarProps = {
+  filters: Array<SearchFilter>;
+  timeframe: Timeframe;
+  onChange: (entry: SearchFilter) => void;
+};
 
-  const [statusCodes, setStatusCodes] = useState<TagValues>([]);
-  const [serviceNames, setServiceNames] = useState<TagValues>([]);
-  const [httpRoutes, setHttpRoutes] = useState<TagValues>([]);
-  const [httpMethods, setHttpMethods] = useState<TagValues>([]);
-  const [httpStatusCodes, setHttpStatusCodes] = useState<TagValues>([]);
-  const [instumentationLibs, setInstrumentationLibs] = useState<TagValues>([]);
+type TagOptions = {
+  title: string;
+  tag: string;
+  isSearchable: boolean;
+  render?: (value: string | number) => React.ReactNode;
+};
+
+export const TagSidebar = ({
+  filters,
+  timeframe,
+  onChange,
+}: TagSidebarProps) => {
+  const onFilterChange = (
+    key: string,
+    label: string,
+    values: Array<string | number>
+  ) => {
+    onChange({ keyValueFilter: { key: key, operator: "in", value: values } });
+  };
+  const tags: Array<TagOptions> = [
+    {
+      title: "Status",
+      tag: "span.status.code",
+      isSearchable: false,
+      render: (value) =>
+        value === StatusCode.UNSET || value === StatusCode.OK ? "Ok" : "Error",
+    },
+    {
+      title: "Service Name",
+      tag: "resource.attributes.service.name",
+      isSearchable: true,
+    },
+    {
+      title: "HTTP Route",
+      tag: "span.attributes.http.target",
+      isSearchable: true,
+    },
+    {
+      title: "HTTP Method",
+      tag: "span.attributes.http.method",
+      isSearchable: true,
+    },
+    {
+      title: "HTTP Status Code",
+      tag: "span.attributes.http.status_code",
+      isSearchable: true,
+    },
+    { title: "Instrumentation Library", tag: "scope.name", isSearchable: true },
+  ];
 
   return (
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
       <Stack spacing="2px" sx={styles.sideTagBar}>
-        <TagValuesSelector
-          title="Status"
-          tag="span.status"
-          value={statusCodes}
-          onChange={setStatusCodes}
-        />
-        <TagValuesSelector
-          searchable
-          title="Service Name"
-          tag="service.name"
-          value={serviceNames}
-          onChange={setServiceNames}
-        />
-        <TagValuesSelector
-          searchable
-          title="HTTP Route"
-          tag="http.route"
-          value={httpRoutes}
-          onChange={setHttpRoutes}
-        />
-        <TagValuesSelector
-          searchable
-          title="HTTP Method"
-          tag="http.method"
-          value={httpMethods}
-          onChange={setHttpMethods}
-        />
-        <TagValuesSelector
-          searchable
-          title="HTTP Status Code"
-          tag="http.status_code"
-          value={httpStatusCodes}
-          onChange={setHttpStatusCodes}
-        />
-        <TagValuesSelector
-          searchable
-          title="Instumentation Library"
-          tag="instrumentation.library"
-          value={instumentationLibs}
-          onChange={setInstrumentationLibs}
-        />
+        {tags.map((t) => {
+          const filterIndex = filters.findIndex(
+            (f) =>
+              f.keyValueFilter.key === t.tag &&
+              f.keyValueFilter.operator === "in"
+          );
+          const value =
+            filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
+          return (
+            <TagValuesSelector
+              key={t.tag}
+              title={t.title}
+              tag={t.tag}
+              value={Array.isArray(value) ? value : []}
+              filters={filters.filter(
+                (f) =>
+                  !(
+                    f.keyValueFilter.key === t.tag &&
+                    f.keyValueFilter.operator === "in"
+                  )
+              )} // remove the current tag
+              timeframe={timeframe}
+              onChange={(values) => onFilterChange(t.tag, t.title, values)}
+              searchable={t.isSearchable}
+              render={t.render}
+            />
+          );
+        })}
       </Stack>
     </Paper>
   );

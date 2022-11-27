@@ -10,11 +10,11 @@ export interface PublicRouteProps {
 
 export const publicRoutes: PublicRouteProps[] = [
   {
-    path: "/trace-view",
-    element: <TraceView />,
-  },
-  {
     path: "/search",
     element: <SpanSearch />,
+  },
+  {
+    path: "/trace/:traceId",
+    element: <TraceView />,
   },
 ];

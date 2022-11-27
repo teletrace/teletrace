@@ -20,7 +20,7 @@ func (api *API) search(c *gin.Context) {
 	if isValidationError {
 		return
 	}
-	res, err := (*api.spanReader).Search(c, &req)
+	res, err := (*api.spanReader).Search(c, req)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
@@ -35,9 +35,9 @@ func (api *API) getTraceById(c *gin.Context) {
 			StartTime: 0,
 			EndTime:   uint64(time.Now().UnixNano()),
 		},
-		SearchFilters: []spansquery.SearchFilter{
+		SearchFilters: []model.SearchFilter{
 			{
-				KeyValueFilter: &spansquery.KeyValueFilter{
+				KeyValueFilter: &model.KeyValueFilter{
 					Key:      "span.traceId",
 					Operator: spansquery.OPERATOR_EQUALS,
 					Value:    traceId,
@@ -46,7 +46,7 @@ func (api *API) getTraceById(c *gin.Context) {
 		},
 	}
 
-	res, err := (*api.spanReader).Search(c, sr)
+	res, err := (*api.spanReader).Search(c, *sr)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
@@ -71,7 +71,7 @@ func (api *API) tagsValues(c *gin.Context) {
 	if isValidationError {
 		return
 	}
-	tag := c.Request.URL.Query().Get("tag")
+	tag := c.Param("tag")
 
 	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag})
 

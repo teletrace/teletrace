@@ -11,42 +11,50 @@ import FormControl from "@mui/material/FormControl";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValues } from "../../api/tagValues";
-import { ValueInputMode, ValueTypes } from "../../types/spanQuery";
+import {
+  FilterValueTypes,
+  Timeframe,
+  ValueInputMode,
+} from "../../types/common";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
+  timeframe: Timeframe;
   query?: TagValuesRequest;
-  value: ValueTypes;
+  value: FilterValueTypes;
   valueInputMode: ValueInputMode;
-  onChange: (value: ValueTypes) => void;
+  onChange: (value: FilterValueTypes) => void;
   error: boolean;
+};
+
+const getOptions = (tag: string, timeframe: Timeframe) => {
+  if (!tag) {
+    return { isLoading: false, tagOptions: [] };
+  }
+  const tagValuesRequest = {
+    filters: [],
+    timeframe: timeframe,
+  } as TagValuesRequest;
+  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
+  const tagOptions =
+    tagValues?.pages
+      .flatMap((page) => page.values)
+      ?.filter((tag) => tag?.value)
+      .sort((a, b) => b.count - a.count) || [];
+  return { isLoading, tagOptions };
 };
 
 export const ValueSelector = ({
   tag,
-  query,
+  timeframe,
   value,
   valueInputMode,
   onChange,
   error,
 }: ValueSelectorProps) => {
-  const tagValuesRequest =
-    query ??
-    ({
-      timeframe: {
-        startTime: 0,
-        endTime: new Date().valueOf(),
-      },
-    } as TagValuesRequest);
-
-  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
-
-  const tagOptions = tagValues?.pages
-    .flatMap((page) => page.values)
-    .sort((a, b) => b.count - a.count);
-
+  const { isLoading, tagOptions } = getOptions(tag, timeframe);
   const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (
@@ -65,12 +73,12 @@ export const ValueSelector = ({
   const getSelectedValues = () => {
     const valueArray = value instanceof Array ? value : [value.toString()];
     return (
-      tagOptions?.filter((tagOption) =>
-        valueArray.includes(tagOption.value.toString())
+      tagOptions?.filter(
+        (tagOption) =>
+          tagOption && valueArray.includes(tagOption?.value.toString())
       ) || []
     );
   };
-
   return (
     <>
       <FormControl required sx={styles.valueSelector}>
@@ -78,6 +86,7 @@ export const ValueSelector = ({
         {valueInputMode === "select" ? (
           <Autocomplete
             multiple
+            openOnFocus
             size="small"
             loading={isLoading}
             disableCloseOnSelect

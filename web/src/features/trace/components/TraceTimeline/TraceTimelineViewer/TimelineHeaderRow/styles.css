@@ -1,0 +1,163 @@
+.TimelineHeaderRow {
+  background: #2b2d32;
+  height: 24px;
+  color: white;
+  position: absolute;
+  width: 100%;
+  z-index: 4;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+}
+.TimelineHeaderRow--title {
+  flex: 1;
+  overflow: hidden;
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: white;
+  padding: 4px 0 4px 16px;
+  font-size: 12px;
+}
+.TimelineColumnResizer {
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.TimelineColumnResizer--wrapper {
+  bottom: 0;
+  position: absolute;
+  top: 0;
+}
+.TimelineColumnResizer--dragger {
+  border-left: 2px solid #3b3c42;
+  cursor: col-resize;
+  height: 5000px;
+  margin-left: -5px;
+  position: absolute;
+  top: 0;
+}
+.TimelineColumnResizer--dragger:hover {
+  border-left: 2px solid rgba(0, 0, 0, 0.3);
+}
+.TimelineColumnResizer.isDraggingLeft > .TimelineColumnResizer--dragger,
+.TimelineColumnResizer.isDraggingRight > .TimelineColumnResizer--dragger {
+  background: rgba(55, 177, 255, 0.15);
+  width: unset;
+}
+.TimelineColumnResizer.isDraggingLeft > .TimelineColumnResizer--dragger {
+  border-left: 2px solid #27cce4;
+  border-right: 1px solid #999;
+}
+.TimelineColumnResizer.isDraggingRight > .TimelineColumnResizer--dragger {
+  border-left: 1px solid #999;
+  border-right: 2px solid #27cce4;
+}
+.TimelineColumnResizer--dragger::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -8px;
+  right: 0;
+  content: " ";
+}
+.TimelineColumnResizer.isDraggingLeft > .TimelineColumnResizer--dragger::before,
+.TimelineColumnResizer.isDraggingRight
+  > .TimelineColumnResizer--dragger::before {
+  left: -2000px;
+  right: -2000px;
+}
+.TimelineColumnResizer--gripIcon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.TimelineColumnResizer--gripIcon::before,
+.TimelineColumnResizer--gripIcon::after {
+  border-right: 1px solid #ccc;
+  content: " ";
+  height: 9px;
+  position: absolute;
+  right: 9px;
+  top: 25px;
+}
+.TimelineColumnResizer--gripIcon::after {
+  right: 5px;
+}
+.TimelineColumnResizer.isDraggingLeft
+  > .TimelineColumnResizer--gripIcon::before,
+.TimelineColumnResizer.isDraggingRight
+  > .TimelineColumnResizer--gripIcon::before,
+.TimelineColumnResizer.isDraggingLeft > .TimelineColumnResizer--gripIcon::after,
+.TimelineColumnResizer.isDraggingRight
+  > .TimelineColumnResizer--gripIcon::after {
+  border-right: 1px solid rgba(136, 0, 136, 0.5);
+}
+.TimelineCollapser {
+  align-items: center;
+  display: flex;
+  flex: none;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+.TimelineCollapser--tooltipTitle {
+  white-space: pre;
+}
+.TimelineCollapser--btn,
+.TimelineCollapser--btn-expand {
+  color: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  margin-right: 0.3rem;
+  padding: 0.1rem;
+}
+.TimelineCollapser--btn:hover,
+.TimelineCollapser--btn-expand:hover {
+  color: rgba(0, 0, 0, 0.85);
+}
+.TimelineCollapser--btn-expand {
+  transform: rotate(90deg);
+}
+.TimelineViewingLayer {
+  bottom: 0;
+  cursor: vertical-text;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.TimelineViewingLayer--cursorGuide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background-color: red;
+}
+.TimelineViewingLayer--dragged {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.TimelineViewingLayer--dragged.isDraggingLeft {
+  border-left: 1px solid;
+}
+.TimelineViewingLayer--dragged.isDraggingRight {
+  border-right: 1px solid;
+}
+.TimelineViewingLayer--dragged.isShiftDrag {
+  background-color: rgba(68, 68, 255, 0.2);
+  border-color: #44f;
+}
+.TimelineViewingLayer--dragged.isReframeDrag {
+  background-color: rgba(255, 68, 68, 0.2);
+  border-color: #f44;
+}
+.TimelineViewingLayer--fullOverlay {
+  bottom: 0;
+  cursor: col-resize;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  user-select: none;
+}

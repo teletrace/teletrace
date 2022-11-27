@@ -26,6 +26,7 @@ jobs:
           echo 'USER_ID='$(jq '.data.node.id' project_data.json) | tr -d '"' >> $GITHUB_ENV
 
       - name: Pull Request Assignee
+        if: ${{ !startsWith(env.USER_ID, 'BOT') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_ID: ${{ github.event.pull_request.node_id }}

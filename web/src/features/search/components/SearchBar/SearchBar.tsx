@@ -3,12 +3,23 @@ import { Button, Chip, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
-import { SearchFilter } from "../../types/spanQuery";
+import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 
-export function SearchBar() {
+export type SearchBarProps = {
+  filters: Array<SearchFilter>;
+  timeframe: Timeframe;
+  onFilterAdded: (entry: SearchFilter) => void;
+  onFilterDeleted: (entry: SearchFilter) => void;
+};
+
+export function SearchBar({
+  filters,
+  timeframe,
+  onFilterAdded,
+  onFilterDeleted,
+}: SearchBarProps) {
   const [open, setOpen] = useState(false);
-  const [filters, setFilters] = useState<SearchFilter[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -18,14 +29,6 @@ export function SearchBar() {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const onFilterAdded = (filter: SearchFilter) => {
-    setFilters([...filters, filter]);
-  };
-
-  const onFilterDeleted = (filter: SearchFilter) => {
-    setFilters(filters.filter((f) => f !== filter));
   };
 
   return (
@@ -40,6 +43,7 @@ export function SearchBar() {
           Add Filter
         </Button>
         <FilterBuilderDialog
+          timeframe={timeframe}
           open={open}
           onClose={handleClose}
           onApply={onFilterAdded}
@@ -47,7 +51,7 @@ export function SearchBar() {
         />
         {filters.map((filter) => (
           <Chip
-            key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
+            key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator}`}
             size="small"
             label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
             onDelete={() => onFilterDeleted(filter)}

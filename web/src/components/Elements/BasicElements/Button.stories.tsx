@@ -134,11 +134,6 @@ export const PrimaryEndIcon = Template.bind({});
 export const Secondary = Template.bind({});
 export const Error = Template.bind({});
 
-{
-  /* <TableCell><Button id="focused" startIcon={<Add/>} variant="contained" {...args}>Button</Button></TableCell>
-<TableCell><Button id="focused" endIcon={<Add/>} variant="contained" {...args}>Button</Button></TableCell> */
-}
-
 Primary.args = {
   color: "primary",
 };

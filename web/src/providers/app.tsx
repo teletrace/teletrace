@@ -1,5 +1,4 @@
-import { ThemeProvider } from "@emotion/react";
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Suspense } from "react";
@@ -26,7 +25,9 @@ export const AppProviders = ({ children }: AppProvidersProps) => (
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
-            {process.env.NODE_ENV !== "test" && <ReactQueryDevtools />}
+            {process.env.NODE_ENV !== "test" && (
+              <ReactQueryDevtools position="bottom-right" />
+            )}
             <BrowserRouter>{children}</BrowserRouter>
           </QueryClientProvider>
         </HelmetProvider>

@@ -1,4 +1,4 @@
-import { Box, TextField } from "@mui/material";
+import { Stack, TextField, Typography } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
@@ -7,16 +7,17 @@ export default {
 } as ComponentMeta<typeof TextField>;
 
 const Template: ComponentStory<typeof TextField> = (args) => (
-  <TextField {...args} />
+  <Stack spacing={2} sx={{ width: "20%" }}>
+    <Typography variant="subtitle1" gutterBottom>
+      Default Text Field size is small
+    </Typography>
+    <TextField label="default textfield" {...args} />
+    <TextField size="medium" label="medium textfield" {...args} />
+  </Stack>
 );
 
 const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
-  <Box
-    component="form"
-    sx={{
-      "& .MuiTextField-root": { m: 1, width: "25ch" },
-    }}
-  >
+  <Stack spacing={2} sx={{ width: "20%" }}>
     <TextField
       id="outlined-basic"
       label="Outlined"
@@ -30,17 +31,12 @@ const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
       variant="standard"
       {...args}
     />
-  </Box>
+  </Stack>
 );
 
 const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
-  <Box
-    component="form"
-    sx={{
-      "& .MuiTextField-root": { m: 1, width: "25ch" },
-    }}
-  >
-    <div>
+  <Stack spacing={4}>
+    <Stack direction="row" spacing={2}>
       <TextField
         required
         id="outlined-required"
@@ -60,6 +56,7 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         label="Password"
         type="password"
         autoComplete="current-password"
+        size="small"
         {...args}
       />
       <TextField
@@ -94,8 +91,8 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         helperText="Some important text"
         {...args}
       />
-    </div>
-    <div>
+    </Stack>
+    <Stack direction="row" spacing={2}>
       <TextField
         required
         id="filled-required"
@@ -155,8 +152,8 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         variant="filled"
         {...args}
       />
-    </div>
-    <div>
+    </Stack>
+    <Stack direction="row" spacing={2}>
       <TextField
         required
         id="standard-required"
@@ -216,8 +213,8 @@ const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
         variant="standard"
         {...args}
       />
-    </div>
-  </Box>
+    </Stack>
+  </Stack>
 );
 
 export const Primary = Template.bind({});

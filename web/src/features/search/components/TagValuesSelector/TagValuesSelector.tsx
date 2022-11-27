@@ -17,6 +17,7 @@ import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValues } from "../../api/tagValues";
+import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
 
@@ -25,28 +26,28 @@ export type TagValuesSelectorProps = {
   title: string;
   value: Array<string | number>;
   searchable?: boolean;
-  query?: TagValuesRequest;
+  filters: Array<SearchFilter>;
+  timeframe: Timeframe;
   onChange?: (value: Array<string | number>) => void;
+  render?: (value: string | number) => React.ReactNode;
 };
 
 export const TagValuesSelector = ({
   title,
   tag,
   value,
-  query,
+  filters,
+  timeframe,
   searchable,
   onChange,
+  render,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
 
-  const tagValuesRequest =
-    query ??
-    ({
-      timeframe: {
-        startTime: 0,
-        endTime: new Date().valueOf(),
-      },
-    } as TagValuesRequest);
+  const tagValuesRequest: TagValuesRequest = {
+    filters: filters,
+    timeframe: timeframe,
+  };
 
   const {
     data: tagValues,
@@ -58,10 +59,10 @@ export const TagValuesSelector = ({
 
   const tagOptions = tagValues?.pages
     .flatMap((page) => page.values)
-    ?.filter((tag) => tag.value.toString().includes(search))
+    ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
-      label: <CheckboxListLabel tag={tag} />,
+      label: <CheckboxListLabel tag={tag} render={render} />,
     }));
 
   return (
@@ -109,9 +110,15 @@ export const TagValuesSelector = ({
   );
 };
 
-const CheckboxListLabel = ({ tag }: { tag: TagValue }) => (
+const CheckboxListLabel = ({
+  tag,
+  render,
+}: {
+  tag: TagValue;
+  render?: (value: string | number) => React.ReactNode;
+}) => (
   <Stack direction="row" alignItems="center" justifyContent="space-between">
-    <Typography noWrap>{tag.value}</Typography>
+    <Typography noWrap>{render ? render(tag.value) : tag.value}</Typography>
     <Typography variant="button" color="GrayText">
       {formatNumber(tag.count)}
     </Typography>
