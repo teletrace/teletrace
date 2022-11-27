@@ -1,4 +1,3 @@
-import { SvgIcon } from "@mui/material";
 import * as React from "react";
 import IoArrowRightA from "react-icons/lib/io/arrow-right-a";
 import MiddleTruncate from "react-middle-truncate/lib/react-middle-truncate";
@@ -55,7 +54,12 @@ export default class SpanBarRow extends React.PureComponent {
     );
     const viewStart = viewBounds.start;
     const viewEnd = viewBounds.end;
-    const icon = <ResourceIcon name="DefaultResourceIcon" />;
+    const icon = (
+      <ResourceIcon
+        name="defaultresourceicon"
+        style={{ height: "15px", width: "15px" }}
+      />
+    );
 
     const labelDetail = `${process.serviceName}::${operationName}`;
     let longLabel;
@@ -100,7 +104,7 @@ export default class SpanBarRow extends React.PureComponent {
               }}
             >
               <div className="span-icon">
-                <SvgIcon>{icon}</SvgIcon>
+                {icon}
                 {showErrorIcon && "error icon"}
                 {showColdStartIcon && "warning icon"}
               </div>
