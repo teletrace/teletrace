@@ -127,8 +127,10 @@ func (tw *traceWriter) writeAttributes(tx *sql.Tx, attributes pcommon.Map, attri
 			finalValue = value.AsString()
 		}
 
-		if err := repository.InsertAttribute(
-			tx, attributeKind, id, key, finalValue, value.Type().String()); err != nil {
+		if err := repository.InsertAttribute(tx, attributeKind, id, key, finalValue, value.Type().String()); err != nil {
+			if err := tx.Rollback(); err != nil {
+				tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+			}
 			tw.logger.Error(
 				"could not insert attribute",
 				zap.String("attributeKind", string(attributeKind)),
