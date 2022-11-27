@@ -13,11 +13,6 @@ export const publicRoutes: PublicRouteProps[] = [
     path: "/search",
     element: <SpanSearch />,
   },
-  // Temporary route for development with mock data
-  {
-    path: "/trace",
-    element: <TraceView />,
-  },
   {
     path: "/trace/:traceId",
     element: <TraceView />,
