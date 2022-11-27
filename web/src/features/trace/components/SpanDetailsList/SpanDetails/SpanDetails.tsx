@@ -11,10 +11,10 @@ import { useMemo, useState } from "react";
 
 import { ReactComponent as DefaultResourceIcon } from "@/components/Elements/ResourceIcon/icons/DefaultResourceIcon.svg";
 import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
+import { roundNanoToTwoDecimalMs } from "@/utils/format";
 
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
 import { styles } from "./styles";
-import { roundNanoToTwoDecimalMs } from "./utils";
 
 export interface SpanDetailsProps {
   span: InternalSpan;
