@@ -73,7 +73,11 @@ export const SpanDetails = ({ span }: SpanDetailsProps) => {
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={styles.accordionDetails}>
-        <SpanAttributesGroup title="Basic" attributes={basicAttributes} />
+        <SpanAttributesGroup
+          title="Basic"
+          attributes={basicAttributes}
+          startExpanded
+        />
         {Object.keys(span.span.attributes).length > 0 && (
           <SpanAttributesGroup
             title="Attributes"
