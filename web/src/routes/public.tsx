@@ -17,4 +17,9 @@ export const publicRoutes: PublicRouteProps[] = [
     path: "/trace/:traceId",
     element: <TraceView />,
   },
+  {
+    path: "/trace/:traceId/spanId=:spanId",
+    element: <TraceView />,
+  },
+  
 ];

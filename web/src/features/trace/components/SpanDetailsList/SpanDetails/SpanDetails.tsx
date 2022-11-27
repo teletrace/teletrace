@@ -18,6 +18,7 @@ import { roundNanoToTwoDecimalMs } from "./utils";
 
 export interface SpanDetailsProps {
   span: InternalSpan;
+  selectedSpanId?: string;
 }
 
 function getBasicAttributes(span: InternalSpan): Attributes {
@@ -33,8 +34,8 @@ function getBasicAttributes(span: InternalSpan): Attributes {
   };
 }
 
-export const SpanDetails = ({ span }: SpanDetailsProps) => {
-  const [expanded, setExpanded] = useState(false);
+export const SpanDetails = ({ span, selectedSpanId }: SpanDetailsProps) => {
+  const [expanded, setExpanded] = useState(selectedSpanId === span.span.spanId);
   const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
 
   const handleChange = (_: React.SyntheticEvent, isExpanded: boolean) => {
@@ -45,6 +46,7 @@ export const SpanDetails = ({ span }: SpanDetailsProps) => {
 
   return (
     <Accordion
+      expanded={expanded}
       onChange={handleChange}
       disableGutters={true}
       sx={styles.accordion}

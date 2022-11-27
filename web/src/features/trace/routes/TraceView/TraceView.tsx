@@ -14,10 +14,11 @@ import { styles } from "./styles";
 
 interface TraceViewUrlParams extends Params {
   traceId: string;
+  spanId: string;
 }
 
 export const TraceView = () => {
-  const { traceId } = useParams() as TraceViewUrlParams;
+  const { traceId, spanId } = useParams() as TraceViewUrlParams;
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
 
@@ -56,7 +57,10 @@ export const TraceView = () => {
           divider={<Divider orientation="vertical" flexItem />}
         >
           <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
-          <SpanDetailsList spans={selectedNode?.spans} />
+          <SpanDetailsList
+            spans={selectedNode?.spans}
+            selectedSpanId={spanId}
+          />
         </Stack>
         <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
           <TraceTimeline trace={trace} />
