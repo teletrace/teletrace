@@ -79,7 +79,7 @@ func InsertSpan(
 	scopeId int64,
 ) error {
 	duration := span.EndTimestamp() - span.StartTimestamp()
-	ingestionTimeUnixNano := uint64(time.Now().UTC().Nanosecond()) //  TODO: Check if this is a duration or a timestamp
+	ingestionTimeUnixNano := uint64(time.Now().UTC().Nanosecond())
 
 	_, err := performInsert(tx, `
 		INSERT INTO spans (
