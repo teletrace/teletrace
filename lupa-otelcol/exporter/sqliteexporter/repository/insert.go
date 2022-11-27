@@ -46,28 +46,28 @@ func performInsert(tx *sql.Tx, query string, data ...any) (*int64, error) {
 }
 
 func InsertAttribute(tx *sql.Tx, attributeKind AttributeKind, id any, key string, value any, valueType string) error {
-	var tableName string
-	var idName string
+	var table string
+	var idColumn string
 	switch attributeKind {
 	case Span:
-		tableName = "span_attributes"
-		idName = "span_id"
+		table = "span_attributes"
+		idColumn = "span_id"
 	case Resource:
-		tableName = "resource_attributes"
-		idName = "resource_id"
+		table = "resource_attributes"
+		idColumn = "resource_id"
 	case Scope:
-		tableName = "scope_attributes"
-		idName = "scope_id"
+		table = "scope_attributes"
+		idColumn = "scope_id"
 	case Event:
-		tableName = "event_attributes"
-		idName = "event_id"
+		table = "event_attributes"
+		idColumn = "event_id"
 	case Link:
-		tableName = "link_attributes"
-		idName = "link_id"
+		table = "link_attributes"
+		idColumn = "link_id"
 	}
 
 	_, err := performInsert(tx,
-		fmt.Sprintf("INSERT INTO %s (%s, key, value, type) VALUES (?, ?, ?, ?)", tableName, idName),
+		fmt.Sprintf("INSERT INTO %s (%s, key, value, type) VALUES (?, ?, ?, ?)", table, idColumn),
 		id, key, value, valueType,
 	)
 
