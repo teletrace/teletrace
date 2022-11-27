@@ -21,5 +21,4 @@ export const publicRoutes: PublicRouteProps[] = [
     path: "/trace/:traceId/spanId=:spanId",
     element: <TraceView />,
   },
-  
 ];
