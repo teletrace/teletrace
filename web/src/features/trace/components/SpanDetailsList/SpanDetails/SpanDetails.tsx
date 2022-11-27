@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useMemo, useState } from "react";
 
-import { ReactComponent as DefaultResourceIcon } from "@/components/Elements/ResourceIcon/icons/DefaultResourceIcon.svg";
+import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
 import { roundNanoToTwoDecimalMs } from "@/utils/format";
 
@@ -57,9 +57,15 @@ export const SpanDetails = ({ span }: SpanDetailsProps) => {
         }}
       >
         <Stack sx={styles.spanFlowIconsContainer}>
-          <DefaultResourceIcon style={styles.spanSourceIcon} />
+          <ResourceIcon
+            name="defaultresourceicon"
+            style={styles.spanSourceIcon}
+          />
           <ArrowForward style={styles.spanFlowArrowIcon} />
-          <DefaultResourceIcon style={styles.spanDestIcon} />
+          <ResourceIcon
+            name="defaultresourceicon"
+            style={styles.spanDestIcon}
+          />
         </Stack>
         <Stack>
           <Typography sx={styles.spanName}>{span.span.name}</Typography>
