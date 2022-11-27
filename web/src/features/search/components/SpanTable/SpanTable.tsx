@@ -1,6 +1,6 @@
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
-  MRT_Row,
+  MRT_Row as Row,
   MRT_ShowHideColumnsButton as ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
@@ -79,7 +79,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     });
   }, [fetchMoreOnBottomReached, tableWrapper]);
 
-  const onClick = (row: MRT_Row<TableSpan>) => {
+  const onClick = (row: Row<TableSpan>) => {
     window.open(`${window.location.origin}/trace/${row.original.traceId}`);
   };
 
