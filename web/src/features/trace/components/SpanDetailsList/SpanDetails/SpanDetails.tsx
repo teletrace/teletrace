@@ -7,10 +7,10 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { ReactComponent as DefaultResourceIcon } from "@/components/Elements/ResourceIcon/icons/DefaultResourceIcon.svg";
-import { InternalSpan } from "@/types/span";
+import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
 
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
 import { styles } from "./styles";
@@ -20,8 +20,22 @@ export interface SpanDetailsProps {
   span: InternalSpan;
 }
 
+function getBasicAttributes(span: InternalSpan): Attributes {
+  return {
+    service_name: span.resource.attributes["service.name"],
+    name: span.span.name,
+    status: StatusCode[span.span.status.code],
+    kind: SpanKind[span.span.kind],
+    duration: `${roundNanoToTwoDecimalMs(span.externalFields.durationNano)}ms`,
+    start_time: span.span.startTimeUnixNano,
+    span_id: span.span.spanId,
+    trace_id: span.span.traceId,
+  };
+}
+
 export const SpanDetails = ({ span }: SpanDetailsProps) => {
   const [expanded, setExpanded] = useState(false);
+  const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
 
   const handleChange = (_: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded);
@@ -59,14 +73,13 @@ export const SpanDetails = ({ span }: SpanDetailsProps) => {
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={styles.accordionDetails}>
-        <SpanAttributesGroup
-          title="Basic"
-          attributes={span.resource.attributes}
-        />
-        <SpanAttributesGroup
-          title="Attributes"
-          attributes={span.span.attributes}
-        />
+        <SpanAttributesGroup title="Basic" attributes={basicAttributes} />
+        {Object.keys(span.span.attributes).length > 0 && (
+          <SpanAttributesGroup
+            title="Attributes"
+            attributes={span.span.attributes}
+          />
+        )}
       </AccordionDetails>
     </Accordion>
   );
