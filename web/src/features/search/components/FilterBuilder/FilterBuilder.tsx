@@ -17,9 +17,9 @@ import {
   Timeframe,
   ValueInputMode,
 } from "../../types/common";
-import { FilterSelector } from "./FilterSelector";
 import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
+import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
 
 export type FilterDialogProps = {
@@ -167,7 +167,7 @@ export const FilterBuilderDialog = ({
         <DialogContent>
           <Stack spacing={2}>
             <Stack direction="row" spacing={2}>
-              <FilterSelector
+              <TagSelector
                 value={dialogState.tag}
                 onChange={onTagChange}
                 error={dialogState.formError.tag}
