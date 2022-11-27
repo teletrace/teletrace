@@ -15,7 +15,7 @@ type TraceWriter interface {
 	CloseDB() error
 }
 
-func NewTracesWriter(logger *zap.Logger, db *sql.DB) TraceWriter {
+func NewTraceWriter(logger *zap.Logger, db *sql.DB) TraceWriter {
 	return &traceWriter{
 		logger: logger,
 		db:     db,

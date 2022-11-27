@@ -31,7 +31,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 	repository.InitDatabase(db)
 
 	return &sqliteTracesExporter{
-		trace_writer.NewTracesWriter(logger, db),
+		trace_writer.NewTraceWriter(logger, db),
 	}, nil
 
 }
