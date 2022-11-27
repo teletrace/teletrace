@@ -70,6 +70,12 @@ func (w *writer) writeSpan(
 		w.logger.Error("could not insert span", zap.NamedError("reason", err))
 	}
 
+	spanAttributes := span.Attributes().AsRaw()
+	for key := range spanAttributes {
+		value := spanAttributes[key]
+		w.insertSpanAttribute(tx, spanId, key, value)
+	}
+
 	spanEventSlice := span.Events()
 	for i := 0; i < spanEventSlice.Len(); i++ {
 		spanEvent := spanEventSlice.At(i)
@@ -91,6 +97,54 @@ func (w *writer) writeSpan(
 			w.logger.Error("could not insert event", zap.NamedError("reason", err))
 		}
 	}
+}
+
+func (w *writer) insertSpanAttribute(tx *sql.Tx, spanId string, key string, value any) error {
+	insertSpanAttribute, err := tx.Prepare(
+		"INSERT INTO span_attributes (span_id, key, value, type) VALUES (?, ?, ?, ?)",
+	)
+
+	if err != nil {
+		return fmt.Errorf("could not prepare statement: %+v\n", err)
+	}
+
+	var attributeType string
+	switch value.(type) {
+	case int:
+		attributeType = "integer"
+	case int8:
+		attributeType = "integer"
+	case int16:
+		attributeType = "integer"
+	case int32:
+		attributeType = "integer"
+	case int64:
+		attributeType = "integer"
+	case uint:
+		attributeType = "integer"
+	case uint8:
+		attributeType = "integer"
+	case uint16:
+		attributeType = "integer"
+	case uint32:
+		attributeType = "integer"
+	case uint64:
+		attributeType = "integer"
+	case float32:
+		attributeType = "float"
+	case float64:
+		attributeType = "float"
+	case bool:
+		attributeType = "boolean"
+	default:
+		attributeType = "string"
+	}
+
+	if _, err := insertSpanAttribute.Exec(spanId, key, value, attributeType); err != nil {
+		return fmt.Errorf("could not execute statement: %v\n", err)
+	}
+
+	return nil
 }
 
 func (w *writer) insertLink(tx *sql.Tx, link ptrace.SpanLink, spanId string) error {

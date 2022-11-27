@@ -6,9 +6,9 @@ import (
 )
 
 func InitDatabase(db *sql.DB) {
-	runStatement(db, "PRAGMA foreign_keys = ON;")
+	runCreateTableStatement(db, "PRAGMA foreign_keys = ON;")
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS scopes (
 		    id INTEGER PRIMARY KEY AUTOINCREMENT,
 		    name TEXT,
@@ -16,7 +16,7 @@ func InitDatabase(db *sql.DB) {
 		    dropped_attributes_count INTEGER NOT NULL);
 	`)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
  		CREATE TABLE IF NOT EXISTS spans (
 			span_id TEXT PRIMARY KEY,
 			trace_id TEXT NOT NULL,
@@ -40,7 +40,7 @@ func InitDatabase(db *sql.DB) {
 		);
     `)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS events (
 		    id INTEGER PRIMARY KEY AUTOINCREMENT,
 		    span_id TEXT NOT NULL,
@@ -51,7 +51,7 @@ func InitDatabase(db *sql.DB) {
 		);
 	`)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS links (
 		    id INTEGER PRIMARY KEY AUTOINCREMENT,
 		    span_id TEXT NOT NULL,
@@ -61,7 +61,7 @@ func InitDatabase(db *sql.DB) {
 		);
 	`)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS scope_attributes (
 		    scope_id INTEGER NOT NULL,
 		    key TEXT NOT NULL,
@@ -71,48 +71,48 @@ func InitDatabase(db *sql.DB) {
 	  	);
 	`)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS span_attributes (
-		    span_id VARCHAR NOT NULL,
+		    span_id TEXT NOT NULL,
 		    key TEXT NOT NULL,
 		    value BLOB,
-		    type TEXT,
+		    type TEXT NOT NULL,
 		    FOREIGN KEY(span_id) REFERENCES spans(span_id)
 	  	);
 	`)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS resource_attributes (
 		    resource_id TEXT NOT NULL,
 		    key TEXT NOT NULL,
 		    value BLOB,
-		    type TEXT,
+		    type TEXT NOT NULL,
 		    FOREIGN KEY(resource_id) REFERENCES spans(resource_id)
 	  	);
 	`)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS event_attributes (
 		    event_id INTEGER NOT NULL,
 		    key TEXT NOT NULL,
 		    value BLOB,
-		    type TEXT,
+		    type TEXT NOT NULL,
 		    FOREIGN KEY(event_id) REFERENCES events(id)
 	  	);
 	`)
 
-	runStatement(db, `
+	runCreateTableStatement(db, `
 		CREATE TABLE IF NOT EXISTS link_attributes (
 		    link_id INTEGER NOT NULL,
 		    key TEXT NOT NULL,
 		    value BLOB,
-		    type TEXT,
+		    type TEXT NOT NULL,
 		    FOREIGN KEY(link_id) REFERENCES links(id)
 	  	);
 	`)
 }
 
-func runStatement(db *sql.DB, queryString string) {
+func runCreateTableStatement(db *sql.DB, queryString string) {
 	createTableStatement, err := db.Prepare(queryString)
 
 	if err != nil {
