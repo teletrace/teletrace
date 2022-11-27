@@ -1,5 +1,6 @@
 import { Paper, Stack } from "@mui/material";
 
+import { StatusCode } from "../../../../types/span";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
@@ -14,6 +15,7 @@ type TagOptions = {
   title: string;
   tag: string;
   isSearchable: boolean;
+  render?: (value: string | number) => React.ReactNode;
 };
 
 export const TagSidebar = ({
@@ -29,7 +31,12 @@ export const TagSidebar = ({
     onChange({ keyValueFilter: { key: key, operator: "in", value: values } });
   };
   const tags: Array<TagOptions> = [
-    { title: "Status", tag: "span.status.code", isSearchable: false },
+    { 
+      title: "Status",
+      tag: "span.status.code",
+      isSearchable: false,
+      render: value => value === StatusCode.UNSET || value === StatusCode.OK ? 'Ok' : 'Error',
+    },
     {
       title: "Service Name",
       tag: "resource.attributes.service.name",
@@ -80,6 +87,7 @@ export const TagSidebar = ({
               timeframe={timeframe}
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
+              render={t.render}
             />
           );
         })}
