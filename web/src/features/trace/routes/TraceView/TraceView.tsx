@@ -32,7 +32,7 @@ export const TraceView = () => {
     return (
       <Alert variant="outlined" severity="error" sx={styles.errorAlert}>
         {`Error loading trace view (traceId=${traceId})
-          Trace might not exist or the API is unavailable.`}
+          The trace might not exist or the API is unavailable.`}
       </Alert>
     );
   }
