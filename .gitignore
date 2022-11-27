@@ -44,3 +44,4 @@ out/
 .idea/
 /lupa-otelcol/embedded_spans_db
 /lupa-otelcol/embedded_spans_db-journal
+/lupa-otelcol/embedded_spans.db
