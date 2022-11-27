@@ -1,18 +1,15 @@
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Params, useParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
-import { InternalSpan } from "@/types/span";
 
 import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
-import { TRACE_MOCK } from "../../components/trace-mock";
 import { TraceGraph } from "../../components/TraceGraph";
 import { GraphNode } from "../../components/TraceGraph/Graph/types";
 import { TraceTimeline } from "../../components/TraceTimeline";
-import { trace_res } from "../../types/TraceViewMock";
 import { styles } from "./styles";
 
 interface TraceViewUrlParams extends Params {
@@ -20,15 +17,6 @@ interface TraceViewUrlParams extends Params {
 }
 
 export const TraceView = () => {
-  const { traceId } = useParams();
-  if (traceId) {
-    return <ProductionTraceView />;
-  }
-  // Temporary for development with mock data
-  return <MockDataTraceView />;
-};
-
-const ProductionTraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
   const { isLoading, data: trace, error } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
@@ -71,55 +59,6 @@ const ProductionTraceView = () => {
         </Stack>
         <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
           <TraceTimeline trace={trace} />
-        </Stack>
-      </Stack>
-    </>
-  );
-};
-
-const MockDataTraceView = () => {
-  const [trace, setTrace] = useState<InternalSpan[] | null>(null);
-  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
-  const [spans, setSpans] = useState<InternalSpan[]>([]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setSpans(trace_res.spans);
-    }, 1000);
-  }, []);
-
-  useEffect(() => {
-    console.log(selectedNode);
-  }, [selectedNode]);
-
-  useEffect(() => {
-    setTrace(TRACE_MOCK);
-  }, []);
-
-  return (
-    <>
-      <Head
-        title="Trace View"
-        description="Designated page to view trace's flow graph and timeline"
-      />
-      <Stack
-        direction="column"
-        divider={<Divider orientation="horizontal" flexItem />}
-        spacing={2}
-        sx={{ height: "100%" }}
-      >
-        <Stack
-          direction="row"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={2}
-          justifyContent="space-between"
-          flex={1}
-        >
-          <TraceGraph setSelectedNode={setSelectedNode} spans={spans} />
-          <SpanDetailsList spans={TRACE_MOCK} />
-        </Stack>
-        <Stack divider={<Divider orientation="vertical" flexItem />} flex={1}>
-          {trace && <TraceTimeline trace={trace} />}
         </Stack>
       </Stack>
     </>
