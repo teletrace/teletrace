@@ -5,6 +5,9 @@ export const styles = {
     justifyContent: "center",
     alignItems: "center",
   },
+  errorAlert: {
+    whiteSpace: "pre-line",
+  },
   graphSpanDetailsContainer: {
     overflow: "auto",
   },

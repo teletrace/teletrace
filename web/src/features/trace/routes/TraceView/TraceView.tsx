@@ -18,7 +18,7 @@ interface TraceViewUrlParams extends Params {
 
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
-  const { isLoading, data: trace, error } = useTraceQuery(traceId);
+  const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
 
   if (isLoading) {
@@ -28,10 +28,11 @@ export const TraceView = () => {
       </Box>
     );
   }
-  if (error || !trace) {
+  if (isError || !trace || trace.length === 0) {
     return (
-      <Alert variant="outlined" severity="error">
-        Error loading trace view. Please try to refresh the page
+      <Alert variant="outlined" severity="error" sx={styles.errorAlert}>
+        {`Error loading trace view (traceId=${traceId})
+          The trace might not exist or the API is unavailable.`}
       </Alert>
     );
   }
