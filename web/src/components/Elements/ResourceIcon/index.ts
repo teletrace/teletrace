@@ -1,3 +1,3 @@
 export * from "@mui/icons-material";
 export { SvgIcon } from "@mui/material";
-export * from "./ResourceIcon";
+export { ResourceIcon } from "./ResourceIcon";
