@@ -5,14 +5,18 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/trace_writer"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 )
 
 import _ "github.com/mattn/go-sqlite3"
 
+const driverName = "sqlite3"
+const dbName = "embedded_spans_db"
+
 type sqliteTracesExporter struct {
-	writer *writer
+	traceWriter trace_writer.TraceWriter
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, error) {
@@ -20,28 +24,25 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 		return nil, err
 	}
 
-	db, err := sql.Open("sqlite3", "embedded_spans_db")
+	db, err := sql.Open(driverName, dbName)
 	if err != nil {
 		return nil, fmt.Errorf("could not create sqlite exporter: %+v", err)
 	}
 	repository.InitDatabase(db)
 
 	return &sqliteTracesExporter{
-		writer: &writer{
-			logger: logger,
-			db:     db,
-		},
+		trace_writer.NewTracesWriter(logger, db),
 	}, nil
 
 }
 
-func (e *sqliteTracesExporter) Shutdown(ctx context.Context) error {
-	if err := e.writer.db.Close(); err != nil {
+func (exporter *sqliteTracesExporter) Shutdown(ctx context.Context) error {
+	if err := exporter.traceWriter.CloseDB(); err != nil {
 		return fmt.Errorf("could not shut down sqlite exporter: %+v", err)
 	}
 	return nil
 }
 
-func (e *sqliteTracesExporter) pushTracesData(ctx context.Context, traces ptrace.Traces) error {
-	return e.writer.writeTraces(traces)
+func (exporter *sqliteTracesExporter) pushTracesData(ctx context.Context, traces ptrace.Traces) error {
+	return exporter.traceWriter.WriteTraces(traces)
 }
