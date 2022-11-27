@@ -10,7 +10,7 @@ import (
 
 const (
 	typeStr   = "sqlite"
-	stability = component.StabilityLevelAlpha
+	stability = component.StabilityLevelInDevelopment
 )
 
 func NewFactory() component.ExporterFactory {
