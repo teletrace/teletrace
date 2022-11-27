@@ -31,7 +31,7 @@ export const TagSidebar = ({
     onChange({ keyValueFilter: { key: key, operator: "in", value: values } });
   };
   const tags: Array<TagOptions> = [
-    { 
+    {
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,

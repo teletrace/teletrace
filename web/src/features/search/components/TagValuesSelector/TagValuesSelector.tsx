@@ -114,7 +114,7 @@ const CheckboxListLabel = ({
   tag,
   render,
 }: {
-  tag: TagValue,
+  tag: TagValue;
   render?: (value: string | number) => React.ReactNode;
 }) => (
   <Stack direction="row" alignItems="center" justifyContent="space-between">
