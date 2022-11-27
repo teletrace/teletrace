@@ -1,7 +1,7 @@
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
-import { Params, useParams } from "react-router-dom";
+import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
 
@@ -14,13 +14,15 @@ import { styles } from "./styles";
 
 interface TraceViewUrlParams extends Params {
   traceId: string;
-  spanId: string;
 }
 
 export const TraceView = () => {
-  const { traceId, spanId } = useParams() as TraceViewUrlParams;
+  const { traceId } = useParams() as TraceViewUrlParams;
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [searchParams] = useSearchParams();
+
+  const spanId = searchParams.get("spanId") as string;
 
   if (isLoading) {
     return (
