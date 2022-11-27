@@ -1,6 +1,7 @@
 import { MRT_ColumnDef as ColumnDef } from "material-react-table";
 
-import { StatusCode } from "../../../../types/span";
+import { StatusCode } from "@/types/span";
+
 import { StatusBadge } from "../StatusBadge";
 
 export interface TableSpan {

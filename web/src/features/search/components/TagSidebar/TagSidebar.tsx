@@ -1,9 +1,11 @@
 import { Paper, Stack } from "@mui/material";
 
-import { StatusCode } from "../../../../types/span";
+import { StatusCode } from "@/types/span";
+
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
+
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
