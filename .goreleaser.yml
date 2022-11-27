@@ -8,7 +8,6 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
-      - windows
     goarch:
       - amd64
       - arm
@@ -62,27 +61,6 @@ dockers:
       - "pkg"
       - "plugin"
   - image_templates:
-      - "epsagon/all-in-one:{{ .Tag }}-armv6"
-      - "epsagon/all-in-one:v{{ .Major }}-armv6"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv6"
-      - "epsagon/all-in-one:latest-armv6"
-    dockerfile: ./cmd/all-in-one/Dockerfile
-    use: buildx
-    build_flag_templates:
-      - --platform=linux/arm/v6
-    goarch: arm
-    goarm: 6
-    goos: linux
-    extra_files:
-      - "go.mod"
-      - "go.sum"
-      - "cmd"
-      - "lupa-otelcol"
-      - "model"
-      - "web"
-      - "pkg"
-      - "plugin"
-  - image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-armv7"
       - "epsagon/all-in-one:v{{ .Major }}-armv7"
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
@@ -109,31 +87,26 @@ docker_manifests:
     image_templates:
       - "epsagon/all-in-one:{{ .Tag }}-amd64"
       - "epsagon/all-in-one:{{ .Tag }}-arm64v8"
-      - "epsagon/all-in-one:{{ .Tag }}-armv6"
       - "epsagon/all-in-one:{{ .Tag }}-armv7"
   - name_template: "epsagon/all-in-one:v{{ .Major }}"
     image_templates:
       - "epsagon/all-in-one:v{{ .Major }}-amd64"
       - "epsagon/all-in-one:v{{ .Major }}-arm64v8"
-      - "epsagon/all-in-one:v{{ .Major }}-armv6"
       - "epsagon/all-in-one:v{{ .Major }}-armv7"
   - name_template: "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}"
     image_templates:
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-amd64"
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-arm64v8"
-      - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv6"
       - "epsagon/all-in-one:v{{ .Major }}.{{ .Minor }}-armv7"
   - name_template: "epsagon/all-in-one:latest"
     image_templates:
       - "epsagon/all-in-one:latest-amd64"
       - "epsagon/all-in-one:latest-arm64v8"
-      - "epsagon/all-in-one:latest-armv6"
       - "epsagon/all-in-one:latest-armv7"
 
 archives:
   - replacements:
       linux: Linux
-      windows: Windows
       386: i386
       amd64: x86_64
 checksum:
