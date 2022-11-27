@@ -11,3 +11,8 @@ export const formatNumber = (n: number) =>
     notation: "compact",
     maximumFractionDigits: 1,
   }).format(n);
+
+export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
+  const ms = nanoSecToMs(nanoSec);
+  return Math.round(ms * 100) / 100;
+};
