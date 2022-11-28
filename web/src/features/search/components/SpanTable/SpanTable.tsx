@@ -18,10 +18,6 @@ import { SearchFilter, Timeframe } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import { LiveSpansState } from "./../../routes/SpanSearch";
 import styles from "./styles";
-import {
-  UseInfiniteQueryOptions,
-  UseInfiniteQueryResult,
-} from "@tanstack/react-query";
 import { InternalSpan } from "@/types/span";
 
 interface SpanTableProps {
@@ -106,10 +102,8 @@ export function SpanTable({
         id: span.spanId,
         traceId: span.traceId,
         spanId: span.spanId,
-        startTime: formatDateToTimeString(
-          span.startTimeUnixNano / (1000 * 1000)
-        ),
-        duration: `${externalFields.durationNano / (1000 * 1000)} ms`,
+        startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
+        duration: `${roundNanoToTwoDecimalMs(externalFields.durationNano)}ms`,
         name: span.name,
         status: span.status.code,
         serviceName:
