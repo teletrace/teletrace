@@ -2,13 +2,10 @@ import _clamp from "lodash-es/clamp";
 import _mapValues from "lodash-es/mapValues";
 import { Component } from "react";
 
-import ErrorMessage from "./ErrorMessage.js";
-import LoadingIndicator from "./LoadingIndicator.js";
 // eslint-disable-next-line import/no-cycle
 import TracePageHeader from "./TracePageHeader/index.js";
 // eslint-disable-next-line import/no-cycle
 import TraceTimelineViewer from "./TraceTimelineViewer/index.js";
-import { FETCHED_STATE } from "./utils/constants.js";
 import {
   merge as mergeShortcuts,
   reset as resetShortcuts,
@@ -186,24 +183,10 @@ class TimelineViewer extends Component {
     } = this.props;
     const { viewRange, headerHeight } = this.state;
 
-    if (!trace || trace.state === FETCHED_STATE.LOADING) {
-      return <LoadingIndicator className="u-mt-vast" centered />;
-    }
-
-    const { data } = trace;
-    if (trace.state === FETCHED_STATE.ERROR || !data) {
-      return (
-        <ErrorMessage
-          className="ub-m3"
-          error={trace.error || "Unknown error"}
-        />
-      );
-    }
-
     const headerProps = {
+      trace,
       nextResult: this.scrollManager.scrollToNextVisibleSpan,
       prevResult: this.scrollManager.scrollToPrevVisibleSpan,
-      trace: data,
       updateNextViewRangeTime: this.updateNextViewRangeTime,
       updateViewRangeTime: this.updateViewRangeTime,
       viewRange,
@@ -221,7 +204,7 @@ class TimelineViewer extends Component {
               setColumnWidth={setColumnWidth}
               traceState={traceState}
               registerAccessors={this.scrollManager.setAccessors}
-              trace={data}
+              trace={trace}
               updateNextViewRangeTime={this.updateNextViewRangeTime}
               updateViewRangeTime={this.updateViewRangeTime}
               viewRange={viewRange}

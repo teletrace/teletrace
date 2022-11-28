@@ -1,13 +1,13 @@
 export const styles = {
   filterBuilder: {
-    width: "500px",
+    width: "520px",
   },
   operatorSelector: {
-    flex: 1,
+    flex: 2,
     display: "flex",
   },
   filterSelector: {
-    flex: 1,
+    flex: 5,
     display: "flex",
   },
   valueSelector: {

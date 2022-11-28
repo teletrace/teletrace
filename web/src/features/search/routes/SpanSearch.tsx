@@ -41,7 +41,8 @@ export const SpanSearch = () => {
       return setFiltersState((prevState: FiltersState) => {
         const shouldRemoveFilter =
           isDelete ||
-          (Array.isArray(entry.keyValueFilter.value) &&
+          (["in", "not_in"].includes(entry.keyValueFilter.operator) &&
+            Array.isArray(entry.keyValueFilter.value) &&
             entry.keyValueFilter.value.length == 0);
         const newFilters = [...prevState.filters];
         const existIndex = newFilters.findIndex(
@@ -99,6 +100,7 @@ export const SpanSearch = () => {
           sx={{ height: "100%" }}
         >
           <SearchBar
+            timeframe={filtersState.timeframe}
             filters={filtersState.filters}
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}

@@ -8,15 +8,13 @@ RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /app/build/bin ./cmd/all-i
 
 
 FROM node:18-alpine3.16 AS ui-builder
-ENV NODE_ENV production
 
 WORKDIR /app
 
 # Cache and Install dependencies
-RUN yarn add @craco/craco@^6.4.5 -g
 COPY web/package.json .
 COPY web/yarn.lock .
-RUN yarn install --production
+RUN yarn install --network-timeout 1000000
 
 # Copy app files
 COPY web/ .

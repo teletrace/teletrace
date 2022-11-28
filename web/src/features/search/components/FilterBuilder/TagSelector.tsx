@@ -5,17 +5,13 @@ import { useAvailableTags } from "../../api/availableTags";
 import { AvailableTag } from "../../types/availableTags";
 import { styles } from "./styles";
 
-export type FilterSelectorProps = {
+export type TagSelectorProps = {
   value: AvailableTag | null;
   onChange: (f: AvailableTag | null) => void;
   error: boolean;
 };
 
-export const FilterSelector = ({
-  value,
-  onChange,
-  error,
-}: FilterSelectorProps) => {
+export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
   const { data: availableTags, isLoading } = useAvailableTags();
 
   const availableTagsOptions = availableTags?.pages.flatMap(
@@ -33,6 +29,7 @@ export const FilterSelector = ({
     <FormControl required sx={styles.filterSelector}>
       <FormLabel required={false}>Key</FormLabel>
       <Autocomplete
+        openOnFocus
         loading={isLoading}
         value={value}
         id="filter"

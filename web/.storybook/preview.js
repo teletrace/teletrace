@@ -7,7 +7,7 @@ export const parameters = {
 
 export const decorators = [
   (Story) => (
-    <AppProviders>
+    <AppProviders isStorybook={true}>
       <Story />
     </AppProviders>
   ),

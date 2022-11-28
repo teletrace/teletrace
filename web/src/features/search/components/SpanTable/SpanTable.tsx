@@ -1,12 +1,17 @@
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
+  MRT_Row as Row,
   MRT_ShowHideColumnsButton as ShowHideColumnsButton,
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { formatDateToTimeString } from "@/utils/format";
+import {
+  formatDateAsDateTime,
+  nanoSecToMs,
+  roundNanoToTwoDecimalMs,
+} from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
@@ -18,8 +23,6 @@ import {
   UseInfiniteQueryResult,
 } from "@tanstack/react-query";
 import { InternalSpan } from "@/types/span";
-
-const DEFAULT_SORT_FIELD = "startTime";
 
 interface SpanTableProps {
   filters?: SearchFilter[];
@@ -54,17 +57,13 @@ export function SpanTable({
     isLoading: false,
   });
 
-  const columnSort = sorting.find(
-    (columnSort) => columnSort.id === DEFAULT_SORT_FIELD
-  );
-
   const searchRequest = {
     filters: filters,
     timeframe: timeframe,
-    sort:
-      columnSort === undefined
-        ? undefined
-        : { field: columnSort.id, ascending: !columnSort.desc },
+    sort: sorting?.map((columnSort) => ({
+      field: columnSort.id,
+      ascending: !columnSort.desc,
+    })),
     metadata: undefined,
   };
 
@@ -135,6 +134,10 @@ export function SpanTable({
     });
   }, [fetchMoreOnBottomReached, tableWrapper]);
 
+  const onClick = (row: Row<TableSpan>) => {
+    window.open(`${window.location.origin}/trace/${row.original.traceId}`);
+  };
+
   return (
     <MaterialReactTable
       columns={columns}
@@ -174,14 +177,12 @@ export function SpanTable({
         sorting,
       }}
       virtualizerInstanceRef={virtualizerInstanceRef}
-      muiTableHeadProps={{
-        sx: styles.header,
-      }}
       muiTableContainerProps={{
         ref: tableWrapperRef,
         sx: styles.container,
       }}
       muiTablePaperProps={{ sx: styles.paper }}
+      muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
     />
   );
 }

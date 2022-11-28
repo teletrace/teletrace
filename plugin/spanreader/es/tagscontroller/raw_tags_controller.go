@@ -5,15 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"oss-tracing/pkg/model/tagsquery/v1"
+	"strings"
+
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"strings"
 )
-
-const TAG_PREFIX = "span.attributes."
 
 type rawTagsController struct {
 	client *elasticsearch.Client
@@ -25,14 +24,6 @@ func NewTagsController(logger *zap.Logger, client *elasticsearch.Client, idx str
 		client: client,
 		idx:    idx,
 	}, nil
-}
-
-func prefixTag(tag string) string {
-	return fmt.Sprint(TAG_PREFIX, tag)
-}
-
-func removePrefixTag(tag string) string {
-	return tag[len(TAG_PREFIX):]
 }
 
 // Get available tags.
@@ -80,14 +71,8 @@ func (r *rawTagsController) GetTagsValues(
 func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
 	var result []tagsquery.TagInfo
 
-	var prefixedTags []string
-
-	for _, tag := range tags {
-		prefixedTags = append(prefixedTags, prefixTag(tag))
-	}
-
 	res, err := r.client.Indices.GetFieldMapping(
-		prefixedTags,
+		tags,
 		r.client.Indices.GetFieldMapping.WithContext(ctx),
 		r.client.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
@@ -221,31 +206,33 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 	// To get an idea of how the response looks like, check the unit test at raw_tags_controller_test.go
 
 	result := map[string]*tagsquery.TagValuesResponse{}
-	aggregations := body["aggregations"].(map[string]any)
+
 	tagValueInfos := make(map[string]map[any]tagsquery.TagValueInfo)
 
-	// the aggregation key is the tag's name because that's how we defined the query.
-	// traverse the returned aggregations, bucket by bucket and update the value counts
-	for tag, v := range aggregations {
-		aggregation := v.(map[string]any)
+	if aggregations, ok := body["aggregations"].(map[string]any); ok {
+		// the aggregation key is the tag's name because that's how we defined the query.
+		// traverse the returned aggregations, bucket by bucket and update the value counts
+		for tag, v := range aggregations {
+			aggregation := v.(map[string]any)
 
-		if _, found := tagValueInfos[tag]; !found {
-			tagValueInfos[tag] = make(map[any]tagsquery.TagValueInfo)
-		}
+			if _, found := tagValueInfos[tag]; !found {
+				tagValueInfos[tag] = make(map[any]tagsquery.TagValueInfo)
+			}
 
-		for _, v := range aggregation["buckets"].([]any) {
-			bucket := v.(map[string]any)
-			value := bucket["key"]
-			count := int(bucket["doc_count"].(float64))
+			for _, v := range aggregation["buckets"].([]any) {
+				bucket := v.(map[string]any)
+				value := bucket["key"]
+				count := int(bucket["doc_count"].(float64))
 
-			if info, found := tagValueInfos[tag][value]; !found {
-				tagValueInfos[tag][value] = tagsquery.TagValueInfo{
-					Value: value,
-					Count: count,
+				if info, found := tagValueInfos[tag][value]; !found {
+					tagValueInfos[tag][value] = tagsquery.TagValueInfo{
+						Value: value,
+						Count: count,
+					}
+				} else {
+					info.Count += count
+					tagValueInfos[tag][value] = info
 				}
-			} else {
-				info.Count += count
-				tagValueInfos[tag][value] = info
 			}
 		}
 	}
@@ -260,7 +247,7 @@ func (r *rawTagsController) parseGetTagsValuesResponseBody(
 			})
 		}
 		if currentTagValues != nil {
-			result[removePrefixTag(tag)] = &tagsquery.TagValuesResponse{
+			result[tag] = &tagsquery.TagValuesResponse{
 				Values: currentTagValues,
 			}
 		}

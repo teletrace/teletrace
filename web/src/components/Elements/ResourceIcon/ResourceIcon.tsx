@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 import { ReactComponent as ApiGatewayEndpoint } from "./icons/ApiGatewayEndpoint.svg";
 import { ReactComponent as AWSLambdaFunction } from "./icons/AWSLambdaFunction.svg";
 import { ReactComponent as Custom } from "./icons/Custom.svg";
@@ -15,8 +17,9 @@ import { ReactComponent as Redis } from "./icons/Redis.svg";
 import { ReactComponent as SNS } from "./icons/Sns.svg";
 import { ReactComponent as SQS } from "./icons/Sqs.svg";
 
-interface IconComponentProps {
+interface ResourceIconProps {
   name: string;
+  style?: CSSProperties;
 }
 
 type ReactSVGComponent = React.FunctionComponent<
@@ -45,10 +48,7 @@ const iconTypes: IconTypes = {
   sqs: SQS,
 };
 
-export const ResourceIcon = (data: IconComponentProps) => {
-  const { name } = data;
+export const ResourceIcon = ({ name, style }: ResourceIconProps) => {
   const Icon = iconTypes[name] || iconTypes["defaultresourceicon"];
-  return <Icon height={30} width={30} />;
+  return <Icon style={style} />;
 };
-
-export default ResourceIcon;

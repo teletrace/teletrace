@@ -61,7 +61,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     event.stopPropagation();
-    setSelectedNode(node);
+    setSelectedNode(node.data.graphNode);
     const connectedEdges = getConnectedEdges([node], edges);
     setNodes(
       nodes.map((n: Node<NodeData>) =>
@@ -115,7 +115,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
 
   const onPaneClick = (event: ReactMouseEvent) => {
     event.stopPropagation();
-    setSelectedNode({});
+    setSelectedNode(null);
     setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
     setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
   };
@@ -126,7 +126,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
         <Stack alignItems="center" justifyContent="center" height="100%">
           <CircularProgress />
         </Stack>
-      ) : nodes.length > 0 ? (
+      ) : (
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -143,10 +143,6 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
         >
           <Controls />
         </ReactFlow>
-      ) : (
-        <Stack alignItems="center" justifyContent="center" height="100%">
-          No data to display
-        </Stack>
       )}
     </Box>
   );
