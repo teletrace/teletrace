@@ -144,6 +144,8 @@ func (tw *traceWriter) rollbackTransaction(tx *sql.Tx) {
 }
 
 func hashAttributes(attributes pcommon.Map) (*uint32, error) {
+	// Golang's map implementation deliberately randomizes the order of the keys, so in order to generate a consistent
+	// hash, the keys should be sorted before iterating over the map
 	sortedKeys := make([]string, 0, len(attributes.AsRaw()))
 	for key := range attributes.AsRaw() {
 		sortedKeys = append(sortedKeys, key)
