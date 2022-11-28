@@ -1,7 +1,7 @@
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
-import { Params, useParams } from "react-router-dom";
+import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
 
@@ -18,8 +18,11 @@ interface TraceViewUrlParams extends Params {
 
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
+  const [searchParams] = useSearchParams();
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+
+  const spanId = searchParams.get("spanId");
 
   if (isLoading) {
     return (
@@ -55,8 +58,15 @@ export const TraceView = () => {
           sx={styles.graphSpanDetailsContainer}
           divider={<Divider orientation="vertical" flexItem />}
         >
-          <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
-          <SpanDetailsList spans={selectedNode?.spans} />
+          <TraceGraph
+            setSelectedNode={setSelectedNode}
+            spans={trace}
+            initiallyFocusedSpanId={spanId}
+          />
+          <SpanDetailsList
+            spans={selectedNode?.spans}
+            initiallyFocusedSpanId={spanId}
+          />
         </Stack>
         <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
           <TraceTimeline trace={trace} />
