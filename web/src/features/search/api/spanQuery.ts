@@ -33,6 +33,7 @@ export const updateSpansQuery = async (searchRequest: SearchRequest) => {
 export const useSpansQuery = (searchRequest: SearchRequest) => {
   const res = useInfiniteQuery({
     queryKey: ["spans", searchRequest],
+    keepPreviousData: true,
     queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
   });

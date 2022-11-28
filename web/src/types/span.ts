@@ -15,9 +15,9 @@ export type Scope = {
 };
 
 export enum StatusCode {
-  UNSET = 0,
+  Unset = 0,
   OK = 1,
-  ERROR = 2,
+  Error = 2,
 }
 
 export type SpanStatus = {

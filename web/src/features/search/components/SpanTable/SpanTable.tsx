@@ -1,8 +1,7 @@
+import { LinearProgress } from "@mui/material";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
   MRT_Row as Row,
-  MRT_ShowHideColumnsButton as ShowHideColumnsButton,
-  MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
@@ -84,6 +83,7 @@ export function SpanTable({
 
   const { spans, fetchNextPage, isError, isFetching, isLoading } = spansState;
 
+
   const tableSpans =
     spans?.flatMap(
       ({ resource, span, externalFields }): TableSpan => ({
@@ -121,50 +121,46 @@ export function SpanTable({
   };
 
   return (
-    <MaterialReactTable
-      columns={columns}
-      data={tableSpans}
-      enablePagination={false}
-      enableRowNumbers={false}
-      enableTopToolbar={false}
-      enableColumnActions={false}
-      enableBottomToolbar={false}
-      manualFiltering
-      manualSorting
-      enableStickyHeader={true}
-      enableColumnResizing
-      renderToolbarInternalActions={({ table }) => (
-        <>
-          <ToggleDensePaddingButton table={table} />
-          <ShowHideColumnsButton table={table} />
-        </>
-      )}
-      muiToolbarAlertBannerProps={
-        isError
-          ? {
-              color: "error",
-              children: "Error loading spans",
-            }
-          : undefined
-      }
-      onColumnFiltersChange={setColumnFilters}
-      onGlobalFilterChange={setGlobalFilter}
-      onSortingChange={setSorting}
-      state={{
-        columnFilters,
-        globalFilter,
-        isLoading,
-        showAlertBanner: isError,
-        showProgressBars: isFetching,
-        sorting,
-      }}
-      virtualizerInstanceRef={virtualizerInstanceRef}
-      muiTableContainerProps={{
-        ref: tableWrapperRef,
-        sx: styles.container,
-      }}
-      muiTablePaperProps={{ sx: styles.paper }}
-      muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
-    />
+    <div style={styles.container}>
+      {isRefetching && <LinearProgress sx={styles.progress} />}
+      <MaterialReactTable
+        columns={columns}
+        data={tableSpans}
+        enablePagination={false}
+        enableColumnActions={false}
+        enableRowNumbers={false}
+        enableTopToolbar={false}
+        enableBottomToolbar={false}
+        manualFiltering
+        manualSorting
+        enableStickyHeader={true}
+        enableColumnResizing
+        muiToolbarAlertBannerProps={
+          isError
+            ? {
+                color: "error",
+                children: "Error loading spans",
+              }
+            : undefined
+        }
+        onColumnFiltersChange={setColumnFilters}
+        onGlobalFilterChange={setGlobalFilter}
+        onSortingChange={setSorting}
+        state={{
+          columnFilters,
+          globalFilter,
+          isLoading,
+          showAlertBanner: isError,
+          sorting,
+        }}
+        virtualizerInstanceRef={virtualizerInstanceRef}
+        muiTableContainerProps={{
+          ref: tableWrapperRef,
+          sx: styles.tableContainer,
+        }}
+        muiTablePaperProps={{ sx: styles.tablePaper }}
+        muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
+      />
+    </div>
   );
 }
