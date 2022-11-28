@@ -61,7 +61,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     event.stopPropagation();
-    setSelectedNode(node);
+    setSelectedNode(node.data.graphNode);
     const connectedEdges = getConnectedEdges([node], edges);
     setNodes(
       nodes.map((n: Node<NodeData>) =>
@@ -115,7 +115,7 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
 
   const onPaneClick = (event: ReactMouseEvent) => {
     event.stopPropagation();
-    setSelectedNode({});
+    setSelectedNode(null);
     setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
     setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
   };

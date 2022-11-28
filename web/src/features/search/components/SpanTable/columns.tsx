@@ -1,5 +1,7 @@
 import { MRT_ColumnDef as ColumnDef } from "material-react-table";
 
+import { StatusCode } from "@/types/span";
+
 import { StatusBadge } from "../StatusBadge";
 
 export interface TableSpan {
@@ -15,27 +17,31 @@ export interface TableSpan {
 
 export const columns: ColumnDef<TableSpan>[] = [
   {
+    id: "span.startTimeUnixNano",
     accessorKey: "startTime",
     header: "Start Time",
     enableSorting: true,
   },
   {
+    id: "externalFields.durationNano",
     accessorKey: "duration",
     header: "Duration",
-    enableSorting: false,
+    enableSorting: true,
   },
   {
+    id: "span.name",
     accessorKey: "name",
     header: "Span name",
     enableSorting: false,
   },
   {
+    id: "span.status.code",
     accessorKey: "status",
     header: "Status",
     enableSorting: false,
     Cell: (mrtCell) => {
       const code = mrtCell.cell.getValue();
-      const isSuccessCode = code === 0;
+      const isSuccessCode = code === StatusCode.UNSET || code === StatusCode.OK;
       return (
         <StatusBadge
           color={isSuccessCode ? "success" : "error"}
@@ -45,6 +51,7 @@ export const columns: ColumnDef<TableSpan>[] = [
     },
   },
   {
+    id: "resource.attributes.service.name",
     accessorKey: "serviceName",
     header: "Service Name",
     enableSorting: false,
