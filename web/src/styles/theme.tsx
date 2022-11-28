@@ -167,6 +167,11 @@ theme = createTheme(theme, {
     },
   },
   components: {
+    MuiCssBaseline: {
+      defaultProps: {
+        enableColorScheme: "true",
+      },
+    },
     MuiAutocomplete: {
       styleOverrides: {
         paper: {
@@ -412,6 +417,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         paper: {
           backgroundColor: theme.palette.grey[800],
+          marginTop: "4px",
         },
       },
     },
