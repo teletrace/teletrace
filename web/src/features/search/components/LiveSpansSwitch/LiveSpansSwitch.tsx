@@ -1,4 +1,4 @@
-import { Switch, FormGroup, FormControlLabel } from "@mui/material";
+import { FormControlLabel, FormGroup, Switch } from "@mui/material";
 
 export type LiveSpansProps = {
   isOn: boolean;

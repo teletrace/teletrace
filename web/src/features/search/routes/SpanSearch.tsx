@@ -3,11 +3,11 @@ import { Fragment, useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
 
+import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { SearchFilter, Timeframe } from "../types/common";
-import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;

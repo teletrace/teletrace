@@ -5,20 +5,20 @@ import MaterialReactTable, {
   MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
   Virtualizer,
 } from "material-react-table";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { InternalSpan } from "@/types/span";
 import {
   formatDateAsDateTime,
   nanoSecToMs,
   roundNanoToTwoDecimalMs,
 } from "@/utils/format";
 
-import { useSpansQuery } from "../../api/spanQuery";
+import { updateSpansQuery, useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
-import { TableSpan, columns } from "./columns";
 import { LiveSpansState } from "./../../routes/SpanSearch";
+import { TableSpan, columns } from "./columns";
 import styles from "./styles";
-import { InternalSpan } from "@/types/span";
 
 interface SpanTableProps {
   filters?: SearchFilter[];
@@ -65,36 +65,24 @@ export function SpanTable({
 
   useEffect(() => {
     if (liveSpans.isOn) {
-      const intervalId = setInterval(() => {
+      const intervalId = setInterval(async () => {
         console.log("fetching query with interval");
-        const { data, fetchNextPage, isError, isFetching, isLoading } =
-          useSpansQuery(searchRequest);
+        const spansQueryResult = await updateSpansQuery(searchRequest);
         setSpansState({
-          spans: data?.pages?.flatMap((page) => page.spans) || [],
-          fetchNextPage: fetchNextPage,
-          isError: isError,
-          isFetching: isFetching,
-          isLoading: isLoading,
+          ...spansQueryResult,
+          fetchNextPage: spansState.fetchNextPage,
         });
       }, liveSpans.interval * 1000);
       return () => clearInterval(intervalId);
     }
-  });
+  }, [liveSpans.isOn]);
 
   const spansQueryResult = useSpansQuery(searchRequest);
   useEffect(() => {
-    setSpansState({
-      spans: spansQueryResult.data?.pages?.flatMap((page) => page.spans) || [],
-      fetchNextPage: spansQueryResult.fetchNextPage,
-      isError: spansQueryResult.isError,
-      isFetching: spansQueryResult.isFetching,
-      isLoading: spansQueryResult.isLoading,
-    });
-  }, [setSpansState]);
+    setSpansState(spansQueryResult);
+  });
 
   const { spans, fetchNextPage, isError, isFetching, isLoading } = spansState;
-  //const { data, fetchNextPage, isError, isFetching, isLoading } = useSpansQuery(searchRequest);
-  //const spans = data?.pages?.flatMap((page) => page.spans) || []
 
   const tableSpans =
     spans?.flatMap(

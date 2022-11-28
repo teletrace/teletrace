@@ -1,45 +1,46 @@
-import {
-  useInfiniteQuery,
-  UseInfiniteQueryResult,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
+import { queryClient } from "@/libs/react-query";
 
 import { SearchRequest, SearchResponse } from "../types/spanQuery";
 
-type FetchSpansParams = { pageParam: string; searchRequest: SearchRequest };
+type FetchSpansParams = { searchRequest: SearchRequest; pageParam: string };
 
 export const fetchSpans = ({
-  pageParam,
   searchRequest,
+  pageParam,
 }: FetchSpansParams): Promise<SearchResponse> => {
   searchRequest.metadata = { nextToken: pageParam };
 
   return axiosClient.post("/v1/search", searchRequest);
 };
 
-export const useSpansQuery = (searchRequest: SearchRequest) => {
-  return useInfiniteQuery({
+export const updateSpansQuery = async (searchRequest: SearchRequest) => {
+  const res = await queryClient.fetchInfiniteQuery({
     queryKey: ["spans", searchRequest],
-    queryFn: ({ pageParam }) => fetchSpans({ pageParam, searchRequest }),
+    queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
   });
+  return {
+    spans: res.pages?.flatMap((page) => page.spans) || [],
+    isError: false,
+    isFetching: false,
+    isLoading: false,
+  };
 };
 
-// export const querySpans = (searchRequest: SearchRequest, liveSpans: LiveSpansState) => {
-//   let intervalId: ReturnType<typeof setInterval> | undefined;
-//
-//   if (liveSpans.isOn) {
-//     intervalId = setInterval(() => {
-//       console.log("fetching query interval")
-//       return useSpansQuery(searchRequest);
-//     }, liveSpans.interval * 1000);
-//
-//   } else {
-//     if (intervalId) {
-//       clearInterval(intervalId);
-//     }
-//     console.log("fetching query once")
-//     return useSpansQuery(searchRequest);
-//   };
-// }
+export const useSpansQuery = (searchRequest: SearchRequest) => {
+  const res = useInfiniteQuery({
+    queryKey: ["spans", searchRequest],
+    queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
+    getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
+  });
+  return {
+    spans: res.data?.pages?.flatMap((page) => page.spans) || [],
+    fetchNextPage: res.fetchNextPage,
+    isError: res.isError,
+    isFetching: res.isFetching,
+    isLoading: res.isLoading,
+  };
+};
