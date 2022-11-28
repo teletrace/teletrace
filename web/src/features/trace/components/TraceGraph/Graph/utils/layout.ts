@@ -85,7 +85,7 @@ const createGraphNode = (
     serviceName: nodeData.name,
     systemType: nodeData.type,
     image: nodeData.image,
-    hasError: internalSpan.span.status.code !== 0,
+    hasError: internalSpan.span.status.code === 2,
     duration: internalSpan.externalFields.durationNano,
     spans: [{ ...internalSpan }],
   };
@@ -175,6 +175,7 @@ const createEdge = (
     data: {
       time: `${Math.round(duration / 1000000)}ms`,
       count: 1,
+      hasError: hasError,
     },
     style: {
       stroke: hasError ? EdgeColor.ERROR : EdgeColor.NORMAL,
