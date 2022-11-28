@@ -48,24 +48,35 @@ func (tw *traceWriter) WriteTraces(traces ptrace.Traces) error {
 			tw.logger.Error("failed to hash resource attributes", zap.NamedError("reason", err))
 			return err
 		}
-		droppedResourceAttributesCount := resourceSpans.Resource().DroppedAttributesCount()
-		if err := tw.writeAttributes(tx, resourceSpans.Resource().Attributes(), repository.Resource, resourceId); err != nil {
-			tw.rollbackTransaction(tx)
-			return err
-		}
-		scopeSpansSlice := resourceSpans.ScopeSpans()
-		for j := 0; j < scopeSpansSlice.Len(); j++ {
-			scopeSpans := scopeSpansSlice.At(j)
-			if err = tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, *resourceId); err != nil {
-				tw.rollbackTransaction(tx)
-				return err
+		if err := tw.writeResourceSpans(resourceSpans, tx, resourceId, err); err != nil {
+			if err := tx.Rollback(); err != nil {
+				tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+				panic(err)
 			}
+			return err
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		tw.logger.Error("failed to commit transaction", zap.NamedError("reason", err))
 		return err
+	}
+
+	return nil
+}
+
+func (tw *traceWriter) writeResourceSpans(
+	resourceSpans ptrace.ResourceSpans, tx *sql.Tx, resourceId *uint32, err error) error {
+	droppedResourceAttributesCount := resourceSpans.Resource().DroppedAttributesCount()
+	if err := tw.writeAttributes(tx, resourceSpans.Resource().Attributes(), repository.Resource, resourceId); err != nil {
+		return err
+	}
+	scopeSpansSlice := resourceSpans.ScopeSpans()
+	for j := 0; j < scopeSpansSlice.Len(); j++ {
+		scopeSpans := scopeSpansSlice.At(j)
+		if err = tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, *resourceId); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -160,12 +171,6 @@ func (tw *traceWriter) writeAttributes(
 	}
 
 	return nil
-}
-
-func (tw *traceWriter) rollbackTransaction(tx *sql.Tx) {
-	if err := tx.Rollback(); err != nil {
-		tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
-	}
 }
 
 func hashAttributes(attributes pcommon.Map) (*uint32, error) {
