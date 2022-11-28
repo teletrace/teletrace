@@ -20,6 +20,7 @@ RUN yarn install --network-timeout 1000000
 COPY web/ .
 
 # Build the app
+ENV API_URL="/"
 RUN yarn build
 
 
