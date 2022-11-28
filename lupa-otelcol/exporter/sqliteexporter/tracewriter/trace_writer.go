@@ -50,7 +50,7 @@ func (tw *traceWriter) WriteTraces(traces ptrace.Traces) error {
 		}
 		if err := tw.writeResourceSpans(resourceSpans, tx, resourceId, err); err != nil {
 			if err := tx.Rollback(); err != nil {
-				tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
+				tw.logger.Fatal("failed to rollback transaction", zap.NamedError("reason", err))
 				panic(err)
 			}
 			return err
