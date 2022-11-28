@@ -1,12 +1,12 @@
 import { Divider, Stack } from "@mui/material";
 import { Fragment, useCallback, useState } from "react";
 
+import { Head } from "@/components/Head";
+
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { SearchFilter, Timeframe } from "../types/common";
-
-import { Head } from "@/components/Head";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;

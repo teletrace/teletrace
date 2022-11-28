@@ -6,16 +6,16 @@ import MaterialReactTable, {
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
 
-import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/common";
-import { TableSpan, columns } from "./columns";
-import styles from "./styles";
-
 import {
   formatDateAsDateTime,
   nanoSecToMs,
   roundNanoToTwoDecimalMs,
 } from "@/utils/format";
+
+import { useSpansQuery } from "../../api/spanQuery";
+import { SearchFilter, Timeframe } from "../../types/common";
+import { TableSpan, columns } from "./columns";
+import styles from "./styles";
 
 interface SpanTableProps {
   filters?: SearchFilter[];
