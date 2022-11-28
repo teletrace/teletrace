@@ -46,61 +46,79 @@ func (tw *traceWriter) WriteTraces(traces ptrace.Traces) error {
 		resourceId, err := hashAttributes(resourceAttributes) // Generating a resource identifier to store with each span
 		if err != nil || resourceId == nil {
 			tw.logger.Error("failed to hash resource attributes", zap.NamedError("reason", err))
+			return err
 		}
 		droppedResourceAttributesCount := resourceSpans.Resource().DroppedAttributesCount()
+		if err := tw.writeAttributes(tx, resourceSpans.Resource().Attributes(), repository.Resource, resourceId); err != nil {
+			tw.rollbackTransaction(tx)
+			return err
+		}
 		scopeSpansSlice := resourceSpans.ScopeSpans()
 		for j := 0; j < scopeSpansSlice.Len(); j++ {
 			scopeSpans := scopeSpansSlice.At(j)
-			tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, *resourceId)
+			if err = tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, *resourceId); err != nil {
+				tw.rollbackTransaction(tx)
+				return err
+			}
 		}
-		tw.writeAttributes(tx, resourceSpans.Resource().Attributes(), repository.Resource, resourceId)
 	}
 
 	if err := tx.Commit(); err != nil {
 		tw.logger.Error("failed to commit transaction", zap.NamedError("reason", err))
+		return err
 	}
 
 	return nil
 }
 
 func (tw *traceWriter) writeScope(
-	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId uint32) {
+	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId uint32) error {
 	scope := scopeSpans.Scope()
 	scopeId, err := repository.InsertScope(tx, scope)
 	if err != nil || scopeId == nil {
-		tw.rollbackTransaction(tx)
 		tw.logger.Error("could not insert scope", zap.NamedError("reason", err))
+		return err
 	}
 
-	tw.writeAttributes(tx, scope.Attributes(), repository.Scope, scopeId)
+	if err := tw.writeAttributes(tx, scope.Attributes(), repository.Scope, scopeId); err != nil {
+		return err
+	}
 
 	spanSlice := scopeSpans.Spans()
 	for k := 0; k < spanSlice.Len(); k++ {
 		span := spanSlice.At(k)
-		tw.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, *scopeId)
+		if err := tw.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, *scopeId); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 func (tw *traceWriter) writeSpan(
-	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uint32, scopeId int64) {
+	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uint32, scopeId int64) error {
 	spanId := span.SpanID().HexString()
 	if err := repository.InsertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceId, scopeId); err != nil {
-		tw.rollbackTransaction(tx)
 		tw.logger.Error("could not insert span", zap.NamedError("reason", err))
+		return err
 	}
 
-	tw.writeAttributes(tx, span.Attributes(), repository.Span, spanId)
+	if err := tw.writeAttributes(tx, span.Attributes(), repository.Span, spanId); err != nil {
+		return err
+	}
 
 	spanEventSlice := span.Events()
 	for i := 0; i < spanEventSlice.Len(); i++ {
 		spanEvent := spanEventSlice.At(i)
 		eventId, err := repository.InsertEvent(tx, spanEvent, spanId)
 		if err != nil || eventId == nil {
-			tw.rollbackTransaction(tx)
 			tw.logger.Error("could not insert event", zap.NamedError("reason", err))
+			return err
 		}
 
-		tw.writeAttributes(tx, spanEvent.Attributes(), repository.Event, eventId)
+		if err := tw.writeAttributes(tx, spanEvent.Attributes(), repository.Event, eventId); err != nil {
+			return err
+		}
 	}
 
 	spanLinkSlice := span.Links()
@@ -108,15 +126,20 @@ func (tw *traceWriter) writeSpan(
 		spanLink := spanLinkSlice.At(i)
 		linkId, err := repository.InsertLink(tx, spanLink, spanId)
 		if err != nil {
-			tw.rollbackTransaction(tx)
 			tw.logger.Error("could not insert event", zap.NamedError("reason", err))
+			return err
 		}
 
-		tw.writeAttributes(tx, spanLink.Attributes(), repository.Link, linkId)
+		if err := tw.writeAttributes(tx, spanLink.Attributes(), repository.Link, linkId); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
-func (tw *traceWriter) writeAttributes(tx *sql.Tx, attributes pcommon.Map, attributeKind repository.AttributeKind, id any) {
+func (tw *traceWriter) writeAttributes(
+	tx *sql.Tx, attributes pcommon.Map, attributeKind repository.AttributeKind, id any) error {
 	for key := range attributes.AsRaw() {
 		value, _ := attributes.Get(key)
 
@@ -126,15 +149,17 @@ func (tw *traceWriter) writeAttributes(tx *sql.Tx, attributes pcommon.Map, attri
 		}
 
 		if err := repository.InsertAttribute(tx, attributeKind, id, key, finalValue, value.Type().String()); err != nil {
-			tw.rollbackTransaction(tx)
 			tw.logger.Error(
 				"could not insert attribute",
 				zap.String("attributeKind", string(attributeKind)),
 				zap.String("attributeKey", key),
 				zap.String("attributeValue", value.AsString()),
 				zap.NamedError("reason", err))
+			return err
 		}
 	}
+
+	return nil
 }
 
 func (tw *traceWriter) rollbackTransaction(tx *sql.Tx) {
