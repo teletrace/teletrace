@@ -24,7 +24,7 @@ func Migrate(dbName string) error {
 		return fmt.Errorf("could not create migrate instance: %+v", err)
 	}
 
-	if err = m.Up(); err != nil {
+	if err = m.Up(); err != nil && err != migrate.ErrNoChange {
 		return fmt.Errorf("could not migrate db: %+v", err)
 	}
 
