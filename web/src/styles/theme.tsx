@@ -412,6 +412,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         paper: {
           backgroundColor: theme.palette.grey[800],
+          marginTop: "4px",
         },
       },
     },
