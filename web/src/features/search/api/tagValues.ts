@@ -44,6 +44,7 @@ export const useTagValues = (
       tagValuesRequest.timeframe.endTimeUnixNanoSec,
       tagValuesRequest.filters,
     ],
+    keepPreviousData: true,
     queryFn: ({ pageParam }) =>
       fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken,

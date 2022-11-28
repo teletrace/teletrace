@@ -167,6 +167,11 @@ theme = createTheme(theme, {
     },
   },
   components: {
+    MuiCssBaseline: {
+      defaultProps: {
+        enableColorScheme: "true",
+      },
+    },
     MuiAutocomplete: {
       styleOverrides: {
         paper: {
