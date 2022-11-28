@@ -16,7 +16,7 @@ import {
 import { updateSpansQuery, useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { LiveSpansState } from "./../../routes/SpanSearch";
-import { TableSpan, columns } from "./columns";
+import { columns, TableSpan } from "./columns";
 import styles from "./styles";
 
 interface SpanTableProps {
@@ -82,7 +82,6 @@ export function SpanTable({
   });
 
   const { spans, fetchNextPage, isError, isFetching, isLoading } = spansState;
-
 
   const tableSpans =
     spans?.flatMap(
