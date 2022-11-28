@@ -9,6 +9,8 @@ processors:
 
 exporters:
   sqlite:
+    db:
+      path: /
 
 service:
   pipelines:

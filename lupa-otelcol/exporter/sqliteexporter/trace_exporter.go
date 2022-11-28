@@ -21,7 +21,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 		return nil, err
 	}
 
-	dbName := "embedded_spans"
+	dbName := fmt.Sprintf("%sembedded_spans", cfg.DBSettings.Path)
 
 	if err := repository.Migrate(dbName); err != nil {
 		return nil, fmt.Errorf("could not migrate DB: %+v", err)
