@@ -18,6 +18,7 @@ require (
 	github.com/epsagon/lupa/lupa-otelcol v0.0.0-00010101000000-000000000000
 	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333
 	github.com/gin-contrib/cors v1.4.0
+	golang.org/x/exp v0.0.0-20221114191408-850992195362
 )
 
 require (
@@ -69,7 +70,6 @@ require (
 	go.opentelemetry.io/otel/metric v0.33.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.11.1 // indirect
 	go.opentelemetry.io/otel/sdk/metric v0.33.0 // indirect
-	golang.org/x/exp v0.0.0-20221114191408-850992195362 // indirect
 	google.golang.org/genproto v0.0.0-20221027153422-115e99e71e1c // indirect
 )
 
@@ -92,6 +92,7 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
+	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
