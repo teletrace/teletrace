@@ -7,12 +7,12 @@ import { styles } from "./styles";
 
 interface SpanDetailsListProps {
   spans?: InternalSpan[];
-  initallyFocusedSpanId?: string;
+  initiallyFocusedSpanId: string | null;
 }
 
 export const SpanDetailsList = ({
   spans,
-  initallyFocusedSpanId,
+  initiallyFocusedSpanId,
 }: SpanDetailsListProps) => {
   return (
     <Box sx={styles.container}>
@@ -21,7 +21,7 @@ export const SpanDetailsList = ({
           <SpanDetails
             key={span.span.spanId}
             span={span}
-            startExpanded={span.span.spanId === initallyFocusedSpanId}
+            startExpanded={span.span.spanId === initiallyFocusedSpanId}
           />
         ))
       ) : (

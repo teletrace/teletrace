@@ -22,7 +22,7 @@ export const TraceView = () => {
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
 
-  const spanId = searchParams.get("spanId") ?? undefined;
+  const spanId = searchParams.get("spanId");
 
   if (isLoading) {
     return (
@@ -61,11 +61,11 @@ export const TraceView = () => {
           <TraceGraph
             setSelectedNode={setSelectedNode}
             spans={trace}
-            initallyFocusedSpanId={spanId}
+            initiallyFocusedSpanId={spanId}
           />
           <SpanDetailsList
             spans={selectedNode?.spans}
-            initallyFocusedSpanId={spanId}
+            initiallyFocusedSpanId={spanId}
           />
         </Stack>
         <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>

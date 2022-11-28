@@ -21,7 +21,7 @@ import { styles } from "./styles";
 
 export interface SpanDetailsProps {
   span: InternalSpan;
-  startExpanded?: boolean;
+  startExpanded: boolean;
 }
 
 function getBasicAttributes(span: InternalSpan): Attributes {

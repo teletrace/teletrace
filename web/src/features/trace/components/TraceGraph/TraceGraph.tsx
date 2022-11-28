@@ -36,7 +36,7 @@ const edgeTypes = { basicEdge: BasicEdge };
 const TraceGraphImpl = ({
   setSelectedNode,
   spans,
-  initallyFocusedSpanId,
+  initiallyFocusedSpanId,
 }: TraceGraphParams) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
@@ -64,22 +64,19 @@ const TraceGraphImpl = ({
   }, [traceData]);
 
   useEffect(() => {
-    if (initallyFocusedSpanId === undefined) {
+    if (!initiallyFocusedSpanId) {
       return;
     }
 
-    traceData.nodes.some((node) => {
-      if (
-        node.data.graphNode.spans.some((span) => {
-          if (span.span.spanId === initallyFocusedSpanId) {
-            markSelectedNode(traceData.nodes, traceData.edges, node);
-            return true;
-          }
-        })
-      ) {
-        return true;
+    for (const node of traceData.nodes) {
+      const isSpanWithinNode = node.data.graphNode.spans.some(
+        (span) => span.span.spanId === initiallyFocusedSpanId
+      );
+      if (isSpanWithinNode) {
+        markSelectedNode(traceData.nodes, traceData.edges, node);
+        break;
       }
-    });
+    }
   }, [traceData]);
 
   const markSelectedNode = (
