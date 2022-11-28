@@ -33,7 +33,11 @@ import "reactflow/dist/style.css";
 const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
-const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
+const TraceGraphImpl = ({
+  setSelectedNode,
+  spans,
+  initiallyFocusedSpanId,
+}: TraceGraphParams) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
@@ -59,13 +63,34 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
     setEdges(traceData.edges);
   }, [traceData]);
 
-  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    setSelectedNode(node.data.graphNode);
-    const connectedEdges = getConnectedEdges([node], edges);
+  useEffect(() => {
+    if (!initiallyFocusedSpanId) {
+      return;
+    }
+
+    for (const node of traceData.nodes) {
+      const isSpanWithinNode = node.data.graphNode.spans.some(
+        (span) => span.span.spanId === initiallyFocusedSpanId
+      );
+      if (isSpanWithinNode) {
+        markSelectedNode(traceData.nodes, traceData.edges, node);
+        break;
+      }
+    }
+  }, [traceData]);
+
+  const markSelectedNode = (
+    nodes: Node<NodeData>[],
+    edges: Edge<EdgeData>[],
+    selectedNode: Node<NodeData>
+  ) => {
+    setSelectedNode(selectedNode.data.graphNode);
+    const connectedEdges = getConnectedEdges([selectedNode], edges);
     setNodes(
       nodes.map((n: Node<NodeData>) =>
-        n.id === node.id ? applySelectedNodeStyle(n) : applyNormalNodeStyle(n)
+        n.id === selectedNode.id
+          ? applySelectedNodeStyle(n)
+          : applyNormalNodeStyle(n)
       )
     );
     setEdges(
@@ -75,6 +100,11 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
           : applyNormalEdgeStyle(e)
       )
     );
+  };
+
+  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
+    event.stopPropagation();
+    markSelectedNode(nodes, edges, node);
   };
 
   const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {

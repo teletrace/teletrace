@@ -17,6 +17,7 @@ export const fetchSpans = ({
 export const useSpansQuery = (searchRequest: SearchRequest) => {
   return useInfiniteQuery({
     queryKey: ["spans", searchRequest],
+    keepPreviousData: true,
     queryFn: ({ pageParam }) => fetchSpans({ pageParam, searchRequest }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
   });
