@@ -36,7 +36,7 @@ const edgeTypes = { basicEdge: BasicEdge };
 const TraceGraphImpl = ({
   setSelectedNode,
   spans,
-  selectedSpanId,
+  initallyFocusedSpanId,
 }: TraceGraphParams) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
@@ -64,16 +64,25 @@ const TraceGraphImpl = ({
   }, [traceData]);
 
   useEffect(() => {
-    traceData.nodes.map((node) =>
-      node.data.graphNode.spans.map((span) => {
-        if (span.span.spanId === selectedSpanId) {
-          markSelected(traceData.nodes, traceData.edges, node);
-        }
-      })
-    );
+    if (initallyFocusedSpanId === undefined) {
+      return;
+    }
+
+    traceData.nodes.some((node) => {
+      if (
+        node.data.graphNode.spans.some((span) => {
+          if (span.span.spanId === initallyFocusedSpanId) {
+            markSelectedNode(traceData.nodes, traceData.edges, node);
+            return true;
+          }
+        })
+      ) {
+        return true;
+      }
+    });
   }, [traceData]);
 
-  const markSelected = (
+  const markSelectedNode = (
     nodes: Node<NodeData>[],
     edges: Edge<EdgeData>[],
     selectedNode: Node<NodeData>
@@ -98,7 +107,7 @@ const TraceGraphImpl = ({
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     event.stopPropagation();
-    markSelected(nodes, edges, node);
+    markSelectedNode(nodes, edges, node);
   };
 
   const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {

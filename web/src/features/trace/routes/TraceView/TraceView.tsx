@@ -18,11 +18,11 @@ interface TraceViewUrlParams extends Params {
 
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
+  const [searchParams] = useSearchParams();
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
-  const [searchParams] = useSearchParams();
 
-  const spanId = searchParams.get("spanId") as string;
+  const spanId = searchParams.get("spanId") ?? undefined;
 
   if (isLoading) {
     return (
@@ -61,11 +61,11 @@ export const TraceView = () => {
           <TraceGraph
             setSelectedNode={setSelectedNode}
             spans={trace}
-            selectedSpanId={spanId}
+            initallyFocusedSpanId={spanId}
           />
           <SpanDetailsList
             spans={selectedNode?.spans}
-            selectedSpanId={spanId}
+            initallyFocusedSpanId={spanId}
           />
         </Stack>
         <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
