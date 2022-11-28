@@ -12,20 +12,24 @@ import { theme } from "@/styles";
 
 export type AppProvidersProps = {
   children: React.ReactNode;
+  isStorybook?: boolean;
 };
 
 const ErrorFallback = () => (
   <div>Oops, something went wrong! try refreshing</div>
 );
 
-export const AppProviders = ({ children }: AppProvidersProps) => (
+export const AppProviders = ({
+  children,
+  isStorybook = false,
+}: AppProvidersProps) => (
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <Suspense fallback={<Loader />}>
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
-            {process.env.NODE_ENV !== "test" && (
+            {process.env.NODE_ENV !== "test" && !isStorybook && (
               <ReactQueryDevtools position="bottom-right" />
             )}
             <BrowserRouter>{children}</BrowserRouter>
