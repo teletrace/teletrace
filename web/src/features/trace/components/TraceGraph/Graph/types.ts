@@ -28,6 +28,7 @@ export interface EdgeData {
 export interface TraceGraphParams {
   setSelectedNode: React.Dispatch<React.SetStateAction<GraphNode | null>>;
   spans: InternalSpan[];
+  initiallyFocusedSpanId: string | null;
 }
 
 export enum EdgeColor {
