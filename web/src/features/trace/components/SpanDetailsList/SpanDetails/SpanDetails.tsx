@@ -9,9 +9,12 @@ import {
 } from "@mui/material";
 import { useMemo, useState } from "react";
 
-import { ReactComponent as DefaultResourceIcon } from "@/components/Elements/ResourceIcon/icons/DefaultResourceIcon.svg";
+import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
-import { roundNanoToTwoDecimalMs } from "@/utils/format";
+import {
+  formatNanoAsMsDateTime,
+  roundNanoToTwoDecimalMs,
+} from "@/utils/format";
 
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
 import { styles } from "./styles";
@@ -27,7 +30,7 @@ function getBasicAttributes(span: InternalSpan): Attributes {
     status: StatusCode[span.span.status.code],
     kind: SpanKind[span.span.kind],
     duration: `${roundNanoToTwoDecimalMs(span.externalFields.durationNano)}ms`,
-    start_time: span.span.startTimeUnixNano,
+    start_time: formatNanoAsMsDateTime(span.span.startTimeUnixNano),
     span_id: span.span.spanId,
     trace_id: span.span.traceId,
   };
@@ -57,18 +60,24 @@ export const SpanDetails = ({ span }: SpanDetailsProps) => {
         }}
       >
         <Stack sx={styles.spanFlowIconsContainer}>
-          <DefaultResourceIcon style={styles.spanSourceIcon} />
+          <ResourceIcon
+            name="defaultresourceicon"
+            style={styles.spanSourceIcon}
+          />
           <ArrowForward style={styles.spanFlowArrowIcon} />
-          <DefaultResourceIcon style={styles.spanDestIcon} />
+          <ResourceIcon
+            name="defaultresourceicon"
+            style={styles.spanDestIcon}
+          />
         </Stack>
         <Stack>
           <Typography sx={styles.spanName}>{span.span.name}</Typography>
           <Typography sx={styles.spanTimes}>
-            {`${roundNanoToTwoDecimalMs(span.externalFields.durationNano)}ms`}{" "}
+            {basicAttributes.duration}{" "}
             <Box component={"span"} sx={styles.spanTimesDivider}>
               {X_DIVIDER}
             </Box>{" "}
-            {span.span.startTimeUnixNano}
+            {basicAttributes.start_time}
           </Typography>
         </Stack>
       </AccordionSummary>

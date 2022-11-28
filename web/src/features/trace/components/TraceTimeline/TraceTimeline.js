@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 import TimelineViewer from "./TimelineViewer";
-import { FETCHED_STATE } from "./utils/constants.js";
 import { transformTraceData } from "./utils/trace";
 
 export function TraceTimeline({ trace }) {
   const [selectedSpan, setSelectedSpan] = useState(null);
-  const [traceData, setTraceData] = useState({});
   const [traceState, setTraceState] = useState({
     childrenHiddenIDs: new Set(),
     detailStates: new Map(),
@@ -15,24 +13,7 @@ export function TraceTimeline({ trace }) {
     spanNameColumnWidth: 0.25,
   });
 
-  useEffect(() => {
-    const loadTrace = async () => {
-      setTraceData({ state: FETCHED_STATE.LOADING });
-      if (!trace) {
-        setTraceData({
-          error: new Error("Invalid trace data received."),
-          state: FETCHED_STATE.ERROR,
-        });
-      } else {
-        setTraceData({
-          data: transformTraceData(trace),
-          state: FETCHED_STATE.DONE,
-        });
-      }
-    };
-
-    loadTrace();
-  }, []);
+  const transformedTrace = useMemo(() => transformTraceData(trace), [trace]);
 
   const setColumnWidth = (width) => {
     const newTraceState = { ...traceState, spanNameColumnWidth: width };
@@ -98,7 +79,7 @@ export function TraceTimeline({ trace }) {
 
   return (
     <TimelineViewer
-      trace={traceData}
+      trace={transformedTrace}
       activeSpan={selectedSpan?.spanID}
       setActiveTimelineState={setSelectedSpan}
       setColumnWidth={setColumnWidth}
