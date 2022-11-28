@@ -9,6 +9,7 @@ import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
+	"sort"
 )
 
 type TraceWriter interface {
@@ -143,8 +144,15 @@ func (tw *traceWriter) rollbackTransaction(tx *sql.Tx) {
 }
 
 func hashAttributes(attributes pcommon.Map) (*uint32, error) {
-	hash := sha256.New()
+	sortedKeys := make([]string, 0, len(attributes.AsRaw()))
 	for key := range attributes.AsRaw() {
+		sortedKeys = append(sortedKeys, key)
+	}
+
+	sort.Strings(sortedKeys)
+
+	hash := sha256.New()
+	for _, key := range sortedKeys {
 		value, exists := attributes.Get(key)
 		if !exists {
 			return nil, fmt.Errorf("failed to retrieve value for '%s'", key)
