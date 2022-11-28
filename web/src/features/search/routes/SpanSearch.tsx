@@ -7,10 +7,16 @@ import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { SearchFilter, Timeframe } from "../types/common";
+import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;
   timeframe: Timeframe;
+};
+
+export type LiveSpansState = {
+  isOn: boolean;
+  interval: number;
 };
 
 export const SpanSearch = () => {
@@ -22,6 +28,12 @@ export const SpanSearch = () => {
       startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
       endTimeUnixNanoSec: now * 1000 * 1000,
     },
+  });
+
+  const defaultLiveSpansInterval = 5;
+  const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
+    isOn: false,
+    interval: defaultLiveSpansInterval,
   });
 
   const onFilterChange = useCallback(
@@ -53,6 +65,11 @@ export const SpanSearch = () => {
     },
     [setFiltersState]
   );
+
+  const toggleLiveSpans = (isOn: boolean) =>
+    setLiveSpansState((prevState) => ({ ...prevState, isOn: isOn }));
+  const setLiveSpansInterval = (interval: number) =>
+    setLiveSpansState((prevState) => ({ ...prevState, interval: interval }));
 
   return (
     <Fragment>
@@ -89,6 +106,11 @@ export const SpanSearch = () => {
           <SpanTable
             timeframe={filtersState.timeframe}
             filters={filtersState.filters}
+            liveSpans={liveSpansState}
+          />
+          <LiveSpanSwitch
+            isOn={liveSpansState.isOn}
+            onLiveSpansChange={toggleLiveSpans}
           />
         </Stack>
       </Stack>

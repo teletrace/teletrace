@@ -1,17 +1,18 @@
 import { Switch, FormGroup, FormControlLabel } from "@mui/material";
-import { useState } from "react";
 
-export function LiveSpanSwitch() {
-  const [liveSpansMode, setLiveSpansMode] = useState(false);
+export type LiveSpansProps = {
+  isOn: boolean;
+  onLiveSpansChange: (isOn: boolean) => void;
+};
 
+export function LiveSpanSwitch({ isOn, onLiveSpansChange }: LiveSpansProps) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLiveSpansMode(event.target.checked);
+    onLiveSpansChange(event.target.checked);
   };
-
   return (
     <FormGroup>
       <FormControlLabel
-        control={<Switch onChange={handleChange} defaultChecked />}
+        control={<Switch onChange={handleChange} checked={isOn} />}
         label="Live Spans"
       />
     </FormGroup>
