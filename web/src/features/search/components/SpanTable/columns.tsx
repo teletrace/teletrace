@@ -41,7 +41,7 @@ export const columns: ColumnDef<TableSpan>[] = [
     enableSorting: false,
     Cell: (mrtCell) => {
       const code = mrtCell.cell.getValue();
-      const isSuccessCode = code === StatusCode.UNSET || code === StatusCode.OK;
+      const isSuccessCode = code === StatusCode.Unset || code === StatusCode.OK;
       return (
         <StatusBadge
           color={isSuccessCode ? "success" : "error"}
