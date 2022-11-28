@@ -119,7 +119,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           ref: tableWrapperRef,
           sx: styles.tableContainer,
         }}
-        muiTablePaperProps={{ sx: styles.paper }}
+        muiTablePaperProps={{ sx: styles.tablePaper }}
         muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
       />
     </div>
