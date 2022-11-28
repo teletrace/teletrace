@@ -1,10 +1,11 @@
 package tracewriter
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/binary"
 	"fmt"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
-	"github.com/google/uuid"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
@@ -40,12 +41,16 @@ func (tw *traceWriter) WriteTraces(traces ptrace.Traces) error {
 	resourceSpansSlice := traces.ResourceSpans()
 	for i := 0; i < resourceSpansSlice.Len(); i++ {
 		resourceSpans := resourceSpansSlice.At(i)
-		resourceId := uuid.New() // Generating a resource identifier to store with each span
+		resourceAttributes := resourceSpans.Resource().Attributes()
+		resourceId, err := hashAttributes(resourceAttributes) // Generating a resource identifier to store with each span
+		if err != nil || resourceId == nil {
+			tw.logger.Error("failed to hash resource attributes", zap.NamedError("reason", err))
+		}
 		droppedResourceAttributesCount := resourceSpans.Resource().DroppedAttributesCount()
 		scopeSpansSlice := resourceSpans.ScopeSpans()
 		for j := 0; j < scopeSpansSlice.Len(); j++ {
 			scopeSpans := scopeSpansSlice.At(j)
-			tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, resourceId)
+			tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, *resourceId)
 		}
 		tw.writeAttributes(tx, resourceSpans.Resource().Attributes(), repository.Resource, resourceId)
 	}
@@ -58,7 +63,7 @@ func (tw *traceWriter) WriteTraces(traces ptrace.Traces) error {
 }
 
 func (tw *traceWriter) writeScope(
-	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId uuid.UUID) {
+	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId uint32) {
 	scope := scopeSpans.Scope()
 	scopeId, err := repository.InsertScope(tx, scope)
 	if err != nil || scopeId == nil {
@@ -71,14 +76,14 @@ func (tw *traceWriter) writeScope(
 	spanSlice := scopeSpans.Spans()
 	for k := 0; k < spanSlice.Len(); k++ {
 		span := spanSlice.At(k)
-		tw.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, scopeId)
+		tw.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, *scopeId)
 	}
 }
 
 func (tw *traceWriter) writeSpan(
-	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uuid.UUID, scopeId *int64) {
+	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uint32, scopeId int64) {
 	spanId := span.SpanID().HexString()
-	if err := repository.InsertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceId, *scopeId); err != nil {
+	if err := repository.InsertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceId, scopeId); err != nil {
 		tw.rollbackTransaction(tx)
 		tw.logger.Error("could not insert span", zap.NamedError("reason", err))
 	}
@@ -135,4 +140,18 @@ func (tw *traceWriter) rollbackTransaction(tx *sql.Tx) {
 	if err := tx.Rollback(); err != nil {
 		tw.logger.Error("failed to rollback transaction", zap.NamedError("reason", err))
 	}
+}
+
+func hashAttributes(attributes pcommon.Map) (*uint32, error) {
+	hash := sha256.New()
+	for key := range attributes.AsRaw() {
+		value, exists := attributes.Get(key)
+		if !exists {
+			return nil, fmt.Errorf("failed to retrieve value for '%s'", key)
+		}
+		hash.Write([]byte(value.AsString()))
+	}
+
+	hashAsUint32 := binary.BigEndian.Uint32(hash.Sum(nil))
+	return &hashAsUint32, nil
 }

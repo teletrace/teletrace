@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"time"
@@ -75,7 +74,7 @@ func InsertAttribute(tx *sql.Tx, attributeKind AttributeKind, id any, key string
 }
 
 func InsertSpan(
-	tx *sql.Tx, span ptrace.Span, spanId string, droppedResourceAttributesCount uint32, resourceId uuid.UUID,
+	tx *sql.Tx, span ptrace.Span, spanId string, droppedResourceAttributesCount uint32, resourceId uint32,
 	scopeId int64,
 ) error {
 	duration := span.EndTimestamp() - span.StartTimestamp()

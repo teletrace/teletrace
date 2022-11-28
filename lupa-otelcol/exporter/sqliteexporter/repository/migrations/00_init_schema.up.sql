@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS spans (
      duration INTEGER NOT NULL,
      ingestion_time_unix_nano INTEGER NOT NULL,
      instrumentation_scope_id INTEGER NOT NULL,
-     resource_id TEXT NOT NULL,
+     resource_id INTEGER NOT NULL,
      FOREIGN KEY(instrumentation_scope_id) REFERENCES scopes(id)
 );
 
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS span_attributes (
 );
 
 CREATE TABLE IF NOT EXISTS resource_attributes (
-    resource_id TEXT NOT NULL,
+    resource_id INTEGER NOT NULL,
     key TEXT NOT NULL,
     value BLOB,
     type TEXT NOT NULL
