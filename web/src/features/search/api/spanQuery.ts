@@ -26,6 +26,7 @@ export const updateSpansQuery = async (searchRequest: SearchRequest) => {
     spans: res.pages?.flatMap((page) => page.spans) || [],
     isError: false,
     isFetching: false,
+    isRefetching: false,
     isLoading: false,
   };
 };
@@ -42,6 +43,7 @@ export const useSpansQuery = (searchRequest: SearchRequest) => {
     fetchNextPage: res.fetchNextPage,
     isError: res.isError,
     isFetching: res.isFetching,
+    isRefetching: res.isRefetching,
     isLoading: res.isLoading,
   };
 };

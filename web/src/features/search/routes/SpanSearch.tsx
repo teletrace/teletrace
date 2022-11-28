@@ -69,8 +69,8 @@ export const SpanSearch = () => {
 
   const toggleLiveSpans = (isOn: boolean) =>
     setLiveSpansState((prevState) => ({ ...prevState, isOn: isOn }));
-  const setLiveSpansInterval = (interval: number) =>
-    setLiveSpansState((prevState) => ({ ...prevState, interval: interval }));
+  // const setLiveSpansInterval = (interval: number) =>
+  // setLiveSpansState((prevState) => ({ ...prevState, interval: interval }));
 
   return (
     <Fragment>

@@ -16,7 +16,7 @@ import {
 import { updateSpansQuery, useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { LiveSpansState } from "./../../routes/SpanSearch";
-import { columns, TableSpan } from "./columns";
+import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
 interface SpanTableProps {
@@ -27,9 +27,10 @@ interface SpanTableProps {
 
 interface FetchSpansResult {
   spans: InternalSpan[];
-  fetchNextPage: Function;
+  fetchNextPage: () => void;
   isError: boolean;
   isFetching: boolean;
+  isRefetching: boolean;
   isLoading: boolean;
 }
 
@@ -49,6 +50,7 @@ export function SpanTable({
     fetchNextPage: () => null,
     isError: false,
     isFetching: false,
+    isRefetching: false,
     isLoading: false,
   });
 
@@ -81,7 +83,8 @@ export function SpanTable({
     setSpansState(spansQueryResult);
   });
 
-  const { spans, fetchNextPage, isError, isFetching, isLoading } = spansState;
+  const { spans, fetchNextPage, isError, isFetching, isRefetching, isLoading } =
+    spansState;
 
   const tableSpans =
     spans?.flatMap(
