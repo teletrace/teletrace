@@ -7,13 +7,23 @@ import { styles } from "./styles";
 
 interface SpanDetailsListProps {
   spans?: InternalSpan[];
+  initiallyFocusedSpanId: string | null;
 }
 
-export const SpanDetailsList = ({ spans }: SpanDetailsListProps) => {
+export const SpanDetailsList = ({
+  spans,
+  initiallyFocusedSpanId,
+}: SpanDetailsListProps) => {
   return (
     <Box sx={styles.container}>
       {spans ? (
-        spans.map((span) => <SpanDetails key={span.span.spanId} span={span} />)
+        spans.map((span) => (
+          <SpanDetails
+            key={span.span.spanId}
+            span={span}
+            startExpanded={span.span.spanId === initiallyFocusedSpanId}
+          />
+        ))
       ) : (
         <Typography>Select graph node to explore spans</Typography>
       )}
