@@ -22,6 +22,7 @@ export interface GraphNodeData {
 export interface EdgeData {
   time: string;
   count: number;
+  hasError: boolean;
 }
 
 export interface TraceGraphProps {
@@ -35,13 +36,16 @@ export enum EdgeColor {
   HOVER = "#FFFFFF",
   SELECTED = "#00CDE7",
   ERROR = "#EF5854",
+  ERR_SELECTED = "#EF5854",
+  ERR_HOVER = "#F47874",
 }
 
 export enum NodeColor {
   NORMAL = "#96979E",
   HOVER = "#FFFFFF",
   SELECTED = "#009EB4",
-  ERR_NORMAL = "#EF5854",
+  ERROR = "#EF5854",
+  ERR_SELECTED = "#EF5854",
   ERR_HOVER = "#B52D29",
 }
 
