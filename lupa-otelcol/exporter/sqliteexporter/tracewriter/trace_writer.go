@@ -3,6 +3,7 @@ package tracewriter
 import (
 	"crypto/md5"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -201,5 +202,9 @@ func hashAttributes(attributes pcommon.Map) (string, error) {
 		return "", errors.New("failed to serialize attributes")
 	}
 	hash.Write(attributesAsJson)
-	return string(hash.Sum(nil)), nil
+
+	src := hash.Sum(nil)
+	dst := make([]byte, hex.EncodedLen(len(src)))
+	hex.Encode(dst, src)
+	return string(dst), nil
 }
