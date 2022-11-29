@@ -13,7 +13,7 @@ import (
 	"sort"
 )
 
-func (exporter *sqliteTracesExporter) WriteTraces(traces ptrace.Traces) error {
+func (exporter *sqliteTracesExporter) writeTraces(traces ptrace.Traces) error {
 	tx, err := exporter.db.Begin()
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %+v\n", err)

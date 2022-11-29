@@ -46,5 +46,5 @@ func (exporter *sqliteTracesExporter) Shutdown(ctx context.Context) error {
 }
 
 func (exporter *sqliteTracesExporter) pushTracesData(ctx context.Context, traces ptrace.Traces) error {
-	return exporter.WriteTraces(traces)
+	return exporter.writeTraces(traces)
 }
