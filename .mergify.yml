@@ -20,6 +20,7 @@ pull_request_rules:
     conditions:
       - base=main
       - label=merge when ready
+      - "#review-requested=0"
     actions:
       queue:
         name: default
