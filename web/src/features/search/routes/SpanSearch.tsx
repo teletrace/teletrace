@@ -80,7 +80,7 @@ export const SpanSearch = () => {
           direction="column"
           divider={<Divider orientation="vertical" flexItem />}
           spacing={1}
-          sx={{ height: "100%" }}
+          sx={{ height: "100%", width: "100%" }}
         >
           <SearchBar
             timeframe={filtersState.timeframe}
