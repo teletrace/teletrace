@@ -3,8 +3,7 @@ import { useMemo, useState } from "react";
 import TimelineViewer from "./TimelineViewer";
 import { transformTraceData } from "./utils/trace";
 
-export function TraceTimeline({ trace }) {
-  const [selectedSpan, setSelectedSpan] = useState(null);
+export function TraceTimeline({ trace, selectedSpanId }) {
   const [traceState, setTraceState] = useState({
     childrenHiddenIDs: new Set(),
     detailStates: new Map(),
@@ -80,8 +79,7 @@ export function TraceTimeline({ trace }) {
   return (
     <TimelineViewer
       trace={transformedTrace}
-      activeSpan={selectedSpan?.spanID}
-      setActiveTimelineState={setSelectedSpan}
+      selectedSpanId={selectedSpanId}
       setColumnWidth={setColumnWidth}
       removeHoverIndentGuideId={removeHoverIndentGuideId}
       setTrace={setTrace}

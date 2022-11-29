@@ -7,13 +7,20 @@ import { styles } from "./styles";
 
 interface SpanDetailsListProps {
   spans?: InternalSpan[];
-  initiallyFocusedSpanId: string | null;
+  selectedSpanId: string | null;
+  setSelectedSpanId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const SpanDetailsList = ({
   spans,
-  initiallyFocusedSpanId,
+  selectedSpanId,
+  setSelectedSpanId,
 }: SpanDetailsListProps) => {
+  const handleChange = (spanId: string, expanded: boolean) => {
+    const nextSelectedSpanId = expanded ? spanId : null;
+    setSelectedSpanId(nextSelectedSpanId);
+  };
+
   return (
     <Box sx={styles.container}>
       {spans ? (
@@ -21,7 +28,10 @@ export const SpanDetailsList = ({
           <SpanDetails
             key={span.span.spanId}
             span={span}
-            startExpanded={span.span.spanId === initiallyFocusedSpanId}
+            expanded={selectedSpanId === span.span.spanId}
+            onChange={(expanded: boolean) =>
+              handleChange(span.span.spanId, expanded)
+            }
           />
         ))
       ) : (
