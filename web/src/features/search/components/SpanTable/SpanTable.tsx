@@ -97,7 +97,6 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         manualFiltering
         manualSorting
         enableStickyHeader={true}
-        enableColumnResizing
         muiToolbarAlertBannerProps={
           isError
             ? {
