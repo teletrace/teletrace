@@ -58,13 +58,7 @@
 .span-row.is-active {
   box-shadow: inset 0 0 0 1px #00cde7;
 }
-.span-row.is-active .span-name:hover {
-  border-top: 1px solid #00cde7;
-  border-bottom: 1px solid #00cde7;
-}
 .span-name {
-  display: flex;
-  align-items: center;
   color: #fff;
   cursor: pointer;
   flex: 1 1 auto;
@@ -92,10 +86,6 @@
 }
 .endpoint-name {
   color: #b6b7be;
-}
-.span-name:hover {
-  background: #3b3c42;
-  box-shadow: inset -1px -1px 0 0 #000;
 }
 .span-name:hover .endpoint-name {
   color: #b6b7be;
