@@ -44,7 +44,7 @@ export enum NodeColor {
   NORMAL = "#96979E",
   HOVER = "#FFFFFF",
   SELECTED = "#009EB4",
-  ERR_NORMAL = "#EF5854",
+  ERROR = "#EF5854",
   ERR_SELECTED = "#EF5854",
   ERR_HOVER = "#B52D29",
 }
