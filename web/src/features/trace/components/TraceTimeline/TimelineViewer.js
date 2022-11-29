@@ -101,9 +101,9 @@ class TimelineViewer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { activeSpan } = this.props;
+    const { selectedSpanId } = this.props;
     this.setHeaderHeight(this._headerElm);
-    if (prevProps.activeSpan !== activeSpan) {
+    if (prevProps.selectedSpanId !== selectedSpanId) {
       this.updateViewRangeTime(0, 1);
     }
   }
@@ -178,8 +178,7 @@ class TimelineViewer extends Component {
       setColumnWidth,
       traceState,
       addHoverIndentGuideId,
-      setActiveTimelineState,
-      activeSpan,
+      selectedSpanId,
     } = this.props;
     const { viewRange, headerHeight } = this.state;
 
@@ -214,8 +213,7 @@ class TimelineViewer extends Component {
               detailToggle={detailToggle}
               childrenToggle={childrenToggle}
               addHoverIndentGuideId={addHoverIndentGuideId}
-              setActiveTimelineState={setActiveTimelineState}
-              activeSpan={activeSpan}
+              selectedSpanId={selectedSpanId}
             />
           </section>
         )}
