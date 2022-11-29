@@ -176,6 +176,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         paper: {
           display: "inline-block",
+          minWidth: "fill-available",
         },
       },
     },
