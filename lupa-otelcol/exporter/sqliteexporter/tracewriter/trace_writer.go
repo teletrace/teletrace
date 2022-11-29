@@ -3,6 +3,7 @@ package tracewriter
 import (
 	"crypto/md5"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
 	"go.opentelemetry.io/collector/pdata/pcommon"
@@ -188,7 +189,12 @@ func hashAttributes(attributes pcommon.Map) (string, error) {
 		if !exists {
 			return "", fmt.Errorf("failed to retrieve value for '%s'", key)
 		}
-		hash.Write([]byte(fmt.Sprintf("%s:%s", key, value.AsString())))
+
+		attributeJson, err := json.Marshal(map[string]string{key: value.AsString()})
+		if err != nil {
+			return "", fmt.Errorf("failed to serialize attribute: { key: %s, value: %s }", key, value.AsString())
+		}
+		hash.Write(attributeJson)
 	}
 
 	return string(hash.Sum(nil)), nil
