@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
 	"go.opentelemetry.io/collector/pdata/pcommon"
@@ -184,18 +185,21 @@ func hashAttributes(attributes pcommon.Map) (string, error) {
 	sort.Strings(sortedKeys)
 
 	hash := md5.New()
+	sortedAttributes := make(map[string]string)
 	for _, key := range sortedKeys {
 		value, exists := attributes.Get(key)
 		if !exists {
 			return "", fmt.Errorf("failed to retrieve value for '%s'", key)
 		}
 
-		attributeJson, err := json.Marshal(map[string]string{key: value.AsString()})
-		if err != nil {
-			return "", fmt.Errorf("failed to serialize attribute: { key: %s, value: %s }", key, value.AsString())
-		}
-		hash.Write(attributeJson)
+		sortedAttributes[key] = value.AsString()
+
 	}
 
+	attributesAsJson, err := json.Marshal(sortedAttributes)
+	if err != nil {
+		return "", errors.New("failed to serialize attributes")
+	}
+	hash.Write(attributesAsJson)
 	return string(hash.Sum(nil)), nil
 }
