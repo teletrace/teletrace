@@ -99,13 +99,6 @@
 .span-name:hover .endpoint-name {
   color: #b6b7be;
 }
-.span-name:hover .truncated-span-resource-name {
-  display: none !important;
-}
-.truncated-span-resource-name {
-  padding: 0 0.25rem;
-  font-size: 1.05em;
-}
 .span-svc-name {
   padding: 0 0.25rem 0 0.25rem;
   font-size: 1.05em;
