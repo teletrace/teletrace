@@ -24,8 +24,8 @@ export interface EdgeData {
   count: number;
 }
 
-export interface TraceGraphParams {
-  setSelectedNode: React.Dispatch<React.SetStateAction<GraphNode | null>>;
+export interface TraceGraphProps {
+  setSelectedNode: (node: GraphNode | null) => void;
   spans: InternalSpan[];
   initiallyFocusedSpanId: string | null;
 }
