@@ -13,8 +13,8 @@ type SqliteConfig struct {
 	Path string
 }
 
-func NewSqliteConfig(path string) SqliteConfig {
-	return SqliteConfig{
+func NewSqliteConfig(path string) *SqliteConfig {
+	return &SqliteConfig{
 		Path: path,
 	}
 }
