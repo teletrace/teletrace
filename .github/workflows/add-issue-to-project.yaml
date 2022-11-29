@@ -1,4 +1,4 @@
-name: Auto Assign to Project
+name: Add issues to project
 
 on:
   issues:
@@ -7,18 +7,13 @@ on:
     types: [opened, labeled]
   issue_comment:
     types: [created]
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  MY_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  assign_one_project:
+  add-to-project:
+    name: Add issue to project
     runs-on: ubuntu-latest
-    name: Assign to One Project
     steps:
-      - name: Assign NEW issues and NEW pull requests to project
-        uses: srggrs/assign-one-project-github-action@1.2.1
-        if: github.event.action == 'opened'
+      - uses: actions/add-to-project@v0.4.0
         with:
-          project: "https://github.com/orgs/epsagon/projects/3"
-          column_name: "🆕 New"
+          project-url: https://github.com/orgs/epsagon/projects/3
+          github-token: ${{ secrets.GITHUB_TOKEN }}
