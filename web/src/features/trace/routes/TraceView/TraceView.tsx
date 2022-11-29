@@ -19,10 +19,18 @@ interface TraceViewUrlParams extends Params {
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
   const [searchParams] = useSearchParams();
+  const spanId = searchParams.get("spanId");
+
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [selectedSpanId, setSelectedSpanId] = useState<string | null>(spanId);
 
-  const spanId = searchParams.get("spanId");
+  const handleSelectedNodeChange = (node: GraphNode | null) => {
+    setSelectedNode(node);
+    if (!node) {
+      setSelectedSpanId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -59,17 +67,18 @@ export const TraceView = () => {
           divider={<Divider orientation="vertical" flexItem />}
         >
           <TraceGraph
-            setSelectedNode={setSelectedNode}
+            setSelectedNode={handleSelectedNodeChange}
             spans={trace}
             initiallyFocusedSpanId={spanId}
           />
           <SpanDetailsList
             spans={selectedNode?.spans}
-            initiallyFocusedSpanId={spanId}
+            selectedSpanId={selectedSpanId}
+            setSelectedSpanId={setSelectedSpanId}
           />
         </Stack>
         <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
-          <TraceTimeline trace={trace} />
+          <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
         </Stack>
       </Stack>
     </>
