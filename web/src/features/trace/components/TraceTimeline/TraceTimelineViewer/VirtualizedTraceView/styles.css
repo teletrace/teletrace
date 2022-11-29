@@ -63,6 +63,8 @@
   border-bottom: 1px solid #00cde7;
 }
 .span-name {
+  display: flex;
+  align-items: center;
   color: #fff;
   cursor: pointer;
   flex: 1 1 auto;
@@ -70,6 +72,7 @@
   overflow: hidden;
   padding-right: 0.25em;
   position: relative;
+  text-overflow: ellipsis;
 }
 .span-name.is-detail-expanded::before {
   bottom: 0;
@@ -91,9 +94,7 @@
   color: #b6b7be;
 }
 .span-name:hover {
-  display: flex;
   background: #3b3c42;
-  align-items: center;
   box-shadow: inset -1px -1px 0 0 #000;
 }
 .span-name:hover .endpoint-name {
