@@ -1,6 +1,7 @@
 package sqliteexporter
 
 import (
+	"fmt"
 	"go.opentelemetry.io/collector/config"
 )
 
@@ -14,5 +15,9 @@ type Config struct {
 
 // Validate validates the SQLite exporter configuration.
 func (cfg *Config) Validate() error {
+	if cfg.Path == "" {
+		return fmt.Errorf("SQLite exporter requires a path, examples: '/database/my_spans.db'")
+	}
+
 	return nil
 }
