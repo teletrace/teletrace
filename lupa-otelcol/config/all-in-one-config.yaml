@@ -9,8 +9,7 @@ processors:
 
 exporters:
   sqlite:
-    db:
-      path: ""
+    path: "embedded_spans"
 
 service:
   pipelines:

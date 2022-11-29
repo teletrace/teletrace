@@ -1,9 +1,8 @@
 package tracewriter
 
 import (
-	"crypto/sha256"
+	"crypto/md5"
 	"database/sql"
-	"encoding/binary"
 	"fmt"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
 	"go.opentelemetry.io/collector/pdata/pcommon"
@@ -44,7 +43,7 @@ func (tw *traceWriter) WriteTraces(traces ptrace.Traces) error {
 		resourceSpans := resourceSpansSlice.At(i)
 		resourceAttributes := resourceSpans.Resource().Attributes()
 		resourceId, err := hashAttributes(resourceAttributes) // Generating a resource identifier to store with each span
-		if err != nil || resourceId == nil {
+		if err != nil || resourceId == "" {
 			tw.logger.Error("failed to hash resource attributes", zap.NamedError("reason", err))
 			return err
 		}
@@ -66,7 +65,7 @@ func (tw *traceWriter) WriteTraces(traces ptrace.Traces) error {
 }
 
 func (tw *traceWriter) writeResourceSpans(
-	resourceSpans ptrace.ResourceSpans, tx *sql.Tx, resourceId *uint32, err error) error {
+	resourceSpans ptrace.ResourceSpans, tx *sql.Tx, resourceId string, err error) error {
 	droppedResourceAttributesCount := resourceSpans.Resource().DroppedAttributesCount()
 	if err := tw.writeAttributes(tx, resourceSpans.Resource().Attributes(), repository.Resource, resourceId); err != nil {
 		return err
@@ -74,7 +73,7 @@ func (tw *traceWriter) writeResourceSpans(
 	scopeSpansSlice := resourceSpans.ScopeSpans()
 	for j := 0; j < scopeSpansSlice.Len(); j++ {
 		scopeSpans := scopeSpansSlice.At(j)
-		if err = tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, *resourceId); err != nil {
+		if err = tw.writeScope(scopeSpans, tx, droppedResourceAttributesCount, resourceId); err != nil {
 			return err
 		}
 	}
@@ -83,10 +82,10 @@ func (tw *traceWriter) writeResourceSpans(
 }
 
 func (tw *traceWriter) writeScope(
-	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId uint32) error {
+	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId string) error {
 	scope := scopeSpans.Scope()
 	scopeId, err := repository.InsertScope(tx, scope)
-	if err != nil || scopeId == nil {
+	if err != nil || scopeId == 0 {
 		tw.logger.Error("could not insert scope", zap.NamedError("reason", err))
 		return err
 	}
@@ -98,7 +97,7 @@ func (tw *traceWriter) writeScope(
 	spanSlice := scopeSpans.Spans()
 	for k := 0; k < spanSlice.Len(); k++ {
 		span := spanSlice.At(k)
-		if err := tw.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, *scopeId); err != nil {
+		if err := tw.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, scopeId); err != nil {
 			return err
 		}
 	}
@@ -107,7 +106,7 @@ func (tw *traceWriter) writeScope(
 }
 
 func (tw *traceWriter) writeSpan(
-	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId uint32, scopeId int64) error {
+	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId string, scopeId int64) error {
 	spanId := span.SpanID().HexString()
 	if err := repository.InsertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceId, scopeId); err != nil {
 		tw.logger.Error("could not insert span", zap.NamedError("reason", err))
@@ -122,7 +121,7 @@ func (tw *traceWriter) writeSpan(
 	for i := 0; i < spanEventSlice.Len(); i++ {
 		spanEvent := spanEventSlice.At(i)
 		eventId, err := repository.InsertEvent(tx, spanEvent, spanId)
-		if err != nil || eventId == nil {
+		if err != nil || eventId == 0 {
 			tw.logger.Error("could not insert event", zap.NamedError("reason", err))
 			return err
 		}
@@ -173,7 +172,7 @@ func (tw *traceWriter) writeAttributes(
 	return nil
 }
 
-func hashAttributes(attributes pcommon.Map) (*uint32, error) {
+func hashAttributes(attributes pcommon.Map) (string, error) {
 	// Golang's map implementation deliberately randomizes the order of the keys, so in order to generate a consistent
 	// hash, the keys should be sorted before iterating over the map
 	sortedKeys := make([]string, 0, len(attributes.AsRaw()))
@@ -183,15 +182,14 @@ func hashAttributes(attributes pcommon.Map) (*uint32, error) {
 
 	sort.Strings(sortedKeys)
 
-	hash := sha256.New()
+	hash := md5.New()
 	for _, key := range sortedKeys {
 		value, exists := attributes.Get(key)
 		if !exists {
-			return nil, fmt.Errorf("failed to retrieve value for '%s'", key)
+			return "", fmt.Errorf("failed to retrieve value for '%s'", key)
 		}
-		hash.Write([]byte(value.AsString()))
+		hash.Write([]byte(fmt.Sprintf("%s:%s", key, value.AsString())))
 	}
 
-	hashAsUint32 := binary.BigEndian.Uint32(hash.Sum(nil))
-	return &hashAsUint32, nil
+	return string(hash.Sum(nil)), nil
 }

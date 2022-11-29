@@ -11,7 +11,7 @@ import (
 )
 
 func newClient(logger *zap.Logger, cfg *Config) (*elasticsearch.Client, error) {
-	esConfig, err := elasticsearch.NewClient(elasticsearch.Config{
+	esClient, err := elasticsearch.NewClient(elasticsearch.Config{
 
 		// basic connection setup
 		Addresses: cfg.Endpoints,
@@ -24,7 +24,11 @@ func newClient(logger *zap.Logger, cfg *Config) (*elasticsearch.Client, error) {
 		return nil, fmt.Errorf("error creating Elasticsearch Client: %+v", err)
 	}
 
-	return esConfig, nil
+	_, err = esClient.Indices.Create(cfg.Index)
+	if err != nil {
+		return nil, fmt.Errorf("error creating index '%s': %+v", cfg.Index, err)
+	}
+	return esClient, nil
 }
 
 func newBulkIndexer(logger *zap.Logger, client *elasticsearch.Client, cfg *Config) (esutil.BulkIndexer, error) {

@@ -6,7 +6,6 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 //go:embed migrations
@@ -19,7 +18,7 @@ func Migrate(dbName string) error {
 	}
 
 	m, err := migrate.NewWithSourceInstance(
-		"iofs", driver, fmt.Sprintf("sqlite3://%s.db", dbName))
+		"iofs", driver, fmt.Sprintf("sqlite3://%s", dbName))
 	if err != nil {
 		return fmt.Errorf("could not create migrate instance: %+v", err)
 	}

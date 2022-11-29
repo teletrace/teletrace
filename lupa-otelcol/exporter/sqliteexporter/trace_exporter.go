@@ -21,13 +21,13 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 		return nil, err
 	}
 
-	dbName := fmt.Sprintf("%sembedded_spans", cfg.DBSettings.Path)
+	dbName := cfg.Path
 
 	if err := repository.Migrate(dbName); err != nil {
 		return nil, fmt.Errorf("could not migrate DB: %+v", err)
 	}
 
-	db, err := sql.Open("sqlite3", fmt.Sprintf("%s.db", dbName))
+	db, err := sql.Open("sqlite3", fmt.Sprintf("%s", dbName))
 	if err != nil {
 		return nil, fmt.Errorf("could not create sqlite exporter: %+v", err)
 	}

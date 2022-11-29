@@ -7,11 +7,8 @@ import (
 // Config defines configuration for SQLite exporter.
 type Config struct {
 	config.ExporterSettings `mapstructure:",squash"`
-	DBSettings              DBSettings `mapstructure:"db"`
-}
 
-type DBSettings struct {
-	// Path is where the embedded database will be created.
+	// Path is the sqlite instance full path.
 	Path string `mapstructure:"path"`
 }
 
