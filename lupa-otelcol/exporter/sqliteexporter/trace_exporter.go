@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/repository"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter/tracewriter"
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 )
@@ -13,7 +11,8 @@ import (
 import _ "github.com/mattn/go-sqlite3"
 
 type sqliteTracesExporter struct {
-	traceWriter tracewriter.TraceWriter
+	logger *zap.Logger
+	db     *sql.DB
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, error) {
@@ -23,7 +22,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 
 	dbName := cfg.Path
 
-	if err := repository.Migrate(dbName); err != nil {
+	if err := migrateSchema(dbName); err != nil {
 		return nil, fmt.Errorf("could not migrate DB: %+v", err)
 	}
 
@@ -33,18 +32,19 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 	}
 
 	return &sqliteTracesExporter{
-		tracewriter.NewTraceWriter(logger, db),
+		logger: logger,
+		db:     db,
 	}, nil
 
 }
 
 func (exporter *sqliteTracesExporter) Shutdown(ctx context.Context) error {
-	if err := exporter.traceWriter.CloseDB(); err != nil {
+	if err := exporter.db.Close(); err != nil {
 		return fmt.Errorf("could not shut down sqlite exporter: %+v", err)
 	}
 	return nil
 }
 
 func (exporter *sqliteTracesExporter) pushTracesData(ctx context.Context, traces ptrace.Traces) error {
-	return exporter.traceWriter.WriteTraces(traces)
+	return exporter.WriteTraces(traces)
 }

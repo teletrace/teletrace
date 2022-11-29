@@ -1,4 +1,4 @@
-package repository
+package sqliteexporter
 
 import (
 	"embed"
@@ -11,7 +11,7 @@ import (
 //go:embed migrations
 var migrations embed.FS
 
-func Migrate(dbName string) error {
+func migrateSchema(dbName string) error {
 	driver, err := iofs.New(migrations, "migrations")
 	if err != nil {
 		return fmt.Errorf("could not read db migrations: %+v", err)
