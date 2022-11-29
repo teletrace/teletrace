@@ -9,7 +9,6 @@ import (
 
 func connectToSqliteDb() (*sql.DB, error) {
 	const dbName string = "Lupa.db"
-	fmt.Println("Database created")
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
 		fmt.Println(err)
