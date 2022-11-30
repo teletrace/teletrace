@@ -1,34 +1,39 @@
 package tagscontroller
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
 
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
 )
 
-type rawTagsController struct {
-	client *elasticsearch.Client
-	idx    string
+// Currently we use both raw and typed since fields mapping typed API has issue with querying the mapping of *
+type tagsController struct {
+	rawClient *elasticsearch.Client
+	client    *elasticsearch.TypedClient
+	idx       string
 }
 
-func NewTagsController(logger *zap.Logger, client *elasticsearch.Client, idx string) (TagsController, error) {
-	return &rawTagsController{
-		client: client,
-		idx:    idx,
+func NewTagsController(logger *zap.Logger, rawClient *elasticsearch.Client, client *elasticsearch.TypedClient, idx string) (TagsController, error) {
+	return &tagsController{
+		rawClient: rawClient,
+		client:    client,
+		idx:       idx,
 	}, nil
 }
 
 // Get available tags.
 // Use elastic's GetFieldMapping api
-func (r *rawTagsController) GetAvailableTags(
+func (r *tagsController) GetAvailableTags(
 	ctx context.Context,
 	request tagsquery.GetAvailableTagsRequest,
 ) (tagsquery.GetAvailableTagsResponse, error) {
@@ -47,13 +52,13 @@ func (r *rawTagsController) GetAvailableTags(
 	return result, nil
 }
 
-func (r *rawTagsController) GetTagsValues(
+func (r *tagsController) GetTagsValues(
 	ctx context.Context,
 	request tagsquery.TagValuesRequest,
 	tags []string,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
-
 	tagsMappings, err := r.getTagsMappings(ctx, tags)
+
 	if err != nil {
 		return nil, fmt.Errorf("Could not get values for tags: %v", tags)
 	}
@@ -68,13 +73,12 @@ func (r *rawTagsController) GetTagsValues(
 }
 
 // Get elasticsearch mappings for specific tags
-func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
+func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
 	var result []tagsquery.TagInfo
-
-	res, err := r.client.Indices.GetFieldMapping(
+	res, err := r.rawClient.Indices.GetFieldMapping(
 		tags,
-		r.client.Indices.GetFieldMapping.WithContext(ctx),
-		r.client.Indices.GetFieldMapping.WithIndex(r.idx),
+		r.rawClient.Indices.GetFieldMapping.WithContext(ctx),
+		r.rawClient.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
 
 	if err != nil {
@@ -89,6 +93,9 @@ func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) 
 	var body map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed to decode body: %v", err)
+	}
+	if res.StatusCode < 200 && res.StatusCode >= 300 {
+		return nil, fmt.Errorf("Could not get tags, got status: %+v", res.StatusCode)
 	}
 
 	// { "lupa-index": { "mappings": { ... }}}
@@ -116,94 +123,61 @@ func (r *rawTagsController) getTagsMappings(ctx context.Context, tags []string) 
 	return result, nil
 }
 
+func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.TagInfo) {
+	aggs := make(map[string]*types.AggregationContainerBuilder, len(tagsMappings))
+	for _, mapping := range tagsMappings {
+		aggregationKey := mapping.Name
+		aggregationField := aggregationKey
+		if mapping.Type == "text" {
+			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
+		}
+		aggs[aggregationKey] = types.NewAggregationContainerBuilder()
+		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)))
+	}
+	builder.Aggregations(aggs)
+}
+
+func buildTagsValuesRequest(request tagsquery.TagValuesRequest, tagsMappings []tagsquery.TagInfo) (*search.Request, error) {
+	builder := search.NewRequestBuilder()
+	timeframeFilters := spanreaderes.CreateTimeframeFilters(request.Timeframe)
+	filters := append(request.SearchFilters, timeframeFilters...)
+	_, err := spanreaderes.BuildQuery(builder, filters...)
+	if err != nil {
+		return nil, err
+	}
+	builder.Size(0)
+	buildAggregations(builder, tagsMappings)
+	return builder.Build(), nil
+}
+
 // Perform search and return the response body
-func (r *rawTagsController) performGetTagsValuesRequest(
+func (r *tagsController) performGetTagsValuesRequest(
 	ctx context.Context,
 	request tagsquery.TagValuesRequest,
 	tagsMappings []tagsquery.TagInfo,
 ) (map[string]any, error) {
-	aggs := make(map[string]any, len(tagsMappings))
-	for _, mapping := range tagsMappings {
-
-		aggregationKey := mapping.Name
-
-		if mapping.Type == "text" {
-			aggs[aggregationKey] = map[string]any{
-				"terms": map[string]any{
-					"field": fmt.Sprintf("%s.keyword", aggregationKey),
-				},
-			}
-		} else {
-			aggs[aggregationKey] = map[string]any{
-				"terms": map[string]any{
-					"field": aggregationKey,
-				},
-			}
-		}
-
+	req, err := buildTagsValuesRequest(request, tagsMappings)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build query: %s", err)
 	}
-
-	query := map[string]any{
-		"bool": map[string]any{
-			"must": []map[string]any{
-				{
-					"range": map[string]any{
-						"span.startTimeUnixNano": map[string]any{
-							"gte": request.Timeframe.StartTime,
-						},
-					},
-				},
-				{
-					"range": map[string]any{
-						"span.endTimeUnixNano": map[string]any{
-							"lte": request.Timeframe.EndTime,
-						},
-					},
-				},
-			},
-		},
-	}
-
-	requestBody := map[string]any{
-		"size":  0,
-		"aggs":  aggs,
-		"query": query,
-	}
-
-	buffer := new(bytes.Buffer)
-	if err := json.NewEncoder(buffer).Encode(requestBody); err != nil {
-		return nil, fmt.Errorf("failed to encode body; %v: %v", requestBody, err)
-	}
-
-	searchOptions := []func(*esapi.SearchRequest){
-		r.client.Search.WithIndex(r.idx),
-		r.client.Search.WithBody(buffer),
-	}
-
-	res, err := r.client.Search(searchOptions...)
+	res, err := r.client.API.Search().Request(req).Index(r.idx).Do(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to perform search: %s", err)
-	}
-
-	defer res.Body.Close()
-	if err := SummarizeResponseError(res); err != nil {
-		return nil, err
 	}
 
 	var body map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
-
 	return body, err
 }
 
-func (r *rawTagsController) parseGetTagsValuesResponseBody(
+func (r *tagsController) parseGetTagsValuesResponseBody(
 	body map[string]any,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 
-	// To get an idea of how the response looks like, check the unit test at raw_tags_controller_test.go
+	// To get an idea of how the response looks like, check the unit test at tags_controller_test.go
 
 	result := map[string]*tagsquery.TagValuesResponse{}
 

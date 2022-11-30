@@ -1,4 +1,4 @@
-package searchcontroller
+package utils
 
 import (
 	"encoding/json"

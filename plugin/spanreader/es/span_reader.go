@@ -5,7 +5,7 @@ import (
 	"fmt"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
-	spanreader "oss-tracing/pkg/spanreader"
+	"oss-tracing/pkg/spanreader"
 	"oss-tracing/plugin/spanreader/es/searchcontroller"
 	"oss-tracing/plugin/spanreader/es/tagscontroller"
 
@@ -75,7 +75,7 @@ func NewSpanReader(ctx context.Context, logger *zap.Logger, cfg ElasticConfig) (
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	tc, err := tagscontroller.NewTagsController(logger, rawClient, cfg.Index)
+	tc, err := tagscontroller.NewTagsController(logger, rawClient, typedClient, cfg.Index)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
