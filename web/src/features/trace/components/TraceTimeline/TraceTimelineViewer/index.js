@@ -27,8 +27,7 @@ class TraceTimelineViewerImpl extends PureComponent {
       removeJumpToSpan,
       childrenToggle,
       addHoverIndentGuideId,
-      setActiveTimelineState,
-      activeSpan,
+      selectedSpanId,
       ...rest
     } = this.props;
     const { trace } = rest;
@@ -55,8 +54,7 @@ class TraceTimelineViewerImpl extends PureComponent {
           childrenToggle={childrenToggle}
           removeHoverIndentGuideId={removeHoverIndentGuideId}
           addHoverIndentGuideId={addHoverIndentGuideId}
-          setActiveTimelineState={setActiveTimelineState}
-          activeSpan={activeSpan}
+          selectedSpanId={selectedSpanId}
         />
       </div>
     );

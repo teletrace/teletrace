@@ -17,7 +17,7 @@ import {
 
 import { BasicEdge } from "./Graph/BasicEdge";
 import { BasicNode } from "./Graph/BasicNode";
-import { EdgeData, NodeData, TraceData, TraceGraphParams } from "./Graph/types";
+import { EdgeData, NodeData, TraceData, TraceGraphProps } from "./Graph/types";
 import { createGraphLayout, spansToGraphData } from "./Graph/utils/layout";
 import {
   applyHoverEdgeStyle,
@@ -37,7 +37,7 @@ const TraceGraphImpl = ({
   setSelectedNode,
   spans,
   initiallyFocusedSpanId,
-}: TraceGraphParams) => {
+}: TraceGraphProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);

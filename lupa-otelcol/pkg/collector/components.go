@@ -1,6 +1,7 @@
 package collector
 
 import (
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
@@ -25,6 +26,7 @@ func components() (component.Factories, error) {
 
 	exporters, err := component.MakeExporterFactoryMap(
 		elasticsearchexporter.NewFactory(),
+		sqliteexporter.NewFactory(),
 	)
 	if err != nil {
 		return component.Factories{}, err
