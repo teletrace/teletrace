@@ -1,5 +1,7 @@
 package errors
 
+import "fmt"
+
 const (
 	IndexNotFoundError string = "index_not_found_exception"
 	Unknown            string = "unknown"
@@ -15,9 +17,14 @@ func (e ElasticSearchError) Error() string {
 	return e.Message
 }
 
-func ESErrorFromHttpResponse(status string, body map[string]any) *ElasticSearchError {
-	errorType := body["error"].(map[string]any)["type"]
-	errorReason := body["error"].(map[string]any)["reason"]
+func ESErrorFromHttpResponse(status string, body map[string]any) (*ElasticSearchError, error) {
+	errorMap := body["error"]
+	if errorMap == nil {
+		return nil, fmt.Errorf("missing 'error' object in response: %+v", body)
+	}
+
+	errorType := errorMap.(map[string]any)["type"]
+	errorReason := errorMap.(map[string]any)["reason"]
 	message := "an error occurred"
 	switch errorReason := errorReason.(type) {
 	case string:
@@ -33,5 +40,5 @@ func ESErrorFromHttpResponse(status string, body map[string]any) *ElasticSearchE
 		Message:    message,
 		HttpStatus: status,
 		ErrorType:  finalErrorType,
-	}
+	}, nil
 }
