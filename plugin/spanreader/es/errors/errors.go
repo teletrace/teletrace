@@ -25,16 +25,14 @@ func ESErrorFromHttpResponse(status string, body map[string]any) (*ElasticSearch
 
 	errorType := errorMap.(map[string]any)["type"]
 	errorReason := errorMap.(map[string]any)["reason"]
-	message := "an error occurred"
-	switch errorReason := errorReason.(type) {
-	case string:
-		message = errorReason
-	}
 
+	message := "an error occurred"
+	if errorReason != nil {
+		message = errorReason.(string)
+	}
 	finalErrorType := Unknown
-	switch errorType := errorType.(type) {
-	case string:
-		finalErrorType = errorType
+	if errorType != nil {
+		finalErrorType = errorType.(string)
 	}
 	return &ElasticSearchError{
 		Message:    message,
