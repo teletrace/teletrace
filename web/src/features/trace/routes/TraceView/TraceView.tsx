@@ -60,7 +60,7 @@ export const TraceView = () => {
         sx={{ height: "100%" }}
       >
         <Stack
-          flex={3}
+          flex={1}
           spacing={2}
           direction="row"
           sx={styles.graphSpanDetailsContainer}
@@ -77,7 +77,10 @@ export const TraceView = () => {
             setSelectedSpanId={setSelectedSpanId}
           />
         </Stack>
-        <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
+        <Stack
+          sx={styles.timelineWrapper}
+          divider={<Divider orientation="vertical" flexItem />}
+        >
           <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
         </Stack>
       </Stack>
