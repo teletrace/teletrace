@@ -176,6 +176,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         paper: {
           display: "inline-block",
+          minWidth: "fill-available",
         },
       },
     },
@@ -332,6 +333,7 @@ theme = createTheme(theme, {
           fontSize: "14px",
           fontWeight: "normal",
           margin: "0px 4px",
+          textOverflow: "ellipsis",
         },
         inputSizeSmall: {
           position: "relative",
