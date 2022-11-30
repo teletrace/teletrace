@@ -44,6 +44,11 @@
   float: left;
   min-width: 100%;
   overflow: visible;
+  width: max-content;
+}
+.span-row.is-active .span-name:hover {
+  border-top: 1px solid #00cde7;
+  border-bottom: 1px solid #00cde7;
 }
 .span-row.is-matching-filter:hover .span-name-wrapper {
   background: linear-gradient(90deg, #fff5e1, #fff5e1 75%, #ffe6c9);
@@ -58,10 +63,6 @@
 .span-row.is-active {
   box-shadow: inset 0 0 0 1px #00cde7;
 }
-.span-row.is-active .span-name:hover {
-  border-top: 1px solid #00cde7;
-  border-bottom: 1px solid #00cde7;
-}
 .span-name {
   color: #fff;
   cursor: pointer;
@@ -70,6 +71,7 @@
   overflow: hidden;
   padding-right: 0.25em;
   position: relative;
+  text-overflow: ellipsis;
 }
 .span-name.is-detail-expanded::before {
   bottom: 0;
@@ -92,19 +94,12 @@
 }
 .span-name:hover {
   display: flex;
-  background: #3b3c42;
   align-items: center;
+  background: #3b3c42;
   box-shadow: inset -1px -1px 0 0 #000;
 }
 .span-name:hover .endpoint-name {
   color: #b6b7be;
-}
-.span-name:hover .truncated-span-resource-name {
-  display: none !important;
-}
-.truncated-span-resource-name {
-  padding: 0 0.25rem;
-  font-size: 1.05em;
 }
 .span-svc-name {
   padding: 0 0.25rem 0 0.25rem;
