@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"oss-tracing/pkg/model"
+	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 
@@ -37,8 +37,8 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 		return nil, fmt.Errorf("Could not build search request: %+v", err)
 	}
 
-	search := sc.client.API.Search()
-	res, err := search.Request(req).Index(sc.idx).Do(ctx)
+	searchAPI := sc.client.API.Search()
+	res, err := searchAPI.Request(req).Index(sc.idx).Do(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
@@ -66,11 +66,11 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 
 	builder := search.NewRequestBuilder()
 
-	timeframeFilters := createTimeframeFilters(r.Timeframe)
+	timeframeFilters := spanreaderes.CreateTimeframeFilters(r.Timeframe)
 
 	filters := append(r.SearchFilters, timeframeFilters...)
 
-	if builder, err = buildQuery(builder, filters...); err != nil {
+	if builder, err = spanreaderes.BuildQuery(builder, filters...); err != nil {
 		return nil, fmt.Errorf("Could not build query for search request: %+v. err: %+v", r, err)
 	}
 
@@ -79,46 +79,6 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 	builder = builder.Size(200) // Where to get this number from?
 
 	return builder.Build(), nil
-}
-
-func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
-	return []model.SearchFilter{
-		{
-			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.startTimeUnixNano",
-				Operator: spansquery.OPERATOR_GTE,
-				Value:    tf.StartTime,
-			},
-		},
-		{
-			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.endTimeUnixNano",
-				Operator: spansquery.OPERATOR_LTE,
-				Value:    tf.EndTime,
-			},
-		},
-	}
-
-}
-
-func buildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.RequestBuilder, error) {
-	var err error
-	query := types.NewQueryContainerBuilder()
-
-	var kvFilters []model.KeyValueFilter
-
-	for _, f := range fs {
-		if f.KeyValueFilter != nil {
-			kvFilters = append(kvFilters, *f.KeyValueFilter)
-		}
-	}
-	query, err = BuildFilters(query, kvFilters...)
-
-	if err != nil {
-		return nil, fmt.Errorf("Could not build filters: %+v", err)
-	}
-
-	return b.Query(query), nil
 }
 
 func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
