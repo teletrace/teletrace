@@ -18,6 +18,10 @@ func SummarizeResponseError(res *esapi.Response) error {
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return fmt.Errorf("error parsing the response body: %s", err)
 	} else {
-		return errors.ESErrorFromHttpResponse(res.Status(), body)
+		esError, err := errors.ESErrorFromHttpResponse(res.Status(), body)
+		if err != nil {
+			return err
+		}
+		return esError
 	}
 }

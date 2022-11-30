@@ -117,7 +117,11 @@ func decodeResponse(res *http.Response) (map[string]any, error) {
 	}
 
 	if res.StatusCode >= 400 {
-		return nil, errors.ESErrorFromHttpResponse(res.Status, body)
+		esError, err := errors.ESErrorFromHttpResponse(res.Status, body)
+		if err != nil {
+			return nil, err
+		}
+		return nil, esError
 	}
 	return body, nil
 }
