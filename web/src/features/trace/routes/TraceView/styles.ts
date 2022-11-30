@@ -11,4 +11,9 @@ export const styles = {
   graphSpanDetailsContainer: {
     overflow: "auto",
   },
+  timelineWrapper: {
+    flex: "0 0 25%",
+    minHeight: "250px",
+    overflow: "auto",
+  },
 };
