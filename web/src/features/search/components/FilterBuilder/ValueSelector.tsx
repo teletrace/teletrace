@@ -79,6 +79,7 @@ export const ValueSelector = ({
       ) || []
     );
   };
+
   return (
     <>
       <FormControl required sx={styles.valueSelector}>
@@ -96,9 +97,10 @@ export const ValueSelector = ({
             getOptionLabel={(option) => option.value.toString()}
             renderInput={(params) => (
               <TextField
+                {...params}
                 error={error}
                 helperText={errorHelperText}
-                {...params}
+                sx={styles.valueInput}
               />
             )}
             renderOption={(props, option) => (
