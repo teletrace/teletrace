@@ -20,6 +20,15 @@ pull_request_rules:
     conditions:
       - base=main
       - label=merge when ready
+    actions:
+      queue:
+        name: default
+        priority: medium
+
+  - name: automatic merge PRs with multiple reviewers approvals
+    conditions:
+      - base=main
+      - label=merge when approved by all
       - "#review-requested=0"
     actions:
       queue:
