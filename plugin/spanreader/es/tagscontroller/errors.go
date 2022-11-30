@@ -3,6 +3,7 @@ package tagscontroller
 import (
 	"encoding/json"
 	"fmt"
+	"oss-tracing/plugin/spanreader/es/errors"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
@@ -17,10 +18,6 @@ func SummarizeResponseError(res *esapi.Response) error {
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return fmt.Errorf("error parsing the response body: %s", err)
 	} else {
-		status := res.Status()
-		errorType := body["error"].(map[string]any)["type"]
-		errorReason := body["error"].(map[string]any)["reason"]
-		return fmt.Errorf("error response - status=[%s], type=%v, reason: %v",
-			status, errorType, errorReason)
+		return errors.ESErrorFromHttpResponse(res.Status(), body)
 	}
 }

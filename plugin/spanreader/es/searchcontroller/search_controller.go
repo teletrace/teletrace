@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
@@ -49,7 +50,14 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 	body, err := decodeResponse(res)
 
 	if err != nil {
-		return nil, fmt.Errorf("Could not decode http response: %+v", err)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return &spansquery.SearchResponse{}, nil
+			}
+		default:
+			return nil, fmt.Errorf("could not search spans: %+v", err)
+		}
 	}
 
 	searchResp, err := parseSpansResponse(body)
@@ -109,7 +117,7 @@ func decodeResponse(res *http.Response) (map[string]any, error) {
 	}
 
 	if res.StatusCode >= 400 {
-		return nil, fmt.Errorf("Could not search spans, got status: %+v", res.StatusCode)
+		return nil, errors.ESErrorFromHttpResponse(res.Status, body)
 	}
 	return body, nil
 }
