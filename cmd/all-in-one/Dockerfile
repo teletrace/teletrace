@@ -4,6 +4,7 @@ WORKDIR /app
 
 # COPY All things inside the project and build
 COPY . .
+RUN apk add build-base
 RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /app/build/bin ./cmd/all-in-one
 
 
