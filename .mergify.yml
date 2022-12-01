@@ -71,6 +71,7 @@ pull_request_rules:
           ## Merge instructions
           - Do NOT use the native GitHub merge button
           - Add the `merge when ready` label to automatically merge the PR once it passes code-review and required checks
+          - Add the `merge when all approved` label to automatically merge the PR once all requested reviewers approved and it passes required checks
           - Add the `urgent priority` label to move the PR up to the top of the merge queue (urgent PRs only)
 
           ### Useful info
