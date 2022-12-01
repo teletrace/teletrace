@@ -75,11 +75,11 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 	}
 
 	builder = buildSort(builder, r.Sort...)
-	//if r.Metadata != nil && r.Metadata.NextToken != "" {
-	//	sortResults := types.SortResults{string(r.Metadata.NextToken)}
-	//	sortResultsBuilder := types.NewSortResultsBuilder().SortResults(sortResults)
-	//	builder = builder.SearchAfter(sortResultsBuilder)
-	//}
+	if r.Metadata != nil && r.Metadata.NextToken != "" {
+		sortResults := types.SortResults{string(r.Metadata.NextToken)}
+		sortResultsBuilder := types.NewSortResultsBuilder().SortResults(sortResults)
+		builder = builder.SearchAfter(sortResultsBuilder)
+	}
 
 	builder = builder.Size(200) // Where to get this number from?
 
