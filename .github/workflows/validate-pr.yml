@@ -23,7 +23,7 @@ jobs:
       - name: install license-header-checker
         run: curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
       - name: run license check
-        run: ./bin/license-header-checker -v -r -a -i node_modules $GITHUB_WORKSPACE/.github/license_header.txt . go ts js css && [[ -z `git status -s` ]]
+        run: ./bin/license-header-checker -v -r -a -i node_modules $GITHUB_WORKSPACE/.github/license_header.txt . go ts tsx js css && [[ -z `git status -s` ]]
 
   pre-commit:
     name: Validate pre-commit hooks
