@@ -10,7 +10,7 @@ export interface PublicRouteProps {
 
 export const publicRoutes: PublicRouteProps[] = [
   {
-    path: "/search",
+    path: "/",
     element: <SpanSearch />,
   },
   {
