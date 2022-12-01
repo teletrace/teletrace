@@ -89,7 +89,7 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
 	DIRECTION := map[bool]sortorder.SortOrder{true: sortorder.Asc, false: sortorder.Desc}
 
-	var sorts []types.SortCombinations
+	sorts := []types.SortCombinations{}
 	for _, _s := range s {
 		sorts = append(sorts, types.NewSortCombinationsBuilder().
 			Field(types.Field(_s.Field)).
@@ -124,8 +124,7 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 
 	hits := body["hits"].(map[string]any)["hits"].([]any)
 
-	var spans []*internalspan.InternalSpan
-
+	spans := []*internalspan.InternalSpan{}
 	for _, h := range hits {
 		hit := h.(map[string]any)["_source"].(map[string]any)
 		var s internalspan.InternalSpan
@@ -151,19 +150,21 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 }
 
 func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
-	sort := hits[len(hits)-1].(map[string]any)["sort"].([]any)
-	if len(sort) > 0 {
-		if len(sort) > 1 {
-			return fmt.Errorf(
-				"expected a single sort field, but found: %v", len(sort))
-		}
+	if sort := hits[len(hits)-1].(map[string]any)["sort"]; sort != nil {
+		sort := sort.([]any)
+		if len(sort) > 0 {
+			if len(sort) > 1 {
+				return fmt.Errorf(
+					"expected a single sort field, but found: %v", len(sort))
+			}
 
-		switch sortField := sort[0].(type) {
-		case string:
-			metadata.NextToken = spansquery.ContinuationToken(sortField)
-		default:
-			return fmt.Errorf(
-				"expected a sort field of type string, but found: %v", sortField)
+			switch sortField := sort[0].(type) {
+			case string:
+				metadata.NextToken = spansquery.ContinuationToken(sortField)
+			default:
+				return fmt.Errorf(
+					"expected a sort field of type string, but found: %v", sortField)
+			}
 		}
 	}
 
