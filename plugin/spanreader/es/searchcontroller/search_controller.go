@@ -75,6 +75,11 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 	}
 
 	builder = buildSort(builder, r.Sort...)
+	if r.Metadata != nil && r.Metadata.NextToken != "" {
+		sortResults := types.SortResults{string(r.Metadata.NextToken)}
+		sortResultsBuilder := types.NewSortResultsBuilder().SortResults(sortResults)
+		builder = builder.SearchAfter(sortResultsBuilder)
+	}
 
 	builder = builder.Size(200) // Where to get this number from?
 
@@ -84,7 +89,7 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
 	DIRECTION := map[bool]sortorder.SortOrder{true: sortorder.Asc, false: sortorder.Desc}
 
-	sorts := []types.SortCombinations{}
+	var sorts []types.SortCombinations
 	for _, _s := range s {
 		sorts = append(sorts, types.NewSortCombinationsBuilder().
 			Field(types.Field(_s.Field)).
@@ -119,7 +124,7 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 
 	hits := body["hits"].(map[string]any)["hits"].([]any)
 
-	spans := []*internalspan.InternalSpan{}
+	var spans []*internalspan.InternalSpan
 
 	for _, h := range hits {
 		hit := h.(map[string]any)["_source"].(map[string]any)
@@ -131,5 +136,36 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 		spans = append(spans, &s)
 	}
 
-	return &spansquery.SearchResponse{Spans: spans}, nil
+	var metadata *spansquery.Metadata
+	if len(hits) > 0 {
+		metadata = &spansquery.Metadata{}
+		if err := extractNextToken(hits, metadata); err != nil {
+			return nil, err
+		}
+	}
+
+	return &spansquery.SearchResponse{
+		Spans:    spans,
+		Metadata: metadata,
+	}, nil
+}
+
+func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
+	sort := hits[len(hits)-1].(map[string]any)["sort"].([]any)
+	if len(sort) > 0 {
+		if len(sort) > 1 {
+			return fmt.Errorf(
+				"expected a single sort field, but found: %v", len(sort))
+		}
+
+		switch sortField := sort[0].(type) {
+		case string:
+			metadata.NextToken = spansquery.ContinuationToken(sortField)
+		default:
+			return fmt.Errorf(
+				"expected a sort field of type string, but found: %v", sortField)
+		}
+	}
+
+	return nil
 }
