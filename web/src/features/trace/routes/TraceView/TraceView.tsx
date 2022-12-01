@@ -8,7 +8,7 @@ import { Head } from "@/components/Head";
 import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
 import { TraceGraph } from "../../components/TraceGraph";
-import { GraphNode } from "../../components/TraceGraph/Graph/types";
+import { GraphNode } from "../../components/TraceGraph/types";
 import { TraceTimeline } from "../../components/TraceTimeline";
 import { styles } from "./styles";
 
