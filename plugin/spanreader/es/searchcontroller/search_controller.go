@@ -91,14 +91,11 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBu
 
 	var sorts []types.SortCombinations
 	for _, _s := range s {
-		// Converting the field into an Elasticsearch keyword which offers better performance
-		fieldAsKeyword := fmt.Sprintf("%s.keyword", _s.Field)
-
 		sorts = append(sorts, types.NewSortCombinationsBuilder().
-			Field(types.Field(fieldAsKeyword)).
+			Field(types.Field(_s.Field)).
 			SortOptions(types.NewSortOptionsBuilder().
 				SortOptions(map[types.Field]*types.FieldSortBuilder{
-					types.Field(fieldAsKeyword): types.NewFieldSortBuilder().Order(DIRECTION[_s.Ascending]),
+					types.Field(_s.Field): types.NewFieldSortBuilder().Order(DIRECTION[_s.Ascending]),
 				}),
 			).
 			Build(),
