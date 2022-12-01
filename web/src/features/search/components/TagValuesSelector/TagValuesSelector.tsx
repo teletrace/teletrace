@@ -27,15 +27,15 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
 
-import { useTagValues } from "../../api/tagValues";
+import { useTagValuesWithAll } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
-import { TagValue, TagValuesRequest } from "../../types/tagValues";
+import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
@@ -61,53 +61,19 @@ export const TagValuesSelector = ({
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
 
-  const timeframeTagValuesRequest: TagValuesRequest = {
-    filters: filters,
-    timeframe: timeframe,
-  };
-  const retentionTagValuesRequest: TagValuesRequest = {
-    filters: [],
-  };
-  const {
-    data: currentTagValues,
-    isFetching: isFetchingCurrent,
-    isError: isErrorCurrent,
-  } = useTagValues(tag, timeframeTagValuesRequest);
-
-  const {
-    data: allTagValues,
-    isFetching: isFetchingAllValues,
-    isError: isErrorAllValues,
-  } = useTagValues(tag, retentionTagValuesRequest);
-
   const clearTags = () => onChange?.([]);
-
-  const currentTagOptions =
-    currentTagValues?.pages
-      .flatMap((page) => page.values)
-      ?.reduce((currentTagsMap: Record<string, TagValue>, currentTag) => {
-        if (currentTag) {
-          currentTagsMap[currentTag.value] = currentTag;
-        }
-        return currentTagsMap;
-      }, {}) || {};
-
-  const tagOptions = allTagValues?.pages
-    .flatMap((page) => page.values)
-    ?.filter((tag) => tag?.value.toString().includes(search))
-    .map(
-      (tag) => currentTagOptions[tag.value] || { value: tag.value, count: 0 }
-    )
-    .sort((tagA, tagB) => {
-      if (tagB.count === tagA.count) {
-        return tagA.value >= tagB.value ? 1 : -1;
-      }
-      return tagB.count - tagA.count;
-    })
-    .map((tag) => ({
+  const tagSearchFilter  : SearchFilter = { keyValueFilter: { key: tag, operator: 'contains' ,value: search } } 
+  const tagFilters : Array<SearchFilter> = useMemo(() => search ? [...filters , tagSearchFilter] : filters,
+  [filters, search]
+  )
+  const { data, isError, isFetching } = useTagValuesWithAll(tag, timeframe, tagFilters)
+  const tagOptions = data
+  ?.filter((tag) => tag?.value.toString().includes(search))
+  .map((tag) => ({
       value: tag.value,
       label: <CheckboxListLabel key={tag.value} tag={tag} render={render} />,
     }));
+
 
   return (
     <div>
@@ -119,7 +85,7 @@ export const TagValuesSelector = ({
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <div>{title}</div>
-              {(isFetchingCurrent || isFetchingAllValues) && (
+              {(isFetching) && (
                 <CircularProgress size="1rem" />
               )}
             </Stack>
@@ -134,17 +100,17 @@ export const TagValuesSelector = ({
         </Stack>
 
         <AccordionDetails>
-          {isErrorCurrent || isErrorAllValues ? (
+          {isError ? (
             <Alert severity="error">Failed loading tag values</Alert>
           ) : (
             <Fragment>
-              {searchable && !!currentTagValues && (
+              {searchable && !!data && (
                 <SearchField value={search} onChange={setSearch} />
               )}
 
               <CheckboxList
                 value={value}
-                loading={!currentTagValues}
+                loading={false}
                 options={tagOptions || []}
                 onChange={onChange}
               />

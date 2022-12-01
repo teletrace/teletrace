@@ -24,7 +24,6 @@ export type TagValue = {
 export type TagValuesRequest = {
   filters: SearchFilter[];
   timeframe?: Timeframe;
-  metadata?: { nextToken: string };
 };
 
 export type TagValuesResponse = {

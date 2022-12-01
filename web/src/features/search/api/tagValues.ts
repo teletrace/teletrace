@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
 
-import { TagValuesRequest, TagValuesResponse } from "../types/tagValues";
+import { SearchFilter, Timeframe } from "../types/common";
+import { TagValue, TagValuesRequest, TagValuesResponse } from "../types/tagValues";
 
 type FetchTagValuesParams = {
   tag: string;
@@ -36,9 +37,7 @@ type FetchTagValuesParams = {
 export const fetchTagValues = ({
   tag,
   tagValuesRequest,
-  nextToken,
 }: FetchTagValuesParams): Promise<TagValuesResponse> => {
-  tagValuesRequest.metadata = { nextToken: nextToken };
   return axiosClient.post(`/v1/tags/${tag}`, tagValuesRequest);
 };
 
@@ -52,7 +51,7 @@ export const useTagValues = (
   tag: string,
   tagValuesRequest: TagValuesRequest
 ) => {
-  return useInfiniteQuery({
+  return useQuery({
     queryKey: [
       "tagValues",
       tag,
@@ -65,4 +64,50 @@ export const useTagValues = (
       fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
   });
+};
+
+const mergeTagValues = (currentTagValues?: Array<TagValue> , allTagValues?: Array<TagValue>) => {
+  if (currentTagValues === undefined || allTagValues === undefined){
+    return undefined
+  }
+  const tagValuesMap : Record<string, TagValue> = {}
+  for (const {value} of allTagValues) {
+    tagValuesMap[value] = {value: value, count: 0}
+  }
+  for (const {value, count } of currentTagValues) {
+    tagValuesMap[value] = {value: value, count: count}
+  }
+
+
+  return Object.values(tagValuesMap)
+    .sort((tagA, tagB) => {
+      if (tagB.count === tagA.count) {
+        return tagA.value >= tagB.value ? 1 : -1;
+      }
+      return tagB.count - tagA.count;
+    })
+}
+
+export const useTagValuesWithAll = (
+  tag: string,
+  timeframe: Timeframe,
+  filters: SearchFilter[],
+) => {
+  const currentValuesRequest : TagValuesRequest = {timeframe: timeframe, filters: filters}
+  const allValuesRequest : TagValuesRequest = {filters: []}
+  const {
+    data: currentTagValues,
+    isFetching: isFetchingCurrent,
+    isError: isErrorCurrent,
+  } = useTagValues(tag, currentValuesRequest)
+  const {
+    data: allTagValues,
+    isFetching: isFetchingAllValues,
+    isError: isErrorAllValues,
+  } = useTagValues(tag, allValuesRequest)
+  // const currentTagValues = currentTagPages?.pages.flatMap((page) => page.values)
+  // const allTagValues = allTagPages?.pages.flatMap((page) => page.values)
+  return {isFetching: isFetchingAllValues || isFetchingCurrent,
+          isError: isErrorAllValues || isErrorCurrent,
+          data: mergeTagValues(currentTagValues?.values || [], allTagValues?.values) || []}
 };

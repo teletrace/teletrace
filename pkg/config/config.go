@@ -31,7 +31,7 @@ const (
 	debugDefault = true
 
 	apiPortEnvName = "API_PORT"
-	apiPortDefault = 8080
+	apiPortDefault = 8880
 
 	esEndpointEnvName = "ES_ENDPOINT"
 	esEndpointDefault = "http://0.0.0.0:9200"
