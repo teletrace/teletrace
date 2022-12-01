@@ -15,6 +15,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  license-header:
+    name: Validate License Header
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: install license-header-checker
+        run: curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
+      - name: run license check
+        run: ./bin/license-header-checker -v -r -a -i node_modules $GITHUB_WORKSPACE/.github/license_header.txt . go ts && [[ -z `git status -s` ]]
+
   pre-commit:
     name: Validate pre-commit hooks
     runs-on: ubuntu-latest
