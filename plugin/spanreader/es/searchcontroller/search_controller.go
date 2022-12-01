@@ -139,7 +139,7 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 	var metadata *spansquery.Metadata
 	if len(hits) > 0 {
 		metadata = &spansquery.Metadata{}
-		if err := extractPaginationToken(hits, metadata); err != nil {
+		if err := extractNextToken(hits, metadata); err != nil {
 			return nil, err
 		}
 	}
@@ -150,7 +150,7 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 	}, nil
 }
 
-func extractPaginationToken(hits []any, metadata *spansquery.Metadata) error {
+func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
 	sort := hits[len(hits)-1].(map[string]any)["sort"].([]any)
 	if len(sort) > 0 {
 		if len(sort) > 1 {
