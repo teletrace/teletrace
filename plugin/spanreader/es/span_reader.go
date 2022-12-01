@@ -12,6 +12,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const spanIdField = "span.spanId"
+
 type spanReader struct {
 	cfg              ElasticConfig
 	logger           *zap.Logger
@@ -21,6 +23,8 @@ type spanReader struct {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	sr.optimizeSort(r.Sort)
+
 	res, err := sr.searchController.Search(ctx, r)
 
 	if err != nil {
@@ -28,6 +32,15 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 	}
 
 	return res, nil
+}
+
+func (sr *spanReader) optimizeSort(s []spansquery.Sort) {
+	for i, sort := range s {
+		if sort.Field == spanIdField {
+			// Mapping span id field to Elasticsearch 'keyword' which offers better performance
+			s[i].Field = spansquery.SortField(fmt.Sprintf("%s.keyword", sort.Field))
+		}
+	}
 }
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
