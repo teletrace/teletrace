@@ -70,7 +70,7 @@ func getSearchResponseMock() (map[string]any, error) {
                       "TraceState":"state"
                    }
                 },
-		 		"sort": ["12345678"]
+				"sort": ["12345678"]
              }
           ],
           "max_score":1,
