@@ -1,7 +1,7 @@
 ---
-name: "✨ New Epic"
+name: "📚️ New Epic"
 about: Suggest an Epic
-title: "✨"
+title: "📚️ "
 labels: "Type: Epic"
 assignees: ""
 ---
