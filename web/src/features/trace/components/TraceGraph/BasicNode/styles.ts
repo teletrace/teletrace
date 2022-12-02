@@ -22,9 +22,17 @@ export const styles = {
     borderRadius: 8,
     marginBottom: "auto",
   },
-  nodeText: {
+  nodeTextContainer: {
+    textAlign: "center",
+  },
+  nodeName: {
+    color: "#E9EAF1",
     fontWeight: 600,
     fontSize: 16,
-    textAlign: "center",
+  },
+  nodeService: {
+    color: "#B6B7BE",
+    fontWeight: 500,
+    fontSize: 14,
   },
 };
