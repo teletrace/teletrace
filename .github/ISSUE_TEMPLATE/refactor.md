@@ -1,8 +1,8 @@
 ---
-name: "✨ New Feature"
-about: Suggest an idea
-title: "✨"
-labels: "Type: Feature"
+name: "♻️ Refactor"
+about: "Something that needs improving while not changing functionality"
+title: "♻️"
+labels: "Type: Refactor"
 assignees: ""
 ---
 
@@ -18,11 +18,11 @@ Hi
 
 ### Pain
 
-<!-- A clear and concise description of what the problem is. Ex. I'm always frustrated when [...] -->
+<!-- Explain the pain you are experiencing -->
 
-### Suggested Solution
+### What code could be improved?
 
-<!-- A clear and concise description of what you want to happen. -->
+<!-- Add a link to the area/file that needs refactoring -->
 
 ### Tasks
 

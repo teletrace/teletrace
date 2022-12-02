@@ -1,8 +1,8 @@
 ---
-name: "✨ New Feature"
-about: Suggest an idea
-title: "✨"
-labels: "Type: Feature"
+name: "👷 DevOps"
+about: CI/CD and other DevOps concerns e.g. Updating the build, code analysis, test, deploy, application monitoring etc.
+title: "👷"
+labels: "Type: DevOps"
 assignees: ""
 ---
 
@@ -18,11 +18,11 @@ Hi
 
 ### Pain
 
-<!-- A clear and concise description of what the problem is. Ex. I'm always frustrated when [...] -->
+<!-- Explain the pain you are experiencing -->
 
 ### Suggested Solution
 
-<!-- A clear and concise description of what you want to happen. -->
+<!-- Describe the solution you'd like -->
 
 ### Tasks
 
