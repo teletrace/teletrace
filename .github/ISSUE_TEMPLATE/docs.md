@@ -16,26 +16,26 @@ Cc:
 
 Hi
 
-### Pain
+## Pain
 
 <!-- Explain the pain you are experiencing -->
 
-### Suggested Documentation
+## Suggested Documentation
 
 <!-- Short summary of the documentation that should be added -->
 
-### Tasks
+## Tasks
 
 <!--Add GitHub tasks-->
 
 - [ ] ...
 - [ ] ...
 
-### More Information
+## More Information
 
 <!-- Add any other context here -->
 
-### Screenshots
+## Screenshots
 
 <!-- If applicable, add screenshots to help explain your problem. -->
 
