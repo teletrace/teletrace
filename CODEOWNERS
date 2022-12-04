@@ -1,0 +1,27 @@
+# by default
+@epsagon/lupa-developers
+
+# specific files
+README.md  @epsagon/lupa-managers
+LICENSE.md  @haimrait
+CONTRIBUTING.md  @epsagon/lupa-managers
+CODE_OF_CONDUCT.md  @haimrait
+.github/pull_request_template.md @epsagon/lupa-managers
+
+# Specific directories
+.github/ISSUE_TEMPLATE/ @epsagon/lupa-managers
+website/ @epsagon/lupa-managers
+
+# Sonic responsibilities
+.github/change-issue-status/ @epsagon/team-sonic
+.github/workflows/ @epsagon/team-sonic
+model/ @epsagon/team-sonic
+plugin/spanreader @epsagon/team-sonic
+
+# Zola responsibilities
+cmd/ @epsagon/team-zola
+deploy/ @epsagon/team-zola
+.goreleaser.yml @epsagon/team-zola
+
+# Specific people
+lupa-otelcol/ @ophiryael @roybh1
