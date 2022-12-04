@@ -88,7 +88,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
 
   const tableWrapper = tableWrapperRef.current;
   if (tableWrapper != undefined) {
-        const scrollbarExists =
+    const scrollbarExists =
       tableWrapper.scrollHeight > tableWrapper.clientHeight;
     if (!scrollbarExists) fetchNextPage();
   }
