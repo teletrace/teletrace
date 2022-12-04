@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package searchcontroller
 
 import (
@@ -69,7 +85,8 @@ func getSearchResponseMock() (map[string]any, error) {
                       "TraceId":"1234567887654321",
                       "TraceState":"state"
                    }
-                }
+                },
+				"sort": ["12345678"]
              }
           ],
           "max_score":1,
@@ -113,7 +130,10 @@ func TestParseSpansResponse(t *testing.T) {
 	//nolint:ineffassign
 	spans, err := parseSpansResponse(res)
 
+	expectedNextToken := "12345678"
 	assert.Len(t, spans.Spans, 1)
+	assert.NotNil(t, spans.Metadata)
+	assert.Equal(t, spans.Metadata.NextToken, spansquery.ContinuationToken(expectedNextToken))
 	assert.Nil(t, err)
 }
 
@@ -129,4 +149,22 @@ func TestBuildSearchRequest_NoFilters(t *testing.T) {
 	_, err = buildSearchRequest(searchReq)
 
 	assert.Nil(t, err)
+}
+
+func TestBuildSearchRequest_WithNextToken(t *testing.T) {
+	var err error
+
+	//nolint:ineffassign
+	searchReq, err := getSearchRequestMock()
+	spanId := "12345678"
+	searchReq.Metadata = &spansquery.Metadata{NextToken: spansquery.ContinuationToken(spanId)}
+
+	assert.Nil(t, err)
+
+	//nolint:ineffassign
+	esSearchRequest, err := buildSearchRequest(searchReq)
+
+	searchAfter := *esSearchRequest.SearchAfter
+	assert.Nil(t, err)
+	assert.Equal(t, searchAfter[0], spanId)
 }

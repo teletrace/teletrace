@@ -1,10 +1,26 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { colors } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+
 import "@fontsource/inter/300.css";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
-
 import {
   errorActionColors,
   primaryActionColors,
@@ -53,14 +69,16 @@ theme = createTheme(theme, {
       paper: theme.palette.grey.A100,
     },
   },
+  typography: {
+    fontFamily: ['"Inter"', "sans-serif"].join(","),
+  },
 });
 
 theme = createTheme(theme, {
   typography: {
-    fontFamily: ['"Inter"', "sans-serif"].join(","),
     fontSize: 12,
     h1: {
-      fontFamily: "Inter, sans-serif",
+      fontFamily: theme.typography.fontFamily,
       fontSize: "96px",
       fontStyle: "normal",
       fontWeight: 300,
@@ -68,6 +86,7 @@ theme = createTheme(theme, {
       lineHeight: "116px",
     },
     h2: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "60px",
       fontStyle: "normal",
       fontWeight: 300,
@@ -75,6 +94,7 @@ theme = createTheme(theme, {
       lineHeight: "73px",
     },
     h3: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "48px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -82,6 +102,7 @@ theme = createTheme(theme, {
       lineHeight: "58px",
     },
     h4: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "34px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -89,6 +110,7 @@ theme = createTheme(theme, {
       lineHeight: "41px",
     },
     h5: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "24px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -96,7 +118,7 @@ theme = createTheme(theme, {
       lineHeight: "29px",
     },
     h6: {
-      fontFamily: "Inter, sans-serif",
+      fontFamily: theme.typography.fontFamily,
       fontSize: "20px",
       fontStyle: "normal",
       fontWeight: 500,
@@ -104,6 +126,7 @@ theme = createTheme(theme, {
       lineHeight: "24px",
     },
     subtitle1: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "16px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -111,6 +134,7 @@ theme = createTheme(theme, {
       lineHeight: "19px",
     },
     subtitle2: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: 500,
@@ -118,6 +142,7 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     body1: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: "normal",
@@ -125,6 +150,7 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     body2: {
+      fontFamily: theme.typography.fontFamily,
       fontSize: "14px",
       fontStyle: "normal",
       fontWeight: "bold",
@@ -132,6 +158,7 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     button: {
+      fontFamily: theme.typography.fontFamily,
       alignItems: "center",
       display: "flex",
       fontSize: "14px",
@@ -140,13 +167,14 @@ theme = createTheme(theme, {
       lineHeight: "20px",
     },
     caption: {
+      fontFamily: theme.typography.fontFamily,
       fontStyle: "normal",
       fontWeight: 500,
       letterSpacing: "0.4px",
       lineHeight: "15px",
     },
     overline: {
-      fontFamily: "Inter, sans-serif",
+      fontFamily: theme.typography.fontFamily,
       fontSize: "10px",
       fontStyle: "normal",
       fontWeight: 500,
@@ -155,6 +183,19 @@ theme = createTheme(theme, {
     },
   },
   components: {
+    MuiCssBaseline: {
+      defaultProps: {
+        enableColorScheme: "true",
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        paper: {
+          display: "inline-block",
+          minWidth: "fill-available",
+        },
+      },
+    },
     MuiAccordion: {
       styleOverrides: {
         root: {
@@ -308,6 +349,10 @@ theme = createTheme(theme, {
           fontSize: "14px",
           fontWeight: "normal",
           margin: "0px 4px",
+          textOverflow: "ellipsis",
+        },
+        inputSizeSmall: {
+          position: "relative",
         },
         notchedOutline: {
           border: `1px solid ${theme.palette.grey[400]}`,
@@ -326,6 +371,17 @@ theme = createTheme(theme, {
             borderColor: primaryActionColors.primaryHovered,
           },
           borderColor: primaryActionColors.primaryHovered,
+        },
+        sizeSmall: {
+          height: "32px",
+          alignContent: "center",
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        sizeSmall: {
+          lineHeight: "15px",
         },
       },
     },
@@ -379,6 +435,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         paper: {
           backgroundColor: theme.palette.grey[800],
+          marginTop: "4px",
         },
       },
     },
@@ -441,10 +498,57 @@ theme = createTheme(theme, {
           "&.MuiChip-colorDefault": {
             borderColor: secondaryActionColors.secondaryHovered,
           },
-          //  mui oulined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
+          //  mui outlined clickable is defined using two classes, .MuiChip-clickable.MuiChip-outlined
           //  so in order to override default hover we need to use two `&` for the specificity to match
           "&&:hover": {
             backgroundColor: secondaryActionColors.secondaryDisabled,
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        size: "small",
+      },
+    },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          "&.MuiTableHead-root": {
+            opacity: 1,
+          },
+        },
+      },
+    },
+    MuiTableRow: {
+      styleOverrides: {
+        root: {
+          "&.MuiTableRow-head": {
+            backgroundColor: theme.palette.grey[800],
+          },
+          "&.MuiTableRow-hover": {
+            cursor: "pointer",
+          },
+        },
+      },
+    },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          "&.MuiTableCell-head": {
+            color: theme.palette.grey[300],
+            fontWeight: 500,
+            "& .Mui-TableHeadCell-Content": {
+              borderRight: `2px solid ${theme.palette.grey[500]}`,
+            },
+            ":last-of-type": {
+              "& .Mui-TableHeadCell-Content": {
+                borderRight: "unset",
+              },
+            },
+          },
+          "&.MuiTableCell-body": {
+            fontWeight: "normal",
           },
         },
       },

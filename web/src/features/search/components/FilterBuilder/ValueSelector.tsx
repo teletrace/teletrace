@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import {
   Autocomplete,
   FormLabel,
@@ -11,12 +27,17 @@ import FormControl from "@mui/material/FormControl";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValues } from "../../api/tagValues";
-import { FilterValueTypes, ValueInputMode } from "../../types/common";
+import {
+  FilterValueTypes,
+  Timeframe,
+  ValueInputMode,
+} from "../../types/common";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
+  timeframe: Timeframe;
   query?: TagValuesRequest;
   value: FilterValueTypes;
   valueInputMode: ValueInputMode;
@@ -24,30 +45,32 @@ export type ValueSelectorProps = {
   error: boolean;
 };
 
+const getOptions = (tag: string, timeframe: Timeframe) => {
+  if (!tag) {
+    return { isLoading: false, tagOptions: [] };
+  }
+  const tagValuesRequest = {
+    filters: [],
+    timeframe: timeframe,
+  } as TagValuesRequest;
+  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
+  const tagOptions =
+    tagValues?.pages
+      .flatMap((page) => page.values)
+      ?.filter((tag) => tag?.value)
+      .sort((a, b) => b.count - a.count) || [];
+  return { isLoading, tagOptions };
+};
+
 export const ValueSelector = ({
   tag,
-  query,
+  timeframe,
   value,
   valueInputMode,
   onChange,
   error,
 }: ValueSelectorProps) => {
-  const tagValuesRequest =
-    query ??
-    ({
-      filters: [],
-      timeframe: {
-        startTimeUnixNanoSec: 0,
-        endTimeUnixNanoSec: new Date().valueOf(),
-      },
-    } as TagValuesRequest);
-
-  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
-
-  const tagOptions = tagValues?.pages
-    .flatMap((page) => page.values)
-    .sort((a, b) => b.count - a.count);
-
+  const { isLoading, tagOptions } = getOptions(tag, timeframe);
   const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (
@@ -66,8 +89,9 @@ export const ValueSelector = ({
   const getSelectedValues = () => {
     const valueArray = value instanceof Array ? value : [value.toString()];
     return (
-      tagOptions?.filter((tagOption) =>
-        valueArray.includes(tagOption.value.toString())
+      tagOptions?.filter(
+        (tagOption) =>
+          tagOption && valueArray.includes(tagOption?.value.toString())
       ) || []
     );
   };
@@ -79,6 +103,7 @@ export const ValueSelector = ({
         {valueInputMode === "select" ? (
           <Autocomplete
             multiple
+            openOnFocus
             size="small"
             loading={isLoading}
             disableCloseOnSelect
@@ -88,9 +113,10 @@ export const ValueSelector = ({
             getOptionLabel={(option) => option.value.toString()}
             renderInput={(params) => (
               <TextField
+                {...params}
                 error={error}
                 helperText={errorHelperText}
-                {...params}
+                sx={styles.valueInput}
               />
             )}
             renderOption={(props, option) => (

@@ -1,4 +1,20 @@
-import { CircularProgress, Paper, Stack } from "@mui/material";
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Box, CircularProgress, Stack } from "@mui/material";
 import {
   MouseEvent as ReactMouseEvent,
   memo,
@@ -15,10 +31,10 @@ import {
   useNodesState,
 } from "reactflow";
 
-import { BasicEdge } from "./Graph/BasicEdge";
-import { BasicNode } from "./Graph/BasicNode";
-import { EdgeData, NodeData, TraceData, TraceGraphParams } from "./Graph/types";
-import { createGraphLayout, spansToGraphData } from "./Graph/utils/layout";
+import { BasicEdge } from "./BasicEdge";
+import { BasicNode } from "./BasicNode";
+import { EdgeData, NodeData, TraceData, TraceGraphProps } from "./types";
+import { createGraphLayout, spansToGraphData } from "./utils/layout";
 import {
   applyHoverEdgeStyle,
   applyHoveredNodeStyle,
@@ -26,14 +42,18 @@ import {
   applyNormalNodeStyle,
   applySelectedEdgeStyle,
   applySelectedNodeStyle,
-} from "./Graph/utils/utils";
+} from "./utils/utils";
 
 import "reactflow/dist/style.css";
 
 const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
-const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
+const TraceGraphImpl = ({
+  setSelectedNode,
+  spans,
+  initiallyFocusedSpanId,
+}: TraceGraphProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
@@ -59,13 +79,34 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
     setEdges(traceData.edges);
   }, [traceData]);
 
-  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    setSelectedNode(node);
-    const connectedEdges = getConnectedEdges([node], edges);
+  useEffect(() => {
+    if (!initiallyFocusedSpanId) {
+      return;
+    }
+
+    for (const node of traceData.nodes) {
+      const isSpanWithinNode = node.data.graphNode.spans.some(
+        (span) => span.span.spanId === initiallyFocusedSpanId
+      );
+      if (isSpanWithinNode) {
+        markSelectedNode(traceData.nodes, traceData.edges, node);
+        break;
+      }
+    }
+  }, [traceData]);
+
+  const markSelectedNode = (
+    nodes: Node<NodeData>[],
+    edges: Edge<EdgeData>[],
+    selectedNode: Node<NodeData>
+  ) => {
+    setSelectedNode(selectedNode.data.graphNode);
+    const connectedEdges = getConnectedEdges([selectedNode], edges);
     setNodes(
       nodes.map((n: Node<NodeData>) =>
-        n.id === node.id ? applySelectedNodeStyle(n) : applyNormalNodeStyle(n)
+        n.id === selectedNode.id
+          ? applySelectedNodeStyle(n)
+          : applyNormalNodeStyle(n)
       )
     );
     setEdges(
@@ -75,6 +116,11 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
           : applyNormalEdgeStyle(e)
       )
     );
+  };
+
+  const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
+    event.stopPropagation();
+    markSelectedNode(nodes, edges, node);
   };
 
   const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {
@@ -115,18 +161,18 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
 
   const onPaneClick = (event: ReactMouseEvent) => {
     event.stopPropagation();
-    setSelectedNode({});
+    setSelectedNode(null);
     setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
     setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
   };
 
   return (
-    <Paper sx={{ width: "100%" }}>
+    <Box sx={{ flex: 1 }}>
       {isLoading ? (
         <Stack alignItems="center" justifyContent="center" height="100%">
           <CircularProgress />
         </Stack>
-      ) : nodes.length > 0 ? (
+      ) : (
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -143,12 +189,8 @@ const TraceGraphImpl = ({ setSelectedNode, spans }: TraceGraphParams) => {
         >
           <Controls />
         </ReactFlow>
-      ) : (
-        <Stack alignItems="center" justifyContent="center" height="100%">
-          No data to display
-        </Stack>
       )}
-    </Paper>
+    </Box>
   );
 };
 

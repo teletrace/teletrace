@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { ArrowForwardIosSharp } from "@mui/icons-material";
 import {
   Accordion,
@@ -29,6 +45,7 @@ export type TagValuesSelectorProps = {
   filters: Array<SearchFilter>;
   timeframe: Timeframe;
   onChange?: (value: Array<string | number>) => void;
+  render?: (value: string | number) => React.ReactNode;
 };
 
 export const TagValuesSelector = ({
@@ -39,6 +56,7 @@ export const TagValuesSelector = ({
   timeframe,
   searchable,
   onChange,
+  render,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
 
@@ -60,7 +78,7 @@ export const TagValuesSelector = ({
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
-      label: <CheckboxListLabel tag={tag} />,
+      label: <CheckboxListLabel tag={tag} render={render} />,
     }));
 
   return (
@@ -108,9 +126,15 @@ export const TagValuesSelector = ({
   );
 };
 
-const CheckboxListLabel = ({ tag }: { tag: TagValue }) => (
+const CheckboxListLabel = ({
+  tag,
+  render,
+}: {
+  tag: TagValue;
+  render?: (value: string | number) => React.ReactNode;
+}) => (
   <Stack direction="row" alignItems="center" justifyContent="space-between">
-    <Typography noWrap>{tag.value}</Typography>
+    <Typography noWrap>{render ? render(tag.value) : tag.value}</Typography>
     <Typography variant="button" color="GrayText">
       {formatNumber(tag.count)}
     </Typography>

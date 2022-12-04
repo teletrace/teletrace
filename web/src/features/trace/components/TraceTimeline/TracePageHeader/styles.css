@@ -1,0 +1,39 @@
+.TracePageHeader--titleRow {
+  /*align-items: center;*/
+  /*background-color: #fff;*/
+  /*display: flex;*/
+  /*padding: 5px 10px;*/
+  /*border: 1px solid #e8e8e8;*/
+
+  display: flex;
+  background-color: #2b2d32;
+  color: white;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 16px;
+  border-radius: 8px 8px 0px 0px;
+  box-shadow: 0px -1px 0px 0px #000000 inset;
+  height: 42px;
+}
+.TracePageHeader--detailToggle {
+  font-size: 2.5rem;
+  transition: transform 0.07s ease-out;
+}
+.TracePageHeader--detailToggle.is-expanded {
+  transform: rotate(90deg);
+}
+.TracePageHeader--title {
+  color: inherit;
+  flex: 1;
+  font-size: 1.7em;
+  line-height: 1em;
+  margin: 0 0 0 0.5em;
+  padding: 0.5em 0;
+}
+.TracePageHeader--title.is-collapsible {
+  margin-left: 0;
+}
+.TracePageHeader--overviewItems {
+  padding: 0.25rem 0.5rem;
+}

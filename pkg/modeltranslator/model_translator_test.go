@@ -1,8 +1,26 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package modeltranslator
 
 import (
 	"fmt"
-	v1 "oss-tracing/pkg/model/internalspan/v1"
+
+	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -76,48 +94,48 @@ func createOTLPTraces() ptrace.Traces {
 	return td
 }
 
-func createExpectedInternalSpans() []*v1.InternalSpan {
-	var spanEvents []*v1.SpanEvent
-	var spanLinks []*v1.SpanLink
+func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
+	var spanEvents []*internalspanv1.SpanEvent
+	var spanLinks []*internalspanv1.SpanLink
 	for i := 0; i < 2; i++ {
-		spanEvents = append(spanEvents, &v1.SpanEvent{
+		spanEvents = append(spanEvents, &internalspanv1.SpanEvent{
 			TimeUnixNano: 5,
 			Name:         fmt.Sprintf("[SpanEvent-%d]Name", i),
-			Attributes: v1.Attributes{
+			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[SpanEvent-%d]attribute", i),
 			},
 			DroppedAttributesCount: 6,
 		})
-		spanLinks = append(spanLinks, &v1.SpanLink{
+		spanLinks = append(spanLinks, &internalspanv1.SpanLink{
 			TraceId:    pcommon.TraceID([16]byte{4}).HexString(),
 			SpanId:     pcommon.SpanID([8]byte{5}).HexString(),
 			TraceState: fmt.Sprintf("[SpanLink-%d]TraceState", i),
-			Attributes: v1.Attributes{
+			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[SpanLink-%d]attribute", i),
 			},
 			DroppedAttributesCount: 7,
 		})
 	}
 
-	var resources []*v1.Resource
-	var scopes []*v1.InstrumentationScope
-	var spans []*v1.Span
+	var resources []*internalspanv1.Resource
+	var scopes []*internalspanv1.InstrumentationScope
+	var spans []*internalspanv1.Span
 	for i := 0; i < 2; i++ {
-		resources = append(resources, &v1.Resource{
-			Attributes: v1.Attributes{
+		resources = append(resources, &internalspanv1.Resource{
+			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[Resource-%d]attribute", i),
 			},
 			DroppedAttributesCount: 1,
 		})
-		scopes = append(scopes, &v1.InstrumentationScope{
+		scopes = append(scopes, &internalspanv1.InstrumentationScope{
 			Name:    fmt.Sprintf("[InstrumentationScope-%d]Name", i),
 			Version: fmt.Sprintf("[InstrumentationScope-%d]Version", i),
-			Attributes: v1.Attributes{
+			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[InstrumentationScope-%d]attribute", i),
 			},
 			DroppedAttributesCount: 2,
 		})
-		spans = append(spans, &v1.Span{
+		spans = append(spans, &internalspanv1.Span{
 			TraceId:           pcommon.TraceID([16]byte{1}).HexString(),
 			SpanId:            pcommon.SpanID([8]byte{2}).HexString(),
 			TraceState:        fmt.Sprintf("[Span-%d]TraceState", i),
@@ -126,7 +144,7 @@ func createExpectedInternalSpans() []*v1.InternalSpan {
 			Kind:              2, // SERVER
 			StartTimeUnixNano: 0,
 			EndTimeUnixNano:   10,
-			Attributes: v1.Attributes{
+			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[Span-%d]attribute", i),
 			},
 			DroppedAttributesCount: 3,
@@ -134,22 +152,22 @@ func createExpectedInternalSpans() []*v1.InternalSpan {
 			DroppedEventsCount:     4,
 			Links:                  spanLinks,
 			DroppedLinksCount:      5,
-			Status: &v1.SpanStatus{
+			Status: &internalspanv1.SpanStatus{
 				Code:    1, // OK
 				Message: fmt.Sprintf("[SpanStatus-%d]Message", i),
 			},
 		})
 	}
 
-	externalFields := &v1.ExternalFields{
+	externalFields := &internalspanv1.ExternalFields{
 		DurationNano: 10,
 	}
 
-	var internalSpans []*v1.InternalSpan
+	var internalSpans []*internalspanv1.InternalSpan
 	for _, resource := range resources {
 		for _, scope := range scopes {
 			for _, span := range spans {
-				internalSpans = append(internalSpans, &v1.InternalSpan{
+				internalSpans = append(internalSpans, &internalspanv1.InternalSpan{
 					Resource:       resource,
 					Scope:          scope,
 					Span:           span,

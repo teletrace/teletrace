@@ -1,4 +1,20 @@
-import { Autocomplete, Box, Stack, TextField } from "@mui/material";
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Autocomplete, Box, Stack, TextField, Typography } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { useState } from "react";
 
@@ -7,8 +23,7 @@ interface FilmOptionType {
   year: number;
 }
 
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films = [
+const topFilms = [
   { title: "The Shawshank Redemption", year: 1994 },
   { title: "The Godfather", year: 1972 },
   { title: "The Godfather: Part II", year: 1974 },
@@ -33,33 +48,38 @@ const top100Films = [
 ];
 function CustomizedAutocomplete() {
   const defaultProps = {
-    options: top100Films,
+    options: topFilms,
     getOptionLabel: (option: string | FilmOptionType) =>
       typeof option === "string" ? option : option.title,
   };
   const flatProps = {
-    options: top100Films.map((option) => option.title),
+    options: topFilms.map((option) => option.title),
   };
   const [value, setValue] = useState<FilmOptionType | null>(null);
 
   return (
     <Stack spacing={1} sx={{ width: 300 }}>
+      <Typography variant="subtitle1" gutterBottom>
+        Default AutoComplete size is small (derived from TextField)
+      </Typography>
       <Autocomplete
         {...defaultProps}
         disablePortal
         id="combo-box-demo"
-        options={top100Films}
+        options={topFilms}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Movie" />}
+        renderInput={(params) => <TextField {...params} />}
       />
       <Autocomplete
         {...defaultProps}
-        size="small"
+        size="medium"
         disablePortal
         id="combo-box-small"
-        options={top100Films}
+        options={topFilms}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Movie Small" />}
+        renderInput={(params) => (
+          <TextField {...params} size="medium" label="Movie Medium" />
+        )}
       />
       <Autocomplete
         {...defaultProps}

@@ -1,19 +1,37 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { LinearProgress } from "@mui/material";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
-  MRT_ShowHideColumnsButton as ShowHideColumnsButton,
-  MRT_ToggleDensePaddingButton as ToggleDensePaddingButton,
+  MRT_Row as Row,
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
 
-import { formatDateToTimeString } from "@/utils/format";
+import {
+  formatDateAsDateTime,
+  nanoSecToMs,
+  roundNanoToTwoDecimalMs,
+} from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
-
-const DEFAULT_SORT_FIELD = "startTime";
 
 interface SpanTableProps {
   filters?: SearchFilter[];
@@ -28,21 +46,17 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const columnSort = sorting.find(
-    (coulmnSort) => coulmnSort.id === DEFAULT_SORT_FIELD
-  );
-
   const searchRequest = {
     filters: filters,
     timeframe: timeframe,
-    sort:
-      columnSort === undefined
-        ? undefined
-        : { field: columnSort.id, ascending: !columnSort.desc },
+    sort: sorting?.map((columnSort) => ({
+      field: columnSort.id,
+      ascending: !columnSort.desc,
+    })),
     metadata: undefined,
   };
 
-  const { data, fetchNextPage, isError, isFetching, isLoading } =
+  const { data, fetchNextPage, isError, isRefetching, isFetching, isLoading } =
     useSpansQuery(searchRequest);
 
   const tableSpans =
@@ -52,10 +66,8 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           id: span.spanId,
           traceId: span.traceId,
           spanId: span.spanId,
-          startTime: formatDateToTimeString(
-            span.startTimeUnixNano / (1000 * 1000)
-          ),
-          duration: `${externalFields.duration / (1000 * 1000)} ms`,
+          startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
+          duration: `${roundNanoToTwoDecimalMs(externalFields.durationNano)}ms`,
           name: span.name,
           status: span.status.code,
           serviceName:
@@ -81,53 +93,52 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     });
   }, [fetchMoreOnBottomReached, tableWrapper]);
 
+  const onClick = (row: Row<TableSpan>) => {
+    window.open(
+      `${window.location.origin}/trace/${row.original.traceId}?spanId=${row.original.spanId}`
+    );
+  };
+
   return (
-    <MaterialReactTable
-      columns={columns}
-      data={tableSpans}
-      enablePagination={false}
-      enableRowNumbers={false}
-      enableTopToolbar={false}
-      enableColumnActions={false}
-      enableBottomToolbar={false}
-      manualFiltering
-      manualSorting
-      enableStickyHeader={true}
-      enableColumnResizing
-      renderToolbarInternalActions={({ table }) => (
-        <>
-          <ToggleDensePaddingButton table={table} />
-          <ShowHideColumnsButton table={table} />
-        </>
-      )}
-      muiToolbarAlertBannerProps={
-        isError
-          ? {
-              color: "error",
-              children: "Error loading spans",
-            }
-          : undefined
-      }
-      onColumnFiltersChange={setColumnFilters}
-      onGlobalFilterChange={setGlobalFilter}
-      onSortingChange={setSorting}
-      state={{
-        columnFilters,
-        globalFilter,
-        isLoading,
-        showAlertBanner: isError,
-        showProgressBars: isFetching,
-        sorting,
-      }}
-      virtualizerInstanceRef={virtualizerInstanceRef}
-      muiTableHeadProps={{
-        sx: styles.header,
-      }}
-      muiTableContainerProps={{
-        ref: tableWrapperRef,
-        sx: styles.container,
-      }}
-      muiTablePaperProps={{ sx: styles.paper }}
-    />
+    <div style={styles.container}>
+      {isRefetching && <LinearProgress sx={styles.progress} />}
+      <MaterialReactTable
+        columns={columns}
+        data={tableSpans}
+        enablePagination={false}
+        enableColumnActions={false}
+        enableRowNumbers={false}
+        enableTopToolbar={false}
+        enableBottomToolbar={false}
+        manualFiltering
+        manualSorting
+        enableStickyHeader={true}
+        muiToolbarAlertBannerProps={
+          isError
+            ? {
+                color: "error",
+                children: "Error loading spans",
+              }
+            : undefined
+        }
+        onColumnFiltersChange={setColumnFilters}
+        onGlobalFilterChange={setGlobalFilter}
+        onSortingChange={setSorting}
+        state={{
+          columnFilters,
+          globalFilter,
+          isLoading,
+          showAlertBanner: isError,
+          sorting,
+        }}
+        virtualizerInstanceRef={virtualizerInstanceRef}
+        muiTableContainerProps={{
+          ref: tableWrapperRef,
+          sx: styles.tableContainer,
+        }}
+        muiTablePaperProps={{ sx: styles.tablePaper }}
+        muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
+      />
+    </div>
   );
 }

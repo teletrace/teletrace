@@ -1,0 +1,113 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { ArrowForward, ArrowForwardIosSharp } from "@mui/icons-material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { useMemo } from "react";
+
+import { ResourceIcon } from "@/components/Elements/ResourceIcon";
+import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
+import {
+  formatNanoAsMsDateTime,
+  roundNanoToTwoDecimalMs,
+} from "@/utils/format";
+
+import { SpanAttributesGroup } from "../SpanAttributesGroup";
+import { styles } from "./styles";
+
+export interface SpanDetailsProps {
+  span: InternalSpan;
+  expanded: boolean;
+  onChange: (expanded: boolean) => void;
+}
+
+function getBasicAttributes(span: InternalSpan): Attributes {
+  return {
+    service_name: span.resource.attributes["service.name"],
+    name: span.span.name,
+    status: StatusCode[span.span.status.code],
+    kind: SpanKind[span.span.kind],
+    duration: `${roundNanoToTwoDecimalMs(span.externalFields.durationNano)}ms`,
+    start_time: formatNanoAsMsDateTime(span.span.startTimeUnixNano),
+    span_id: span.span.spanId,
+    trace_id: span.span.traceId,
+  };
+}
+
+export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
+  const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
+
+  const X_DIVIDER = "|";
+
+  return (
+    <Accordion
+      expanded={expanded}
+      onChange={(_, expanded) => onChange(expanded)}
+      disableGutters={true}
+      sx={styles.accordion}
+    >
+      <AccordionSummary
+        expandIcon={<ArrowForwardIosSharp sx={styles.expandArrowIcon} />}
+        sx={{
+          ...styles.accordionSummary,
+          ...(expanded && styles.expandedAccordion),
+        }}
+      >
+        <Stack sx={styles.spanFlowIconsContainer}>
+          <ResourceIcon
+            name="defaultresourceicon"
+            style={styles.spanSourceIcon}
+          />
+          <ArrowForward style={styles.spanFlowArrowIcon} />
+          <ResourceIcon
+            name="defaultresourceicon"
+            style={styles.spanDestIcon}
+          />
+        </Stack>
+        <Stack>
+          <Typography sx={styles.spanName}>{span.span.name}</Typography>
+          <Typography sx={styles.spanTimes}>
+            {basicAttributes.duration}{" "}
+            <Box component={"span"} sx={styles.spanTimesDivider}>
+              {X_DIVIDER}
+            </Box>{" "}
+            {basicAttributes.start_time}
+          </Typography>
+        </Stack>
+      </AccordionSummary>
+      <AccordionDetails sx={styles.accordionDetails}>
+        <SpanAttributesGroup
+          title="Basic"
+          attributes={basicAttributes}
+          startExpanded
+        />
+        {Object.keys(span.span.attributes).length > 0 && (
+          <SpanAttributesGroup
+            title="Attributes"
+            attributes={span.span.attributes}
+          />
+        )}
+      </AccordionDetails>
+    </Accordion>
+  );
+};

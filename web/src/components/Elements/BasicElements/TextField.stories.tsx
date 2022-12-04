@@ -1,4 +1,20 @@
-import { Box, Stack, TextField } from "@mui/material";
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Stack, TextField, Typography } from "@mui/material";
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 
 export default {
@@ -7,16 +23,17 @@ export default {
 } as ComponentMeta<typeof TextField>;
 
 const Template: ComponentStory<typeof TextField> = (args) => (
-  <TextField {...args} />
+  <Stack spacing={2} sx={{ width: "20%" }}>
+    <Typography variant="subtitle1" gutterBottom>
+      Default Text Field size is small
+    </Typography>
+    <TextField label="default textfield" {...args} />
+    <TextField size="medium" label="medium textfield" {...args} />
+  </Stack>
 );
 
 const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
-  <Box
-    component="form"
-    sx={{
-      "& .MuiTextField-root": { m: 1, width: "25ch" },
-    }}
-  >
+  <Stack spacing={2} sx={{ width: "20%" }}>
     <TextField
       id="outlined-basic"
       label="Outlined"
@@ -30,7 +47,7 @@ const BasicTemplate: ComponentStory<typeof TextField> = (args) => (
       variant="standard"
       {...args}
     />
-  </Box>
+  </Stack>
 );
 
 const TemplateFromProps: ComponentStory<typeof TextField> = (args) => (
