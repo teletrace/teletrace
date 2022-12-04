@@ -3,45 +3,46 @@ package sqlite
 import (
 	"context"
 	"fmt"
+	"go.uber.org/zap"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 )
 
-type sqliteSpanReader struct {
-	cfg    *SqliteConfig
-	client *sqliteClient
+type SqliteSpanReader struct {
+	cfg    SqliteConfig
+	logger *zap.Logger
+	ctx    context.Context
+	client sqliteClient
 }
 
-func (sr *sqliteSpanReader) Initialize() error {
+func (sr *SqliteSpanReader) Initialize() error {
 	return nil
 }
 
-func (sr *sqliteSpanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	err := sr.client.db.Ping()
+func (sr *SqliteSpanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	return nil, nil
+}
+
+func (sr *SqliteSpanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
+	return nil, nil
+}
+
+func (sr *SqliteSpanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	return nil, nil
+}
+
+func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (*SqliteSpanReader, error) {
+	errMsg := "cannot create a new span reader for sqlite: %w"
+
+	client, err := newSqliteClient(logger, cfg)
 	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
-	return nil, nil
-}
-
-func (sr *sqliteSpanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
-	return nil, nil
-}
-
-func (sr *sqliteSpanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
-	return nil, nil
-}
-
-func NewSqliteSpanReader() (*sqliteSpanReader, error) {
-	cfg := NewSqliteConfig("test.db")
-	client, err := newSqliteClient(cfg)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	return &sqliteSpanReader{
+	return &SqliteSpanReader{
 		cfg:    cfg,
-		client: client,
+		logger: logger,
+		ctx:    ctx,
+		client: *client,
 	}, nil
 }
