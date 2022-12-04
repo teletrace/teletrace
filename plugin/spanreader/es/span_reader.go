@@ -39,6 +39,9 @@ type spanReader struct {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	if r.Sort == nil || len(r.Sort) == 0 {
+		r.Sort = []spansquery.Sort{{Field: spanIdField, Ascending: true}}
+	}
 	sr.optimizeSort(r.Sort)
 
 	res, err := sr.searchController.Search(ctx, r)
