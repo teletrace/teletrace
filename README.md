@@ -1,4 +1,4 @@
-<img src="./website/docs/images/lupa_dark.png" width="500"/>
+<img src="./website/docs/images/lupa_light.png" width="500"/>
 
 ## **Table of contents**
 
