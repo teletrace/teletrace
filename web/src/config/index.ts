@@ -18,3 +18,6 @@
 const LOCAL_API_URL = "http://localhost:8080";
 export const API_URL = process.env.REACT_APP_API_URL ?? LOCAL_API_URL;
 export const LUPA_REPOSITORY_URL = "https://github.com/epsagon/lupa";
+
+export const LUPA_BUILD_TAG = process.env.REACT_APP_BUILD_TAG ?? "v0.0.0-devel";
+export const LUPA_BUILD_COMMIT = process.env.REACT_APP_BUILD_COMMIT;
