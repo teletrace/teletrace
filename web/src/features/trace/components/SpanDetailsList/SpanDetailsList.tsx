@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 
 import { InternalSpan } from "@/types/span";
 
-import { SpanDetails } from "../SpanDetails/SpanDetails";
+import { SpanDetails } from "./SpanDetails/SpanDetails";
 import { styles } from "./styles";
 
 interface SpanDetailsListProps {

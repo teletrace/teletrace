@@ -2,8 +2,8 @@ import { Box } from "@mui/material";
 import { memo } from "react";
 import { EdgeProps, getBezierPath } from "reactflow";
 
+import { FOREIGN_OBJECT_SIZE } from "../utils/global";
 import { styles } from "./styles";
-import { FOREIGN_OBJECT_SIZE } from "./utils/global";
 
 const BasicEdgeImpl = ({
   id,
@@ -42,12 +42,12 @@ const BasicEdgeImpl = ({
         y={labelY - FOREIGN_OBJECT_SIZE / 2}
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
-        <Box sx={styles.edgeStyle.edgeLabelContainer}>
-          <Box sx={styles.edgeStyle.timeContainer}>{data.time}</Box>
+        <Box sx={styles.edgeLabelContainer}>
+          <Box sx={styles.timeContainer}>{data.time}</Box>
           {data?.count && (
             <Box
               sx={{
-                ...styles.edgeStyle.counterContainer,
+                ...styles.counterContainer,
                 borderColor: style?.stroke,
               }}
             >

@@ -15,10 +15,10 @@ import {
   useNodesState,
 } from "reactflow";
 
-import { BasicEdge } from "./Graph/BasicEdge";
-import { BasicNode } from "./Graph/BasicNode";
-import { EdgeData, NodeData, TraceData, TraceGraphProps } from "./Graph/types";
-import { createGraphLayout, spansToGraphData } from "./Graph/utils/layout";
+import { BasicEdge } from "./BasicEdge";
+import { BasicNode } from "./BasicNode";
+import { EdgeData, NodeData, TraceData, TraceGraphProps } from "./types";
+import { createGraphLayout, spansToGraphData } from "./utils/layout";
 import {
   applyHoverEdgeStyle,
   applyHoveredNodeStyle,
@@ -26,7 +26,7 @@ import {
   applyNormalNodeStyle,
   applySelectedEdgeStyle,
   applySelectedNodeStyle,
-} from "./Graph/utils/utils";
+} from "./utils/utils";
 
 import "reactflow/dist/style.css";
 
