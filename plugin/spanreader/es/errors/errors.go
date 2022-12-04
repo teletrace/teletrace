@@ -18,20 +18,20 @@ func (e ElasticSearchError) Error() string {
 }
 
 func ESErrorFromHttpResponse(status string, body map[string]any) (*ElasticSearchError, error) {
-	errorMap := body["error"]
-	if errorMap == nil {
+	errorMap, errorMapExists := body["error"]
+	if !errorMapExists {
 		return nil, fmt.Errorf("missing 'error' object in response: %+v", body)
 	}
 
-	errorType := errorMap.(map[string]any)["type"]
-	errorReason := errorMap.(map[string]any)["reason"]
+	errorReason, reasonExists := errorMap.(map[string]any)["reason"]
+	errorType, typeExists := errorMap.(map[string]any)["type"]
 
 	message := "an error occurred"
-	if errorReason != nil {
+	if !reasonExists {
 		message = errorReason.(string)
 	}
 	finalErrorType := Unknown
-	if errorType != nil {
+	if !typeExists {
 		finalErrorType = errorType.(string)
 	}
 	return &ElasticSearchError{
