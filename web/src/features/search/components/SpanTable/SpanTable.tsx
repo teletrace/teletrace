@@ -21,6 +21,7 @@ import MaterialReactTable, {
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 import {
   formatDateAsDateTime,
@@ -85,10 +86,11 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       )
     ) ?? [];
 
+  const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
     if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
-      fetchNextPage();
+      debouncedFetchNextPage();
     }
   };
 
