@@ -33,6 +33,8 @@ import { SearchFilter, Timeframe } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
+const SPAN_ID_FIELD = "span.spanId"
+
 interface SpanTableProps {
   filters?: SearchFilter[];
   timeframe: Timeframe;
@@ -46,7 +48,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const sort = [{ field: "span.spanId", ascending: true }].concat(
+  const sort = [{ field: SPAN_ID_FIELD, ascending: true }].concat(
     sorting?.map((columnSort) => ({
       field: columnSort.id,
       ascending: !columnSort.desc,
