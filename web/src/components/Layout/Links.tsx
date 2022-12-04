@@ -18,7 +18,12 @@ import { Article, GitHub } from "@mui/icons-material";
 import { Button, ListItemText, Menu, MenuItem, MenuList } from "@mui/material";
 import { Fragment, useState } from "react";
 
-import { LUPA_BUILD_COMMIT, LUPA_BUILD_TAG } from "@/config";
+import {
+  LUPA_BUILD_INFO,
+  LUPA_DOCS_URL,
+  LUPA_REPOSITORY_URL,
+  LUPA_SLACK_INVITE_LINK,
+} from "@/config";
 
 import { ResourceIcon } from "../Elements/ResourceIcon";
 
@@ -26,17 +31,17 @@ const links = [
   {
     icon: <ResourceIcon name="slack" />,
     label: "Slack",
-    link: "https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ",
+    link: LUPA_SLACK_INVITE_LINK,
   },
   {
     icon: <GitHub />,
     label: "Github",
-    link: "https://github.com/epsagon/lupa",
+    link: LUPA_REPOSITORY_URL,
   },
   {
     icon: <Article />,
     label: "Documentation",
-    link: "",
+    link: LUPA_DOCS_URL,
   },
 ];
 
@@ -73,10 +78,7 @@ export const Links = () => {
       >
         <MenuList>
           <MenuItem disabled>
-            <ListItemText>
-              Lupa {LUPA_BUILD_TAG}{" "}
-              {LUPA_BUILD_COMMIT && `(${LUPA_BUILD_COMMIT})`}
-            </ListItemText>
+            <ListItemText>Lupa {LUPA_BUILD_INFO}</ListItemText>
           </MenuItem>
         </MenuList>
       </Menu>
