@@ -50,7 +50,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
 
   const sort = [{ field: SPAN_ID_FIELD, ascending: true }].concat(
     sorting?.map((columnSort) => ({
-      field: columnSort.id,
+      field: `span.${columnSort.id}`,
       ascending: !columnSort.desc,
     }))
   );
