@@ -110,27 +110,36 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed to decode body: %v", err)
 	}
+
 	if res.StatusCode < 200 && res.StatusCode >= 300 {
 		return nil, fmt.Errorf("Could not get tags, got status: %+v", res.StatusCode)
 	}
 
-	// { "lupa-index": { "mappings": { ... }}}
-	body = body[r.idx].(map[string]any)["mappings"].(map[string]any)
+	// in case multiple indices are managed by a single alias (in rollover for example)
+	// we need to traverse all indices, not only r.idx.
+	// for example, we might have lupa-traces-000001 and lupa-traces-000002 aliased by lupa-traces,
+	// so we need to traverse body[*] to acquire the information per index.
 
+	// _ is the index name
+	// v is the response correlated for this index
 	for _, v := range body {
-		fieldMapping := v.(map[string]any)
+		indexMappings := v.(map[string]any)["mappings"].(map[string]any)
 
-		mappingData := fieldMapping["mapping"].(map[string]any)
-		if len(mappingData) > 1 {
-			return nil, fmt.Errorf(
-				"unknown scenario - mapping data contains more than one entry: %v", mappingData)
-		}
+		for _, v := range indexMappings {
+			fieldMapping := v.(map[string]any)
 
-		for _, valueData := range mappingData {
-			result = append(result, tagsquery.TagInfo{
-				Name: fieldMapping["full_name"].(string),
-				Type: valueData.(map[string]any)["type"].(string),
-			})
+			mappingData := fieldMapping["mapping"].(map[string]any)
+			if len(mappingData) > 1 {
+				return nil, fmt.Errorf(
+					"unknown scenario - mapping data contains more than one entry: %v", mappingData)
+			}
+
+			for _, valueData := range mappingData {
+				result = append(result, tagsquery.TagInfo{
+					Name: fieldMapping["full_name"].(string),
+					Type: valueData.(map[string]any)["type"].(string),
+				})
+			}
 		}
 	}
 
