@@ -21,14 +21,13 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"oss-tracing/plugin/spanreader/sqlite"
 	"syscall"
 
+	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
-	spanreaderes "oss-tracing/plugin/spanreader/es"
-
-	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
 
 	"go.uber.org/zap"
 )
@@ -45,7 +44,7 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	sr, err := spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
+	sr, err := sqlite.NewSqliteSpanReader(context.Background(), logger, sqlite.NewSqliteConfig(cfg))
 
 	if err != nil {
 		log.Fatalf("Failed to initialize SpanReader of Elasticsearch plugin %v", err)
