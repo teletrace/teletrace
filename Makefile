@@ -67,4 +67,4 @@ bin/license-header-checker:
 	curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
 
 update-license-headers: bin/license-header-checker
-	bin/license-header-checker -v -a -r -i node_modules .github/license_header.txt . ts tsx js go css
+	bin/license-header-checker -v -a -r -i node_modules,web/src/features/trace/components/TraceTimeline .github/license_header.txt . ts tsx js go css

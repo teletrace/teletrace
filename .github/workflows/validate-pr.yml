@@ -20,10 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: install license-header-checker
-        run: curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
-      - name: run license check
-        run: ./bin/license-header-checker -v -r -a -i node_modules $GITHUB_WORKSPACE/.github/license_header.txt . go ts tsx js css && [[ -z `git status -s` ]]
+      - name: validate license headers
+        run: make update-license-headers && [[ -z `git status -s` ]]
 
   pre-commit:
     name: Validate pre-commit hooks
