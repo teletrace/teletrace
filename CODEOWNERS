@@ -13,15 +13,13 @@ CODE_OF_CONDUCT.md  @haimrait
 website/ @epsagon/lupa-managers
 
 # Sonic responsibilities
-.github/change-issue-status/ @epsagon/team-sonic
-.github/workflows/ @epsagon/team-sonic
-model/ @epsagon/team-sonic
-plugin/spanreader @epsagon/team-sonic
+web/features/search @epsagon/team-sonic
 
 # Zola responsibilities
+web/features/trace @epsagon/team-zola
 cmd/ @epsagon/team-zola
 deploy/ @epsagon/team-zola
-.goreleaser.yml @epsagon/team-zola
 
-# Specific people
-lupa-otelcol/ @ophiryael @roybh1
+# Exporters
+lupa-otelcol/exporter/elasticsearchexporter/ @ophiryael @roybh1
+lupa-otelcol/exporter/sqliteexporter/ @Tavh @tmishari
