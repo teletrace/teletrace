@@ -1,4 +1,3 @@
-import { datePickerDefaultProps } from "@material-ui/pickers/constants/prop-types";
 import { Alert, Button, DialogContent, Stack, TextField } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -8,9 +7,13 @@ import { Timeframe } from "../../types/common";
 
 export type DateTimeSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
+  onClose: () => void;
 };
 
-export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
+export const DateTimeSelector = ({
+  onChange,
+  onClose,
+}: DateTimeSelectorProps) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [startTime, setStartTime] = useState<Date | null>(
@@ -43,7 +46,10 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
     const isTimeValid =
       timeRange.startTimeUnixNanoSec < timeRange.endTimeUnixNanoSec;
     setTimeValid(isTimeValid);
-    onChange(timeRange);
+    if (isTimeValid) {
+      onChange(timeRange);
+      onClose();
+    }
   };
 
   const handleCancle = () => {
@@ -51,7 +57,8 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
     setEndDate(new Date());
     setStartTime(new Date(new Date().setHours(new Date().getHours() - 1)));
     setEndTime(new Date());
-    setTimeValid(false);
+
+    onClose();
   };
 
   return (

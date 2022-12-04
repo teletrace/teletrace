@@ -117,6 +117,7 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
               setTimeFrame(timeframe);
               onChange(timeframe);
             }}
+            onClose={() => setOpen(false)}
           />
         </DialogContent>
       </Popover>
