@@ -76,8 +76,6 @@ export const SpanSearch = () => {
         <TimeFrameSelector
           onChange={(timeframe) => {
             onTimeframeChange(timeframe);
-            console.log("start time: " + timeframe.startTimeUnixNanoSec);
-            console.log("end time: " + timeframe.endTimeUnixNanoSec);
           }}
         />
       </Stack>

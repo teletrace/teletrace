@@ -1,3 +1,4 @@
+import { datePickerDefaultProps } from "@material-ui/pickers/constants/prop-types";
 import { Alert, Button, DialogContent, Stack, TextField } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -45,6 +46,14 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
     onChange(timeRange);
   };
 
+  const handleCancle = () => {
+    setStartDate(new Date());
+    setEndDate(new Date());
+    setStartTime(new Date(new Date().setHours(new Date().getHours() - 1)));
+    setEndTime(new Date());
+    setTimeValid(false);
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DialogContent>
@@ -52,17 +61,13 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
         <Stack direction="row">
           <DatePicker
             inputFormat="dd-MM-yyyy"
-            onChange={(startDate) => {
-              setStartDate(startDate);
-            }}
+            onChange={(startDate) => setStartDate(startDate)}
             renderInput={(props) => <TextField {...props} />}
             value={startDate}
           />
           <TimePicker
             ampm={false}
-            onChange={(startTime) => {
-              setStartTime(startTime);
-            }}
+            onChange={(startTime) => setStartTime(startTime)}
             value={startTime}
             renderInput={(params) => <TextField {...params} />}
           />
@@ -93,7 +98,7 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
         </Stack>
       ) : null}
       <Stack direction="row" justifyContent="flex-end">
-        <Button onClick={handleApply}>Cancel</Button>
+        <Button onClick={handleCancle}>Cancel</Button>
         <Button onClick={handleApply}>Apply</Button>
       </Stack>
     </LocalizationProvider>

@@ -5,7 +5,7 @@ import {
   ToggleButtonGroup,
   Tooltip,
 } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, MouseEvent } from "react";
 import { Timeframe } from "../../types/common";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 import { formatDateToTimeString } from "@/utils/format";
@@ -14,14 +14,14 @@ export type TimeFrameSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
 };
 
-export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
-  const options: RelativeTimeFrame[] = [
-    { label: "1H", offsetRange: "1h", relativeTo: "now" },
-    { label: "1D", offsetRange: "1d", relativeTo: "now" },
-    { label: "3D", offsetRange: "3d", relativeTo: "now" },
-    { label: "1W", offsetRange: "1w", relativeTo: "now" },
-  ];
+const options: RelativeTimeFrame[] = [
+  { label: "1H", offsetRange: "1h", relativeTo: "now" },
+  { label: "1D", offsetRange: "1d", relativeTo: "now" },
+  { label: "3D", offsetRange: "3d", relativeTo: "now" },
+  { label: "1W", offsetRange: "1w", relativeTo: "now" },
+];
 
+export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
   const customOption: CustomTimeFrame = {
     label: "Custom",
     startTime: new Date(),
@@ -29,25 +29,22 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
   };
 
   const buttonRef = useRef(null);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
 
   const [timeframe, setTimeFrame] = useState<Timeframe>();
 
-  const handleCustomClick = (event: React.MouseEvent<HTMLElement>) => {
+  const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
     setOpen(true);
     setAnchorEl(event.currentTarget);
-    console.log(event.currentTarget);
   };
 
-  function instanceOfRelativeTimeFrame(
-    object: any
-  ): object is RelativeTimeFrame {
+  function isRelativeTimeFrame(object: any): object is RelativeTimeFrame {
     return "offsetRange" in object;
   }
 
-  function instanceOfCustomTimeFrame(object: any): object is CustomTimeFrame {
+  function isCustomTimeFrame(object: any): object is CustomTimeFrame {
     return "startTime" in object;
   }
 
@@ -74,15 +71,15 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
   };
 
   const calcTimeFrame = (timeFrame: TimeFrameTypes) => {
-    if (instanceOfRelativeTimeFrame(timeFrame)) {
+    if (isRelativeTimeFrame(timeFrame)) {
       return toTimeframeFromRelative(timeFrame);
-    } else if (instanceOfCustomTimeFrame(timeFrame)) {
+    } else if (isCustomTimeFrame(timeFrame)) {
       return toTimeframeFromCustom(timeFrame);
     }
   };
 
   const handleBtnClicked = (
-    event: React.MouseEvent<HTMLElement>,
+    event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
   ) => {
     if (value?.label === "Custom") {
