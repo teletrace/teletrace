@@ -46,13 +46,17 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const sort = [{ field: "span.spanId", ascending: true }].concat(
+    sorting?.map((columnSort) => ({
+      field: columnSort.id,
+      ascending: !columnSort.desc,
+    }))
+  );
+
   const searchRequest = {
     filters: filters,
     timeframe: timeframe,
-    sort: sorting?.map((columnSort) => ({
-      field: columnSort.id,
-      ascending: !columnSort.desc,
-    })),
+    sort: sort,
     metadata: undefined,
   };
 
