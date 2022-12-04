@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package searchcontroller
 
 import (
@@ -97,7 +113,7 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
 	DIRECTION := map[bool]sortorder.SortOrder{true: sortorder.Asc, false: sortorder.Desc}
 
-	var sorts []types.SortCombinations
+	sorts := []types.SortCombinations{}
 	for _, _s := range s {
 		sorts = append(sorts, types.NewSortCombinationsBuilder().
 			Field(types.Field(_s.Field)).
@@ -136,8 +152,7 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 
 	hits := body["hits"].(map[string]any)["hits"].([]any)
 
-	var spans []*internalspan.InternalSpan
-
+	spans := []*internalspan.InternalSpan{}
 	for _, h := range hits {
 		hit := h.(map[string]any)["_source"].(map[string]any)
 		var s internalspan.InternalSpan
@@ -163,19 +178,21 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 }
 
 func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
-	sort := hits[len(hits)-1].(map[string]any)["sort"].([]any)
-	if len(sort) > 0 {
-		if len(sort) > 1 {
-			return fmt.Errorf(
-				"expected a single sort field, but found: %v", len(sort))
-		}
+	if sort := hits[len(hits)-1].(map[string]any)["sort"]; sort != nil {
+		sort := sort.([]any)
+		if len(sort) > 0 {
+			if len(sort) > 1 {
+				return fmt.Errorf(
+					"expected a single sort field, but found: %v", len(sort))
+			}
 
-		switch sortField := sort[0].(type) {
-		case string:
-			metadata.NextToken = spansquery.ContinuationToken(sortField)
-		default:
-			return fmt.Errorf(
-				"expected a sort field of type string, but found: %v", sortField)
+			switch sortField := sort[0].(type) {
+			case string:
+				metadata.NextToken = spansquery.ContinuationToken(sortField)
+			default:
+				return fmt.Errorf(
+					"expected a sort field of type string, but found: %v", sortField)
+			}
 		}
 	}
 
