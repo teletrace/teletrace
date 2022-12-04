@@ -33,7 +33,7 @@ import { SearchFilter, Timeframe } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 
-const SPAN_ID_FIELD = "span.spanId"
+const SPAN_ID_FIELD = "span.spanId";
 
 interface SpanTableProps {
   filters?: SearchFilter[];
