@@ -3,7 +3,7 @@
 
 # specific files
 README.md  @epsagon/lupa-managers
-LICENSE.md  @haimrait
+LICENSE  @haimrait
 CONTRIBUTING.md  @epsagon/lupa-managers
 CODE_OF_CONDUCT.md  @haimrait
 .github/pull_request_template.md @epsagon/lupa-managers
