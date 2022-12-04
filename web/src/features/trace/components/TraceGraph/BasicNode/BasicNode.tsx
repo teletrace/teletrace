@@ -40,12 +40,10 @@ const BasicNodeImpl = (props: NodeProps<NodeData>) => {
             borderColor: color,
           }}
         >
-          <ResourceIcon name={image} />
+          <ResourceIcon name={image} style={styles.nodeIcon} />
         </Box>
-        <Box sx={styles.nodeText}>
-          <Box sx={{ color: "#E9EAF1" }}>{name}</Box>
-          <Box sx={{ fontSize: 14 }}>{type}</Box>
-        </Box>
+        <Box sx={styles.nodeName}>{name}</Box>
+        <Box sx={styles.nodeService}>{type}</Box>
       </Box>
       <Handle
         type="source"
