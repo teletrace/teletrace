@@ -78,7 +78,9 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   }, [fetchMoreOnBottomReached, tableWrapper]);
 
   const onClick = (row: Row<TableSpan>) => {
-    window.open(`${window.location.origin}/trace/${row.original.traceId}`);
+    window.open(
+      `${window.location.origin}/trace/${row.original.traceId}?spanId=${row.original.spanId}`
+    );
   };
 
   return (
@@ -95,7 +97,6 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         manualFiltering
         manualSorting
         enableStickyHeader={true}
-        enableColumnResizing
         muiToolbarAlertBannerProps={
           isError
             ? {

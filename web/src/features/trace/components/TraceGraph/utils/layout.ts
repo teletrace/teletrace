@@ -2,7 +2,7 @@ import Elk, { ElkNode } from "elkjs";
 import { ElkExtendedEdge } from "elkjs/lib/elk-api";
 import { Edge, MarkerType, Node, Position } from "reactflow";
 
-import { InternalSpan } from "@/types/span";
+import { InternalSpan, StatusCode } from "@/types/span";
 
 import {
   EdgeColor,
@@ -85,7 +85,7 @@ const createGraphNode = (
     serviceName: nodeData.name,
     systemType: nodeData.type,
     image: nodeData.image,
-    hasError: internalSpan.span.status.code !== 0,
+    hasError: internalSpan.span.status.code === StatusCode.Error,
     duration: internalSpan.externalFields.durationNano,
     spans: [{ ...internalSpan }],
   };
@@ -108,7 +108,7 @@ const updateGraphNode = (
   internalSpan: Readonly<InternalSpan>
 ): void => {
   g.spans.push({ ...internalSpan });
-  g.hasError = g.hasError || internalSpan.span.status.code === 2;
+  g.hasError = g.hasError || internalSpan.span.status.code === StatusCode.Error;
   g.duration = g.duration + internalSpan.externalFields.durationNano;
 };
 
@@ -153,7 +153,7 @@ const createNode = (g: Readonly<GraphNode>): Node<NodeData> => {
       name: g.serviceName,
       type: g.systemType,
       image: g.image,
-      color: g.hasError ? NodeColor.ERR_NORMAL : NodeColor.NORMAL,
+      color: g.hasError ? NodeColor.ERROR : NodeColor.NORMAL,
       graphNode: { ...g },
     },
     position: POSITION,
@@ -175,6 +175,7 @@ const createEdge = (
     data: {
       time: `${Math.round(duration / 1000000)}ms`,
       count: 1,
+      hasError,
     },
     style: {
       stroke: hasError ? EdgeColor.ERROR : EdgeColor.NORMAL,

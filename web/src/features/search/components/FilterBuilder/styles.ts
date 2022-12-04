@@ -14,4 +14,13 @@ export const styles = {
     flex: 1,
     display: "flex",
   },
+  valueInput: {
+    "& .MuiAutocomplete-inputRoot": {
+      height: "fit-content",
+      "&.MuiInputBase-sizeSmall": {
+        paddingTop: "4px",
+        paddingBottom: "4px",
+      },
+    },
+  },
 };

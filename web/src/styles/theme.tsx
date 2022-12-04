@@ -176,6 +176,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         paper: {
           display: "inline-block",
+          minWidth: "fill-available",
         },
       },
     },
@@ -332,6 +333,7 @@ theme = createTheme(theme, {
           fontSize: "14px",
           fontWeight: "normal",
           margin: "0px 4px",
+          textOverflow: "ellipsis",
         },
         inputSizeSmall: {
           position: "relative",
@@ -493,6 +495,15 @@ theme = createTheme(theme, {
         size: "small",
       },
     },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          "&.MuiTableHead-root": {
+            opacity: 1,
+          },
+        },
+      },
+    },
     MuiTableRow: {
       styleOverrides: {
         root: {
@@ -511,6 +522,14 @@ theme = createTheme(theme, {
           "&.MuiTableCell-head": {
             color: theme.palette.grey[300],
             fontWeight: 500,
+            "& .Mui-TableHeadCell-Content": {
+              borderRight: `2px solid ${theme.palette.grey[500]}`,
+            },
+            ":last-of-type": {
+              "& .Mui-TableHeadCell-Content": {
+                borderRight: "unset",
+              },
+            },
           },
           "&.MuiTableCell-body": {
             fontWeight: "normal",

@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
@@ -21,6 +21,8 @@ import { styles } from "./styles";
 
 export interface SpanDetailsProps {
   span: InternalSpan;
+  expanded: boolean;
+  onChange: (expanded: boolean) => void;
 }
 
 function getBasicAttributes(span: InternalSpan): Attributes {
@@ -36,19 +38,15 @@ function getBasicAttributes(span: InternalSpan): Attributes {
   };
 }
 
-export const SpanDetails = ({ span }: SpanDetailsProps) => {
-  const [expanded, setExpanded] = useState(false);
+export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
-
-  const handleChange = (_: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded);
-  };
 
   const X_DIVIDER = "|";
 
   return (
     <Accordion
-      onChange={handleChange}
+      expanded={expanded}
+      onChange={(_, expanded) => onChange(expanded)}
       disableGutters={true}
       sx={styles.accordion}
     >
