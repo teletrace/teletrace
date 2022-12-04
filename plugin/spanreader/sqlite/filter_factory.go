@@ -17,12 +17,22 @@
 package sqlite
 
 import (
+	"fmt"
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"strings"
 )
 
-func BuildFilters(fs ...model.KeyValueFilter) {
-	var sqliteOperators = map[string]string{
+func buildSearchRequest(r spansquery.SearchRequest) string {
+	var filters []model.SearchFilter
+	filters = append(filters, CreateTimeframeFilters(r.Timeframe)...)
+	filters = append(filters, r.SearchFilters...)
+	qr := BuildQuery(filters...)
+	return qr
+}
+
+func BuildQuery(filters ...model.SearchFilter) string {
+	var sqliteOperatorsMap = map[string]string{
 		spansquery.OPERATOR_EQUALS:       "=",
 		spansquery.OPERATOR_NOT_EQUALS:   "!=",
 		spansquery.OPERATOR_CONTAINS:     "LIKE",
@@ -37,14 +47,74 @@ func BuildFilters(fs ...model.KeyValueFilter) {
 		spansquery.OPERATOR_LTE:          "<=",
 	}
 
-	// var query string = "SELECT * FROM spans WHERE "
+	//TODO timur1$ check which keys are allowed
+	var sqliteFieldsMap = map[string]string{
+		"span.id":                "spans.span_id",
+		"span.traceId":           "spans.trace_id",
+		"span.traceState":        "spans.trace_state",
+		"span.parentId":          "spans.parent_span_id",
+		"span.name":              "spans.name",
+		"span.kind":              "spans.kind",
+		"span.startTimeUnixNano": "spans.start_time_unix_nano",
+		"span.endTimeUnixNano":   "spans.end_time_unix_nano",
+		"span.durationNano":      "spans.duration",
+		"span.status.code":       "spans.span_status_code",
+	}
 
-	for _, f := range fs {
-		if _, ok := sqliteOperators[string(f.Operator)]; !ok {
-			continue
+	var sqliteTablesMap = map[string]string{
+		"span":                  "spans",
+		"span.attributes":       "span_attributes",
+		"span.events":           "events",
+		"span.event.attributes": "event_attributes",
+		"span.links":            "links",
+		"span.link.attributes":  "link_attributes",
+		"resource.attributes":   "resource_attributes",
+		"scope.attributes":      "scope_attributes",
+		"scope":                 "scopes",
+	}
+	var filterStrings []string
+	var dbTables []string
+	for _, filter := range filters {
+		if filter.KeyValueFilter != nil && filter.KeyValueFilter.Key != "" && filter.KeyValueFilter.Operator != "" {
+			dbName := strings.Split(string(filter.KeyValueFilter.Key), ".")[0]
+			if !contains(dbTables, sqliteTablesMap[dbName]) {
+				dbTables = append(dbTables, sqliteTablesMap[dbName])
+			}
+			if len(filterStrings) > 0 {
+				filterStrings = append(filterStrings, "AND")
+			}
+			var value string = fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+			filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorsMap[string(filter.KeyValueFilter.Operator)], value))
 		}
-		// query += f.Key + " " + sqliteOperators[string(f.Operator)] + " " + f.Value;
+	}
+	return fmt.Sprintf("SELECT * FROM %s WHERE %s", fmt.Sprintf("%s", strings.Join(dbTables, ",")), strings.Join(filterStrings, " "))
+}
 
+func contains(tables []string, name string) bool {
+	for _, table := range tables {
+		if table == name {
+			return true
+		}
+	}
+	return false
+}
+
+func CreateTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
+	return []model.SearchFilter{
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.startTimeUnixNano",
+				Operator: spansquery.OPERATOR_GTE,
+				Value:    tf.StartTime,
+			},
+		},
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.endTimeUnixNano",
+				Operator: spansquery.OPERATOR_LTE,
+				Value:    tf.EndTime,
+			},
+		},
 	}
 
 }
