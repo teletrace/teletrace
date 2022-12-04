@@ -1,8 +1,24 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import Elk, { ElkNode } from "elkjs";
 import { ElkExtendedEdge } from "elkjs/lib/elk-api";
 import { Edge, MarkerType, Node, Position } from "reactflow";
 
-import { InternalSpan } from "@/types/span";
+import { InternalSpan, StatusCode } from "@/types/span";
 
 import {
   EdgeColor,
@@ -85,7 +101,7 @@ const createGraphNode = (
     serviceName: nodeData.name,
     systemType: nodeData.type,
     image: nodeData.image,
-    hasError: internalSpan.span.status.code !== 0,
+    hasError: internalSpan.span.status.code === StatusCode.Error,
     duration: internalSpan.externalFields.durationNano,
     spans: [{ ...internalSpan }],
   };
@@ -108,7 +124,7 @@ const updateGraphNode = (
   internalSpan: Readonly<InternalSpan>
 ): void => {
   g.spans.push({ ...internalSpan });
-  g.hasError = g.hasError || internalSpan.span.status.code === 2;
+  g.hasError = g.hasError || internalSpan.span.status.code === StatusCode.Error;
   g.duration = g.duration + internalSpan.externalFields.durationNano;
 };
 
@@ -153,7 +169,7 @@ const createNode = (g: Readonly<GraphNode>): Node<NodeData> => {
       name: g.serviceName,
       type: g.systemType,
       image: g.image,
-      color: g.hasError ? NodeColor.ERR_NORMAL : NodeColor.NORMAL,
+      color: g.hasError ? NodeColor.ERROR : NodeColor.NORMAL,
       graphNode: { ...g },
     },
     position: POSITION,
@@ -175,6 +191,7 @@ const createEdge = (
     data: {
       time: `${Math.round(duration / 1000000)}ms`,
       count: 1,
+      hasError,
     },
     style: {
       stroke: hasError ? EdgeColor.ERROR : EdgeColor.NORMAL,

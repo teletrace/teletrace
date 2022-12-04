@@ -1,5 +1,7 @@
 FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.19-alpine3.16 as backend-builder
 
+RUN apk add build-base
+
 WORKDIR /app
 
 # COPY All things inside the project and build
@@ -20,7 +22,7 @@ RUN yarn install --network-timeout 1000000
 COPY web/ .
 
 # Build the app
-ENV API_URL="/"
+ENV REACT_APP_API_URL="/"
 RUN yarn build
 
 

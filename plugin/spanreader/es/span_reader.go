@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package spanreaderes
 
 import (
@@ -5,12 +21,14 @@ import (
 	"fmt"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
-	spanreader "oss-tracing/pkg/spanreader"
+	"oss-tracing/pkg/spanreader"
 	"oss-tracing/plugin/spanreader/es/searchcontroller"
 	"oss-tracing/plugin/spanreader/es/tagscontroller"
 
 	"go.uber.org/zap"
 )
+
+const spanIdField = "span.spanId"
 
 type spanReader struct {
 	cfg              ElasticConfig
@@ -21,6 +39,8 @@ type spanReader struct {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	sr.optimizeSort(r.Sort)
+
 	res, err := sr.searchController.Search(ctx, r)
 
 	if err != nil {
@@ -28,6 +48,15 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 	}
 
 	return res, nil
+}
+
+func (sr *spanReader) optimizeSort(s []spansquery.Sort) {
+	for i, sort := range s {
+		if sort.Field == spanIdField {
+			// Mapping span id field to Elasticsearch 'keyword' which offers better performance
+			s[i].Field = spansquery.SortField(fmt.Sprintf("%s.keyword", sort.Field))
+		}
+	}
 }
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
@@ -75,7 +104,7 @@ func NewSpanReader(ctx context.Context, logger *zap.Logger, cfg ElasticConfig) (
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	tc, err := tagscontroller.NewTagsController(logger, rawClient, cfg.Index)
+	tc, err := tagscontroller.NewTagsController(logger, rawClient, typedClient, cfg.Index)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}

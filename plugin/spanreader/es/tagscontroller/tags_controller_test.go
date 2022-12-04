@@ -1,8 +1,26 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package tagscontroller
 
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"testing"
 
@@ -86,7 +104,7 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 	_ = json.NewDecoder(buffer).Decode(&body)
 
 	// Act
-	uut := rawTagsController{}
+	uut := tagsController{}
 	result, err := uut.parseGetTagsValuesResponseBody(body)
 	if err != nil {
 		t.Fatal(err)
@@ -179,4 +197,75 @@ func Test_RemoveDuplicatedTextTags_RemoveTextDuplicates(t *testing.T) {
 
 	assert.Contains(t, tagsNames, "span.attributes.http.method")
 	assert.Contains(t, tagsNames, "span.attributes.http.method.not_keyword")
+}
+
+func Test_BuildTagsValuesRequest_sanity(t *testing.T) {
+	expectedJson := `{
+ "aggregations": {
+  "scope.name": {
+   "terms": {
+    "field": "scope.name.keyword"
+   }
+  }
+ },
+ "query": {
+  "bool": {
+   "must": [
+    {
+ 	"bool": {
+ 	 "should": [
+ 	  {
+ 	   "match_phrase": {
+ 		"resource.attributes.service.name": {
+ 		 "query": "demo-server"
+ 		}
+ 	   }
+ 	  }
+ 	 ]
+ 	}
+    },
+    {
+ 	"range": {
+ 	 "span.startTimeUnixNano": {
+ 	  "gte": 1669194382741000000
+ 	 }
+ 	}
+    },
+    {
+ 	"range": {
+ 	 "span.endTimeUnixNano": {
+ 	  "lte": 1669799182741000000
+ 	 }
+ 	}
+    }
+   ]
+  }
+ },
+ "size": 0
+}`
+	tagsMapping := []tagsquery.TagInfo{
+		{
+			Name: "scope.name",
+			Type: "text",
+		},
+	}
+	filter := model.KeyValueFilter{
+		Key:      "resource.attributes.service.name",
+		Operator: "in",
+		Value:    []string{"demo-server"},
+	}
+	request := tagsquery.TagValuesRequest{
+		Timeframe: model.Timeframe{StartTime: 1669194382741000000, EndTime: 1669799182741000000},
+		SearchFilters: []model.SearchFilter{
+			{
+				KeyValueFilter: &filter,
+			},
+		},
+	}
+	res, err := buildTagsValuesRequest(request, tagsMapping)
+	assert.Nil(t, err)
+	j, err := json.Marshal(res)
+	assert.Nil(t, err)
+	assert.JSONEq(t, expectedJson, fmt.Sprintf("%+v", string(j)))
+
 }

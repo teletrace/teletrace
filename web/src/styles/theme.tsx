@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { colors } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 
@@ -176,6 +192,7 @@ theme = createTheme(theme, {
       styleOverrides: {
         paper: {
           display: "inline-block",
+          minWidth: "fill-available",
         },
       },
     },
@@ -332,6 +349,7 @@ theme = createTheme(theme, {
           fontSize: "14px",
           fontWeight: "normal",
           margin: "0px 4px",
+          textOverflow: "ellipsis",
         },
         inputSizeSmall: {
           position: "relative",
@@ -493,6 +511,15 @@ theme = createTheme(theme, {
         size: "small",
       },
     },
+    MuiTableHead: {
+      styleOverrides: {
+        root: {
+          "&.MuiTableHead-root": {
+            opacity: 1,
+          },
+        },
+      },
+    },
     MuiTableRow: {
       styleOverrides: {
         root: {
@@ -511,6 +538,14 @@ theme = createTheme(theme, {
           "&.MuiTableCell-head": {
             color: theme.palette.grey[300],
             fontWeight: 500,
+            "& .Mui-TableHeadCell-Content": {
+              borderRight: `2px solid ${theme.palette.grey[500]}`,
+            },
+            ":last-of-type": {
+              "& .Mui-TableHeadCell-Content": {
+                borderRight: "unset",
+              },
+            },
           },
           "&.MuiTableCell-body": {
             fontWeight: "normal",

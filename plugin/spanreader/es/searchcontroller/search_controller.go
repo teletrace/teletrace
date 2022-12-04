@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package searchcontroller
 
 import (
@@ -5,7 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"oss-tracing/pkg/model"
+	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 
@@ -37,8 +53,8 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 		return nil, fmt.Errorf("Could not build search request: %+v", err)
 	}
 
-	search := sc.client.API.Search()
-	res, err := search.Request(req).Index(sc.idx).Do(ctx)
+	searchAPI := sc.client.API.Search()
+	res, err := searchAPI.Request(req).Index(sc.idx).Do(ctx)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
@@ -66,59 +82,24 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 
 	builder := search.NewRequestBuilder()
 
-	timeframeFilters := createTimeframeFilters(r.Timeframe)
+	timeframeFilters := spanreaderes.CreateTimeframeFilters(r.Timeframe)
 
 	filters := append(r.SearchFilters, timeframeFilters...)
 
-	if builder, err = buildQuery(builder, filters...); err != nil {
+	if builder, err = spanreaderes.BuildQuery(builder, filters...); err != nil {
 		return nil, fmt.Errorf("Could not build query for search request: %+v. err: %+v", r, err)
 	}
 
 	builder = buildSort(builder, r.Sort...)
+	if r.Metadata != nil && r.Metadata.NextToken != "" {
+		sortResults := types.SortResults{string(r.Metadata.NextToken)}
+		sortResultsBuilder := types.NewSortResultsBuilder().SortResults(sortResults)
+		builder = builder.SearchAfter(sortResultsBuilder)
+	}
 
 	builder = builder.Size(200) // Where to get this number from?
 
 	return builder.Build(), nil
-}
-
-func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
-	return []model.SearchFilter{
-		{
-			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.startTimeUnixNano",
-				Operator: spansquery.OPERATOR_GTE,
-				Value:    tf.StartTime,
-			},
-		},
-		{
-			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.endTimeUnixNano",
-				Operator: spansquery.OPERATOR_LTE,
-				Value:    tf.EndTime,
-			},
-		},
-	}
-
-}
-
-func buildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.RequestBuilder, error) {
-	var err error
-	query := types.NewQueryContainerBuilder()
-
-	var kvFilters []model.KeyValueFilter
-
-	for _, f := range fs {
-		if f.KeyValueFilter != nil {
-			kvFilters = append(kvFilters, *f.KeyValueFilter)
-		}
-	}
-	query, err = BuildFilters(query, kvFilters...)
-
-	if err != nil {
-		return nil, fmt.Errorf("Could not build filters: %+v", err)
-	}
-
-	return b.Query(query), nil
 }
 
 func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
@@ -160,7 +141,6 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 	hits := body["hits"].(map[string]any)["hits"].([]any)
 
 	spans := []*internalspan.InternalSpan{}
-
 	for _, h := range hits {
 		hit := h.(map[string]any)["_source"].(map[string]any)
 		var s internalspan.InternalSpan
@@ -171,5 +151,38 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 		spans = append(spans, &s)
 	}
 
-	return &spansquery.SearchResponse{Spans: spans}, nil
+	var metadata *spansquery.Metadata
+	if len(hits) > 0 {
+		metadata = &spansquery.Metadata{}
+		if err := extractNextToken(hits, metadata); err != nil {
+			return nil, err
+		}
+	}
+
+	return &spansquery.SearchResponse{
+		Spans:    spans,
+		Metadata: metadata,
+	}, nil
+}
+
+func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
+	if sort := hits[len(hits)-1].(map[string]any)["sort"]; sort != nil {
+		sort := sort.([]any)
+		if len(sort) > 0 {
+			if len(sort) > 1 {
+				return fmt.Errorf(
+					"expected a single sort field, but found: %v", len(sort))
+			}
+
+			switch sortField := sort[0].(type) {
+			case string:
+				metadata.NextToken = spansquery.ContinuationToken(sortField)
+			default:
+				return fmt.Errorf(
+					"expected a sort field of type string, but found: %v", sortField)
+			}
+		}
+	}
+
+	return nil
 }

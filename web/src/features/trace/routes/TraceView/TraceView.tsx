@@ -1,14 +1,30 @@
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
-import { Params, useParams } from "react-router-dom";
+import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
 
 import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
 import { TraceGraph } from "../../components/TraceGraph";
-import { GraphNode } from "../../components/TraceGraph/Graph/types";
+import { GraphNode } from "../../components/TraceGraph/types";
 import { TraceTimeline } from "../../components/TraceTimeline";
 import { styles } from "./styles";
 
@@ -18,8 +34,19 @@ interface TraceViewUrlParams extends Params {
 
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
+  const [searchParams] = useSearchParams();
+  const spanId = searchParams.get("spanId");
+
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [selectedSpanId, setSelectedSpanId] = useState<string | null>(spanId);
+
+  const handleSelectedNodeChange = (node: GraphNode | null) => {
+    setSelectedNode(node);
+    if (!node) {
+      setSelectedSpanId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -49,17 +76,28 @@ export const TraceView = () => {
         sx={{ height: "100%" }}
       >
         <Stack
-          flex={3}
+          flex={1}
           spacing={2}
           direction="row"
           sx={styles.graphSpanDetailsContainer}
           divider={<Divider orientation="vertical" flexItem />}
         >
-          <TraceGraph setSelectedNode={setSelectedNode} spans={trace} />
-          <SpanDetailsList spans={selectedNode?.spans} />
+          <TraceGraph
+            setSelectedNode={handleSelectedNodeChange}
+            spans={trace}
+            initiallyFocusedSpanId={spanId}
+          />
+          <SpanDetailsList
+            spans={selectedNode?.spans}
+            selectedSpanId={selectedSpanId}
+            setSelectedSpanId={setSelectedSpanId}
+          />
         </Stack>
-        <Stack flex={1} divider={<Divider orientation="vertical" flexItem />}>
-          <TraceTimeline trace={trace} />
+        <Stack
+          sx={styles.timelineWrapper}
+          divider={<Divider orientation="vertical" flexItem />}
+        >
+          <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
         </Stack>
       </Stack>
     </>
