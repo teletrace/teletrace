@@ -18,8 +18,8 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
   const [endTime, setEndTime] = useState<Date | null>(new Date());
   const [timeValid, setTimeValid] = useState<boolean>(true);
   const [timeframe, setTimeframe] = useState<Timeframe>({
-    startTime: new Date().setHours(new Date().getHours() - 1),
-    endTime: new Date().getTime(),
+    startTimeUnixNanoSec: new Date().setHours(new Date().getHours() - 1),
+    endTimeUnixNanoSec: new Date().getTime(),
   });
 
   const calcRange = () => {
@@ -29,14 +29,18 @@ export const DateTimeSelector = ({ onChange }: DateTimeSelectorProps) => {
     const endRange = new Date(
       endDate!.setHours(endTime!.getHours(), endTime!.getMinutes())
     ).getTime();
-    setTimeframe({ startTime: startRange, endTime: endRange });
+    setTimeframe({
+      startTimeUnixNanoSec: startRange,
+      endTimeUnixNanoSec: endRange,
+    });
 
-    return { startTime: startRange, endTime: endRange };
+    return { startTimeUnixNanoSec: startRange, endTimeUnixNanoSec: endRange };
   };
 
   const handleApply = () => {
     const timeRange = calcRange();
-    const isTimeValid = timeRange.startTime < timeRange.endTime;
+    const isTimeValid =
+      timeRange.startTimeUnixNanoSec < timeRange.endTimeUnixNanoSec;
     setTimeValid(isTimeValid);
     onChange(timeRange);
   };

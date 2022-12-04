@@ -5,7 +5,6 @@ import { Fragment, useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
 
-import { DateTimeSelector } from "../components/DateTimeSelector/DateTimeSelector";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
@@ -27,6 +26,15 @@ export const SpanSearch = () => {
       endTimeUnixNanoSec: now * 1000 * 1000,
     },
   });
+
+  const onTimeframeChange = useCallback(
+    (timeframe: Timeframe) => {
+      return setFiltersState((prevState: FiltersState) => {
+        return { ...prevState, timeframe };
+      });
+    },
+    [setFiltersState]
+  );
 
   const onFilterChange = useCallback(
     (entry: SearchFilter, isDelete = false) => {
@@ -67,9 +75,9 @@ export const SpanSearch = () => {
       <Stack direction="row" justifyContent="flex-end">
         <TimeFrameSelector
           onChange={(timeframe) => {
-            setTimeFrame(timeframe);
-            console.log("start time: " + timeframe.startTime);
-            console.log("end time: " + timeframe.endTime);
+            onTimeframeChange(timeframe);
+            console.log("start time: " + timeframe.startTimeUnixNanoSec);
+            console.log("end time: " + timeframe.endTimeUnixNanoSec);
           }}
         />
       </Stack>

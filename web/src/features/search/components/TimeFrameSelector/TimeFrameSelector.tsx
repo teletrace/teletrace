@@ -60,13 +60,16 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
     else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
     else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
     const startTimeNumber = startTime.getTime();
-    return { startTime: startTimeNumber, endTime: endTimeNumber };
+    return {
+      startTimeUnixNanoSec: startTimeNumber,
+      endTimeUnixNanoSec: endTimeNumber,
+    };
   };
 
   const toTimeframeFromCustom = (timeFrame: CustomTimeFrame) => {
     return {
-      startTime: timeFrame.startTime.getTime(),
-      endTime: timeFrame.endTime.getTime(),
+      startTimeUnixNanoSec: timeFrame.startTime.getTime(),
+      endTimeUnixNanoSec: timeFrame.endTime.getTime(),
     };
   };
 
@@ -93,8 +96,8 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
 
   const getTooltipTitle = (): string =>
     `${formatDateToTimeString(
-      timeframe?.startTime || 0
-    )} -> ${formatDateToTimeString(timeframe?.endTime || 0)}`;
+      timeframe?.startTimeUnixNanoSec || 0
+    )} -> ${formatDateToTimeString(timeframe?.endTimeUnixNanoSec || 0)}`;
 
   return (
     <div>
@@ -168,8 +171,3 @@ type CustomTimeFrame = {
 };
 
 export type TimeFrameTypes = RelativeTimeFrame | CustomTimeFrame;
-
-// export type AbsoluteTimeFrame = {
-//   start: number;
-//   end: number;
-// };
