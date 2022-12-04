@@ -18,9 +18,9 @@ import { Article, GitHub } from "@mui/icons-material";
 import { Button, ListItemText, Menu, MenuItem, MenuList } from "@mui/material";
 import { Fragment, useState } from "react";
 
-import { ResourceIcon } from "../Elements/ResourceIcon";
-
 import { LUPA_BUILD_COMMIT, LUPA_BUILD_TAG } from "@/config";
+
+import { ResourceIcon } from "../Elements/ResourceIcon";
 
 const links = [
   {
