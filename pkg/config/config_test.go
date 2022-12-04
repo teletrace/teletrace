@@ -84,7 +84,7 @@ func TestSourceOverrides(t *testing.T) {
 func writeEnvFile(t *testing.T, content []byte) {
 	path := filepath.Join(configPath, configFilename+"."+configFileExt)
 
-	err := os.WriteFile(path, content, 0644)
+	err := os.WriteFile(path, content, 0o644)
 	assert.NoError(t, err)
 
 	t.Cleanup(func() {

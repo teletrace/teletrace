@@ -19,10 +19,10 @@ package main
 import (
 	"context"
 	"log"
-
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
+
 	spanreaderes "oss-tracing/plugin/spanreader/es"
 
 	"go.uber.org/zap"

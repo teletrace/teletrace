@@ -21,11 +21,11 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"syscall"
-
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
+	"syscall"
+
 	spanreaderes "oss-tracing/plugin/spanreader/es"
 
 	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
@@ -46,7 +46,6 @@ func main() {
 	defer logs.FlushBufferedLogs(logger)
 
 	sr, err := spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
-
 	if err != nil {
 		log.Fatalf("Failed to initialize SpanReader of Elasticsearch plugin %v", err)
 	}

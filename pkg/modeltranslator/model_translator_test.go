@@ -18,10 +18,9 @@ package modeltranslator
 
 import (
 	"fmt"
+	"testing"
 
 	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
-
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/collector/pdata/pcommon"
