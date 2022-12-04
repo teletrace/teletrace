@@ -10,6 +10,7 @@ RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /app/build/bin ./cmd/all-i
 
 
 FROM node:18-alpine3.16 AS ui-builder
+ARG BUILD_INFO
 
 WORKDIR /app
 
@@ -23,6 +24,7 @@ COPY web/ .
 
 # Build the app
 ENV REACT_APP_API_URL="/"
+ENV REACT_APP_BUILD_INFO="${BUILD_INFO}"
 RUN yarn build
 
 
