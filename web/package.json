@@ -30,8 +30,7 @@
     "recompose": "^0.30.0",
     "tween-functions": "^1.2.0",
     "u-basscss": "^2.0.1",
-    "use-debounce": "^9.0.2",
-    "yarn": "^1.22.19"
+    "use-debounce": "^9.0.2"
   },
   "devDependencies": {
     "@craco/craco": "^6.4.5",
