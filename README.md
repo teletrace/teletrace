@@ -55,7 +55,9 @@ Contribution is welcomed!
 
 Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, take a look at a [good first issue](https://github.com/epsagon/lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
-## 👥 **Community**
+## 👤 **Community**
+
+Join our [Slack](https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ) for questions, support and fun.
 
 ## ❗ **Code of conduct**
 
