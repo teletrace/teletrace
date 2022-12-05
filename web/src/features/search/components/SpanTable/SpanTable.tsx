@@ -21,6 +21,7 @@ import MaterialReactTable, {
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 import {
   formatDateAsDateTime,
@@ -32,6 +33,8 @@ import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
+
+const SPAN_ID_FIELD = "span.spanId";
 
 interface SpanTableProps {
   filters?: SearchFilter[];
@@ -46,13 +49,17 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const sort = [{ field: SPAN_ID_FIELD, ascending: true }].concat(
+    sorting?.map((columnSort) => ({
+      field: `span.${columnSort.id}`,
+      ascending: !columnSort.desc,
+    }))
+  );
+
   const searchRequest = {
     filters: filters,
     timeframe: timeframe,
-    sort: sorting?.map((columnSort) => ({
-      field: columnSort.id,
-      ascending: !columnSort.desc,
-    })),
+    sort: sort,
     metadata: undefined,
   };
 
@@ -79,10 +86,11 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       )
     ) ?? [];
 
+  const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
     if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
-      fetchNextPage();
+      debouncedFetchNextPage();
     }
   };
 
@@ -94,9 +102,10 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   }, [fetchMoreOnBottomReached, tableWrapper]);
 
   const onClick = (row: Row<TableSpan>) => {
-    window.open(
-      `${window.location.origin}/trace/${row.original.traceId}?spanId=${row.original.spanId}`
-    );
+    !isLoading &&
+      window.open(
+        `${window.location.origin}/trace/${row.original.traceId}?spanId=${row.original.spanId}`
+      );
   };
 
   return (
