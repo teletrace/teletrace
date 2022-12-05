@@ -1,12 +1,19 @@
 <div align="center">
   <a href="https://solid-dollop-44b513ff.pages.github.io/" target="_blank">
   <picture>
-    <img src="./website/docs/images/lupa_light.png" width="300" alt="Logo"/>
+    <img src="./website/docs/images/lupa_light.png" width="400" alt="Logo"/>
   </picture>
   </a>
 </div>
 
 <h1 align="center">Tracing Troubleshooting Tool.</h1>
+
+<h3 align="center">
+  <a href="https://solid-dollop-44b513ff.pages.github.io/"><b>Explore the docs</b></a> &bull;
+  <a href=""><b>Join Our Slack</b></a> &bull;
+  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=bug_report.md&title="><b>Report Bug</b></a> &bull;
+  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=feature_request.md&title="><b>Request Feature</b></a>
+</h3>
 
 ## ⭐️ **Why Lupa?**
 
@@ -26,7 +33,7 @@ TODO
 
 ## 🖼 **Screenshots**
 
-<img src="./website/docs/images/demo.gif" width="900" height="500"/>
+<img src="./website/docs/images/demo.gif" width="900" height="450"/>
 
 Take a look on our [demo](https://app.lupaproject.io/search) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
 
