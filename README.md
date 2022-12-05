@@ -17,7 +17,7 @@
 
 ## ⭐️ **Why Lupa?**
 
-TODO
+TODO Placeholder Placeholder
 
 ## 📚 **Table of contents**
 
@@ -30,6 +30,10 @@ TODO
 - [License](#license)
 
 ## ✨ **Features**
+
+- Feature number 1
+- Feature number 2
+- Feature number 3
 
 ## 🖼 **Screenshots**
 
