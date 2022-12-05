@@ -24,6 +24,7 @@ import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
+import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter, Timeframe } from "../types/common";
 
 export type FiltersState = {
@@ -101,6 +102,11 @@ export const SpanSearch = () => {
             onLiveSpansChange={toggleLiveSpans}
             disabled={false}
           />
+                  <TimeFrameSelector
+          onChange={(timeframe) => {
+            onTimeframeChange(timeframe);
+          }}
+        />
         </Stack>
       </Stack>
 
