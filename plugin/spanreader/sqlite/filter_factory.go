@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package sqlite
+package sqlitespanreader
 
 import (
 	"oss-tracing/pkg/model"
