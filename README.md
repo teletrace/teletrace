@@ -1,6 +1,6 @@
 <img src="./website/docs/images/lupa_light.png" width="500"/>
 
-Todo add summary for Lupa tool
+Todo add summery for Lupa tool
 
 ## **Table of contents**
 
@@ -17,7 +17,7 @@ Todo add summary for Lupa tool
 
 ### Demo
 
-Take a look to our [demo](https://app.lupaproject.io/search) environment that based on [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
+Take a look on our [demo](https://app.lupaproject.io/search) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
 
 ## **Getting started**
 
