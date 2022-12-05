@@ -15,7 +15,7 @@ Todo add summery for Lupa tool
 
 ## **Screenshots**
 
-<img src="./website/docs/images/demo.gif" width="800"/>
+<img src="./website/docs/images/demo.gif" width="800" height="500"/>
 
 Take a look on our [demo](https://app.lupaproject.io/search) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
 
