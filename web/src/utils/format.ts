@@ -54,3 +54,5 @@ export const getCurrentTimestamp = (): Timeframe => {
     endTimeUnixNanoSec: now * 1000 * 1000,
   };
 };
+export const formatDateToTimeString = (date: number) =>
+  format(date, "PP, HH:mm:ss");
