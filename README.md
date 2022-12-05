@@ -8,7 +8,8 @@ Todo add summery for Lupa tool
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
 - [Contributing](#contributing)
-- [Code of Conduct](#)
+- [Community](#community)
+- [Code of Conduct](#code-of-conduct)
 - [License](#license)
 
 ## **Features**
@@ -32,6 +33,8 @@ Take a look on our [demo](https://app.lupaproject.io/search) environment that us
 Contribution is welcomed!
 
 Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, take a look at a [good first issue](https://github.com/epsagon/lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
+## **Community**
 
 ## **Code of conduct**
 
