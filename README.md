@@ -1,6 +1,16 @@
-<img src="./website/docs/images/lupa_light.png" width="500"/>
+<div align="center">
+  <a href="https://solid-dollop-44b513ff.pages.github.io/" target="_blank">
+  <picture>
+    <img src="./website/docs/images/lupa_light.png" width="300" alt="Logo"/>
+  </picture>
+  </a>
+</div>
 
-Todo add summery for Lupa tool
+<h1 align="center">Tracing Troubleshooting Tool.</h1>
+
+## **Why Lupa?**
+
+TODO
 
 ## **Table of contents**
 
@@ -16,7 +26,7 @@ Todo add summery for Lupa tool
 
 ## **Screenshots**
 
-<img src="./website/docs/images/demo.gif" width="800" height="500"/>
+<img src="./website/docs/images/demo.gif" width="900" height="500"/>
 
 Take a look on our [demo](https://app.lupaproject.io/search) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
 
