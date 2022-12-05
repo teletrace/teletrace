@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package sqlite
+package sqlitespanreader
 
 import (
 	"context"
 	"fmt"
 	"go.uber.org/zap"
+	"oss-tracing/pkg/config"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
@@ -29,7 +30,7 @@ type spanReader struct {
 	cfg    SqliteConfig
 	logger *zap.Logger
 	ctx    context.Context
-	client sqliteClient
+	client *sqliteClient
 }
 
 func (sr *spanReader) Initialize() error {
@@ -61,18 +62,18 @@ func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRe
 	return nil, nil
 }
 
-func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
+func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg config.Config) (spanreader.SpanReader, error) {
 	errMsg := "cannot create a new span reader for sqlite: %w"
-
-	client, err := newSqliteClient(logger, cfg)
+	sqliteConfig := NewSqliteConfig(cfg)
+	client, err := newSqliteClient(logger, sqliteConfig)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
 	return &spanReader{
-		cfg:    cfg,
+		cfg:    sqliteConfig,
 		logger: logger,
 		ctx:    ctx,
-		client: *client,
+		client: client,
 	}, nil
 }
