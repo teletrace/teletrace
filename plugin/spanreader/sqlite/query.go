@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package sqlite
+package sqlitespanreader
 
 func (sr *sqliteClient) buildQuery(filters []string) (string, error) {
 	return "", nil
