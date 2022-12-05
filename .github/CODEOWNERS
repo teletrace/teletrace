@@ -6,7 +6,7 @@ README.md  @epsagon/lupa-managers
 LICENSE  @haimrait
 CONTRIBUTING.md  @epsagon/lupa-managers
 CODE_OF_CONDUCT.md  @haimrait
-.guthub/CODEOWNERS @haimrait
+.github/CODEOWNERS @haimrait
 .github/pull_request_template.md @epsagon/lupa-managers
 
 # Specific directories
