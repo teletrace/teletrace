@@ -10,7 +10,7 @@
 
 <h3 align="center">
   <a href="https://solid-dollop-44b513ff.pages.github.io/"><b>📝 Explore the docs</b></a> &bull;
-  <a href="https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ"><b>👤 Join Our Slack</b></a> &bull;
+  <a href="https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ"><b>💬 Join Our Slack</b></a> &bull;
   <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=bug_report.md&title="><b>🐛 Report Bug</b></a> &bull;
   <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=feature_request.md&title="><b>✨ Request Feature</b></a>
 </h3>
@@ -18,16 +18,6 @@
 ## ⭐️ **Why Lupa?**
 
 TODO Placeholder Placeholder
-
-## 📚 **Table of contents**
-
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Getting Started](#getting-started)
-- [Contribution](#contribution)
-- [Community](#community)
-- [Code of Conduct](#code-of-conduct)
-- [License](#license)
 
 ## ✨ **Features**
 
@@ -40,6 +30,16 @@ TODO Placeholder Placeholder
 <img src="./website/docs/images/demo.gif" width="900" height="450"/>
 
 Take a look on our [demo](https://app.lupaproject.io/search) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
+
+## 📚 **Table of contents**
+
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Getting Started](#getting-started)
+- [Contribution](#contribution)
+- [Community](#community)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
 
 ## 🚀 **Getting started**
 
@@ -90,7 +90,7 @@ Contribution is welcomed!
 
 Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, take a look at a [good first issue](https://github.com/epsagon/lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
-## 👤 **Community**
+## 💬 **Community**
 
 Join our [Slack](https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ) for questions, support and fun.
 
