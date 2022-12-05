@@ -63,6 +63,15 @@ Make sure you have the following tools installed:
 
 _make sure to install pre-commit hooks by running `pre-commit install` from the root of the project after cloning_
 
+##### Pre-Commit
+
+Pre-commit hooks are used to validate code before its being pushed to the remote, the configuration is located at [`.pre-commit-config.yaml`](./.pre-commit-config.yaml) file,
+all pre-commit rules are validated on the CI as well so if you don't want to run them locally for some reason feel free to skip the local setup.
+
+To setup pre-commit hooks use the command: `pre-commit install`.
+
+To execute pre-commit hooks regardless of a commit, for example to fix CI errors, you can use the `pre-commit run --all-files` to execute all rules on all files.
+
 #### Project Layout
 
 This project is following the [standard go project layout](https://github.com/golang-standards/project-layout) in the backend and [bulletproof react](https://github.com/alan2207/bulletproof-react/) in the frontend, please read through their docs to make sure you know where each file should go.

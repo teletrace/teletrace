@@ -1,0 +1,25 @@
+# by default
+@epsagon/lupa-developers
+
+# specific files
+README.md  @epsagon/lupa-managers
+LICENSE  @haimrait
+CONTRIBUTING.md  @epsagon/lupa-managers
+CODE_OF_CONDUCT.md  @haimrait
+.github/pull_request_template.md @epsagon/lupa-managers
+
+# Specific directories
+.github/ISSUE_TEMPLATE/ @epsagon/lupa-managers
+website/ @epsagon/lupa-managers
+
+# Sonic responsibilities
+web/features/search @epsagon/team-sonic
+
+# Zola responsibilities
+web/features/trace @epsagon/team-zola
+cmd/ @epsagon/team-zola
+deploy/ @epsagon/team-zola
+
+# Exporters
+lupa-otelcol/exporter/elasticsearchexporter/ @ophiryael @roybh1
+lupa-otelcol/exporter/sqliteexporter/ @Tavh @tmishari
