@@ -9,10 +9,10 @@
 <h1 align="center">Tracing Troubleshooting Tool.</h1>
 
 <h3 align="center">
-  <a href="https://solid-dollop-44b513ff.pages.github.io/"><b>Explore the docs</b></a> &bull;
-  <a href=""><b>Join Our Slack</b></a> &bull;
-  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=bug_report.md&title="><b>Report Bug</b></a> &bull;
-  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=feature_request.md&title="><b>Request Feature</b></a>
+  <a href="https://solid-dollop-44b513ff.pages.github.io/"><b>📝 Explore the docs</b></a> &bull;
+  <a href="https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ"><b>Join Our Slack</b></a> &bull;
+  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=bug_report.md&title="><b>🐛 Report Bug</b></a> &bull;
+  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=feature_request.md&title="><b>✨ Request Feature</b></a>
 </h3>
 
 ## ⭐️ **Why Lupa?**
