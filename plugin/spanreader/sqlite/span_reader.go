@@ -38,7 +38,7 @@ func (sr *spanReader) Initialize() error {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	qr := buildSearchRequest(r)
+	qr := buildSearchQuery(r)
 	row, err := sr.client.db.Query(qr)
 	if err != nil {
 		return nil, err
