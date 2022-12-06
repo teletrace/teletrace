@@ -27,7 +27,7 @@ TODO Placeholder Placeholder
 
 ## 🖼 **Screenshots**
 
-<img src="./website/docs/images/demo.gif" width="900" height="450"/>
+<img src="./website/docs/images/demo.gif" min-width="100%" min-height="100%"/>
 
 Take a look at our [demo](https://app.lupaproject.io) environment, with [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) data.
 
