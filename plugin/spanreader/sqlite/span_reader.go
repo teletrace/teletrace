@@ -19,11 +19,13 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"oss-tracing/pkg/config"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
+
+	"go.uber.org/zap"
+
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
 
 type spanReader struct {
@@ -38,6 +40,7 @@ func (sr *spanReader) Initialize() error {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	_ = buildSearchQuery(r)
 	return nil, nil
 }
 
