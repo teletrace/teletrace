@@ -25,6 +25,9 @@ export const styles = {
     padding: "11px 36px 11px 87px",
     "&:hover": {
       backgroundColor: "#2B2D32",
+      ".copy-button": {
+        display: "block",
+      },
     },
   },
   key: {
@@ -42,5 +45,6 @@ export const styles = {
     marginLeft: "auto",
     fontSize: 15,
     alignSelf: "center",
+    display: "none",
   },
 };

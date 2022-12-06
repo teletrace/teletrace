@@ -27,44 +27,40 @@ interface SpanAttributeProps {
   attValue: AttributeValue;
 }
 
-const onCopyClick = (
-  value: string,
-  setCopyClicked: (value: boolean) => void
-): void => {
-  navigator.clipboard.writeText(value);
-  setCopyClicked(true);
-};
-
 export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
-  const [copyClicked, setCopyClicked] = useState(false);
-  const [hoveringOver, setHoveringOver] = useState("");
+  const [isCopyTooltipVisible, setIsCopyTooltipVisible] = useState(false);
+
+  const onCopyClick = (
+    value: string,
+    setIsCopyTooltipVisible: (value: boolean) => void
+  ): void => {
+    navigator.clipboard.writeText(value);
+    setIsCopyTooltipVisible(true);
+  };
+
   return (
-    <Box
-      sx={styles.container}
-      onMouseEnter={() => setHoveringOver(attKey)}
-      onMouseLeave={() => setHoveringOver("")}
-    >
+    <Box sx={styles.container}>
       <Typography component="span" sx={styles.key}>
         {attKey}
       </Typography>
       <Typography component="span" sx={styles.value}>
         {attValue.toString()}
       </Typography>
-      {hoveringOver === attKey && (
-        <Tooltip
-          title="Copied!"
-          placement="top"
-          open={copyClicked}
-          onOpen={() => setTimeout(() => setCopyClicked(false), 3000)}
-        >
-          <ContentCopy
-            sx={styles.copy}
-            onClick={() =>
-              onCopyClick(attValue.toString() || "", setCopyClicked)
-            }
-          />
-        </Tooltip>
-      )}
+      <Tooltip
+        title="Copied!"
+        placement="top"
+        open={isCopyTooltipVisible}
+        onOpen={() => setTimeout(() => setIsCopyTooltipVisible(false), 3000)}
+      >
+        <ContentCopy
+          sx={styles.copy}
+          className="copy-button"
+          role="button"
+          onClick={() =>
+            onCopyClick(attValue.toString(), setIsCopyTooltipVisible)
+          }
+        />
+      </Tooltip>
     </Box>
   );
 };
