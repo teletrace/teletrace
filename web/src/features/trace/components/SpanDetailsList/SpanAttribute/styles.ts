@@ -35,7 +35,6 @@ export const styles = {
   },
   value: {
     fontWeight: "700",
-    pointer: "cursor",
     ...ellipsisOverflow,
   },
   copy: {
