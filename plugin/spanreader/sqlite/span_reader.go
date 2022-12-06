@@ -19,12 +19,11 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
-
-	"go.uber.org/zap"
 	"oss-tracing/pkg/config"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
+
+	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
 
 type spanReader struct {
