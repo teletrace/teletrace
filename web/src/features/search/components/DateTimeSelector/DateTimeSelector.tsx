@@ -20,60 +20,59 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 import { Timeframe } from "../../types/common";
+import { msToNanoSec } from "@/utils/format";
 
 export type DateTimeSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
+  timeframe: Timeframe;
   onClose: () => void;
 };
 
 export const DateTimeSelector = ({
   onChange,
+  timeframe,
   onClose,
 }: DateTimeSelectorProps) => {
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
-  const [startTime, setStartTime] = useState<Date | null>(
-    new Date(new Date().setHours(new Date().getHours() - 1))
+  const [startDate, setStartDate] = useState<Date | null>(
+    new Date(timeframe.startTimeUnixNanoSec / 1000000)
   );
-  const [endTime, setEndTime] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(
+    new Date(timeframe.endTimeUnixNanoSec / 1000000)
+  );
+  const [startTime, setStartTime] = useState<Date | null>(startDate);
+  const [endTime, setEndTime] = useState<Date | null>(endDate);
   const [timeValid, setTimeValid] = useState<boolean>(true);
-  const [timeframe, setTimeframe] = useState<Timeframe>({
-    startTimeUnixNanoSec: new Date().setHours(new Date().getHours() - 1),
-    endTimeUnixNanoSec: new Date().getTime(),
-  });
 
   const calcRange = () => {
-    const startRange = new Date(
-      startDate!.setHours(startTime!.getHours(), startTime!.getMinutes())
-    ).getTime();
-    const endRange = new Date(
-      endDate!.setHours(endTime!.getHours(), endTime!.getMinutes())
-    ).getTime();
-    setTimeframe({
-      startTimeUnixNanoSec: startRange,
-      endTimeUnixNanoSec: endRange,
-    });
-
-    return { startTimeUnixNanoSec: startRange, endTimeUnixNanoSec: endRange };
+    const startRange = msToNanoSec(
+      new Date(
+        startDate!.setHours(startTime!.getHours(), startTime!.getMinutes())
+      ).getTime()
+    );
+    const endRange = msToNanoSec(
+      new Date(
+        endDate!.setHours(endTime!.getHours(), endTime!.getMinutes())
+      ).getTime()
+    );
+    return { startRange, endRange };
   };
 
   const handleApply = () => {
     const timeRange = calcRange();
-    const isTimeValid =
-      timeRange.startTimeUnixNanoSec < timeRange.endTimeUnixNanoSec;
-    setTimeValid(isTimeValid);
-    if (isTimeValid) {
-      onChange(timeRange);
+    if (timeRange.startRange < timeRange.endRange) {
+      setTimeValid(true);
+      onChange({
+        startTimeUnixNanoSec: timeRange.startRange,
+        endTimeUnixNanoSec: timeRange.endRange,
+      });
       onClose();
+    } else {
+      setTimeValid(false);
+      onChange(timeframe);
     }
   };
 
   const handleCancle = () => {
-    setStartDate(new Date());
-    setEndDate(new Date());
-    setStartTime(new Date(new Date().setHours(new Date().getHours() - 1)));
-    setEndTime(new Date());
-
     onClose();
   };
 

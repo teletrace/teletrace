@@ -24,10 +24,11 @@ import {
 import { useRef, useState, MouseEvent } from "react";
 import { Timeframe } from "../../types/common";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
-import { formatDateToTimeString } from "@/utils/format";
+import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 export type TimeFrameSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
+  timeframe: Timeframe;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -37,19 +38,20 @@ const options: RelativeTimeFrame[] = [
   { label: "1W", offsetRange: "1w", relativeTo: "now" },
 ];
 
-export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
+export const TimeFrameSelector = ({
+  onChange,
+  timeframe,
+}: TimeFrameSelectorProps) => {
   const customOption: CustomTimeFrame = {
     label: "Custom",
-    startTime: new Date(),
-    endTime: new Date(),
+    startTime: timeframe.startTimeUnixNanoSec,
+    endTime: timeframe.endTimeUnixNanoSec,
   };
 
   const buttonRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
-
-  const [timeframe, setTimeFrame] = useState<Timeframe>();
 
   const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
     setOpen(true);
@@ -73,24 +75,20 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
     else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
     else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
     const startTimeNumber = startTime.getTime();
-    return {
-      startTimeUnixNanoSec: startTimeNumber,
-      endTimeUnixNanoSec: endTimeNumber,
-    };
+    timeframe.startTimeUnixNanoSec = startTimeNumber * 1000 * 1000;
+    timeframe.endTimeUnixNanoSec = endTimeNumber * 1000 * 1000;
   };
 
-  const toTimeframeFromCustom = (timeFrame: CustomTimeFrame) => {
-    return {
-      startTimeUnixNanoSec: timeFrame.startTime.getTime(),
-      endTimeUnixNanoSec: timeFrame.endTime.getTime(),
-    };
+  const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
+    timeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
+    timeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
   };
 
-  const calcTimeFrame = (timeFrame: TimeFrameTypes) => {
-    if (isRelativeTimeFrame(timeFrame)) {
-      return toTimeframeFromRelative(timeFrame);
-    } else if (isCustomTimeFrame(timeFrame)) {
-      return toTimeframeFromCustom(timeFrame);
+  const calcTimeFrame = (timeframeType: TimeFrameTypes) => {
+    if (isRelativeTimeFrame(timeframeType)) {
+      toTimeframeFromRelative(timeframeType);
+    } else if (isCustomTimeFrame(timeframeType)) {
+      toTimeframeFromCustom(timeframeType);
     }
   };
 
@@ -101,16 +99,21 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
     if (value?.label === "Custom") {
       handleCustomClick(event);
     }
-    const timeFrame = calcTimeFrame(value);
-    setTimeFrame(timeFrame);
-    onChange(timeFrame!);
+    calcTimeFrame(value);
+    onChange(timeframe);
     setIsSelected(value);
   };
 
-  const getTooltipTitle = (): string =>
-    `${formatDateToTimeString(
+  const formatNanoToTimeString = (time: number): string => {
+    const ms = nanoSecToMs(time);
+    return formatDateAsDateTime(ms, { showSec: false });
+  };
+
+  const getTooltipTitle = (): string => {
+    return `${formatNanoToTimeString(
       timeframe?.startTimeUnixNanoSec || 0
-    )} -> ${formatDateToTimeString(timeframe?.endTimeUnixNanoSec || 0)}`;
+    )} -> ${formatNanoToTimeString(timeframe?.endTimeUnixNanoSec || 0)}`;
+  };
 
   return (
     <div>
@@ -130,9 +133,9 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
         <DialogContent>
           <DateTimeSelector
             onChange={(timeframe) => {
-              setTimeFrame(timeframe);
               onChange(timeframe);
             }}
+            timeframe={timeframe}
             onClose={() => setOpen(false)}
           />
         </DialogContent>
@@ -180,8 +183,8 @@ type RelativeTimeFrame = {
 
 type CustomTimeFrame = {
   label: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: number;
+  endTime: number;
 };
 
 export type TimeFrameTypes = RelativeTimeFrame | CustomTimeFrame;

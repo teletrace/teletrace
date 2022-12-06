@@ -38,15 +38,28 @@ export type LiveSpansState = {
 };
 
 export const SpanSearch = () => {
+  const now = new Date();
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
-    timeframe: getCurrentTimestamp(),
+    timeframe: {
+      startTimeUnixNanoSec: now.setHours(now.getHours() - 1) * 1000 * 1000,
+      endTimeUnixNanoSec: new Date().getTime() * 1000 * 1000,
+    },
   });
 
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
     isOn: false,
     intervalInMs: 2000,
   });
+
+  const onTimeframeChange = useCallback(
+    (timeframe: Timeframe) => {
+      return setFiltersState((prevState: FiltersState) => {
+        return { ...prevState, timeframe };
+      });
+    },
+    [setFiltersState]
+  );
 
   const onFilterChange = useCallback(
     (entry: SearchFilter, isDelete = false) => {
@@ -102,11 +115,10 @@ export const SpanSearch = () => {
             onLiveSpansChange={toggleLiveSpans}
             disabled={false}
           />
-                  <TimeFrameSelector
-          onChange={(timeframe) => {
-            onTimeframeChange(timeframe);
-          }}
-        />
+          <TimeFrameSelector
+            onChange={onTimeframeChange}
+            timeframe={filtersState.timeframe}
+          />
         </Stack>
       </Stack>
 
