@@ -38,11 +38,13 @@ func buildQueryByFilters(filters ...model.SearchFilter) string {
 	for _, filter := range filters {
 		if isValidFilter(filter) {
 			dbTableName := findTableName(string(filter.KeyValueFilter.Key))
-			if _, ok := dbTablesSet[dbTableName]; !ok {
-				dbTablesSet[dbTableName] = true
+			if dbTableName != "" {
+				if _, ok := dbTablesSet[dbTableName]; !ok {
+					dbTablesSet[dbTableName] = true
+				}
+				value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+				filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
 			}
-			value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
-			filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
 		}
 	}
 	var dbTables []string
