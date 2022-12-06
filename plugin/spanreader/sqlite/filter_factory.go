@@ -23,15 +23,15 @@ import (
 	"strings"
 )
 
-func buildSearchRequest(r spansquery.SearchRequest) string {
+func buildSearchQuery(r spansquery.SearchRequest) string {
 	var filters []model.SearchFilter
 	filters = append(filters, CreateTimeframeFilters(r.Timeframe)...)
 	filters = append(filters, r.SearchFilters...)
-	qr := BuildQuery(filters...)
+	qr := filtersSqliteMapping(filters...)
 	return qr
 }
 
-func BuildQuery(filters ...model.SearchFilter) string {
+func filtersSqliteMapping(filters ...model.SearchFilter) string {
 	var sqliteOperatorsMap = map[string]string{
 		spansquery.OPERATOR_EQUALS:       "=",
 		spansquery.OPERATOR_NOT_EQUALS:   "!=",
@@ -47,7 +47,6 @@ func BuildQuery(filters ...model.SearchFilter) string {
 		spansquery.OPERATOR_LTE:          "<=",
 	}
 
-	//TODO timur1$ check which keys are allowed
 	var sqliteFieldsMap = map[string]string{
 		"span.id":                "spans.span_id",
 		"span.traceId":           "spans.trace_id",
@@ -76,14 +75,14 @@ func BuildQuery(filters ...model.SearchFilter) string {
 	var dbTables []string
 	for _, filter := range filters {
 		if filter.KeyValueFilter != nil && filter.KeyValueFilter.Key != "" && filter.KeyValueFilter.Operator != "" {
-			dbName := strings.Split(string(filter.KeyValueFilter.Key), ".")[0]
-			if !contains(dbTables, sqliteTablesMap[dbName]) {
-				dbTables = append(dbTables, sqliteTablesMap[dbName])
+			dbTableName := strings.Split(string(filter.KeyValueFilter.Key), ".")[0]
+			if !contains(dbTables, sqliteTablesMap[dbTableName]) {
+				dbTables = append(dbTables, sqliteTablesMap[dbTableName])
 			}
 			if len(filterStrings) > 0 {
 				filterStrings = append(filterStrings, "AND")
 			}
-			var value string = fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+			var value = fmt.Sprintf("%v", filter.KeyValueFilter.Value)
 			filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorsMap[string(filter.KeyValueFilter.Operator)], value))
 		}
 	}
