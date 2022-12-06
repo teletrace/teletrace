@@ -18,6 +18,7 @@ package sqlitespanreader
 
 import (
 	"database/sql"
+
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 )
