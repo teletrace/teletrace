@@ -48,14 +48,12 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 	var err error
 
 	req, err := buildSearchRequest(r)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not build search request: %+v", err)
 	}
 
 	searchAPI := sc.client.API.Search()
 	res, err := searchAPI.Request(req).Index(sc.idx).Do(ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
 	}
@@ -63,13 +61,11 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 	defer res.Body.Close()
 
 	body, err := decodeResponse(res)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not decode http response: %+v", err)
 	}
 
 	searchResp, err := parseSpansResponse(body)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
 	}
@@ -118,7 +114,6 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBu
 		)
 	}
 	return b.Sort(types.NewSortBuilder().Sort(sorts))
-
 }
 
 func decodeResponse(res *http.Response) (map[string]any, error) {

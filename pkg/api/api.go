@@ -19,7 +19,9 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/spanreader"
 	"path/filepath"
 	"strings"
 	"time"
@@ -29,9 +31,6 @@ import (
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-
-	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/spanreader"
 )
 
 const apiPrefix = "/v1"
