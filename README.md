@@ -29,7 +29,7 @@ TODO Placeholder Placeholder
 
 <img src="./website/docs/images/demo.gif" width="900" height="450"/>
 
-Take a look on our [demo](https://app.lupaproject.io/search) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
+Take a look on our [demo](https://app.lupaproject.io) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
 
 ## 📚 **Table of contents**
 
