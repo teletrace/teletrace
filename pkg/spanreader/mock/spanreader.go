@@ -18,12 +18,12 @@ package mock
 
 import (
 	"context"
+	"oss-tracing/pkg/model/tagsquery/v1"
+	"oss-tracing/pkg/spanreader"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"oss-tracing/pkg/spanreader"
 
 	spanformatutiltests "github.com/epsagon/lupa/model/internalspan/v1/util"
 )
@@ -50,7 +50,8 @@ func (sr spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvaila
 }
 
 func (sr spanReader) GetTagsValues(
-	ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	ctx context.Context, r tagsquery.TagValuesRequest, tags []string,
+) (map[string]*tagsquery.TagValuesResponse, error) {
 	res := map[string]*tagsquery.TagValuesResponse{
 		"span.attributes.custom-tag": {
 			Values: []tagsquery.TagValueInfo{
