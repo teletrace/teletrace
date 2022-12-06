@@ -19,8 +19,10 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
-import { Timeframe } from "../../types/common";
+
 import { msToNanoSec } from "@/utils/format";
+
+import { Timeframe } from "../../types/common";
 
 export type DateTimeSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
@@ -45,14 +47,18 @@ export const DateTimeSelector = ({
 
   const calcRange = () => {
     const startRange = msToNanoSec(
-      new Date(
-        startDate!.setHours(startTime!.getHours(), startTime!.getMinutes())
-      ).getTime()
+      startDate && startTime
+        ? new Date(
+            startDate.setHours(startTime.getHours(), startTime.getMinutes())
+          ).getTime()
+        : new Date().getTime()
     );
     const endRange = msToNanoSec(
-      new Date(
-        endDate!.setHours(endTime!.getHours(), endTime!.getMinutes())
-      ).getTime()
+      endTime && endDate
+        ? new Date(
+            endDate.setHours(endTime.getHours(), endTime.getMinutes())
+          ).getTime()
+        : new Date().getTime()
     );
     return { startRange, endRange };
   };

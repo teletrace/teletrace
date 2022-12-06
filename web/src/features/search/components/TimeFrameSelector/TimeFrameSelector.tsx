@@ -21,10 +21,12 @@ import {
   ToggleButtonGroup,
   Tooltip,
 } from "@mui/material";
-import { useRef, useState, MouseEvent } from "react";
+import { MouseEvent, useRef, useState } from "react";
+
+import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
+
 import { Timeframe } from "../../types/common";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
-import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 export type TimeFrameSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
@@ -58,11 +60,15 @@ export const TimeFrameSelector = ({
     setAnchorEl(event.currentTarget);
   };
 
-  function isRelativeTimeFrame(object: any): object is RelativeTimeFrame {
+  function isRelativeTimeFrame(
+    object: TimeFrameTypes
+  ): object is RelativeTimeFrame {
     return "offsetRange" in object;
   }
 
-  function isCustomTimeFrame(object: any): object is CustomTimeFrame {
+  function isCustomTimeFrame(
+    object: TimeFrameTypes
+  ): object is CustomTimeFrame {
     return "startTime" in object;
   }
 
@@ -153,8 +159,9 @@ export const TimeFrameSelector = ({
             : customOption.label}
         </ToggleButton>
 
-        {options.map((tf, idx) => (
+        {options.map((tf) => (
           <Tooltip
+            key={tf.label}
             title={isSelected?.label === tf?.label ? getTooltipTitle() : ""}
             placement="top-end"
             arrow
