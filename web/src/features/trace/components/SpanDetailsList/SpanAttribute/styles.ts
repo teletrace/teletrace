@@ -35,6 +35,13 @@ export const styles = {
   },
   value: {
     fontWeight: "700",
+    pointer: "cursor",
     ...ellipsisOverflow,
+  },
+  copy: {
+    cursor: "pointer",
+    marginLeft: "auto",
+    fontSize: 15,
+    alignSelf: "center",
   },
 };
