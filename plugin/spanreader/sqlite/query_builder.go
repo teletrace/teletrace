@@ -18,8 +18,9 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
 	"strings"
+
+	"oss-tracing/pkg/model"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -47,7 +48,7 @@ func buildQueryByFilters(filters ...model.SearchFilter) string {
 			}
 		}
 	}
-	var dbTables []string
+	dbTables := make([]string, 0, len(dbTablesSet))
 	for table := range dbTablesSet {
 		dbTables = append(dbTables, table)
 	}
