@@ -45,7 +45,32 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 }
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
-	return nil, nil
+	var tags tagsquery.GetAvailableTagsResponse
+	for k, v := range sqliteTablesMap {
+		if v != "event_attributes" && v != "link_attributes" && v != "scope_attributes" && v != "span_attributes" {
+			query := fmt.Sprintf("SELECT name,type FROM PRAGMA_TABLE_INFO('%s')", v)
+			rows, err := sr.client.db.QueryContext(ctx, query)
+			if err != nil {
+				continue
+			}
+			for rows.Next() {
+				var name string
+				var fieldType string
+				err = rows.Scan(&name, &fieldType)
+				if err != nil {
+					return nil, err
+				}
+				if name != "id" {
+					newTag := tagsquery.TagInfo{
+						Name: k + "." + name,
+						Type: fieldType,
+					}
+					tags.Tags = append(tags.Tags, newTag)
+				}
+			}
+		}
+	}
+	return &tags, nil
 }
 
 func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
