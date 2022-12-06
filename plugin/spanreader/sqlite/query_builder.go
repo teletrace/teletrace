@@ -24,15 +24,15 @@ import (
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
 
-func buildSqLiteQuery(r spansquery.SearchRequest) string { // create a query string from the request
+func buildSearchQuery(r spansquery.SearchRequest) string { // create a query string from the request
 	var filters []model.SearchFilter
 	filters = append(filters, createTimeframeFilters(r.Timeframe)...)
 	filters = append(filters, r.SearchFilters...)
-	qr := buildSelectQuery(filters...)
+	qr := buildQueryByFilters(filters...)
 	return qr
 }
 
-func buildSelectQuery(filters ...model.SearchFilter) string {
+func buildQueryByFilters(filters ...model.SearchFilter) string {
 	var filterStrings []string
 	dbTablesSet := make(map[string]bool)
 	for _, filter := range filters {
@@ -42,7 +42,7 @@ func buildSelectQuery(filters ...model.SearchFilter) string {
 				dbTablesSet[dbTableName] = true
 			}
 			value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
-			filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", getSqLiteFields()[string(filter.KeyValueFilter.Key)], getSqLiteOperator()[string(filter.KeyValueFilter.Operator)], value))
+			filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
 		}
 	}
 	var dbTables []string

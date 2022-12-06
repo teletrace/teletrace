@@ -39,7 +39,7 @@ func (sr *spanReader) Initialize() error {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	_ = buildSqLiteQuery(r)
+	_ = buildSearchQuery(r)
 	return nil, nil
 }
 
