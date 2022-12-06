@@ -19,6 +19,7 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
+
 	"go.uber.org/zap"
 	"oss-tracing/pkg/config"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
@@ -38,19 +39,6 @@ func (sr *spanReader) Initialize() error {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	qr := buildSearchQuery(r)
-	row, err := sr.client.db.Query(qr)
-	if err != nil {
-		return nil, err
-	}
-	for row.Next() {
-		var id, traceID, spanID, parentSpanID, operationName, startTime, duration, tags, logs, refs string
-		err = row.Scan(&id, &traceID, &spanID, &parentSpanID, &operationName, &startTime, &duration, &tags, &logs, &refs)
-		if err != nil {
-			return nil, err
-		}
-		fmt.Println(id, traceID, spanID, parentSpanID, operationName, startTime, duration, tags, logs, refs)
-	}
 	return nil, nil
 }
 
