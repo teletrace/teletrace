@@ -33,13 +33,13 @@ Take a look on our [demo](https://app.lupaproject.io) environment that uses [Ope
 
 ## 📚 **Table of contents**
 
-- [Features](#✨-features)
-- [Screenshots](#🖼-screenshots)
-- [Getting Started](#🚀-getting-started)
-- [Contribution](#👨‍💻-contribution)
-- [Community](#💬-community)
-- [Code of Conduct](#❗-code-of-conduct)
-- [License](#🪪-license)
+- [Features](#-features)
+- [Screenshots](#-screenshots)
+- [Getting Started](#-getting-started)
+- [Contribution](#-contribution)
+- [Community](#-community)
+- [Code of Conduct](#-code-of-conduct)
+- [License](#-license)
 
 ## 🚀 **Getting started**
 
