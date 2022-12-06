@@ -49,5 +49,5 @@ func buildQueryByFilters(filters ...model.SearchFilter) string {
 	for table := range dbTablesSet {
 		dbTables = append(dbTables, table)
 	}
-	return fmt.Sprintf("SELECT * FROM %s WHERE %s", fmt.Sprintf("%s", strings.Join(dbTables, ",")), strings.Join(filterStrings, " AND "))
+	return fmt.Sprintf("SELECT * FROM %s WHERE %s", strings.Join(dbTables, ","), strings.Join(filterStrings, " AND "))
 }
