@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://solid-dollop-44b513ff.pages.github.io/" target="_blank">
   <picture>
-    <img src="./website/docs/images/lupa_light.png" width="400" alt="Logo"/>
+    <img src="./website/docs/images/lupa_light.png" width="350" alt="Logo"/>
   </picture>
   </a>
 </div>
@@ -107,4 +107,4 @@ Please take a few minutes to review our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## 🪪 **License**
 
-Copyright (c) Epsagon. [Apache 2.0 License](./LICENSE).
+Copyright (c) Cisco Systems, Inc. [Apache 2.0 License](./LICENSE).
