@@ -29,7 +29,7 @@ TODO Placeholder Placeholder
 
 <img src="./website/docs/images/demo.gif" width="900" height="450"/>
 
-Take a look on our [demo](https://app.lupaproject.io) environment that uses [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
+Take a look at our [demo](https://app.lupaproject.io) environment, with [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) data.
 
 ## 📚 **Table of contents**
 
@@ -92,7 +92,7 @@ docker run \
 
 ## 👨‍💻 **Contribution**
 
-Contributions are welcomed!
+Contributions are welcome!
 
 Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, take a look at a [good first issue](https://github.com/epsagon/lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
