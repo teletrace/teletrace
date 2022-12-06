@@ -61,25 +61,52 @@ export const TagValuesSelector = ({
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
 
-  const tagValuesRequest: TagValuesRequest = {
+  const timeframeTagValuesRequest: TagValuesRequest = {
     filters: filters,
     timeframe: timeframe,
   };
+  const retentionTagValuesRequest: TagValuesRequest = {
+    filters: [],
+  };
+  const {
+    data: currentTagValues,
+    isFetching: isFetchingCurrent,
+    isError: isErrorCurrent,
+  } = useTagValues(tag, timeframeTagValuesRequest);
 
   const {
-    data: tagValues,
-    isFetching,
-    isError,
-  } = useTagValues(tag, tagValuesRequest);
+    data: allTagValues,
+    isFetching: isFetchingAllValues,
+    isError: isErrorAllValues,
+  } = useTagValues(tag, retentionTagValuesRequest);
 
   const clearTags = () => onChange?.([]);
 
-  const tagOptions = tagValues?.pages
+  const currentTagOptions =
+    currentTagValues?.pages
+      .flatMap((page) => page.values)
+      ?.reduce((currentTagsMap: Record<string, TagValue>, currentTag) => {
+        if (currentTag) {
+          currentTagsMap[currentTag.value] = currentTag;
+        }
+        return currentTagsMap;
+      }, {}) || {};
+
+  const tagOptions = allTagValues?.pages
     .flatMap((page) => page.values)
     ?.filter((tag) => tag?.value.toString().includes(search))
+    .map(
+      (tag) => currentTagOptions[tag.value] || { value: tag.value, count: 0 }
+    )
+    .sort((tagA, tagB) => {
+      if (tagB.count === tagA.count) {
+        return tagA.value >= tagB.value ? 1 : -1;
+      }
+      return tagB.count - tagA.count;
+    })
     .map((tag) => ({
       value: tag.value,
-      label: <CheckboxListLabel tag={tag} render={render} />,
+      label: <CheckboxListLabel key={tag.value} tag={tag} render={render} />,
     }));
 
   return (
@@ -92,7 +119,9 @@ export const TagValuesSelector = ({
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <div>{title}</div>
-              {isFetching && <CircularProgress size="1rem" />}
+              {(isFetchingCurrent || isFetchingAllValues) && (
+                <CircularProgress size="1rem" />
+              )}
             </Stack>
           </AccordionSummary>
           <AccordionActions>
@@ -105,17 +134,17 @@ export const TagValuesSelector = ({
         </Stack>
 
         <AccordionDetails>
-          {isError ? (
+          {isErrorCurrent || isErrorAllValues ? (
             <Alert severity="error">Failed loading tag values</Alert>
           ) : (
             <Fragment>
-              {searchable && !!tagValues && (
+              {searchable && !!currentTagValues && (
                 <SearchField value={search} onChange={setSearch} />
               )}
 
               <CheckboxList
                 value={value}
-                loading={!tagValues}
+                loading={!currentTagValues}
                 options={tagOptions || []}
                 onChange={onChange}
               />

@@ -56,13 +56,13 @@ export const useTagValues = (
     queryKey: [
       "tagValues",
       tag,
-      tagValuesRequest.timeframe.startTimeUnixNanoSec,
-      tagValuesRequest.timeframe.endTimeUnixNanoSec,
+      tagValuesRequest.timeframe?.startTimeUnixNanoSec,
+      tagValuesRequest.timeframe?.endTimeUnixNanoSec,
       tagValuesRequest.filters,
     ],
     keepPreviousData: true,
     queryFn: ({ pageParam }) =>
       fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
-    getNextPageParam: (lastPage) => lastPage.metadata?.nextToken,
+    getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
   });
 };

@@ -255,7 +255,63 @@ func Test_BuildTagsValuesRequest_sanity(t *testing.T) {
 		Value:    []string{"demo-server"},
 	}
 	request := tagsquery.TagValuesRequest{
-		Timeframe: model.Timeframe{StartTime: 1669194382741000000, EndTime: 1669799182741000000},
+		Timeframe: &model.Timeframe{StartTime: 1669194382741000000, EndTime: 1669799182741000000},
+		SearchFilters: []model.SearchFilter{
+			{
+				KeyValueFilter: &filter,
+			},
+		},
+	}
+	res, err := buildTagsValuesRequest(request, tagsMapping)
+	assert.Nil(t, err)
+	j, err := json.Marshal(res)
+	assert.Nil(t, err)
+	assert.JSONEq(t, expectedJson, fmt.Sprintf("%+v", string(j)))
+}
+
+func Test_BuildTagsValuesRequest_BuildWithoutTimeframe(t *testing.T) {
+	expectedJson := `{
+ "aggregations": {
+  "scope.name": {
+   "terms": {
+    "field": "scope.name.keyword"
+   }
+  }
+ },
+ "query": {
+  "bool": {
+   "must": [
+    {
+ 	"bool": {
+ 	 "should": [
+ 	  {
+ 	   "match_phrase": {
+ 		"resource.attributes.service.name": {
+ 		 "query": "demo-server"
+ 		}
+ 	   }
+ 	  }
+ 	 ]
+ 	}
+    }
+   ]
+  }
+ },
+ "size": 0
+}`
+	tagsMapping := []tagsquery.TagInfo{
+		{
+			Name: "scope.name",
+			Type: "text",
+		},
+	}
+	filter := model.KeyValueFilter{
+		Key:      "resource.attributes.service.name",
+		Operator: "in",
+		Value:    []string{"demo-server"},
+	}
+	request := tagsquery.TagValuesRequest{
+		Timeframe: nil,
 		SearchFilters: []model.SearchFilter{
 			{
 				KeyValueFilter: &filter,
