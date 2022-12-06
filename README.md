@@ -33,13 +33,13 @@ Take a look on our [demo](https://app.lupaproject.io) environment that uses [Ope
 
 ## 📚 **Table of contents**
 
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Getting Started](#getting-started)
-- [Contribution](#contribution)
-- [Community](#community)
-- [Code of Conduct](#code-of-conduct)
-- [License](#license)
+- [Features](#✨-features)
+- [Screenshots](#🖼-screenshots)
+- [Getting Started](#🚀-getting-started)
+- [Contribution](#👨‍💻-contribution)
+- [Community](#💬-community)
+- [Code of Conduct](#❗-code-of-conduct)
+- [License](#🪪-license)
 
 ## 🚀 **Getting started**
 
@@ -49,7 +49,13 @@ Take a look on our [demo](https://app.lupaproject.io) environment that uses [Ope
 
 ### Using Docker
 
-> Currently, we do not have public image, so all examples assume execution from the root directory
+> Currently, we do not have a public image, so all examples assume execution from the root directory
+
+Clone the project
+
+```sh
+git clone https://github.com/epsagon/lupa.git
+```
 
 Using docker-compose:
 
@@ -86,7 +92,7 @@ docker run \
 
 ## 👨‍💻 **Contribution**
 
-Contribution is welcomed!
+Contributions are welcomed!
 
 Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, take a look at a [good first issue](https://github.com/epsagon/lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
 
