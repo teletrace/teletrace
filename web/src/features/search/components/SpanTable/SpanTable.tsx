@@ -63,8 +63,15 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     metadata: undefined,
   };
 
-  const { data, fetchNextPage, isError, isRefetching, isFetching, isLoading } =
-    useSpansQuery(searchRequest);
+  const {
+    data,
+    fetchNextPage,
+    isError,
+    isRefetching,
+    isFetching,
+    isLoading,
+    hasNextPage,
+  } = useSpansQuery(searchRequest);
 
   const tableSpans =
     data?.pages?.flatMap((page) =>
@@ -95,6 +102,18 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   };
 
   const tableWrapper = tableWrapperRef.current;
+  if (tableWrapper) {
+    const firstRow = tableWrapper.querySelector<HTMLElement>(
+      "tbody tr:first-child"
+    );
+    if (firstRow != undefined) {
+      const rowsHeightExceedPageHeight =
+        tableSpans.length * firstRow.offsetHeight < tableWrapper.offsetHeight;
+      if (rowsHeightExceedPageHeight && hasNextPage) {
+        debouncedFetchNextPage();
+      }
+    }
+  }
   useEffect(() => {
     tableWrapper?.addEventListener("scroll", () => {
       fetchMoreOnBottomReached(tableWrapper);
