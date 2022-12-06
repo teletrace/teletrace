@@ -37,7 +37,7 @@ const onCopyClick = (
 
 export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
   const [copyClicked, setCopyClicked] = useState(false);
-  const [hoveringOver, setHoveringOver] = useState("")
+  const [hoveringOver, setHoveringOver] = useState("");
   return (
     <Box
       sx={styles.container}
@@ -60,7 +60,7 @@ export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
           <ContentCopy
             sx={styles.copy}
             onClick={() =>
-              onCopyClick(attValue.toString() || '', setCopyClicked)
+              onCopyClick(attValue.toString() || "", setCopyClicked)
             }
           />
         </Tooltip>
