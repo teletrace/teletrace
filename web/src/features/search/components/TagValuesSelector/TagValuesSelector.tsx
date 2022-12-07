@@ -24,18 +24,19 @@ import {
   Button,
   CircularProgress,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Fragment, useState } from "react";
-
-import { CheckboxList } from "@/components/CheckboxList";
-import { SearchField } from "@/components/SearchField";
-import { formatNumber } from "@/utils/format";
 
 import { useTagValues } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
+
+import { CheckboxList } from "@/components/CheckboxList";
+import { SearchField } from "@/components/SearchField";
+import { formatNumber } from "@/utils/format";
 
 export type TagValuesSelectorProps = {
   tag: string;
@@ -133,10 +134,19 @@ const CheckboxListLabel = ({
   tag: TagValue;
   render?: (value: string | number) => React.ReactNode;
 }) => (
-  <Stack direction="row" alignItems="center" justifyContent="space-between">
-    <Typography noWrap>{render ? render(tag.value) : tag.value}</Typography>
-    <Typography variant="button" color="GrayText">
-      {formatNumber(tag.count)}
-    </Typography>
-  </Stack>
+  <Tooltip title={tag.value} placement="right">
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      spacing={1}
+    >
+      <Typography noWrap sx={styles.valueLabel}>
+        <span>{render ? render(tag.value) : tag.value}</span>
+      </Typography>
+      <Typography variant="button" color="GrayText">
+        {formatNumber(tag.count)}
+      </Typography>
+    </Stack>
+  </Tooltip>
 );
