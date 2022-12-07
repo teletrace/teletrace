@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
 
@@ -62,7 +63,14 @@ func (r *tagsController) GetAvailableTags(
 	// mappingData["keyword"]
 
 	if err != nil {
-		return result, fmt.Errorf("Could not get available tags: %v", err)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return tagsquery.GetAvailableTagsResponse{}, nil
+			}
+		default:
+			return result, fmt.Errorf("could not get available tags: %v", err)
+		}
 	}
 
 	return result, nil
@@ -74,13 +82,18 @@ func (r *tagsController) GetTagsValues(
 	tags []string,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 	tagsMappings, err := r.getTagsMappings(ctx, tags)
-
 	if err != nil {
-		return nil, fmt.Errorf("Could not get values for tags: %v", tags)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return nil, nil
+			}
+		default:
+			return nil, fmt.Errorf("could not get values for tags: %v", tags)
+		}
 	}
 
 	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings)
-
 	if err != nil {
 		return map[string]*tagsquery.TagValuesResponse{}, err
 	}
@@ -96,7 +109,6 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 		r.rawClient.Indices.GetFieldMapping.WithContext(ctx),
 		r.rawClient.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to get field mapping: %v", err)
 	}
@@ -186,7 +198,6 @@ func (r *tagsController) performGetTagsValuesRequest(
 		return nil, fmt.Errorf("failed to build query: %s", err)
 	}
 	res, err := r.client.API.Search().Request(req).Index(r.idx).Do(ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to perform search: %s", err)
 	}
@@ -201,7 +212,6 @@ func (r *tagsController) performGetTagsValuesRequest(
 func (r *tagsController) parseGetTagsValuesResponseBody(
 	body map[string]any,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
-
 	// To get an idea of how the response looks like, check the unit test at tags_controller_test.go
 
 	result := map[string]*tagsquery.TagValuesResponse{}

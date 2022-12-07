@@ -34,4 +34,14 @@ export const styles: Record<string, SxProps<Theme>> = {
     "&:not(:last-child)": { borderBottom: 0 },
     "&:before": { display: "none" },
   },
+
+  valueLabel: {
+    direction: "rtl",
+    textOverflow: "ellipsis",
+
+    "& span": {
+      direction: "ltr",
+      unicodeBidi: "bidi-override",
+    },
+  },
 };

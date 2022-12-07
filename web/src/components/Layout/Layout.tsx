@@ -29,6 +29,8 @@ export const Layout = ({ children }: LayoutProps) => {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
+        minWidth: "100%",
+        width: "fit-content",
       }}
     >
       <AppBar position="sticky">

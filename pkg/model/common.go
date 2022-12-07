@@ -27,9 +27,11 @@ type Metadata struct {
 	NextToken ContinuationToken `json:"nextToken"`
 }
 
-type FilterOperator string
-type FilterKey string
-type FilterValue any
+type (
+	FilterOperator string
+	FilterKey      string
+	FilterValue    any
+)
 
 type KeyValueFilter struct {
 	Key      FilterKey      `json:"key"`

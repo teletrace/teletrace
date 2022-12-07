@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"strconv"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
@@ -93,7 +94,6 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*
 
 		filter := m[string(f.Operator)]
 		qc, err := filter.Builder(f)
-
 		if err != nil {
 			return nil, fmt.Errorf("Could not create filter from: %+v: %+v", f, err)
 		}
@@ -108,7 +108,6 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*
 	return b.Bool(types.NewBoolQueryBuilder().
 		MustNot(mustNot).Must(must),
 	), nil
-
 }
 
 func createEqualsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
@@ -125,7 +124,6 @@ func createInFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error
 	var shouldQueriesArray []map[types.Field]*types.MatchPhraseQueryBuilder
 
 	jsVal, err := json.Marshal(f.Value)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse IN filter value: %+v", err)
 	}
@@ -177,13 +175,30 @@ func createRangeFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, er
 
 	var fVal float64
 
-	if i, ok := f.Value.(int64); ok {
-		fVal = float64(i)
-	} else if ui, ok := f.Value.(uint64); ok {
-		fVal = float64(ui)
-	} else if fl, ok := f.Value.(float64); ok {
-		fVal = fl
-	} else {
+	switch castValue := f.Value.(type) {
+	case int:
+		fVal = float64(castValue)
+	case int32:
+		fVal = float64(castValue)
+	case int64:
+		fVal = float64(castValue)
+	case uint:
+		fVal = float64(castValue)
+	case uint32:
+		fVal = float64(castValue)
+	case uint64:
+		fVal = float64(castValue)
+	case float32:
+		fVal = float64(castValue)
+	case float64:
+		fVal = castValue
+	case string:
+		var err error
+		fVal, err = strconv.ParseFloat(castValue, 64)
+		if err != nil {
+			return nil, fmt.Errorf("Could not parse RANGE filter value as float64: %+v", f.Value)
+		}
+	default:
 		return nil, fmt.Errorf("Could not parse RANGE filter value as float64: %+v", f.Value)
 	}
 
