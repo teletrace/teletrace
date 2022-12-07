@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-// this file contains configuration for the application such as API_URL, etc.
-const LOCAL_API_URL = "http://localhost:8080";
-export const API_URL = process.env.REACT_APP_API_URL ?? LOCAL_API_URL;
+package sqlitespanreader
 
-export const LUPA_DOCS_URL = "https://solid-dollop-44b513ff.pages.github.io/";
-export const LUPA_REPOSITORY_URL = "https://github.com/epsagon/lupa";
-export const LUPA_SLACK_INVITE_LINK =
-  "https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ";
+import (
+	"database/sql"
 
-export const LUPA_BUILD_INFO =
-  process.env.REACT_APP_BUILD_INFO ?? "v0.0.0-devel";
+	_ "github.com/mattn/go-sqlite3"
+	"go.uber.org/zap"
+)
+
+type sqliteClient struct {
+	db *sql.DB
+}
+
+func newSqliteClient(logger *zap.Logger, sqliteConfig SqliteConfig) (*sqliteClient, error) {
+	db, err := sql.Open("sqlite3", sqliteConfig.Path)
+	if err != nil {
+		logger.Error("Could not connect to sqlite database: %+v", zap.Error(err))
+		return nil, err
+	}
+	return &sqliteClient{
+		db: db,
+	}, nil
+}

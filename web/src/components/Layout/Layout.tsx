@@ -16,31 +16,39 @@
 
 import { AppBar, Box, Toolbar, Typography } from "@mui/material";
 
+import { Links } from "./Links";
+
 type LayoutProps = {
   children: React.ReactNode;
 };
 
-export const Layout = ({ children }: LayoutProps) => (
-  <Box
-    sx={{
-      height: "100vh",
-      display: "flex",
-      flexDirection: "column",
-    }}
-  >
-    <AppBar position="sticky">
-      <Toolbar>
-        <Typography variant="h6" color="inherit" noWrap>
-          Lupa
-        </Typography>
-      </Toolbar>
-    </AppBar>
+export const Layout = ({ children }: LayoutProps) => {
+  return (
     <Box
-      component="main"
-      padding={2}
-      sx={{ flex: 1, height: "calc(100vh - 64px)" }}
+      sx={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        minWidth: "100%",
+        width: "fit-content",
+      }}
     >
-      {children}
+      <AppBar position="sticky">
+        <Toolbar>
+          <Typography variant="h6" color="inherit" sx={{ flex: 1 }} noWrap>
+            Lupa
+          </Typography>
+
+          <Links />
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="main"
+        padding={2}
+        sx={{ flex: 1, height: "calc(100vh - 64px)" }}
+      >
+        {children}
+      </Box>
     </Box>
-  </Box>
-);
+  );
+};

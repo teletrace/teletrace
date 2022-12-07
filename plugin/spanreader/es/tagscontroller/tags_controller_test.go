@@ -267,5 +267,4 @@ func Test_BuildTagsValuesRequest_sanity(t *testing.T) {
 	j, err := json.Marshal(res)
 	assert.Nil(t, err)
 	assert.JSONEq(t, expectedJson, fmt.Sprintf("%+v", string(j)))
-
 }

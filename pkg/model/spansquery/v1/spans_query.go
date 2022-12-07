@@ -38,9 +38,11 @@ const (
 	OPERATOR_LTE          = "lte"
 )
 
-type SortField string
-type FilterQueryString string
-type ContinuationToken string
+type (
+	SortField         string
+	FilterQueryString string
+	ContinuationToken string
+)
 
 type Sort struct {
 	Field     SortField `json:"field"`

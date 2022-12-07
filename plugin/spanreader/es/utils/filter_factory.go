@@ -93,7 +93,6 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*
 
 		filter := m[string(f.Operator)]
 		qc, err := filter.Builder(f)
-
 		if err != nil {
 			return nil, fmt.Errorf("Could not create filter from: %+v: %+v", f, err)
 		}
@@ -108,7 +107,6 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*
 	return b.Bool(types.NewBoolQueryBuilder().
 		MustNot(mustNot).Must(must),
 	), nil
-
 }
 
 func createEqualsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
@@ -125,7 +123,6 @@ func createInFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error
 	var shouldQueriesArray []map[types.Field]*types.MatchPhraseQueryBuilder
 
 	jsVal, err := json.Marshal(f.Value)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse IN filter value: %+v", err)
 	}

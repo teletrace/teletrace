@@ -39,10 +39,12 @@ type spanReader struct {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	if r.Sort == nil || len(r.Sort) == 0 {
+		r.Sort = []spansquery.Sort{{Field: spanIdField, Ascending: true}}
+	}
 	sr.optimizeSort(r.Sort)
 
 	res, err := sr.searchController.Search(ctx, r)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not index document: %+v", err)
 	}
@@ -61,7 +63,6 @@ func (sr *spanReader) optimizeSort(s []spansquery.Sort) {
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
 	res, err := sr.tagsController.GetAvailableTags(ctx, r)
-
 	if err != nil {
 		return nil, fmt.Errorf("GetAvailableTags failed with error: %+v", err)
 	}
@@ -70,9 +71,9 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 }
 
 func (sr *spanReader) GetTagsValues(
-	ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	ctx context.Context, r tagsquery.TagValuesRequest, tags []string,
+) (map[string]*tagsquery.TagValuesResponse, error) {
 	res, err := sr.tagsController.GetTagsValues(ctx, r, tags)
-
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
 	}
@@ -83,7 +84,6 @@ func (sr *spanReader) GetTagsValues(
 func (sr *spanReader) Initialize() error {
 	// This method may be implemented for other databases, not needed in ES.
 	return nil
-
 }
 
 func NewSpanReader(ctx context.Context, logger *zap.Logger, cfg ElasticConfig) (spanreader.SpanReader, error) {

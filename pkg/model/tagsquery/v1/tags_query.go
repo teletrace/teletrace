@@ -44,8 +44,7 @@ type TagValuesResponse struct {
 	Values   []TagValueInfo  `json:"values"`
 }
 
-type GetAvailableTagsRequest struct {
-}
+type GetAvailableTagsRequest struct{}
 
 type GetAvailableTagsResponse struct {
 	Tags []TagInfo

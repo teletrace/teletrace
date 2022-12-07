@@ -30,6 +30,7 @@ import { ReactComponent as NodeJS } from "./icons/NodeJSIcon.svg";
 import { ReactComponent as Python } from "./icons/Python.svg";
 import { ReactComponent as RabbitMQ } from "./icons/RabbitMQ.svg";
 import { ReactComponent as Redis } from "./icons/Redis.svg";
+import { ReactComponent as Slack } from "./icons/Slack.svg";
 import { ReactComponent as SNS } from "./icons/Sns.svg";
 import { ReactComponent as SQS } from "./icons/Sqs.svg";
 
@@ -62,6 +63,7 @@ const iconTypes: IconTypes = {
   redis: Redis,
   sns: SNS,
   sqs: SQS,
+  slack: Slack,
 };
 
 export const ResourceIcon = ({ name, style }: ResourceIconProps) => {
