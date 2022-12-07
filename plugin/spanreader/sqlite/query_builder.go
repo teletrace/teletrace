@@ -18,8 +18,10 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
 	"strings"
+
+	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/model/tagsquery/v1"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -30,6 +32,10 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 	filters = append(filters, r.SearchFilters...)
 	qr := buildQueryByFilters(filters...)
 	return qr
+}
+
+func buildTagsQuery(r tagsquery.TagValuesRequest, tags []string) string {
+	return ""
 }
 
 func buildQueryByFilters(filters ...model.SearchFilter) string {

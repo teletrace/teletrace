@@ -17,8 +17,9 @@
 package sqlitespanreader
 
 import (
-	"oss-tracing/pkg/model"
 	"strings"
+
+	"oss-tracing/pkg/model"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -39,16 +40,30 @@ var sqliteOperatorMap = map[string]string{
 }
 
 var sqliteFieldsMap = map[string]string{
-	"span.id":                "spans.span_id",
-	"span.traceId":           "spans.trace_id",
-	"span.traceState":        "spans.trace_state",
-	"span.parentId":          "spans.parent_span_id",
-	"span.name":              "spans.name",
-	"span.kind":              "spans.kind",
-	"span.startTimeUnixNano": "spans.start_time_unix_nano",
-	"span.endTimeUnixNano":   "spans.end_time_unix_nano",
-	"span.durationNano":      "spans.duration",
-	"span.status.code":       "spans.span_status_code",
+	"span.events.name":                    "events.name",
+	"span.events.droppedAttributesCount":  "events.dropped_attributes_count",
+	"span.events.spanId":                  "events.span_id",
+	"span.links.spanId":                   "links.span_id",
+	"span.links.traceState":               "links.trace_state",
+	"span.links.droppedAttributesCount":   "links.dropped_attributes_count",
+	"scope.name":                          "scopes.name",
+	"scope.version":                       "scopes.version",
+	"scope.droppedAttributesCount":        "scopes.dropped_attributes_count",
+	"span.spanId":                         "spans.span_id",
+	"span.traceId":                        "spans.trace_id",
+	"span.traceState":                     "spans.trace_state",
+	"span.parentSpanId":                   "spans.parent_span_id",
+	"span.name":                           "spans.name",
+	"span.kind":                           "spans.kind",
+	"span.startTimeUnixNano":              "spans.start_time_unix_nano",
+	"span.endTimeUnixNano":                "spans.end_time_unix_nano",
+	"span.droppedAttributesCount":         "spans.dropped_attributes_count",
+	"span.status.message":                 "spans.status_message",
+	"span.status.code":                    "spans.span_status_code",
+	"span.droppedResourceAttributesCount": "spans.dropped_resource_attributes_count",
+	"span.droppedEventsCount":             "spans.dropped_events_count",
+	"span.droppedLinksCount":              "spans.dropped_links_count",
+	"externalFields.durationNano":         "spans.duration",
 }
 
 var sqliteTablesMap = map[string]string{
