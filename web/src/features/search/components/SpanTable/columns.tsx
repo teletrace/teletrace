@@ -29,6 +29,7 @@ export interface TableSpan {
   name: string;
   status: number;
   serviceName: string;
+  isNew: boolean;
 }
 
 export const columns: ColumnDef<TableSpan>[] = [

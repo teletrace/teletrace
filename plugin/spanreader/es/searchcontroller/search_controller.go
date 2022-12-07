@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"net/http"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+	"strconv"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 
@@ -97,7 +98,7 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 		builder = builder.SearchAfter(sortResultsBuilder)
 	}
 
-	builder = builder.Size(200) // Where to get this number from?
+	builder = builder.Size(30) // Where to get this number from?
 
 	return builder.Build(), nil
 }
@@ -177,6 +178,8 @@ func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
 			switch sortField := sort[0].(type) {
 			case string:
 				metadata.NextToken = spansquery.ContinuationToken(sortField)
+			case float64:
+				metadata.NextToken = spansquery.ContinuationToken(strconv.FormatFloat(sortField, 'f', 0, 64))
 			default:
 				return fmt.Errorf(
 					"expected a sort field of type string, but found: %v", sortField)

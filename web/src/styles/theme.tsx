@@ -523,6 +523,10 @@ theme = createTheme(theme, {
     MuiTableRow: {
       styleOverrides: {
         root: {
+          "&.newSpanTableRow": {
+            transition: "background-color",
+            backgroundColor: theme.palette.grey[700],
+          },
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },

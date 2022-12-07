@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, tableRowClasses } from "@mui/material";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
   MRT_Row as Row,
@@ -34,6 +34,7 @@ import { SearchFilter, Timeframe } from "../../types/common";
 import { LiveSpansState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
+import { calcNewSpans } from "./utils";
 
 interface SpanTableProps {
   filters?: SearchFilter[];
@@ -43,6 +44,7 @@ interface SpanTableProps {
 
 interface FetchSpansResult {
   spans: InternalSpan[];
+  newSpansIds: string[];
   fetchNextPage: () => void;
   isError: boolean;
   isFetching: boolean;
@@ -60,9 +62,12 @@ export function SpanTable({
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "span.startTimeUnixNano", desc: true },
+  ]);
   const [spansState, setSpansState] = useState<FetchSpansResult>({
     spans: [],
+    newSpansIds: [],
     fetchNextPage: () => null,
     isError: false,
     isFetching: false,
@@ -84,10 +89,16 @@ export function SpanTable({
     if (liveSpans.isOn) {
       const intervalId = setInterval(async () => {
         console.log("fetching query with interval");
-        const spansQueryResult = await updateSpansQuery(searchRequest);
-        setSpansState({
-          ...spansQueryResult,
-          fetchNextPage: spansState.fetchNextPage,
+        const spansQueryResult = await updateSpansQuery(
+          searchRequest,
+          liveSpans.interval * 1000
+        );
+        setSpansState((prevState) => {
+          return {
+            ...spansQueryResult,
+            newSpansIds: calcNewSpans(prevState.spans, spansQueryResult.spans),
+            fetchNextPage: spansState.fetchNextPage,
+          };
         });
       }, liveSpans.interval * 1000);
       return () => clearInterval(intervalId);
@@ -96,11 +107,21 @@ export function SpanTable({
 
   const spansQueryResult = useSpansQuery(searchRequest);
   useEffect(() => {
-    setSpansState(spansQueryResult);
-  });
+    setSpansState({
+      newSpansIds: [],
+      ...spansQueryResult,
+    });
+  }, [spansQueryResult.isFetching]);
 
-  const { spans, fetchNextPage, isError, isFetching, isRefetching, isLoading } =
-    spansState;
+  const {
+    spans,
+    newSpansIds,
+    fetchNextPage,
+    isError,
+    isFetching,
+    isRefetching,
+    isLoading,
+  } = spansState;
 
   const tableSpans =
     spans?.flatMap(
@@ -117,6 +138,7 @@ export function SpanTable({
           typeof resource.attributes?.["service.name"] === "string"
             ? resource.attributes["service.name"]
             : "service unknown",
+        isNew: span.spanId in newSpansIds,
       })
     ) ?? [];
 
@@ -128,11 +150,11 @@ export function SpanTable({
   };
 
   const tableWrapper = tableWrapperRef.current;
-  useEffect(() => {
-    tableWrapper?.addEventListener("scroll", () => {
-      fetchMoreOnBottomReached(tableWrapper);
-    });
-  }, [fetchMoreOnBottomReached, tableWrapper]);
+  // useEffect(() => {
+  //   tableWrapper?.addEventListener("scroll", () => {
+  //     fetchMoreOnBottomReached(tableWrapper);
+  //   });
+  // }, [fetchMoreOnBottomReached, tableWrapper]);
 
   const onClick = (row: Row<TableSpan>) => {
     window.open(
@@ -178,7 +200,12 @@ export function SpanTable({
           sx: styles.tableContainer,
         }}
         muiTablePaperProps={{ sx: styles.tablePaper }}
-        muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
+        muiTableBodyRowProps={({ row }) => ({
+          onClick: () => onClick(row),
+          className: newSpansIds.includes(row.original.spanId)
+            ? "newSpanTableRow"
+            : "",
+        })}
       />
     </div>
   );

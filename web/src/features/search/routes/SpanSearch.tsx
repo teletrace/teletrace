@@ -18,6 +18,7 @@ import { Divider, Stack } from "@mui/material";
 import { Fragment, useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
+import { getCurrentTimestamp } from "@/utils/format";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
@@ -36,17 +37,12 @@ export type LiveSpansState = {
 };
 
 export const SpanSearch = () => {
-  const now = new Date().valueOf();
-  const hourInMillis = 60 * 60 * 1000;
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
-    timeframe: {
-      startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
-      endTimeUnixNanoSec: now * 1000 * 1000,
-    },
+    timeframe: getCurrentTimestamp(),
   });
 
-  const defaultLiveSpansInterval = 5;
+  const defaultLiveSpansInterval = 1;
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
     isOn: false,
     interval: defaultLiveSpansInterval,
