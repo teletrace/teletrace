@@ -134,7 +134,7 @@ const CheckboxListLabel = ({
   tag: TagValue;
   render?: (value: string | number) => React.ReactNode;
 }) => (
-  <Tooltip title={tag.value} placement="right">
+  <Tooltip arrow title={tag.value} placement="right">
     <Stack
       direction="row"
       alignItems="center"
