@@ -21,6 +21,7 @@ import { ReactComponent as AWSLambdaFunction } from "./icons/AWSLambdaFunction.s
 import { ReactComponent as Custom } from "./icons/Custom.svg";
 import { ReactComponent as DefaultResourceIcon } from "./icons/DefaultResourceIcon.svg";
 import { ReactComponent as DynamoDB } from "./icons/DynamoDB.svg";
+import { ReactComponent as ErrorOutline } from "./icons/ErrorOutline.svg";
 import { ReactComponent as Grpc } from "./icons/Grpc.svg";
 import { ReactComponent as Http } from "./icons/Http.svg";
 import { ReactComponent as IoTHTTP2Protocol } from "./icons/IoTHTTP2Protocol.svg";
@@ -54,6 +55,7 @@ const iconTypes: IconTypes = {
   lambda: Lambda,
   custom: Custom,
   dynamodb: DynamoDB,
+  erroroutline: ErrorOutline,
   grpc: Grpc,
   http: Http,
   mongodb: MongoDB,

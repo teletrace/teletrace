@@ -16,8 +16,8 @@
 
 export const styles = {
   accordion: {
+    width: "100%",
     borderRadius: "8px",
-    marginBottom: "8px",
   },
   accordionSummary: {
     flexDirection: "row-reverse",
@@ -36,6 +36,30 @@ export const styles = {
   expandArrowIcon: {
     color: "#FFFFFF",
     fontSize: "15px",
+  },
+  errorIcon: {
+    width: "22px",
+    height: "22px",
+  },
+  spanMainContainer: {
+    display: "flex",
+    marginLeft: "36px",
+    marginBottom: "8px",
+  },
+  spanErrorMainContainer: {
+    marginLeft: "0px",
+  },
+  spanErrorIconContainer: {
+    marginRight: "16px",
+    marginTop: "20px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  expandedSpanErrorContainer: {
+    backgroundColor: "#3B3C42",
+    flex: "1",
+    width: "1px",
   },
   spanFlowIconsContainer: {
     flexDirection: "row",
