@@ -59,6 +59,9 @@ const (
 
 	esIndexerFlushThresholdSecondsEnvName = "ES_INDEXER_FLUSH_THRESHOLD_SECONDS"
 	esIndexerFlushThresholdSecondsDefault = 30
+
+	sqlitePathEnvName        = "SQLITE_PATH"
+	sqlitePathEnvNameDefault = "lupa_embedded.db"
 )
 
 // Config defines global configurations used throughout the application.
@@ -76,6 +79,7 @@ type Config struct {
 	ESIndex                        string `mapstructure:"es_index"`
 	ESIndexerWorkersCount          int    `mapstructure:"es_indexer_workers_count"`
 	ESIndexerFlushThresholdSeconds int    `mapstructure:"es_indexer_flush_threshold_seconds"`
+	SQLitePath                     string `mapstructure:"sqlite_path"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -122,4 +126,5 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esIndexEnvName, esIndexDefault)
 	v.SetDefault(esIndexerFlushThresholdSecondsEnvName, esIndexerFlushThresholdSecondsDefault)
 	v.SetDefault(esIndexerWorkersCountEnvName, esIndexerWorkersCountDefault)
+	v.SetDefault(sqlitePathEnvName, sqlitePathEnvNameDefault)
 }

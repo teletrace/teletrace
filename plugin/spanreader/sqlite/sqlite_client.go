@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 
-package tagscontroller
+package sqlitespanreader
 
 import (
-	"encoding/json"
-	"fmt"
-	"oss-tracing/plugin/spanreader/es/errors"
+	"database/sql"
 
-	"github.com/elastic/go-elasticsearch/v8/esapi"
+	_ "github.com/mattn/go-sqlite3"
+	"go.uber.org/zap"
 )
 
-// If the response contains an error, this function returns an error that summarize it
-func SummarizeResponseError(res *esapi.Response) error {
-	if !res.IsError() {
-		return nil
-	}
+type sqliteClient struct {
+	db *sql.DB
+}
 
-	var body map[string]any
-	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
-		return fmt.Errorf("error parsing the response body: %s", err)
-	} else {
-		esError, err := errors.ESErrorFromHttpResponse(res.Status(), body)
-		if err != nil {
-			return err
-		}
-		return esError
+func newSqliteClient(logger *zap.Logger, sqliteConfig SqliteConfig) (*sqliteClient, error) {
+	db, err := sql.Open("sqlite3", sqliteConfig.Path)
+	if err != nil {
+		logger.Error("Could not connect to sqlite database: %+v", zap.Error(err))
+		return nil, err
 	}
+	return &sqliteClient{
+		db: db,
+	}, nil
 }

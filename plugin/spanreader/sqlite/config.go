@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-// this file contains configuration for the application such as API_URL, etc.
-const LOCAL_API_URL = "http://localhost:8080";
-export const API_URL = process.env.REACT_APP_API_URL ?? LOCAL_API_URL;
+package sqlitespanreader
 
-export const LUPA_DOCS_URL = "https://solid-dollop-44b513ff.pages.github.io/";
-export const LUPA_REPOSITORY_URL = "https://github.com/epsagon/lupa";
-export const LUPA_SLACK_INVITE_LINK =
-  "https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ";
+import "oss-tracing/pkg/config"
 
-export const LUPA_BUILD_INFO =
-  process.env.REACT_APP_BUILD_INFO ?? "v0.0.0-devel";
+type SqliteConfig struct {
+	Path string
+}
+
+func NewSqliteConfig(cfg config.Config) SqliteConfig {
+	return SqliteConfig{
+		Path: cfg.SQLitePath,
+	}
+}

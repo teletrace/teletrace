@@ -42,7 +42,6 @@ func CreateTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
 			},
 		},
 	}
-
 }
 
 func BuildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.RequestBuilder, error) {

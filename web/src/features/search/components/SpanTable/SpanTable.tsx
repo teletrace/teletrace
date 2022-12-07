@@ -21,6 +21,7 @@ import MaterialReactTable, {
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 import {
   formatDateAsDateTime,
@@ -62,8 +63,15 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     metadata: undefined,
   };
 
-  const { data, fetchNextPage, isError, isRefetching, isFetching, isLoading } =
-    useSpansQuery(searchRequest);
+  const {
+    data,
+    fetchNextPage,
+    isError,
+    isRefetching,
+    isFetching,
+    isLoading,
+    hasNextPage,
+  } = useSpansQuery(searchRequest);
 
   const tableSpans =
     data?.pages?.flatMap((page) =>
@@ -85,14 +93,27 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
       )
     ) ?? [];
 
+  const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
     if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
-      fetchNextPage();
+      debouncedFetchNextPage();
     }
   };
 
   const tableWrapper = tableWrapperRef.current;
+  if (tableWrapper) {
+    const firstRow = tableWrapper.querySelector<HTMLElement>(
+      "tbody tr:first-child"
+    );
+    if (firstRow != undefined) {
+      const rowsHeightExceedPageHeight =
+        tableSpans.length * firstRow.offsetHeight < tableWrapper.offsetHeight;
+      if (rowsHeightExceedPageHeight && hasNextPage) {
+        debouncedFetchNextPage();
+      }
+    }
+  }
   useEffect(() => {
     tableWrapper?.addEventListener("scroll", () => {
       fetchMoreOnBottomReached(tableWrapper);

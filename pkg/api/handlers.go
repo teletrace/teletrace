@@ -90,7 +90,6 @@ func (api *API) tagsValues(c *gin.Context) {
 	tag := c.Param("tag")
 
 	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag})
-
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
@@ -98,7 +97,7 @@ func (api *API) tagsValues(c *gin.Context) {
 
 	tagValues := res[tag]
 	if tagValues == nil {
-		c.JSON(http.StatusNoContent, nil)
+		tagValues = &tagsquery.TagValuesResponse{}
 	}
 
 	c.JSON(http.StatusOK, tagValues)
