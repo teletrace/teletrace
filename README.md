@@ -102,7 +102,9 @@ Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, t
 ## 💬 **Community**
 
 Join our [Slack](https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ) for questions, support and fun.
+
 Start with our [Documentation](https://solid-dollop-44b513ff.pages.github.io/) for quick tutorials and examples.
+
 If you need direct support you can contact us at support@epsagon.com.
 
 ## ❗ **Code of conduct**
