@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LinearProgress, tableRowClasses } from "@mui/material";
+import { LinearProgress } from "@mui/material";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
 import MaterialReactTable, {
   MRT_Row as Row,
