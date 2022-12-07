@@ -29,7 +29,6 @@ We are a highly dedicated group of developers, with years of experience in distr
 - Advanced search to pinpoint slow and failing requests.
 - Visualize requests to understand their context in your application.
 - Track user requests and data across your application.
-- Community-driven.
 - Visualize and compare latency and error trends. (Coming Soon)
 - Advanced latency analysis tools. (Coming Soon)
 
