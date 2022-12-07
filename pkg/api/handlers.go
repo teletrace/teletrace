@@ -97,7 +97,7 @@ func (api *API) tagsValues(c *gin.Context) {
 
 	tagValues := res[tag]
 	if tagValues == nil {
-		c.JSON(http.StatusNoContent, nil)
+		tagValues = &tagsquery.TagValuesResponse{}
 	}
 
 	c.JSON(http.StatusOK, tagValues)
