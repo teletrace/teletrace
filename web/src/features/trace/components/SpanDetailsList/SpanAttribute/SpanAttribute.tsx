@@ -30,11 +30,8 @@ interface SpanAttributeProps {
 export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
   const [isCopyTooltipVisible, setIsCopyTooltipVisible] = useState(false);
 
-  const onCopyClick = (
-    value: string,
-    setIsCopyTooltipVisible: (value: boolean) => void
-  ): void => {
-    navigator.clipboard.writeText(value);
+  const onCopyClick = (): void => {
+    navigator.clipboard.writeText(attValue.toString());
     setIsCopyTooltipVisible(true);
   };
 
@@ -56,9 +53,7 @@ export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
           sx={styles.copy}
           className="copy-button"
           role="button"
-          onClick={() =>
-            onCopyClick(attValue.toString(), setIsCopyTooltipVisible)
-          }
+          onClick={onCopyClick}
         />
       </Tooltip>
     </Box>
