@@ -29,14 +29,14 @@ import {
 } from "@mui/material";
 import { Fragment, useState } from "react";
 
+import { CheckboxList } from "@/components/CheckboxList";
+import { SearchField } from "@/components/SearchField";
+import { formatNumber } from "@/utils/format";
+
 import { useTagValues } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValue, TagValuesRequest } from "../../types/tagValues";
 import { styles } from "./styles";
-
-import { CheckboxList } from "@/components/CheckboxList";
-import { SearchField } from "@/components/SearchField";
-import { formatNumber } from "@/utils/format";
 
 export type TagValuesSelectorProps = {
   tag: string;
