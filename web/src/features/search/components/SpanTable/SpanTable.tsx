@@ -81,7 +81,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           traceId: span.traceId,
           spanId: span.spanId,
           startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
-          duration: `${roundNanoToTwoDecimalMs(externalFields.durationNano)}ms`,
+          duration: roundNanoToTwoDecimalMs(externalFields.durationNano),
           name: span.name,
           status: span.status.code,
           serviceName:

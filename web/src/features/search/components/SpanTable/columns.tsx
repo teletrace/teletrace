@@ -20,12 +20,14 @@ import { StatusCode } from "@/types/span";
 
 import { StatusBadge } from "../StatusBadge";
 
+const LOW_PRECISION_DURATION_DISPLAY = "<0.01"
+
 export interface TableSpan {
   id: string;
   traceId: string;
   spanId: string;
   startTime: string;
-  duration: string;
+  duration: number;
   name: string;
   status: number;
   serviceName: string;
@@ -43,6 +45,14 @@ export const columns: ColumnDef<TableSpan>[] = [
     accessorKey: "duration",
     header: "Duration",
     enableSorting: true,
+    Cell: (mrtCell) => {
+      const durationMillis = mrtCell.cell.getValue() as number;
+      let durationString = `${durationMillis}`
+      if (durationMillis < 0.01) {
+        durationString = LOW_PRECISION_DURATION_DISPLAY
+      }
+      return `${durationString}ms`
+    },
   },
   {
     id: "span.name",
