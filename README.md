@@ -6,7 +6,7 @@
   </a>
 </div>
 
-<h1 align="center">The Open-Source Platform For Tracing.</h1>
+<h1 align="center">The Open-Source Tracing Platform.</h1>
 
 <h3 align="center">
   <a href="https://solid-dollop-44b513ff.pages.github.io/"><b>📝 Explore the docs</b></a> &bull;
