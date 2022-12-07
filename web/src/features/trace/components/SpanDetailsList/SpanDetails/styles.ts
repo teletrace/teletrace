@@ -40,6 +40,7 @@ export const styles = {
   errorIcon: {
     width: "20px",
     height: "20px",
+    color: "#EF5854",
   },
   spanMainContainer: {
     display: "flex",

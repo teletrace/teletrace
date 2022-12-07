@@ -15,6 +15,7 @@
  */
 
 import { ArrowForward, ArrowForwardIosSharp } from "@mui/icons-material";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {
   Accordion,
   AccordionDetails,
@@ -70,7 +71,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
     >
       {hasError && (
         <Box sx={styles.spanErrorIconContainer}>
-          <ResourceIcon name="erroroutline" style={styles.errorIcon} />
+          <ErrorOutlineIcon style={styles.errorIcon} />
           {expanded && <Box sx={styles.expandedSpanErrorContainer} />}
         </Box>
       )}
