@@ -81,7 +81,7 @@ func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptr
 	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
 
 	for span := range internalSpans {
-		err := writeSpan(ctx, e.logger, e.idx, e.bulkIndexer, &span, e.maxRetries)
+		err := writeSpan(ctx, e.logger, e.idx, e.bulkIndexer, span, e.maxRetries)
 		if err != nil {
 			if cerr := ctx.Err(); cerr != nil {
 				return cerr

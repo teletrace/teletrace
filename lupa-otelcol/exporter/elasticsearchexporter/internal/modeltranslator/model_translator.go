@@ -24,8 +24,8 @@ import (
 
 // TranslateOTLPToInternalSpans converts traces from the OLTP format
 // to the InternalSpan model used by the Elasticsearch exporter.
-func TranslateOTLPToInternalSpans(td ptrace.Traces) <-chan internalspanv1.InternalSpan {
-	ch := make(chan internalspanv1.InternalSpan)
+func TranslateOTLPToInternalSpans(td ptrace.Traces) <-chan *internalspanv1.InternalSpan {
+	ch := make(chan *internalspanv1.InternalSpan)
 	go func() {
 		resourceSpansSlice := td.ResourceSpans()
 		for i := 0; i < resourceSpansSlice.Len(); i++ {
@@ -43,7 +43,7 @@ func TranslateOTLPToInternalSpans(td ptrace.Traces) <-chan internalspanv1.Intern
 					internalSpan := getInternalSpan(span)
 					internalSpanExternalFields := getInternalSpanExternalFields(span)
 
-					ch <- internalspanv1.InternalSpan{
+					ch <- &internalspanv1.InternalSpan{
 						Resource:       internalSpanResource,
 						Scope:          internalSpanScope,
 						Span:           internalSpan,
