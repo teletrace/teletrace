@@ -25,6 +25,9 @@ export const styles = {
     padding: "11px 36px 11px 87px",
     "&:hover": {
       backgroundColor: "#2B2D32",
+      ".copy-button": {
+        display: "block",
+      },
     },
   },
   key: {
@@ -36,5 +39,12 @@ export const styles = {
   value: {
     fontWeight: "700",
     ...ellipsisOverflow,
+  },
+  copy: {
+    cursor: "pointer",
+    marginLeft: "auto",
+    fontSize: 15,
+    alignSelf: "center",
+    display: "none",
   },
 };
