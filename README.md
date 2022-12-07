@@ -6,7 +6,7 @@
   </a>
 </div>
 
-<h1 align="center">Tracing Troubleshooting Tool.</h1>
+<h1 align="center">The Open-Source Platform For Tracing.</h1>
 
 <h3 align="center">
   <a href="https://solid-dollop-44b513ff.pages.github.io/"><b>📝 Explore the docs</b></a> &bull;
@@ -17,15 +17,18 @@
 
 ## ⭐️ **Why Lupa?**
 
-TODO Placeholder Placeholder
+Lupa is built from the ground up for modern applications. It is open-source and relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
 
 ## ✨ **Features**
 
-- Feature number 1
-- Feature number 2
-- Feature number 3
+- Advanced search to pinpoint slow and failing requests.
+- Visualize requests to understand their context in your application.
+- Track user requests and data across your application.
+- Community-driven.
+- Visualize and compare latency and error trends. (Coming Soon)
+- Advanced latency analysis tools. (Coming Soon)
 
-## 🖼 **Screenshots**
+## 🖼 **Live Demo**
 
 <img src="./website/docs/images/demo.gif" min-width="100%" min-height="100%"/>
 
@@ -34,7 +37,7 @@ Take a look at our [demo](https://app.lupaproject.io) environment, with [Open Te
 ## 📚 **Table of contents**
 
 - [Features](#-features)
-- [Screenshots](#-screenshots)
+- [Live Demo](#-live-demo)
 - [Getting Started](#-getting-started)
 - [Contribution](#-contribution)
 - [Community](#-community)
@@ -99,6 +102,8 @@ Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, t
 ## 💬 **Community**
 
 Join our [Slack](https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ) for questions, support and fun.
+Start with our [Documentation](https://solid-dollop-44b513ff.pages.github.io/) for quick tutorials and examples.
+If you need direct support you can contact us at support@epsagon.com.
 
 ## ❗ **Code of conduct**
 
