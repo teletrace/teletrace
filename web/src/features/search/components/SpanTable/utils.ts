@@ -21,6 +21,10 @@ export const calcNewSpans = (
   spans: InternalSpan[]
 ): string[] => {
   const prevSpansIds = prevSpans.map((span) => span.span.spanId);
+  if (prevSpans.length == 0) {
+    // prevent showing all new spans on filter change
+    return [];
+  }
   const spansIds = spans.map((span) => span.span.spanId);
   return spansIds.filter((spanId) => !prevSpansIds.includes(spanId));
 };

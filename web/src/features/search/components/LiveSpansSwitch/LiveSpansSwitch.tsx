@@ -1,20 +1,54 @@
-import { FormControlLabel, FormGroup, Switch } from "@mui/material";
+/**
+ * Copyright 2022 Epsagon
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { FormControlLabel, FormGroup, Switch, Tooltip } from "@mui/material";
 
 export type LiveSpansProps = {
   isOn: boolean;
   onLiveSpansChange: (isOn: boolean) => void;
+  disabled: boolean;
 };
 
-export function LiveSpanSwitch({ isOn, onLiveSpansChange }: LiveSpansProps) {
+export function LiveSpanSwitch({
+  isOn,
+  onLiveSpansChange,
+  disabled,
+}: LiveSpansProps) {
+  const TooltipTitleDisabled =
+    "Live mode is off when a custom time range is applied";
+  const TooltipTitleEnabled =
+    "Live mode streams new ingested spans to the span table";
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onLiveSpansChange(event.target.checked);
   };
   return (
-    <FormGroup>
-      <FormControlLabel
-        control={<Switch onChange={handleChange} checked={isOn} />}
-        label="Live Spans"
-      />
-    </FormGroup>
+    <Tooltip title={disabled ? TooltipTitleDisabled : TooltipTitleEnabled}>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Switch
+              onChange={handleChange}
+              checked={isOn}
+              disabled={disabled}
+            />
+          }
+          label="Live Spans"
+        />
+      </FormGroup>
+    </Tooltip>
   );
 }

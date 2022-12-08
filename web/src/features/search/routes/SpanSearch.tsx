@@ -42,7 +42,7 @@ export const SpanSearch = () => {
     timeframe: getCurrentTimestamp(),
   });
 
-  const defaultLiveSpansInterval = 1;
+  const defaultLiveSpansInterval = 0.5;
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
     isOn: false,
     interval: defaultLiveSpansInterval,
@@ -125,6 +125,7 @@ export const SpanSearch = () => {
           <LiveSpanSwitch
             isOn={liveSpansState.isOn}
             onLiveSpansChange={toggleLiveSpans}
+            disabled={false}
           />
         </Stack>
       </Stack>

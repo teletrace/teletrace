@@ -37,7 +37,8 @@ import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
 
-const SPAN_ID_FIELD = "span.spanId";
+const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
+const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
   filters?: SearchFilter[];
@@ -53,6 +54,7 @@ interface FetchSpansResult {
   isFetching: boolean;
   isRefetching: boolean;
   isLoading: boolean;
+  hasNextPage: boolean | undefined;
 }
 
 export function SpanTable({
@@ -63,11 +65,13 @@ export function SpanTable({
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef = useRef<Virtualizer>(null);
 
+  const sortDefault: SortingState = [
+    { id: DEFAULT_SORT_FIELD, desc: !DEFAULT_SORT_ASC },
+  ];
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>();
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "span.startTimeUnixNano", desc: true },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [spansState, setSpansState] = useState<FetchSpansResult>({
     spans: [],
     newSpansIds: [],
@@ -76,14 +80,13 @@ export function SpanTable({
     isFetching: false,
     isRefetching: false,
     isLoading: false,
+    hasNextPage: false,
   });
 
-  const sort = [{ field: SPAN_ID_FIELD, ascending: true }].concat(
-    sorting?.map((columnSort) => ({
-      field: `span.${columnSort.id}`,
-      ascending: !columnSort.desc,
-    }))
-  );
+  const sort = sorting?.map((columnSort) => ({
+    field: columnSort.id,
+    ascending: !columnSort.desc,
+  }));
 
   const searchRequest = {
     filters: filters,
@@ -95,7 +98,6 @@ export function SpanTable({
   useEffect(() => {
     if (liveSpans.isOn) {
       const intervalId = setInterval(async () => {
-        console.log("fetching query with interval");
         const spansQueryResult = await updateSpansQuery(
           searchRequest,
           liveSpans.interval * 1000
@@ -105,16 +107,17 @@ export function SpanTable({
             ...spansQueryResult,
             newSpansIds: calcNewSpans(prevState.spans, spansQueryResult.spans),
             fetchNextPage: spansState.fetchNextPage,
+            hasNextPage: spansState.hasNextPage,
           };
         });
       }, liveSpans.interval * 1000);
       return () => clearInterval(intervalId);
     }
-  }, [liveSpans.isOn]);
+  }, [liveSpans.isOn, searchRequest]);
 
   const spansQueryResult = useSpansQuery(searchRequest);
   useEffect(() => {
-    setSpansState({
+    return setSpansState({
       newSpansIds: [],
       ...spansQueryResult,
     });
