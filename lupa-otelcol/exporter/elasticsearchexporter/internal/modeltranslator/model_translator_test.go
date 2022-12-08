@@ -33,7 +33,12 @@ func TestModelTranslator(t *testing.T) {
 
 	actualInternalSpans := TranslateOTLPToInternalSpans(traces)
 
-	assert.ElementsMatch(t, expectedInternalSpans, actualInternalSpans)
+	actualInternalSpansSlice := make([]*internalspanv1.InternalSpan, 0)
+	for span := range actualInternalSpans {
+		actualInternalSpansSlice = append(actualInternalSpansSlice, span)
+	}
+
+	assert.ElementsMatch(t, expectedInternalSpans, actualInternalSpansSlice)
 }
 
 func createOTLPTraces() ptrace.Traces {
