@@ -35,7 +35,7 @@ export const fetchSpans = ({
 
 export const updateSpansQuery = async (
   searchRequest: SearchRequest,
-  updateInterval = 5000
+  updateInterval: number
 ) => {
   searchRequest.timeframe = getCurrentTimestamp();
   const res = await queryClient.fetchInfiniteQuery({
@@ -67,5 +67,6 @@ export const useSpansQuery = (searchRequest: SearchRequest) => {
     isFetching: res.isFetching,
     isRefetching: res.isRefetching,
     isLoading: res.isLoading,
+    hasNextPage: res.hasNextPage,
   };
 };
