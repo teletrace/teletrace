@@ -17,24 +17,56 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
+import { queryClient } from "@/libs/react-query";
+import { getCurrentTimestamp } from "@/utils/format";
 
 import { SearchRequest, SearchResponse } from "../types/spanQuery";
 
-type FetchSpansParams = { pageParam: string; searchRequest: SearchRequest };
+type FetchSpansParams = { searchRequest: SearchRequest; pageParam: string };
 
 export const fetchSpans = ({
-  pageParam,
   searchRequest,
+  pageParam,
 }: FetchSpansParams): Promise<SearchResponse> => {
   searchRequest.metadata = { nextToken: pageParam };
+
   return axiosClient.post("/v1/search", searchRequest);
 };
 
+export const updateSpansQuery = async (
+  searchRequest: SearchRequest,
+  updateInterval: number
+) => {
+  searchRequest.timeframe = getCurrentTimestamp();
+  const res = await queryClient.fetchInfiniteQuery({
+    queryKey: ["spans", searchRequest],
+    queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
+    getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
+    cacheTime: updateInterval,
+  });
+  return {
+    spans: res.pages?.flatMap((page) => page.spans) || [],
+    isError: false,
+    isFetching: false,
+    isRefetching: false,
+    isLoading: false,
+  };
+};
+
 export const useSpansQuery = (searchRequest: SearchRequest) => {
-  return useInfiniteQuery({
+  const res = useInfiniteQuery({
     queryKey: ["spans", searchRequest],
     keepPreviousData: true,
-    queryFn: ({ pageParam }) => fetchSpans({ pageParam, searchRequest }),
+    queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
   });
+  return {
+    spans: res.data?.pages?.flatMap((page) => page.spans) || [],
+    fetchNextPage: res.fetchNextPage,
+    isError: res.isError,
+    isFetching: res.isFetching,
+    isRefetching: res.isRefetching,
+    isLoading: res.isLoading,
+    hasNextPage: res.hasNextPage,
+  };
 };
