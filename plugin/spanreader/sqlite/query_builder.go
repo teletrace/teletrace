@@ -42,50 +42,69 @@ func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
 	dbFieldsSet := make(map[string]bool)
 	dbTableName := findTableName(tag)
 	if dbTableName != "" {
+		var filterStrings []string
+		for _, filter := range filters {
+			if isValidFilter(filter) {
+				dbTableName := findTableName(string(filter.KeyValueFilter.Key))
+				if dbTableName != "" {
+					if _, ok := dbTablesSet[dbTableName]; !ok {
+						dbTablesSet[dbTableName] = true
+					}
+					value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+					filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
+				}
+			}
+		}
 		if _, ok := dbTablesSet[dbTableName]; !ok {
 			dbTablesSet[dbTableName] = true
 		}
-		if f, ok := sqliteFieldsMap[tag]; ok {
-			dbFieldsSet[f] = true
+		if isDynamicTagsTable(dbTableName) {
+			dynamicTag := getDynamicTagValue(tag)
+			if dynamicTag != "" {
+				dbFieldsSet[dbTableName+".value"] = true
+				filter := model.SearchFilter{
+					KeyValueFilter: &model.KeyValueFilter{
+						Key:      model.FilterKey(dbTableName + ".key"),
+						Operator: spansquery.OPERATOR_EQUALS,
+						Value:    dynamicTag,
+					},
+				}
+				filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", filter.KeyValueFilter.Key, sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], filter.KeyValueFilter.Value))
+				switch dbTableName {
+				case "span_attributes":
+					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "span_attributes.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
+					break
+				case "resource_attributes":
+					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "resource_attributes.resource_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.resource_id"))
+					break
+				}
+				dbTables := make([]string, 0, len(dbTablesSet))
+				for table := range dbTablesSet {
+					dbTables = append(dbTables, table)
+				}
+				dbFields := make([]string, 0, len(dbFieldsSet))
+				for field := range dbFieldsSet {
+					dbFields = append(dbFields, field)
+				}
+				return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFields, ","), strings.Join(dbTables, ","), strings.Join(filterStrings, " AND "), strings.Join(dbFields, ","))
+			}
 		} else {
-			if isDynamicTagsTable(dbTableName) {
-				dynamicTag := getDynamicTagValue(tag)
-				if dynamicTag != "" {
-					dbFieldsSet["key"] = true
-					filters = append(filters, model.SearchFilter{
-						KeyValueFilter: &model.KeyValueFilter{
-							Key:      "key",
-							Operator: spansquery.OPERATOR_EQUALS,
-							Value:    dbTableName + "." + dynamicTag,
-						},
-					})
-				}
+			if f, ok := sqliteFieldsMap[tag]; ok {
+				dbFieldsSet[f] = true
 			}
-		}
-	}
-	var filterStrings []string
-	for _, filter := range filters {
-		if isValidFilter(filter) {
-			dbTableName := findTableName(string(filter.KeyValueFilter.Key))
-			if dbTableName != "" {
-				if _, ok := dbTablesSet[dbTableName]; !ok {
-					dbTablesSet[dbTableName] = true
-				}
-				value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
-				filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
+			dbTables := make([]string, 0, len(dbTablesSet))
+			for table := range dbTablesSet {
+				dbTables = append(dbTables, table)
 			}
-		}
-	}
-	dbTables := make([]string, 0, len(dbTablesSet))
-	for table := range dbTablesSet {
-		dbTables = append(dbTables, table)
-	}
-	dbFields := make([]string, 0, len(dbFieldsSet))
-	for field := range dbFieldsSet {
-		dbFields = append(dbFields, field)
-	}
+			dbFields := make([]string, 0, len(dbFieldsSet))
+			for field := range dbFieldsSet {
+				dbFields = append(dbFields, field)
+			}
 
-	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFields, ","), strings.Join(dbTables, ","), strings.Join(filterStrings, " AND "), strings.Join(dbFields, ","))
+			return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFields, ","), strings.Join(dbTables, ","), strings.Join(filterStrings, " AND "), strings.Join(dbFields, ","))
+		}
+	}
+	return ""
 }
 
 func buildQueryByFilters(filters ...model.SearchFilter) string {
