@@ -29,7 +29,6 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
   const containerRef = useRef(null);
   const [expanded, setExpanded] = useState(false);
   const [showButton, setShowButton] = useState(true);
-  const messasgeEmpty = errorMessage === "";
 
   useEffect(() => {
     if (containerRef.current !== null) {
@@ -47,7 +46,7 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
         sx={expanded ? styles.textContainerExpanded : styles.textContainer}
       >
         <Typography sx={styles.typography}>
-          {messasgeEmpty ? "No Error Message Found" : errorMessage}
+          {errorMessage ? errorMessage : "No Error Message Found"}
         </Typography>
       </Box>
       {showButton && (
