@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Divider, Stack } from "@mui/material";
+import { Divider, Stack, Typography } from "@mui/material";
 import { Fragment, useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
@@ -90,6 +90,22 @@ export const SpanSearch = () => {
         title="Span Search"
         description="Designated page to span search's flow graph and timeline"
       />
+      <Stack
+        sx={{ paddingBottom: "12px", paddingTop: "24px" }}
+        display="flex"
+        flexDirection="row"
+      >
+        <Typography variant="h5" fontWeight="600">
+          Spans
+        </Typography>
+        <Stack marginLeft="auto">
+          <LiveSpanSwitch
+            isOn={liveSpansState.isOn}
+            onLiveSpansChange={toggleLiveSpans}
+            disabled={false}
+          />
+        </Stack>
+      </Stack>
 
       <Stack
         direction="row"
@@ -121,11 +137,6 @@ export const SpanSearch = () => {
             timeframe={filtersState.timeframe}
             filters={filtersState.filters}
             liveSpans={liveSpansState}
-          />
-          <LiveSpanSwitch
-            isOn={liveSpansState.isOn}
-            onLiveSpansChange={toggleLiveSpans}
-            disabled={false}
           />
         </Stack>
       </Stack>
