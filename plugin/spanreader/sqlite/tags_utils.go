@@ -28,5 +28,5 @@ var staticTagTypeMap = map[string]string{
 }
 
 func isDynamicTagsTable(tableName string) bool {
-	return tableName == "event_attributes" || tableName == "link_attributes" || tableName == "scope_attributes" || tableName == "span_attributes"
+	return tableName == "event_attributes" || tableName == "link_attributes" || tableName == "scope_attributes" || tableName == "span_attributes" || tableName == "resource_attributes"
 }
