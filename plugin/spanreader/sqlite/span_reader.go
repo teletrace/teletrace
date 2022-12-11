@@ -79,8 +79,31 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 }
 
 func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
-	_ = buildTagsQuery(r, tags)
-	return nil, nil
+	result := make(map[string]*tagsquery.TagValuesResponse)
+	for _, tag := range tags {
+		var currentTagValues []tagsquery.TagValueInfo
+		query := buildTagsValuesQuery(r, tag)
+		rows, err := sr.client.db.QueryContext(ctx, query)
+		if err != nil {
+			return nil, err
+		}
+		for rows.Next() {
+			var name string
+			var count int
+			err = rows.Scan(&name, &count)
+			if err != nil {
+				continue
+			}
+			currentTagValues = append(currentTagValues, tagsquery.TagValueInfo{
+				Value: name,
+				Count: count,
+			})
+		}
+		result[tag] = &tagsquery.TagValuesResponse{
+			Values: currentTagValues,
+		}
+	}
+	return result, nil
 }
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg config.Config) (spanreader.SpanReader, error) {

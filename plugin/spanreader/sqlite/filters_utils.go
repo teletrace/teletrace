@@ -78,10 +78,22 @@ var sqliteTablesMap = map[string]string{
 	"span":                  "spans",
 }
 
+// should be ordered, regular map is not option
+var tablesMapKeys = [9]string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
+
 func findTableName(filterKey string) string {
-	for k, v := range sqliteTablesMap {
-		if strings.HasPrefix(filterKey, k) {
-			return v
+	for _, tableKey := range tablesMapKeys {
+		if strings.HasPrefix(filterKey, tableKey) {
+			return sqliteTablesMap[tableKey]
+		}
+	}
+	return ""
+}
+
+func getDynamicTagValue(tag string) string {
+	for _, tableKey := range tablesMapKeys {
+		if strings.HasPrefix(tag, tableKey) {
+			return strings.ReplaceAll(tag, tableKey+".", "")
 		}
 	}
 	return ""

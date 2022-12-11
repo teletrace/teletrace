@@ -34,8 +34,58 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 	return qr
 }
 
-func buildTagsQuery(r tagsquery.TagValuesRequest, tags []string) string {
-	return ""
+func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
+	var filters []model.SearchFilter
+	filters = append(filters, createTimeframeFilters(r.Timeframe)...)
+	filters = append(filters, r.SearchFilters...)
+	dbTablesSet := make(map[string]bool)
+	dbFieldsSet := make(map[string]bool)
+	dbTableName := findTableName(tag)
+	if dbTableName != "" {
+		if _, ok := dbTablesSet[dbTableName]; !ok {
+			dbTablesSet[dbTableName] = true
+		}
+		if f, ok := sqliteFieldsMap[tag]; ok {
+			dbFieldsSet[f] = true
+		} else {
+			if isDynamicTagsTable(dbTableName) {
+				dynamicTag := getDynamicTagValue(tag)
+				if dynamicTag != "" {
+					dbFieldsSet["key"] = true
+					filters = append(filters, model.SearchFilter{
+						KeyValueFilter: &model.KeyValueFilter{
+							Key:      "key",
+							Operator: spansquery.OPERATOR_EQUALS,
+							Value:    dbTableName + "." + dynamicTag,
+						},
+					})
+				}
+			}
+		}
+	}
+	var filterStrings []string
+	for _, filter := range filters {
+		if isValidFilter(filter) {
+			dbTableName := findTableName(string(filter.KeyValueFilter.Key))
+			if dbTableName != "" {
+				if _, ok := dbTablesSet[dbTableName]; !ok {
+					dbTablesSet[dbTableName] = true
+				}
+				value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+				filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
+			}
+		}
+	}
+	dbTables := make([]string, 0, len(dbTablesSet))
+	for table := range dbTablesSet {
+		dbTables = append(dbTables, table)
+	}
+	dbFields := make([]string, 0, len(dbFieldsSet))
+	for field := range dbFieldsSet {
+		dbFields = append(dbFields, field)
+	}
+
+	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFields, ","), strings.Join(dbTables, ","), strings.Join(filterStrings, " AND "), strings.Join(dbFields, ","))
 }
 
 func buildQueryByFilters(filters ...model.SearchFilter) string {
