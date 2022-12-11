@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,7 @@ export const Layout = ({ children }: LayoutProps) => {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        minWidth: "100%",
-        width: "fit-content",
+        width: "100%",
       }}
     >
       <AppBar position="sticky">
@@ -45,7 +44,7 @@ export const Layout = ({ children }: LayoutProps) => {
       <Box
         component="main"
         padding={2}
-        sx={{ flex: 1, height: "calc(100vh - 64px)" }}
+        sx={{ flex: 1, height: "calc(100vh - 64px)", minWidth: 0 }}
       >
         {children}
       </Box>

@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptr
 	var errs []error
 	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
 
-	for _, span := range internalSpans {
+	for span := range internalSpans {
 		err := writeSpan(ctx, e.logger, e.idx, e.bulkIndexer, span, e.maxRetries)
 		if err != nil {
 			if cerr := ctx.Err(); cerr != nil {
