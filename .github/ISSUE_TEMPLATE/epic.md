@@ -28,19 +28,20 @@ Hi
 
 <!-- A clear and concise description of what you want to happen. -->
 
-## Tasks
+## Incentive
 
-<!--Add GitHub tasks-->
+<!-- Explain the Incentive to create this Epic. -->
 
-- [ ] ...
-- [ ] ...
-
-## More Information
-
-<!-- Add any other context here. -->
-
-## Screenshots
+## Presentation
 
 <!-- If applicable, add screenshots to help explain your problem. -->
+
+## Interactions
+
+<!-- How does new epic interacts with current application elements. -->
+
+## Notes
+
+<!-- Add any other context here. -->
 
 Thanks!
