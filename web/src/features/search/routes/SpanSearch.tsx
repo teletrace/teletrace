@@ -82,7 +82,7 @@ export const SpanSearch = () => {
         direction="row"
         spacing={2}
         alignItems="flex-start"
-        sx={{ height: "100%" }}
+        sx={{ height: "100%", minWidth: 0 }}
       >
         <aside style={{ display: "flex", maxHeight: "100%" }}>
           <TagSidebar
@@ -96,7 +96,7 @@ export const SpanSearch = () => {
           direction="column"
           divider={<Divider orientation="vertical" flexItem />}
           spacing={1}
-          sx={{ height: "100%", width: "100%" }}
+          sx={{ height: "100%", width: "100%", minWidth: 0 }}
         >
           <SearchBar
             timeframe={filtersState.timeframe}
