@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
 
@@ -62,7 +63,14 @@ func (r *tagsController) GetAvailableTags(
 	// mappingData["keyword"]
 
 	if err != nil {
-		return result, fmt.Errorf("Could not get available tags: %v", err)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return tagsquery.GetAvailableTagsResponse{}, nil
+			}
+		default:
+			return result, fmt.Errorf("could not get available tags: %v", err)
+		}
 	}
 
 	return result, nil
@@ -75,7 +83,14 @@ func (r *tagsController) GetTagsValues(
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 	tagsMappings, err := r.getTagsMappings(ctx, tags)
 	if err != nil {
-		return nil, fmt.Errorf("Could not get values for tags: %v", tags)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return nil, nil
+			}
+		default:
+			return nil, fmt.Errorf("could not get values for tags: %v", tags)
+		}
 	}
 
 	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings)

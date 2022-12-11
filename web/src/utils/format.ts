@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 import format from "date-fns/format";
+
+import { Timeframe } from "../features/search/types/common";
 
 export const formatDateAsDateTime = (
   date: Date | number,
@@ -42,4 +44,13 @@ export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
 export const formatNanoAsMsDateTime = (nanoSec: number) => {
   const ms = nanoSecToMs(nanoSec);
   return formatDateAsDateTime(ms, { showMs: true });
+};
+
+export const getCurrentTimestamp = (): Timeframe => {
+  const now = new Date().valueOf();
+  const hourInMillis = 60 * 60 * 1000;
+  return {
+    startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
+    endTimeUnixNanoSec: now * 1000 * 1000,
+  };
 };

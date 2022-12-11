@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,12 @@ func TestModelTranslator(t *testing.T) {
 
 	actualInternalSpans := TranslateOTLPToInternalSpans(traces)
 
-	assert.ElementsMatch(t, expectedInternalSpans, actualInternalSpans)
+	actualInternalSpansSlice := make([]*internalspanv1.InternalSpan, 0)
+	for span := range actualInternalSpans {
+		actualInternalSpansSlice = append(actualInternalSpansSlice, span)
+	}
+
+	assert.ElementsMatch(t, expectedInternalSpans, actualInternalSpansSlice)
 }
 
 func createOTLPTraces() ptrace.Traces {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { Box, Typography } from "@mui/material";
+import { ContentCopy } from "@mui/icons-material";
+import { Box, Tooltip, Typography } from "@mui/material";
+import { useState } from "react";
 
 import { AttributeKey, AttributeValue } from "@/types/span";
 
@@ -26,6 +28,13 @@ interface SpanAttributeProps {
 }
 
 export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
+  const [isCopyTooltipVisible, setIsCopyTooltipVisible] = useState(false);
+
+  const onCopyClick = (): void => {
+    navigator.clipboard.writeText(attValue.toString());
+    setIsCopyTooltipVisible(true);
+  };
+
   return (
     <Box sx={styles.container}>
       <Typography component="span" sx={styles.key}>
@@ -34,6 +43,19 @@ export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
       <Typography component="span" sx={styles.value}>
         {attValue.toString()}
       </Typography>
+      <Tooltip
+        title="Copied!"
+        placement="top"
+        open={isCopyTooltipVisible}
+        onOpen={() => setTimeout(() => setIsCopyTooltipVisible(false), 3000)}
+      >
+        <ContentCopy
+          sx={styles.copy}
+          className="copy-button"
+          role="button"
+          onClick={onCopyClick}
+        />
+      </Tooltip>
     </Box>
   );
 };

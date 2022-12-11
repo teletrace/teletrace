@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import {
   Button,
   CircularProgress,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Fragment, useState } from "react";
@@ -133,10 +134,19 @@ const CheckboxListLabel = ({
   tag: TagValue;
   render?: (value: string | number) => React.ReactNode;
 }) => (
-  <Stack direction="row" alignItems="center" justifyContent="space-between">
-    <Typography noWrap>{render ? render(tag.value) : tag.value}</Typography>
-    <Typography variant="button" color="GrayText">
-      {formatNumber(tag.count)}
-    </Typography>
-  </Stack>
+  <Tooltip arrow title={tag.value} placement="right">
+    <Stack
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      spacing={1}
+    >
+      <Typography noWrap sx={styles.valueLabel}>
+        <span>{render ? render(tag.value) : tag.value}</span>
+      </Typography>
+      <Typography variant="button" color="GrayText">
+        {formatNumber(tag.count)}
+      </Typography>
+    </Stack>
+  </Tooltip>
 );
