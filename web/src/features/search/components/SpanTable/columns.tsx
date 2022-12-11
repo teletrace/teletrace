@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,14 @@ import { StatusCode } from "@/types/span";
 
 import { StatusBadge } from "../StatusBadge";
 
+const LOW_PRECISION_DURATION_DISPLAY = "<0.01";
+
 export interface TableSpan {
   id: string;
   traceId: string;
   spanId: string;
   startTime: string;
-  duration: string;
+  duration: number;
   name: string;
   status: number;
   serviceName: string;
@@ -44,6 +46,14 @@ export const columns: ColumnDef<TableSpan>[] = [
     accessorKey: "duration",
     header: "Duration",
     enableSorting: true,
+    Cell: (mrtCell) => {
+      const durationMillis = mrtCell.cell.getValue() as number;
+      const durationString =
+        durationMillis < 0.01
+          ? LOW_PRECISION_DURATION_DISPLAY
+          : durationMillis.toString();
+      return `${durationString}ms`;
+    },
   },
   {
     id: "span.name",

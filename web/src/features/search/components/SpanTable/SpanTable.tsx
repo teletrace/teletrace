@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ export function SpanTable({
         traceId: span.traceId,
         spanId: span.spanId,
         startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
-        duration: `${roundNanoToTwoDecimalMs(externalFields.durationNano)}ms`,
+        duration: roundNanoToTwoDecimalMs(externalFields.durationNano),
         name: span.name,
         status: span.status.code,
         serviceName:
