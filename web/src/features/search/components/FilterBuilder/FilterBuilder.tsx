@@ -146,6 +146,23 @@ export const FilterBuilderDialog = ({
     return errors;
   };
 
+  const valueConverter = (
+    tagType: string | undefined,
+    v: string | number
+  ): string | number => {
+    if (tagType === "string") {
+      return v.toString();
+    }
+    if (tagType === "long" || tagType == "float") {
+      return +v;
+    }
+    // TODO: add it back
+    // if (tagType === "boolean") {
+    //   return v.toString().toLowerCase() === "true"
+    // }
+    return v;
+  };
+
   const handleApply = (event: React.SyntheticEvent) => {
     event.preventDefault();
     const errors = validateForm(dialogState);
@@ -160,7 +177,9 @@ export const FilterBuilderDialog = ({
     const newFilter: KeyValueFilter = {
       key: dialogState.tag?.name || "",
       operator: dialogState.operator,
-      value: dialogState.value,
+      value: Array.isArray(dialogState.value)
+        ? dialogState.value.map((v) => valueConverter(dialogState.tag?.type, v))
+        : valueConverter(dialogState.tag?.type, dialogState.value),
     };
     onApply({ keyValueFilter: newFilter });
     handleClose();
