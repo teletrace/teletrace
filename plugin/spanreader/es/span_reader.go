@@ -74,7 +74,7 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 func (sr *spanReader) GetTagsValues(
 	ctx context.Context, r tagsquery.TagValuesRequest, tags []string,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
-	sr.convertFilterKeysToKeywords(r)
+	sr.convertFilterKeysToKeywords(&r)
 	res, err := sr.tagsController.GetTagsValues(ctx, r, tags)
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
@@ -83,7 +83,7 @@ func (sr *spanReader) GetTagsValues(
 	return res, nil
 }
 
-func (sr *spanReader) convertFilterKeysToKeywords(r tagsquery.TagValuesRequest) {
+func (sr *spanReader) convertFilterKeysToKeywords(r *tagsquery.TagValuesRequest) {
 	// Converting every filter key to Elasticsearch 'keyword' which guarantees that the string will be a single token
 	for _, f := range r.SearchFilters {
 		f.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.keyword", f.KeyValueFilter.Key))
