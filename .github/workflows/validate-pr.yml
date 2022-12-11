@@ -15,6 +15,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  license-header:
+    name: Validate License Header
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: validate license headers
+        run: make update-license-headers && [[ -z `git status -s` ]]
+
   pre-commit:
     name: Validate pre-commit hooks
     runs-on: ubuntu-latest

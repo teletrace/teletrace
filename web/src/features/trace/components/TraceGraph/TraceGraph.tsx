@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Cisco Systems, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Box, CircularProgress, Stack } from "@mui/material";
 import {
   MouseEvent as ReactMouseEvent,
@@ -15,10 +31,10 @@ import {
   useNodesState,
 } from "reactflow";
 
-import { BasicEdge } from "./Graph/BasicEdge";
-import { BasicNode } from "./Graph/BasicNode";
-import { EdgeData, NodeData, TraceData, TraceGraphProps } from "./Graph/types";
-import { createGraphLayout, spansToGraphData } from "./Graph/utils/layout";
+import { BasicEdge } from "./BasicEdge";
+import { BasicNode } from "./BasicNode";
+import { EdgeData, NodeData, TraceData, TraceGraphProps } from "./types";
+import { createGraphLayout, spansToGraphData } from "./utils/layout";
 import {
   applyHoverEdgeStyle,
   applyHoveredNodeStyle,
@@ -26,7 +42,7 @@ import {
   applyNormalNodeStyle,
   applySelectedEdgeStyle,
   applySelectedNodeStyle,
-} from "./Graph/utils/utils";
+} from "./utils/utils";
 
 import "reactflow/dist/style.css";
 

@@ -42,3 +42,6 @@ yarn-error.log*
 out/
 
 .idea/
+bin/
+
+*.db

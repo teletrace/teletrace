@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Cisco Systems, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package spanreaderes
 
 import (
@@ -23,10 +39,12 @@ type spanReader struct {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	if r.Sort == nil || len(r.Sort) == 0 {
+		r.Sort = []spansquery.Sort{{Field: spanIdField, Ascending: true}}
+	}
 	sr.optimizeSort(r.Sort)
 
 	res, err := sr.searchController.Search(ctx, r)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not index document: %+v", err)
 	}
@@ -45,7 +63,6 @@ func (sr *spanReader) optimizeSort(s []spansquery.Sort) {
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
 	res, err := sr.tagsController.GetAvailableTags(ctx, r)
-
 	if err != nil {
 		return nil, fmt.Errorf("GetAvailableTags failed with error: %+v", err)
 	}
@@ -54,9 +71,9 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 }
 
 func (sr *spanReader) GetTagsValues(
-	ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	ctx context.Context, r tagsquery.TagValuesRequest, tags []string,
+) (map[string]*tagsquery.TagValuesResponse, error) {
 	res, err := sr.tagsController.GetTagsValues(ctx, r, tags)
-
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
 	}
@@ -67,7 +84,6 @@ func (sr *spanReader) GetTagsValues(
 func (sr *spanReader) Initialize() error {
 	// This method may be implemented for other databases, not needed in ES.
 	return nil
-
 }
 
 func NewSpanReader(ctx context.Context, logger *zap.Logger, cfg ElasticConfig) (spanreader.SpanReader, error) {

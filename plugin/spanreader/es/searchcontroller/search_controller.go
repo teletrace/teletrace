@@ -1,3 +1,19 @@
+/**
+ * Copyright 2022 Cisco Systems, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package searchcontroller
 
 import (
@@ -5,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
@@ -32,14 +49,12 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 	var err error
 
 	req, err := buildSearchRequest(r)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not build search request: %+v", err)
 	}
 
 	searchAPI := sc.client.API.Search()
 	res, err := searchAPI.Request(req).Index(sc.idx).Do(ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
 	}
@@ -47,13 +62,18 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 	defer res.Body.Close()
 
 	body, err := decodeResponse(res)
-
 	if err != nil {
-		return nil, fmt.Errorf("Could not decode http response: %+v", err)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return &spansquery.SearchResponse{}, nil
+			}
+		default:
+			return nil, fmt.Errorf("could not search spans: %+v", err)
+		}
 	}
 
 	searchResp, err := parseSpansResponse(body)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
 	}
@@ -102,7 +122,6 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBu
 		)
 	}
 	return b.Sort(types.NewSortBuilder().Sort(sorts))
-
 }
 
 func decodeResponse(res *http.Response) (map[string]any, error) {
@@ -114,7 +133,11 @@ func decodeResponse(res *http.Response) (map[string]any, error) {
 	}
 
 	if res.StatusCode >= 400 {
-		return nil, fmt.Errorf("Could not search spans, got status: %+v", res.StatusCode)
+		esError, err := errors.ESErrorFromHttpResponse(res.Status, body)
+		if err != nil {
+			return nil, err
+		}
+		return nil, esError
 	}
 	return body, nil
 }
