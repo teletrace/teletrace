@@ -47,8 +47,10 @@ export const columns: ColumnDef<TableSpan>[] = [
     enableSorting: true,
     Cell: (mrtCell) => {
       const durationMillis = mrtCell.cell.getValue() as number;
-      const durationString = durationMillis < 0.01 ? 
-      LOW_PRECISION_DURATION_DISPLAY : durationMillis.toString()
+      const durationString =
+        durationMillis < 0.01
+          ? LOW_PRECISION_DURATION_DISPLAY
+          : durationMillis.toString();
       return `${durationString}ms`;
     },
   },
