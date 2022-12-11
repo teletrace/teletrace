@@ -1,0 +1,1 @@
+export { SpanErrorDetails } from "./SpanErrorDetails";

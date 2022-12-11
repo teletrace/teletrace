@@ -34,6 +34,7 @@ import {
 } from "@/utils/format";
 
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
+import { SpanErrorDetails } from "../SpanErrorDetails";
 import { styles } from "./styles";
 
 export interface SpanDetailsProps {
@@ -61,6 +62,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   const X_DIVIDER = "|";
 
   const hasError: boolean = span.span.status.code === StatusCode.Error;
+  console.log(span.span )
 
   return (
     <Box
@@ -111,6 +113,9 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
           </Stack>
         </AccordionSummary>
         <AccordionDetails sx={styles.accordionDetails}>
+          {hasError && (
+            <SpanErrorDetails errorMessage={span.span.status.message} />
+          )}
           <SpanAttributesGroup
             title="Basic"
             attributes={basicAttributes}
