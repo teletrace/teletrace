@@ -61,7 +61,8 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
 
   const X_DIVIDER = "|";
 
-  const hasError: boolean = span.span.status.code === StatusCode.Error;
+  // const hasError: boolean = span.span.status.code === StatusCode.Error;
+  const hasError = true;
   console.log(span.span )
 
   return (

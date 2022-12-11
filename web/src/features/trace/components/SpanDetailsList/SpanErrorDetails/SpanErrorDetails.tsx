@@ -28,9 +28,9 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
 
   return (
     <Box ref={containerRef} sx={styles.mainContainer}>
-      <Typography sx={styles.typography}>{errorMessage}</Typography>
+      <Typography sx={styles.typography}>{"errorMessageerrorMessage errorMessageerrorMessageerrorMessageerrorMessageerrorMessageerror MessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessageerrorMessage"}</Typography>
       {/* {showButton && ( */}
-        <Box>
+        <Box sx={{marginTop: "5px"}}>
           <Button
             onClick={() => setExpanded(!expanded)}
             variant="text"
