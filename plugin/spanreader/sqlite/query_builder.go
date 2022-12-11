@@ -18,10 +18,9 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"strings"
-
 	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"strings"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -73,16 +72,12 @@ func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
 				switch dbTableName {
 				case "span_attributes":
 					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "span_attributes.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
-					break
 				case "resource_attributes":
 					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "resource_attributes.resource_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.resource_id"))
-					break
 				case "links":
 					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "links.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
-					break
 				case "events":
 					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "events.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
-					break
 				}
 				dbTables := make([]string, 0, len(dbTablesSet))
 				for table := range dbTablesSet {
