@@ -204,7 +204,8 @@ func Test_BuildTagsValuesRequest_sanity(t *testing.T) {
  "aggregations": {
   "scope.name": {
    "terms": {
-    "field": "scope.name.keyword"
+    "field": "scope.name.keyword",
+	"size": 100
    }
   }
  },
@@ -274,7 +275,8 @@ func Test_BuildTagsValuesRequest_BuildWithoutTimeframe(t *testing.T) {
  "aggregations": {
   "scope.name": {
    "terms": {
-    "field": "scope.name.keyword"
+    "field": "scope.name.keyword",
+	"size": 100
    }
   }
  },

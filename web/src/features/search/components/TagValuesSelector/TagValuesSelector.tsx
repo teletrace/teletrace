@@ -28,6 +28,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Fragment, useMemo, useState } from "react";
+import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
@@ -37,7 +38,6 @@ import { useTagValuesWithAll } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
-import { useDebounce } from "use-debounce";
 
 export type TagValuesSelectorProps = {
   tag: string;
