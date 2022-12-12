@@ -86,7 +86,10 @@ func (sr *spanReader) GetTagsValues(
 func (sr *spanReader) convertFilterKeysToKeywords(r *tagsquery.TagValuesRequest) {
 	// Converting every filter key to Elasticsearch 'keyword' which guarantees that the string will be a single token
 	for _, f := range r.SearchFilters {
-		f.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.keyword", f.KeyValueFilter.Key))
+		switch f.KeyValueFilter.Value.(type) {
+		case string:
+			f.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.keyword", f.KeyValueFilter.Key))
+		}
 	}
 }
 
