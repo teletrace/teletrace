@@ -31,8 +31,7 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
   const [showButton, setShowButton] = useState(true);
 
   useEffect(() => {
-    if (containerRef.current !== null) {
-      console.log(containerRef.current);
+    if (containerRef.current) {
       const { clientHeight, scrollHeight } = containerRef.current;
       if (containerRef.current) {
         setShowButton(clientHeight !== scrollHeight);
