@@ -210,6 +210,7 @@ export function SpanTable({
             ? "MuiTableRow-grey"
             : "",
         })}
+        initialState={{ density: "compact" }}
       />
     </div>
   );
