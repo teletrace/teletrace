@@ -17,6 +17,8 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
@@ -88,7 +90,8 @@ func (api *API) tagsValues(c *gin.Context) {
 		return
 	}
 	tag := c.Param("tag")
-
+	j, _ := json.Marshal(req)
+	fmt.Printf("tag: %s, req: %s\n", tag, j)
 	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag})
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
