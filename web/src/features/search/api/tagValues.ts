@@ -53,8 +53,13 @@ export const fetchTagValues = ({
  */
 export const useTagValues = (
   tag: string,
-  tagValuesRequest: TagValuesRequest
+  tagValuesRequest: TagValuesRequest,
+  updateIntervalMilli?: number
 ) => {
+  const refetchInterval =
+    updateIntervalMilli && updateIntervalMilli > 0
+      ? updateIntervalMilli
+      : false;
   return useQuery({
     queryKey: [
       "tagValues",
@@ -69,6 +74,8 @@ export const useTagValues = (
         ? fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam })
         : Promise.resolve<TagValuesResponse>({ values: [] }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
+    refetchInterval: refetchInterval,
+    cacheTime: refetchInterval ? refetchInterval : 5000,
   });
 };
 
@@ -98,7 +105,8 @@ const mergeTagValues = (
 export const useTagValuesWithAll = (
   tag: string,
   timeframe: Timeframe,
-  filters: SearchFilter[]
+  filters: SearchFilter[],
+  updateIntervalMilli?: number
 ) => {
   const currentValuesRequest: TagValuesRequest = {
     timeframe: timeframe,
@@ -109,12 +117,12 @@ export const useTagValuesWithAll = (
     data: currentTagValues,
     isFetching: isFetchingCurrent,
     isError: isErrorCurrent,
-  } = useTagValues(tag, currentValuesRequest);
+  } = useTagValues(tag, currentValuesRequest, updateIntervalMilli);
   const {
     data: allTagValues,
     isFetching: isFetchingAllValues,
     isError: isErrorAllValues,
-  } = useTagValues(tag, allValuesRequest);
+  } = useTagValues(tag, allValuesRequest, updateIntervalMilli);
   // const currentTagValues = currentTagPages?.pages.flatMap((page) => page.values)
   // const allTagValues = allTagPages?.pages.flatMap((page) => page.values)
   return {
