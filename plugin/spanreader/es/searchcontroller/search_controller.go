@@ -87,7 +87,7 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 
 	builder := search.NewRequestBuilder()
 
-	timeframeFilters := spanreaderes.CreateTimeframeFilters(r.Timeframe)
+	timeframeFilters := spanreaderes.CreateTimeframeFilters(&r.Timeframe)
 
 	filters := append(r.SearchFilters, timeframeFilters...)
 
