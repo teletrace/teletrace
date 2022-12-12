@@ -33,7 +33,7 @@ export type FiltersState = {
 
 export type LiveSpansState = {
   isOn: boolean;
-  interval: number;
+  intervalInMs: number;
 };
 
 export const SpanSearch = () => {
@@ -42,10 +42,10 @@ export const SpanSearch = () => {
     timeframe: getCurrentTimestamp(),
   });
 
-  const defaultLiveSpansInterval = 0.5;
+  const defaultLiveSpansInterval = 2000;
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
     isOn: false,
-    interval: defaultLiveSpansInterval,
+    intervalInMs: defaultLiveSpansInterval,
   });
 
   const onFilterChange = useCallback(

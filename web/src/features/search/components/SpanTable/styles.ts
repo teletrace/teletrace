@@ -21,7 +21,6 @@ const styles: { [name: string]: CSSProperties } = {
   container: { minHeight: 0, position: "relative", borderRadius: "8px" },
   tablePaper: { display: "flex", maxHeight: "100%" },
   tableContainer: { borderRadius: "8px" },
-  newSpanTableRow: { backgroundColor: "red" },
 };
 
 export default styles;

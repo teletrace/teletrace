@@ -21,7 +21,7 @@ import MaterialReactTable, {
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
+import { useDebounce, useDebouncedCallback } from "use-debounce";
 
 import { InternalSpan } from "@/types/span";
 import {
@@ -30,7 +30,7 @@ import {
   roundNanoToTwoDecimalMs,
 } from "@/utils/format";
 
-import { updateSpansQuery, useSpansQuery } from "../../api/spanQuery";
+import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { LiveSpansState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
@@ -46,15 +46,9 @@ interface SpanTableProps {
   liveSpans: LiveSpansState;
 }
 
-interface FetchSpansResult {
+interface SpansStateProps {
   spans: InternalSpan[];
   newSpansIds: string[];
-  fetchNextPage: () => void;
-  isError: boolean;
-  isFetching: boolean;
-  isRefetching: boolean;
-  isLoading: boolean;
-  hasNextPage: boolean | undefined;
 }
 
 export function SpanTable({
@@ -72,15 +66,9 @@ export function SpanTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>(sortDefault);
-  const [spansState, setSpansState] = useState<FetchSpansResult>({
+  const [spansState, setSpansState] = useState<SpansStateProps>({
     spans: [],
     newSpansIds: [],
-    fetchNextPage: () => null,
-    isError: false,
-    isFetching: false,
-    isRefetching: false,
-    isLoading: false,
-    hasNextPage: false,
   });
 
   const sort = sorting?.map((columnSort) => ({
@@ -95,44 +83,29 @@ export function SpanTable({
     metadata: undefined,
   };
 
-  useEffect(() => {
-    if (liveSpans.isOn) {
-      const intervalId = setInterval(async () => {
-        const spansQueryResult = await updateSpansQuery(
-          searchRequest,
-          liveSpans.interval * 1000
-        );
-        setSpansState((prevState) => {
-          return {
-            ...spansQueryResult,
-            newSpansIds: calcNewSpans(prevState.spans, spansQueryResult.spans),
-            fetchNextPage: spansState.fetchNextPage,
-            hasNextPage: spansState.hasNextPage,
-          };
-        });
-      }, liveSpans.interval * 1000);
-      return () => clearInterval(intervalId);
-    }
-  }, [liveSpans.isOn, searchRequest]);
-
-  const spansQueryResult = useSpansQuery(searchRequest);
-  useEffect(() => {
-    return setSpansState({
-      newSpansIds: [],
-      ...spansQueryResult,
-    });
-  }, [spansQueryResult.isFetching]);
-
   const {
-    spans,
-    newSpansIds,
+    data,
     fetchNextPage,
     isError,
     isRefetching,
     isFetching,
     isLoading,
     hasNextPage,
-  } = spansState;
+  } = useSpansQuery(searchRequest, liveSpans.isOn ? liveSpans.intervalInMs : 0);
+
+  useEffect(
+    () =>
+      setSpansState((prevState) => {
+        const spans = data?.pages?.flatMap((page) => page.spans) || [];
+        return {
+          spans: spans,
+          newSpansIds: calcNewSpans(prevState.spans, spans),
+        };
+      }),
+    [data]
+  );
+
+  const { spans, newSpansIds } = spansState;
 
   const tableSpans =
     spans?.flatMap(
@@ -152,6 +125,12 @@ export function SpanTable({
         isNew: span.spanId in newSpansIds,
       })
     ) ?? [];
+
+  // reset newSpansIds
+  useDebouncedCallback(
+    () => setSpansState({ spans: spans, newSpansIds: [] }),
+    500
+  )();
 
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
@@ -228,7 +207,7 @@ export function SpanTable({
         muiTableBodyRowProps={({ row }) => ({
           onClick: () => onClick(row),
           className: newSpansIds.includes(row.original.spanId)
-            ? "newSpanTableRow"
+            ? "MuiTableRow-grey"
             : "",
         })}
       />
