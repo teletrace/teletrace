@@ -138,9 +138,7 @@ export const TimeFrameSelector = ({
       >
         <DialogContent>
           <DateTimeSelector
-            onChange={(timeframe) => {
-              onChange(timeframe);
-            }}
+            onChange={onChange}
             timeframe={timeframe}
             onClose={() => setOpen(false)}
           />

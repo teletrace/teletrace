@@ -38,12 +38,11 @@ export type LiveSpansState = {
 };
 
 export const SpanSearch = () => {
-  const now = new Date();
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
     timeframe: {
-      startTimeUnixNanoSec: now.setHours(now.getHours() - 1) * 1000 * 1000,
-      endTimeUnixNanoSec: new Date().getTime() * 1000 * 1000,
+      startTimeUnixNanoSec: new Date().valueOf() - 60 * 60 * 1000 * 1000,
+      endTimeUnixNanoSec: new Date().valueOf() * 1000 * 1000,
     },
   });
 

@@ -53,6 +53,7 @@ export const DateTimeSelector = ({
           ).getTime()
         : new Date().getTime()
     );
+
     const endRange = msToNanoSec(
       endTime && endDate
         ? new Date(
@@ -76,10 +77,6 @@ export const DateTimeSelector = ({
       setTimeValid(false);
       onChange(timeframe);
     }
-  };
-
-  const handleCancle = () => {
-    onClose();
   };
 
   return (
@@ -126,7 +123,7 @@ export const DateTimeSelector = ({
         </Stack>
       ) : null}
       <Stack direction="row" justifyContent="flex-end">
-        <Button onClick={handleCancle}>Cancel</Button>
+        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleApply}>Apply</Button>
       </Stack>
     </LocalizationProvider>
