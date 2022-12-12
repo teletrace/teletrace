@@ -35,7 +35,7 @@ export const SpanSearch = () => {
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
     timeframe: {
-      startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
+      startTimeUnixNanoSec: (now - hourInMillis * 24 * 20) * 1000 * 1000,
       endTimeUnixNanoSec: now * 1000 * 1000,
     },
   });
