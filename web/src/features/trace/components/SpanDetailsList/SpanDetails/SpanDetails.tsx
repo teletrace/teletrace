@@ -112,7 +112,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
           </Stack>
         </AccordionSummary>
         <AccordionDetails sx={styles.accordionDetails}>
-          {hasError && (
+          {hasError && span.span.status.message && (
             <SpanErrorDetails errorMessage={span.span.status.message} />
           )}
           <SpanAttributesGroup
