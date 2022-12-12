@@ -166,6 +166,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         }}
         muiTablePaperProps={{ sx: styles.tablePaper }}
         muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
+        initialState={{ density: "compact" }}
       />
     </div>
   );
