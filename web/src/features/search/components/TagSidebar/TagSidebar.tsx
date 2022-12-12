@@ -61,7 +61,7 @@ export const TagSidebar = ({
     },
     {
       title: "HTTP Route",
-      tag: "span.attributes.http.target",
+      tag: "span.attributes.http.route",
       isSearchable: true,
     },
     {

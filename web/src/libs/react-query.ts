@@ -21,7 +21,9 @@ import {
 } from "@tanstack/react-query";
 import { PromiseValue } from "type-fest";
 
-const queryConfig: DefaultOptions = {};
+const queryConfig: DefaultOptions = {
+  queries: { refetchOnWindowFocus: false },
+};
 export const queryClient = new QueryClient({ defaultOptions: queryConfig });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
