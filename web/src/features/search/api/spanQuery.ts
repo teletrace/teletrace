@@ -17,24 +17,36 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
+import { getCurrentTimestamp } from "@/utils/format";
 
 import { SearchRequest, SearchResponse } from "../types/spanQuery";
 
-type FetchSpansParams = { pageParam: string; searchRequest: SearchRequest };
+type FetchSpansParams = { searchRequest: SearchRequest; pageParam: string };
 
 export const fetchSpans = ({
-  pageParam,
   searchRequest,
+  pageParam,
 }: FetchSpansParams): Promise<SearchResponse> => {
   searchRequest.metadata = { nextToken: pageParam };
+  searchRequest.timeframe = getCurrentTimestamp();
+
   return axiosClient.post("/v1/search", searchRequest);
 };
 
-export const useSpansQuery = (searchRequest: SearchRequest) => {
+export const useSpansQuery = (
+  searchRequest: SearchRequest,
+  updateIntervalMilli?: number
+) => {
+  const refetchInterval =
+    updateIntervalMilli && updateIntervalMilli > 0
+      ? updateIntervalMilli
+      : false;
   return useInfiniteQuery({
     queryKey: ["spans", searchRequest],
     keepPreviousData: true,
-    queryFn: ({ pageParam }) => fetchSpans({ pageParam, searchRequest }),
+    queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
+    refetchInterval: refetchInterval,
+    cacheTime: refetchInterval ? refetchInterval : 5000,
   });
 };

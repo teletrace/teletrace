@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { Divider, Stack } from "@mui/material";
+import { Divider, Stack, Typography } from "@mui/material";
 import { Fragment, useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
+import { getCurrentTimestamp } from "@/utils/format";
 
+import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
@@ -29,15 +31,20 @@ export type FiltersState = {
   timeframe: Timeframe;
 };
 
+export type LiveSpansState = {
+  isOn: boolean;
+  intervalInMs: number;
+};
+
 export const SpanSearch = () => {
-  const now = new Date().valueOf();
-  const hourInMillis = 60 * 60 * 1000;
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
-    timeframe: {
-      startTimeUnixNanoSec: (now - hourInMillis * 24 * 20) * 1000 * 1000,
-      endTimeUnixNanoSec: now * 1000 * 1000,
-    },
+    timeframe: getCurrentTimestamp(),
+  });
+
+  const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
+    isOn: false,
+    intervalInMs: 2000,
   });
 
   const onFilterChange = useCallback(
@@ -71,12 +78,31 @@ export const SpanSearch = () => {
     [setFiltersState]
   );
 
+  const toggleLiveSpans = (isOn: boolean) =>
+    setLiveSpansState((prevState) => ({ ...prevState, isOn: isOn }));
+
   return (
     <Fragment>
       <Head
         title="Span Search"
         description="Designated page to span search's flow graph and timeline"
       />
+      <Stack
+        sx={{ paddingBottom: "12px", paddingTop: "24px" }}
+        display="flex"
+        flexDirection="row"
+      >
+        <Typography variant="h5" fontWeight="600">
+          Spans
+        </Typography>
+        <Stack marginLeft="auto">
+          <LiveSpanSwitch
+            isOn={liveSpansState.isOn}
+            onLiveSpansChange={toggleLiveSpans}
+            disabled={false}
+          />
+        </Stack>
+      </Stack>
 
       <Stack
         direction="row"
@@ -107,6 +133,7 @@ export const SpanSearch = () => {
           <SpanTable
             timeframe={filtersState.timeframe}
             filters={filtersState.filters}
+            liveSpans={liveSpansState}
           />
         </Stack>
       </Stack>
