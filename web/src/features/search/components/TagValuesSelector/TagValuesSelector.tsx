@@ -37,6 +37,7 @@ import { useTagValuesWithAll } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
+import { useDebounce } from "use-debounce";
 
 export type TagValuesSelectorProps = {
   tag: string;
@@ -60,20 +61,30 @@ export const TagValuesSelector = ({
   render,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
-
+  const [debouncedSearch] = useDebounce(search, 500);
   const clearTags = () => onChange?.([]);
-  const tagSearchFilter  : SearchFilter = { keyValueFilter: { key: tag, operator: 'contains' ,value: search } } 
-  const tagFilters : Array<SearchFilter> = useMemo(() => search ? [...filters , tagSearchFilter] : filters,
-  [filters, search]
-  )
-  const { data, isError, isFetching } = useTagValuesWithAll(tag, timeframe, tagFilters)
+  const tagSearchFilter: SearchFilter = {
+    keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
+  };
+  const tagFilters: Array<SearchFilter> = useMemo(
+    () =>
+      tagSearchFilter.keyValueFilter.value
+        ? [...filters, tagSearchFilter]
+        : filters,
+    [filters, tagSearchFilter]
+  );
+  const { data, isError, isFetching } = useTagValuesWithAll(
+    tag,
+    timeframe,
+    tagFilters
+  );
   const tagOptions = data
-  ?.filter((tag) => tag?.value.toString().includes(search))
-  .map((tag) => ({
+
+    ?.filter((tag) => tag?.value.toString().includes(search))
+    .map((tag) => ({
       value: tag.value,
       label: <CheckboxListLabel key={tag.value} tag={tag} render={render} />,
     }));
-
 
   return (
     <div>
@@ -85,9 +96,7 @@ export const TagValuesSelector = ({
           >
             <Stack direction="row" spacing={2} alignItems="center">
               <div>{title}</div>
-              {(isFetching) && (
-                <CircularProgress size="1rem" />
-              )}
+              {isFetching && <CircularProgress size="1rem" />}
             </Stack>
           </AccordionSummary>
           <AccordionActions>

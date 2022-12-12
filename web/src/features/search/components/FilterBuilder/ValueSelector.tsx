@@ -45,11 +45,12 @@ export type ValueSelectorProps = {
   error: boolean;
 };
 
-const getOptions = (tag: string, timeframe: Timeframe) => {
-  if (!tag) {
-    return { isLoading: false, tagOptions: [] };
-  }
-  const { data: tagValues, isFetching } = useTagValuesWithAll(tag, timeframe, []);
+const useGetOptions = (tag: string, timeframe: Timeframe) => {
+  const { data: tagValues, isFetching } = useTagValuesWithAll(
+    tag,
+    timeframe,
+    []
+  );
   return { isLoading: isFetching, tagOptions: tagValues || [] };
 };
 
@@ -61,7 +62,7 @@ export const ValueSelector = ({
   onChange,
   error,
 }: ValueSelectorProps) => {
-  const { isLoading, tagOptions } = getOptions(tag, timeframe);
+  const { isLoading, tagOptions } = useGetOptions(tag, timeframe);
   const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (

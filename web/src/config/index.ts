@@ -15,7 +15,7 @@
  */
 
 // this file contains configuration for the application such as API_URL, etc.
-export const LOCAL_API_URL = "http://localhost:8880";
+export const LOCAL_API_URL = "http://localhost:8080";
 export const API_URL = process.env.REACT_APP_API_URL ?? LOCAL_API_URL;
 
 export const LUPA_DOCS_URL = "https://solid-dollop-44b513ff.pages.github.io/";

@@ -19,7 +19,11 @@ import { useQuery } from "@tanstack/react-query";
 import { axiosClient } from "@/libs/axios";
 
 import { SearchFilter, Timeframe } from "../types/common";
-import { TagValue, TagValuesRequest, TagValuesResponse } from "../types/tagValues";
+import {
+  TagValue,
+  TagValuesRequest,
+  TagValuesResponse,
+} from "../types/tagValues";
 
 type FetchTagValuesParams = {
   tag: string;
@@ -61,53 +65,64 @@ export const useTagValues = (
     ],
     keepPreviousData: true,
     queryFn: ({ pageParam }) =>
-      fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam }),
+      tag
+        ? fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam })
+        : Promise.resolve<TagValuesResponse>({ values: [] }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
   });
 };
 
-const mergeTagValues = (currentTagValues?: Array<TagValue> , allTagValues?: Array<TagValue>) => {
-  if (currentTagValues === undefined || allTagValues === undefined){
-    return undefined
+const mergeTagValues = (
+  currentTagValues?: Array<TagValue>,
+  allTagValues?: Array<TagValue>
+) => {
+  if (currentTagValues === undefined || allTagValues === undefined) {
+    return undefined;
   }
-  const tagValuesMap : Record<string, TagValue> = {}
-  for (const {value} of allTagValues) {
-    tagValuesMap[value] = {value: value, count: 0}
+  const tagValuesMap: Record<string, TagValue> = {};
+  for (const { value } of allTagValues) {
+    tagValuesMap[value] = { value: value, count: 0 };
   }
-  for (const {value, count } of currentTagValues) {
-    tagValuesMap[value] = {value: value, count: count}
+  for (const { value, count } of currentTagValues) {
+    tagValuesMap[value] = { value: value, count: count };
   }
 
-
-  return Object.values(tagValuesMap)
-    .sort((tagA, tagB) => {
-      if (tagB.count === tagA.count) {
-        return tagA.value >= tagB.value ? 1 : -1;
-      }
-      return tagB.count - tagA.count;
-    })
-}
+  return Object.values(tagValuesMap).sort((tagA, tagB) => {
+    if (tagB.count === tagA.count) {
+      return tagA.value >= tagB.value ? 1 : -1;
+    }
+    return tagB.count - tagA.count;
+  });
+};
 
 export const useTagValuesWithAll = (
   tag: string,
   timeframe: Timeframe,
-  filters: SearchFilter[],
+  filters: SearchFilter[]
 ) => {
-  const currentValuesRequest : TagValuesRequest = {timeframe: timeframe, filters: filters}
-  const allValuesRequest : TagValuesRequest = {filters: []}
+  const currentValuesRequest: TagValuesRequest = {
+    timeframe: timeframe,
+    filters: filters,
+  };
+  const allValuesRequest: TagValuesRequest = { filters: [] };
   const {
     data: currentTagValues,
     isFetching: isFetchingCurrent,
     isError: isErrorCurrent,
-  } = useTagValues(tag, currentValuesRequest)
+  } = useTagValues(tag, currentValuesRequest);
   const {
     data: allTagValues,
     isFetching: isFetchingAllValues,
     isError: isErrorAllValues,
-  } = useTagValues(tag, allValuesRequest)
+  } = useTagValues(tag, allValuesRequest);
   // const currentTagValues = currentTagPages?.pages.flatMap((page) => page.values)
   // const allTagValues = allTagPages?.pages.flatMap((page) => page.values)
-  return {isFetching: isFetchingAllValues || isFetchingCurrent,
-          isError: isErrorAllValues || isErrorCurrent,
-          data: mergeTagValues(currentTagValues?.values || [], allTagValues?.values) || []}
+  return {
+    isFetching: isFetchingAllValues || isFetchingCurrent,
+    isError: isErrorAllValues || isErrorCurrent,
+    data: mergeTagValues(
+      currentTagValues?.values || [],
+      allTagValues?.values || []
+    ),
+  };
 };
