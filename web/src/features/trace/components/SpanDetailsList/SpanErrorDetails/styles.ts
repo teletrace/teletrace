@@ -17,7 +17,7 @@
 const textContainer = {
   maxHeight: "80px",
   overflow: "hidden",
-  padding: "7px 150px 4px 45px",
+  padding: "16px 150px 16px 62px",
 };
 
 export const styles = {
@@ -30,6 +30,7 @@ export const styles = {
     ...textContainer,
     overflow: "visible",
     maxHeight: "fit-content",
+    paddingBottom: "0px",
   },
   typography: {
     color: "#EF5854",
@@ -40,6 +41,7 @@ export const styles = {
     width: "107px",
     fontWeight: "500",
     fontSize: "10px",
+    marginTop: "16px",
     marginLeft: "220px",
     lineHeight: "12px",
     letterSpacing: "1.5px",
