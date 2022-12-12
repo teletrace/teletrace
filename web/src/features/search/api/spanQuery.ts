@@ -35,9 +35,12 @@ export const fetchSpans = ({
 
 export const useSpansQuery = (
   searchRequest: SearchRequest,
-  updateIntervalInMs: number
+  updateIntervalMilli?: number
 ) => {
-  const refetchInterval = updateIntervalInMs > 0 ? updateIntervalInMs : false;
+  const refetchInterval =
+    updateIntervalMilli && updateIntervalMilli > 0
+      ? updateIntervalMilli
+      : false;
   return useInfiniteQuery({
     queryKey: ["spans", searchRequest],
     keepPreviousData: true,

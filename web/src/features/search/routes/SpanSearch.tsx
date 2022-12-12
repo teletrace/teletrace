@@ -42,10 +42,9 @@ export const SpanSearch = () => {
     timeframe: getCurrentTimestamp(),
   });
 
-  const defaultLiveSpansInterval = 2000;
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
     isOn: false,
-    intervalInMs: defaultLiveSpansInterval,
+    intervalInMs: 2000,
   });
 
   const onFilterChange = useCallback(
@@ -81,8 +80,6 @@ export const SpanSearch = () => {
 
   const toggleLiveSpans = (isOn: boolean) =>
     setLiveSpansState((prevState) => ({ ...prevState, isOn: isOn }));
-  // const setLiveSpansInterval = (interval: number) =>
-  // setLiveSpansState((prevState) => ({ ...prevState, interval: interval }));
 
   return (
     <Fragment>

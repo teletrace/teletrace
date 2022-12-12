@@ -168,7 +168,7 @@ export function SpanTable({
 
   return (
     <div style={styles.container}>
-      {isRefetching && <LinearProgress sx={styles.progress} />}
+      {isRefetching && !isRefetching && <LinearProgress sx={styles.progress} />}
       <MaterialReactTable
         columns={columns}
         data={tableSpans}

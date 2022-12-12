@@ -27,16 +27,16 @@ export function LiveSpanSwitch({
   onLiveSpansChange,
   disabled,
 }: LiveSpansProps) {
-  const TooltipTitleDisabled =
+  const tooltipTitleDisabled =
     "Live mode is off when a custom time range is applied";
-  const TooltipTitleEnabled =
+  const tooltipTitleEnabled =
     "Live mode streams new ingested spans to the span table";
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onLiveSpansChange(event.target.checked);
   };
   return (
-    <Tooltip title={disabled ? TooltipTitleDisabled : TooltipTitleEnabled}>
+    <Tooltip title={disabled ? tooltipTitleDisabled : tooltipTitleEnabled}>
       <FormGroup>
         <FormControlLabel
           control={
