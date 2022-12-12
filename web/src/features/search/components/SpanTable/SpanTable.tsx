@@ -21,7 +21,7 @@ import MaterialReactTable, {
   Virtualizer,
 } from "material-react-table";
 import { useEffect, useRef, useState } from "react";
-import { useDebounce, useDebouncedCallback } from "use-debounce";
+import { useDebouncedCallback } from "use-debounce";
 
 import { InternalSpan } from "@/types/span";
 import {
