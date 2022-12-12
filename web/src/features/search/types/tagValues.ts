@@ -23,8 +23,7 @@ export type TagValue = {
 
 export type TagValuesRequest = {
   filters: SearchFilter[];
-  timeframe: Timeframe;
-  metadata?: { nextToken: string };
+  timeframe?: Timeframe;
 };
 
 export type TagValuesResponse = {
