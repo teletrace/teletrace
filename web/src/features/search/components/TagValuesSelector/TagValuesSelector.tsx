@@ -27,15 +27,16 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
 
-import { useTagValues } from "../../api/tagValues";
+import { useTagValuesWithAll } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
-import { TagValue, TagValuesRequest } from "../../types/tagValues";
+import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
@@ -60,26 +61,29 @@ export const TagValuesSelector = ({
   render,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
-
-  const tagValuesRequest: TagValuesRequest = {
-    filters: filters,
-    timeframe: timeframe,
-  };
-
-  const {
-    data: tagValues,
-    isFetching,
-    isError,
-  } = useTagValues(tag, tagValuesRequest);
-
+  const [debouncedSearch] = useDebounce(search, 500);
   const clearTags = () => onChange?.([]);
+  const tagSearchFilter: SearchFilter = {
+    keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
+  };
+  const tagFilters: Array<SearchFilter> = useMemo(
+    () =>
+      tagSearchFilter.keyValueFilter.value
+        ? [...filters, tagSearchFilter]
+        : filters,
+    [filters, tagSearchFilter]
+  );
+  const { data, isError, isFetching } = useTagValuesWithAll(
+    tag,
+    timeframe,
+    tagFilters
+  );
+  const tagOptions = data
 
-  const tagOptions = tagValues?.pages
-    .flatMap((page) => page.values)
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
-      label: <CheckboxListLabel tag={tag} render={render} />,
+      label: <CheckboxListLabel key={tag.value} tag={tag} render={render} />,
     }));
 
   return (
@@ -109,13 +113,13 @@ export const TagValuesSelector = ({
             <Alert severity="error">Failed loading tag values</Alert>
           ) : (
             <Fragment>
-              {searchable && !!tagValues && (
+              {searchable && !!data && (
                 <SearchField value={search} onChange={setSearch} />
               )}
 
               <CheckboxList
                 value={value}
-                loading={!tagValues}
+                loading={false}
                 options={tagOptions || []}
                 onChange={onChange}
               />

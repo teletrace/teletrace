@@ -26,7 +26,7 @@ import FormControl from "@mui/material/FormControl";
 
 import { formatNumber } from "@/utils/format";
 
-import { useTagValues } from "../../api/tagValues";
+import { useTagValuesWithAll } from "../../api/tagValues";
 import {
   FilterValueTypes,
   Timeframe,
@@ -45,21 +45,13 @@ export type ValueSelectorProps = {
   error: boolean;
 };
 
-const getOptions = (tag: string, timeframe: Timeframe) => {
-  if (!tag) {
-    return { isLoading: false, tagOptions: [] };
-  }
-  const tagValuesRequest = {
-    filters: [],
-    timeframe: timeframe,
-  } as TagValuesRequest;
-  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
-  const tagOptions =
-    tagValues?.pages
-      .flatMap((page) => page.values)
-      ?.filter((tag) => tag?.value)
-      .sort((a, b) => b.count - a.count) || [];
-  return { isLoading, tagOptions };
+const useGetOptions = (tag: string, timeframe: Timeframe) => {
+  const { data: tagValues, isFetching } = useTagValuesWithAll(
+    tag,
+    timeframe,
+    []
+  );
+  return { isLoading: isFetching, tagOptions: tagValues || [] };
 };
 
 export const ValueSelector = ({
@@ -70,7 +62,7 @@ export const ValueSelector = ({
   onChange,
   error,
 }: ValueSelectorProps) => {
-  const { isLoading, tagOptions } = getOptions(tag, timeframe);
+  const { isLoading, tagOptions } = useGetOptions(tag, timeframe);
   const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (

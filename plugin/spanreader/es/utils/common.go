@@ -25,7 +25,10 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
-func CreateTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
+func CreateTimeframeFilters(tf *model.Timeframe) []model.SearchFilter {
+	if tf == nil {
+		return []model.SearchFilter{}
+	}
 	return []model.SearchFilter{
 		{
 			KeyValueFilter: &model.KeyValueFilter{
