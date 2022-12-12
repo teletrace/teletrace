@@ -1,8 +1,8 @@
 ---
-name: "✨ New Feature"
-about: Suggest an idea
-title: "✨"
-labels: "Type: Feature"
+name: "📝 Documentation"
+about: Updating documentation (e.g. README, Wiki, Guides etc.)
+title: "📝"
+labels: "Type: Documentation"
 assignees: ""
 ---
 
@@ -18,11 +18,11 @@ Hi
 
 ## Pain
 
-<!-- A clear and concise description of what the problem is. Ex. I'm always frustrated when [...] -->
+<!-- Explain the pain you are experiencing -->
 
-## Suggested Solution
+## Suggested Documentation
 
-<!-- A clear and concise description of what you want to happen. -->
+<!-- Short summary of the documentation that should be added -->
 
 ## Tasks
 
@@ -33,7 +33,7 @@ Hi
 
 ## More Information
 
-<!-- Add any other context here. -->
+<!-- Add any other context here -->
 
 ## Screenshots
 
