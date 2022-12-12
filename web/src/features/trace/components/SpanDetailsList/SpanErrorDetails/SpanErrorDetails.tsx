@@ -34,9 +34,6 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
     if (containerRef.current) {
       const { clientHeight, scrollHeight } = containerRef.current;
       setShowButton(clientHeight !== scrollHeight);
-      // if (containerRef.current) {
-      //   setShowButton(clientHeight !== scrollHeight);
-      // }
     }
   }, [containerRef]);
 
@@ -46,7 +43,9 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
         ref={containerRef}
         sx={expanded ? styles.textContainerExpanded : styles.textContainer}
       >
-        <Typography sx={styles.typography}>{errorMessage}</Typography>
+        <Typography sx={styles.typography}>
+          {errorMessage ? errorMessage : "No Error Message Found"}
+        </Typography>
       </Box>
       {showButton && (
         <Box>
