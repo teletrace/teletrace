@@ -30,7 +30,7 @@ import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
-  timeframe: Timeframe;
+  value: Timeframe;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -42,7 +42,7 @@ const options: RelativeTimeFrame[] = [
 
 export const TimeFrameSelector = ({
   onChange,
-  timeframe,
+  value: timeframe,
 }: TimeFrameSelectorProps) => {
   const customOption: CustomTimeFrame = {
     label: "Custom",

@@ -116,7 +116,7 @@ export const SpanSearch = () => {
           />
           <TimeFrameSelector
             onChange={onTimeframeChange}
-            timeframe={filtersState.timeframe}
+            value={filtersState.timeframe}
           />
         </Stack>
       </Stack>
