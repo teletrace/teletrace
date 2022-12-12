@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+	"strconv"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 
@@ -184,6 +185,8 @@ func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
 			switch sortField := sort[0].(type) {
 			case string:
 				metadata.NextToken = spansquery.ContinuationToken(sortField)
+			case float64:
+				metadata.NextToken = spansquery.ContinuationToken(strconv.FormatFloat(sortField, 'f', 0, 64))
 			default:
 				return fmt.Errorf(
 					"expected a sort field of type string, but found: %v", sortField)
