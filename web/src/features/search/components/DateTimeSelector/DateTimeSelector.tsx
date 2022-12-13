@@ -17,13 +17,13 @@
 import {
   Alert,
   Button,
+  DialogActions,
   DialogContent,
-  FormLabel,
+  Divider,
   FormControl,
+  FormLabel,
   Stack,
   TextField,
-  Divider,
-  DialogActions,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -33,7 +33,7 @@ import { useState } from "react";
 import { msToNanoSec } from "@/utils/format";
 
 import { Timeframe } from "../../types/common";
-import styles from "./styles";
+import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
@@ -92,7 +92,7 @@ export const DateTimeSelector = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <DialogContent>
+      <DialogContent sx={{ width: "320px" }}>
         <Stack spacing={2}>
           <FormControl>
             <FormLabel>From</FormLabel>
@@ -140,13 +140,13 @@ export const DateTimeSelector = ({
               />
             </Stack>
           </FormControl>
+          {!timeValid ? (
+            <Alert sx={styles.alert} variant="outlined" severity="error">
+              Please enter a valid date range
+            </Alert>
+          ) : null}
         </Stack>
       </DialogContent>
-      {!timeValid ? (
-        <Stack sx={{ width: "100%" }} spacing={2}>
-          <Alert severity="error">Please enter a valid date range</Alert>
-        </Stack>
-      ) : null}
       <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

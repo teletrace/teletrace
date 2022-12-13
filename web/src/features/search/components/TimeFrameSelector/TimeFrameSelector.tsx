@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { CalendarTodayOutlined } from "@mui/icons-material";
 import {
   Popover,
   ToggleButton,
@@ -21,7 +22,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
-import { CalendarTodayOutlined } from "@mui/icons-material";
+
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 import { Timeframe } from "../../types/common";
