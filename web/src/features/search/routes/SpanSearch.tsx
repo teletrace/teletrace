@@ -15,7 +15,7 @@
  */
 
 import { Divider, Stack, Typography } from "@mui/material";
-import { Fragment, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
 import { getCurrentTimestamp } from "@/utils/format";
