@@ -37,20 +37,20 @@ import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
-  timeframe: Timeframe;
+  value: Timeframe;
   onClose: () => void;
 };
 
 export const DateTimeSelector = ({
   onChange,
-  timeframe,
+  value,
   onClose,
 }: DateTimeSelectorProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
-    new Date(timeframe.startTimeUnixNanoSec / 1000000)
+    new Date(value.startTimeUnixNanoSec / 1000000)
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    new Date(timeframe.endTimeUnixNanoSec / 1000000)
+    new Date(value.endTimeUnixNanoSec / 1000000)
   );
   const [startTime, setStartTime] = useState<Date | null>(startDate);
   const [endTime, setEndTime] = useState<Date | null>(endDate);
@@ -86,7 +86,7 @@ export const DateTimeSelector = ({
       onClose();
     } else {
       setTimeValid(false);
-      onChange(timeframe);
+      onChange(value);
     }
   };
 

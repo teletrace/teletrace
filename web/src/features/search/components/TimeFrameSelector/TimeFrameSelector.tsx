@@ -138,7 +138,7 @@ export const TimeFrameSelector = ({
       >
         <DateTimeSelector
           onChange={onChange}
-          timeframe={timeframe}
+          value={timeframe}
           onClose={() => setOpen(false)}
         />
       </Popover>
