@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-import {
-  Autocomplete,
-  FormLabel,
-  ListItem,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { FormLabel, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import { formatNumber } from "@/utils/format";
-
-import { useTagValuesWithAll } from "../../api/tagValues";
 import {
   FilterValueTypes,
+  SearchFilter,
   Timeframe,
   ValueInputMode,
 } from "../../types/common";
-import { TagValue, TagValuesRequest } from "../../types/tagValues";
+import { TagValuesRequest } from "../../types/tagValues";
+import { AutoCompleteValueSelector } from "./AutoCompleteValueSelector";
 import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
   timeframe: Timeframe;
+  filters: Array<SearchFilter>;
   query?: TagValuesRequest;
   value: FilterValueTypes;
   valueInputMode: ValueInputMode;
@@ -45,24 +38,15 @@ export type ValueSelectorProps = {
   error: boolean;
 };
 
-const useGetOptions = (tag: string, timeframe: Timeframe) => {
-  const { data: tagValues, isFetching } = useTagValuesWithAll(
-    tag,
-    timeframe,
-    []
-  );
-  return { isLoading: isFetching, tagOptions: tagValues || [] };
-};
-
 export const ValueSelector = ({
   tag,
   timeframe,
+  filters,
   value,
   valueInputMode,
   onChange,
   error,
 }: ValueSelectorProps) => {
-  const { isLoading, tagOptions } = useGetOptions(tag, timeframe);
   const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (
@@ -71,60 +55,19 @@ export const ValueSelector = ({
     onChange(event?.target?.value ?? "");
   };
 
-  const handleSelectChange = (
-    event: React.SyntheticEvent<Element, Event>,
-    value: TagValue[]
-  ) => {
-    onChange(value.map((v) => v.value.toString()));
-  };
-
-  const getSelectedValues = () => {
-    const valueArray = value instanceof Array ? value : [value.toString()];
-    return (
-      tagOptions?.filter(
-        (tagOption) =>
-          tagOption && valueArray.includes(tagOption?.value.toString())
-      ) || []
-    );
-  };
-
   return (
     <>
       <FormControl required sx={styles.valueSelector}>
         <FormLabel required={false}>Value</FormLabel>
         {valueInputMode === "select" ? (
-          <Autocomplete
-            multiple
-            openOnFocus
-            size="small"
-            loading={isLoading}
-            disableCloseOnSelect
-            value={getSelectedValues()}
-            id={"value-selector"}
-            options={tagOptions || []}
-            getOptionLabel={(option) => option.value.toString()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={error}
-                helperText={errorHelperText}
-                sx={styles.valueInput}
-              />
-            )}
-            renderOption={(props, option) => (
-              <ListItem {...props}>
-                <Stack
-                  sx={{ width: "100%" }}
-                  direction="row"
-                  justifyContent="space-between"
-                >
-                  <Typography>{option.value}</Typography>
-                  <Typography>{formatNumber(option.count)}</Typography>
-                </Stack>
-              </ListItem>
-            )}
-            onChange={handleSelectChange}
-          ></Autocomplete>
+          <AutoCompleteValueSelector
+            error={error}
+            filters={filters}
+            timeframe={timeframe}
+            value={Array.isArray(value) ? value : [value]}
+            onChange={onChange}
+            tag={tag}
+          />
         ) : null}
         {valueInputMode === "text" ? (
           <TextField
