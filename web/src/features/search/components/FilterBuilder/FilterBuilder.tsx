@@ -44,6 +44,7 @@ export type FilterDialogProps = {
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
   timeframe: Timeframe;
+  filters: Array<SearchFilter>;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -73,6 +74,7 @@ type FilterBuilderDialogState = {
 
 export const FilterBuilderDialog = ({
   timeframe,
+  filters,
   onClose,
   open,
   anchorEl,
@@ -235,6 +237,7 @@ export const FilterBuilderDialog = ({
               <Stack>
                 <ValueSelector
                   timeframe={timeframe}
+                  filters={filters}
                   tag={dialogState.tag?.name || ""}
                   value={dialogState.value}
                   onChange={onValueChange}
