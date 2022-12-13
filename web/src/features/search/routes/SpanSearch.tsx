@@ -82,7 +82,7 @@ export const SpanSearch = () => {
     setLiveSpansState((prevState) => ({ ...prevState, isOn: isOn }));
 
   return (
-    <Fragment>
+    <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>
       <Head
         title="Span Search"
         description="Designated page to span search's flow graph and timeline"
@@ -108,7 +108,7 @@ export const SpanSearch = () => {
         direction="row"
         spacing={2}
         alignItems="flex-start"
-        sx={{ height: "100%", minWidth: 0 }}
+        sx={{ height: "100%", minWidth: 0, minHeight: 0 }}
       >
         <aside style={{ display: "flex", maxHeight: "100%" }}>
           <TagSidebar
@@ -137,6 +137,6 @@ export const SpanSearch = () => {
           />
         </Stack>
       </Stack>
-    </Fragment>
+    </Stack>
   );
 };
