@@ -24,6 +24,7 @@ import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
+import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter, Timeframe } from "../types/common";
 
 export type FiltersState = {
@@ -46,6 +47,15 @@ export const SpanSearch = () => {
     isOn: false,
     intervalInMs: 2000,
   });
+
+  const onTimeframeChange = useCallback(
+    (timeframe: Timeframe) => {
+      return setFiltersState((prevState: FiltersState) => {
+        return { ...prevState, timeframe };
+      });
+    },
+    [setFiltersState]
+  );
 
   const onFilterChange = useCallback(
     (entry: SearchFilter, isDelete = false) => {
@@ -95,7 +105,13 @@ export const SpanSearch = () => {
         <Typography variant="h5" fontWeight="600">
           Spans
         </Typography>
-        <Stack marginLeft="auto">
+        <Stack marginLeft="auto" direction="row">
+          <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
+            <TimeFrameSelector
+              onChange={onTimeframeChange}
+              value={filtersState.timeframe}
+            />
+          </Stack>
           <LiveSpanSwitch
             isOn={liveSpansState.isOn}
             onLiveSpansChange={toggleLiveSpans}
@@ -131,8 +147,8 @@ export const SpanSearch = () => {
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
           />
           <SpanTable
-            timeframe={filtersState.timeframe}
             filters={filtersState.filters}
+            timeframe={filtersState.timeframe}
             liveSpans={liveSpansState}
           />
         </Stack>

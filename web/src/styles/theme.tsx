@@ -557,6 +557,33 @@ theme = createTheme(theme, {
         },
       },
     },
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        root: {
+          backgroundColor: theme.palette.grey[900],
+          height: "32px",
+        },
+        grouped: {
+          borderTop: "none",
+          borderBottom: "none",
+          borderColor: "black",
+          color: theme.palette.grey[300],
+          "&.Mui-selected": {
+            color: "white",
+          },
+          "&:last-of-type": {
+            borderBottomRightRadius: "8px",
+            borderTopRightRadius: "8px",
+            borderRight: "none",
+          },
+          "&:first-of-type": {
+            borderBottomLeftRadius: "8px",
+            borderTopLeftRadius: "8px",
+            borderLeft: "none",
+          },
+        },
+      },
+    },
   },
 });
 
