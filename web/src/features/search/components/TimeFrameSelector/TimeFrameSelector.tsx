@@ -15,14 +15,13 @@
  */
 
 import {
-  DialogContent,
   Popover,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
-
+import { CalendarTodayOutlined } from "@mui/icons-material";
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 import { Timeframe } from "../../types/common";
@@ -136,13 +135,11 @@ export const TimeFrameSelector = ({
         }}
         onClose={() => setOpen(false)}
       >
-        <DialogContent>
-          <DateTimeSelector
-            onChange={onChange}
-            timeframe={timeframe}
-            onClose={() => setOpen(false)}
-          />
-        </DialogContent>
+        <DateTimeSelector
+          onChange={onChange}
+          timeframe={timeframe}
+          onClose={() => setOpen(false)}
+        />
       </Popover>
       <ToggleButtonGroup exclusive>
         <ToggleButton
@@ -152,7 +149,8 @@ export const TimeFrameSelector = ({
           ref={buttonRef}
           key={customOption.label}
         >
-          {isSelected?.label === customOption?.label
+          <CalendarTodayOutlined sx={{ paddingRight: "7px" }} />
+          {isSelected?.label === customOption?.label && !open
             ? getTooltipTitle()
             : customOption.label}
         </ToggleButton>

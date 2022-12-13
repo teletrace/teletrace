@@ -40,10 +40,7 @@ export type LiveSpansState = {
 export const SpanSearch = () => {
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
-    timeframe: {
-      startTimeUnixNanoSec: new Date().valueOf() - 60 * 60 * 1000 * 1000,
-      endTimeUnixNanoSec: new Date().valueOf() * 1000 * 1000,
-    },
+    timeframe: getCurrentTimestamp(),
   });
 
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
@@ -108,15 +105,17 @@ export const SpanSearch = () => {
         <Typography variant="h5" fontWeight="600">
           Spans
         </Typography>
-        <Stack marginLeft="auto">
+        <Stack marginLeft="auto" direction="row">
+          <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
+            <TimeFrameSelector
+              onChange={onTimeframeChange}
+              value={filtersState.timeframe}
+            />
+          </Stack>
           <LiveSpanSwitch
             isOn={liveSpansState.isOn}
             onLiveSpansChange={toggleLiveSpans}
             disabled={false}
-          />
-          <TimeFrameSelector
-            onChange={onTimeframeChange}
-            value={filtersState.timeframe}
           />
         </Stack>
       </Stack>
@@ -148,8 +147,8 @@ export const SpanSearch = () => {
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
           />
           <SpanTable
-            timeframe={filtersState.timeframe}
             filters={filtersState.filters}
+            timeframe={filtersState.timeframe}
             liveSpans={liveSpansState}
           />
         </Stack>

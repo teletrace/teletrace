@@ -14,7 +14,17 @@
  * limitations under the License.
  */
 
-import { Alert, Button, DialogContent, Stack, TextField } from "@mui/material";
+import {
+  Alert,
+  Button,
+  DialogContent,
+  FormLabel,
+  FormControl,
+  Stack,
+  TextField,
+  Divider,
+  DialogActions,
+} from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -23,6 +33,7 @@ import { useState } from "react";
 import { msToNanoSec } from "@/utils/format";
 
 import { Timeframe } from "../../types/common";
+import styles from "./styles";
 
 export type DateTimeSelectorProps = {
   onChange: (timeframe: Timeframe) => void;
@@ -82,39 +93,53 @@ export const DateTimeSelector = ({
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DialogContent>
-        From
-        <Stack direction="row">
-          <DatePicker
-            inputFormat="dd-MM-yyyy"
-            onChange={(startDate) => setStartDate(startDate)}
-            renderInput={(props) => <TextField {...props} />}
-            value={startDate}
-          />
-          <TimePicker
-            ampm={false}
-            onChange={(startTime) => setStartTime(startTime)}
-            value={startTime}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </Stack>
-        To
-        <Stack direction="row">
-          <DatePicker
-            inputFormat="dd-MM-yyyy"
-            renderInput={(props) => <TextField {...props} />}
-            onChange={(endDate) => {
-              setEndDate(endDate);
-            }}
-            value={endDate}
-          />
-          <TimePicker
-            ampm={false}
-            onChange={(endTime) => {
-              setEndTime(endTime);
-            }}
-            value={endTime}
-            renderInput={(params) => <TextField {...params} />}
-          />
+        <Stack spacing={2}>
+          <FormControl>
+            <FormLabel>From</FormLabel>
+            <Stack direction="row" spacing={2}>
+              <DatePicker
+                inputFormat="dd-MM-yyyy"
+                onChange={(startDate) => setStartDate(startDate)}
+                renderInput={(props) => (
+                  <TextField {...props} sx={styles.dateInput} />
+                )}
+                value={startDate}
+              />
+              <TimePicker
+                ampm={false}
+                onChange={(startTime) => setStartTime(startTime)}
+                value={startTime}
+                renderInput={(params) => (
+                  <TextField {...params} sx={styles.timeInput} />
+                )}
+              />
+            </Stack>
+          </FormControl>
+          <FormControl>
+            <FormLabel>To</FormLabel>
+            <Stack direction="row" spacing={2}>
+              <DatePicker
+                inputFormat="dd-MM-yyyy"
+                renderInput={(props) => (
+                  <TextField {...props} sx={styles.dateInput} />
+                )}
+                onChange={(endDate) => {
+                  setEndDate(endDate);
+                }}
+                value={endDate}
+              />
+              <TimePicker
+                ampm={false}
+                onChange={(endTime) => {
+                  setEndTime(endTime);
+                }}
+                value={endTime}
+                renderInput={(params) => (
+                  <TextField {...params} sx={styles.timeInput} />
+                )}
+              />
+            </Stack>
+          </FormControl>
         </Stack>
       </DialogContent>
       {!timeValid ? (
@@ -122,10 +147,13 @@ export const DateTimeSelector = ({
           <Alert severity="error">Please enter a valid date range</Alert>
         </Stack>
       ) : null}
-      <Stack direction="row" justifyContent="flex-end">
+      <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
+      <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleApply}>Apply</Button>
-      </Stack>
+        <Button onClick={handleApply} variant="contained">
+          Apply
+        </Button>
+      </DialogActions>
     </LocalizationProvider>
   );
 };

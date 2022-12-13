@@ -54,16 +54,8 @@ export const formatNanoAsMsDateTime = (nanoSec: number) => {
 
 export const getCurrentTimestamp = (): Timeframe => {
   const now = new Date().valueOf();
-  const hourInMillis = 60 * 60 * 1000;
   return {
-    startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
-    endTimeUnixNanoSec: now * 1000 * 1000,
+    startTimeUnixNanoSec: msToNanoSec(now - 3600000),
+    endTimeUnixNanoSec: msToNanoSec(now),
   };
-};
-export const formatDateToTimeString = (date: number) =>
-  format(date, "PP, HH:mm:ss");
-
-export const formatNanoAsTimeString = (nanoSec: number) => {
-  const ms = nanoSecToMs(nanoSec);
-  return formatDateToTimeString(ms);
 };
