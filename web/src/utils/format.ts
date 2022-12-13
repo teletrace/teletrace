@@ -20,9 +20,11 @@ import { Timeframe } from "../features/search/types/common";
 
 export const formatDateAsDateTime = (
   date: Date | number,
-  { showMs = false } = {}
+  { showMs = false, showSec = true } = {}
 ) => {
-  const pattern = showMs ? "PP, HH:mm:ss.SSS" : "PP, HH:mm:ss";
+  const pattern = `PP, HH:mm${showSec ? ":ss" : ""}${
+    showSec && showMs ? ".SSS" : ""
+  }`;
   return format(date, pattern);
 };
 
@@ -34,6 +36,10 @@ export const formatNumber = (n: number) =>
 
 export const nanoSecToMs = (nanoSec: number) => {
   return nanoSec / (1000 * 1000);
+};
+
+export const msToNanoSec = (ms: number) => {
+  return ms * 1000000;
 };
 
 export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
@@ -48,9 +54,8 @@ export const formatNanoAsMsDateTime = (nanoSec: number) => {
 
 export const getCurrentTimestamp = (): Timeframe => {
   const now = new Date().valueOf();
-  const hourInMillis = 60 * 60 * 1000;
   return {
-    startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
-    endTimeUnixNanoSec: now * 1000 * 1000,
+    startTimeUnixNanoSec: msToNanoSec(now - 3600000),
+    endTimeUnixNanoSec: msToNanoSec(now),
   };
 };
