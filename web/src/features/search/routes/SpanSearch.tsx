@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { Divider, Stack, Typography } from "@mui/material";
-import { Fragment, useCallback, useState } from "react";
+import {Divider, Stack, Typography} from "@mui/material";
+import {Fragment, useCallback, useState} from "react";
 
 import { Head } from "@/components/Head";
 import { getCurrentTimestamp } from "@/utils/format";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
+import { RefreshButton } from "../components/RefreshButton";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
@@ -94,6 +95,8 @@ export const SpanSearch = () => {
       >
         <Typography variant="h5" fontWeight="600">
           Spans
+          {' '}
+          <RefreshButton />
         </Typography>
         <Stack marginLeft="auto">
           <LiveSpanSwitch
