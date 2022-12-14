@@ -20,11 +20,8 @@ export function RefreshButton() {
                 ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
                 : 0
 
-            console.log(timeSinceLastRefresh)
             let timeSinceLastRefreshString = '';
-            if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
-                timeSinceLastRefreshString = 'a few seconds ago';
-            } else if (timeSinceLastRefresh < 60) {
+            if (timeSinceLastRefresh < 60) {
                 timeSinceLastRefreshString = 'under a minute ago';
                 setRerenderInterval(50 * 1000)
             } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
