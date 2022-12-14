@@ -1,4 +1,4 @@
-site_name: OSS tracing
+site_name: Lupa
 
 theme:
   homepage: https://epsagon.github.io/oss-tracing/
@@ -7,7 +7,8 @@ theme:
 
   theme:
   features:
-    - navigation.tabs
+    - navigation.sections
+    - content.code.annotate
 
   name: material
   palette:
@@ -28,8 +29,18 @@ extra:
   generator: true
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/epsagon/oss-tracing
-      name: OSS tracing on github
+      link: https://github.com/epsagon/lupa
+      name: Lupa on GithHub
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 
-repo_name: epsagon/oss-tracing
-repo_url: https://github.com/epsagon/oss-tracing
+plugins:
+    - search
+    - awesome-pages
+
+repo_name: epsagon/lupa
+repo_url: https://github.com/epsagon/lupa
