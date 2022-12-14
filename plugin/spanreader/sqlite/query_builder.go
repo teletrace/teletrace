@@ -18,9 +18,10 @@ package sqlitespanreader
 
 import (
 	"fmt"
+	"strings"
+
 	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/tagsquery/v1"
-	"strings"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -35,7 +36,7 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 
 func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
 	var filters []model.SearchFilter
-	filters = append(filters, createTimeframeFilters(r.Timeframe)...)
+	filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
 	filters = append(filters, r.SearchFilters...)
 	dbTablesSet := make(map[string]bool)
 	dbFieldsSet := make(map[string]bool)
@@ -58,7 +59,7 @@ func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
 			dbTablesSet[dbTableName] = true
 		}
 		if isDynamicTagsTable(dbTableName) {
-			dynamicTag := getDynamicTagValue(tag)
+			dynamicTag := removeTablePrefixFromDynamicTag(tag)
 			if dynamicTag != "" {
 				dbFieldsSet[dbTableName+".value"] = true
 				filter := model.SearchFilter{
@@ -78,6 +79,12 @@ func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
 					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "links.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
 				case "events":
 					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "events.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
+				case "event_attributes":
+					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "event_attributes.event_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "events.id"))
+				case "link_attributes":
+					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "link_attributes.link_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "links.id"))
+				case "scope_attributes":
+					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "scope_attributes.scope_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "scopes.id"))
 				}
 				dbTables := make([]string, 0, len(dbTablesSet))
 				for table := range dbTablesSet {
@@ -109,19 +116,29 @@ func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
 }
 
 func buildQueryByFilters(filters ...model.SearchFilter) string {
-	var filterStrings []string
 	dbTablesSet := make(map[string]bool)
+	var filterStrings []string
 	for _, filter := range filters {
-		if isValidFilter(filter) {
-			dbTableName := findTableName(string(filter.KeyValueFilter.Key))
-			if dbTableName != "" {
-				if _, ok := dbTablesSet[dbTableName]; !ok {
-					dbTablesSet[dbTableName] = true
-				}
-				value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
-				filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
-			}
+		if !isValidFilter(filter) {
+			continue
 		}
+		dbTableName := findTableName(string(filter.KeyValueFilter.Key))
+		if dbTableName == "" {
+			continue
+		}
+		if _, ok := dbTablesSet[dbTableName]; !ok {
+			dbTablesSet[dbTableName] = true
+		}
+		value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+		filterStrings = append(
+			filterStrings,
+			fmt.Sprintf(
+				"%s %s '%s'",
+				sqliteFieldsMap[string(filter.KeyValueFilter.Key)],
+				sqliteOperatorMap[string(filter.KeyValueFilter.Operator)],
+				value,
+			),
+		)
 	}
 	dbTables := make([]string, 0, len(dbTablesSet))
 	for table := range dbTablesSet {

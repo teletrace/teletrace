@@ -16,31 +16,36 @@
 
 package sqlitespanreader
 
+const (
+	TextType   = "Str"
+	NumberType = "Int"
+)
+
 var staticTagTypeMap = map[string]string{
-	"span.events.name":                    "Str",
-	"span.events.droppedAttributesCount":  "Int",
-	"span.events.spanId":                  "Str",
-	"span.links.spanId":                   "Str",
-	"span.links.traceState":               "Str",
-	"span.links.droppedAttributesCount":   "Int",
-	"scope.name":                          "Str",
-	"scope.version":                       "Str",
-	"scope.droppedAttributesCount":        "Int",
-	"span.spanId":                         "Str",
-	"span.traceId":                        "Str",
-	"span.traceState":                     "Str",
-	"span.parentSpanId":                   "Str",
-	"span.name":                           "Str",
-	"span.kind":                           "Int",
-	"span.startTimeUnixNano":              "Int",
-	"span.endTimeUnixNano":                "Int",
-	"span.droppedAttributesCount":         "Int",
-	"span.status.message":                 "Str",
-	"span.status.code":                    "Int",
-	"span.droppedResourceAttributesCount": "Int",
-	"span.droppedEventsCount":             "Int",
-	"span.droppedLinksCount":              "Int",
-	"externalFields.durationNano":         "Int",
+	"span.events.name":                    TextType,
+	"span.events.droppedAttributesCount":  NumberType,
+	"span.events.spanId":                  TextType,
+	"span.links.spanId":                   TextType,
+	"span.links.traceState":               TextType,
+	"span.links.droppedAttributesCount":   NumberType,
+	"scope.name":                          TextType,
+	"scope.version":                       TextType,
+	"scope.droppedAttributesCount":        NumberType,
+	"span.spanId":                         TextType,
+	"span.traceId":                        TextType,
+	"span.traceState":                     TextType,
+	"span.parentSpanId":                   TextType,
+	"span.name":                           TextType,
+	"span.kind":                           NumberType,
+	"span.startTimeUnixNano":              NumberType,
+	"span.endTimeUnixNano":                NumberType,
+	"span.droppedAttributesCount":         NumberType,
+	"span.status.message":                 TextType,
+	"span.status.code":                    NumberType,
+	"span.droppedResourceAttributesCount": NumberType,
+	"span.droppedEventsCount":             NumberType,
+	"span.droppedLinksCount":              NumberType,
+	"externalFields.durationNano":         NumberType,
 }
 
 func isDynamicTagsTable(tableName string) bool {

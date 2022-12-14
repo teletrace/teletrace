@@ -19,6 +19,7 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
+
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
@@ -46,17 +47,18 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
 	var tags tagsquery.GetAvailableTagsResponse
-	for k, v := range staticTagTypeMap { // add static tags
+	for tagName, fieldType := range staticTagTypeMap {
 		tags.Tags = append(tags.Tags, tagsquery.TagInfo{
-			Name: k,
-			Type: v,
+			Name: tagName,
+			Type: fieldType,
 		})
 	}
-	for k, v := range sqliteTablesMap {
-		if isDynamicTagsTable(v) {
-			query := fmt.Sprintf("SELECT key, type FROM %s", v)
+	for tableKey, tableName := range sqliteTablesMap {
+		if isDynamicTagsTable(tableName) {
+			query := fmt.Sprintf("SELECT key, type FROM %s", tableName)
 			rows, err := sr.client.db.QueryContext(ctx, query)
 			if err != nil {
+				sr.logger.Error("failed to query available tags", zap.Error(err))
 				continue
 			}
 			for rows.Next() {
@@ -64,10 +66,11 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 				var attrType string
 				err = rows.Scan(&key, &attrType)
 				if err != nil {
-					return nil, err
+					sr.logger.Error("failed to get available tag", zap.Error(err))
+					continue
 				}
 				newTag := tagsquery.TagInfo{
-					Name: k + "." + key,
+					Name: tableKey + "." + key,
 					Type: attrType,
 				}
 				tags.Tags = append(tags.Tags, newTag)
@@ -84,13 +87,15 @@ func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRe
 		query := buildTagsValuesQuery(r, tag)
 		rows, err := sr.client.db.QueryContext(ctx, query)
 		if err != nil {
-			return nil, err
+			sr.logger.Error("failed to query tags values", zap.Error(err))
+			continue
 		}
 		for rows.Next() {
 			var name string
 			var count int
 			err = rows.Scan(&name, &count)
 			if err != nil {
+				sr.logger.Error("failed to get tag value", zap.Error(err))
 				continue
 			}
 			currentTagValues = append(currentTagValues, tagsquery.TagValueInfo{
