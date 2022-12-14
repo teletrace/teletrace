@@ -60,6 +60,7 @@ export function SearchBar({
         </Button>
         <FilterBuilderDialog
           timeframe={timeframe}
+          filters={filters}
           open={open}
           onClose={handleClose}
           onApply={onFilterAdded}

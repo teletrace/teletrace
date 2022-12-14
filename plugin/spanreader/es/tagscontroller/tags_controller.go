@@ -169,7 +169,7 @@ func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.
 			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
 		}
 		aggs[aggregationKey] = types.NewAggregationContainerBuilder()
-		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)))
+		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)).Size(100))
 	}
 	builder.Aggregations(aggs)
 }

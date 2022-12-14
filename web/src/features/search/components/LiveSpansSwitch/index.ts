@@ -14,19 +14,4 @@
  * limitations under the License.
  */
 
-import { SearchFilter, Timeframe } from "./common";
-
-export type TagValue = {
-  value: string | number;
-  count: number;
-};
-
-export type TagValuesRequest = {
-  filters: SearchFilter[];
-  timeframe?: Timeframe;
-};
-
-export type TagValuesResponse = {
-  values: TagValue[];
-  metadata?: { nextToken: string };
-};
+export * from "./LiveSpansSwitch";

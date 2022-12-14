@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-import { SearchFilter, Timeframe } from "./common";
+import { InternalSpan } from "@/types/span";
 
-export type TagValue = {
-  value: string | number;
-  count: number;
-};
-
-export type TagValuesRequest = {
-  filters: SearchFilter[];
-  timeframe?: Timeframe;
-};
-
-export type TagValuesResponse = {
-  values: TagValue[];
-  metadata?: { nextToken: string };
+export const calcNewSpans = (
+  prevSpans: InternalSpan[],
+  spans: InternalSpan[]
+): string[] => {
+  const prevSpansIds = prevSpans.map((span) => span.span.spanId);
+  if (prevSpans.length == 0) {
+    // prevent showing all new spans on filter change
+    return [];
+  }
+  const spansIds = spans.map((span) => span.span.spanId);
+  return spansIds.filter((spanId) => !prevSpansIds.includes(spanId));
 };

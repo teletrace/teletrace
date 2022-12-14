@@ -19,6 +19,7 @@ package spanreaderes
 import (
 	"context"
 	"fmt"
+	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
@@ -42,6 +43,7 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 	if r.Sort == nil || len(r.Sort) == 0 {
 		r.Sort = []spansquery.Sort{{Field: spanIdField, Ascending: true}}
 	}
+	sr.convertFilterKeysToKeywords(r.SearchFilters)
 	sr.optimizeSort(r.Sort)
 
 	res, err := sr.searchController.Search(ctx, r)
@@ -73,12 +75,23 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 func (sr *spanReader) GetTagsValues(
 	ctx context.Context, r tagsquery.TagValuesRequest, tags []string,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
+	sr.convertFilterKeysToKeywords(r.SearchFilters)
 	res, err := sr.tagsController.GetTagsValues(ctx, r, tags)
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
 	}
 
 	return res, nil
+}
+
+func (sr *spanReader) convertFilterKeysToKeywords(filters []model.SearchFilter) {
+	// Converting every filter key to Elasticsearch 'keyword' which guarantees that the string will be a single token
+	for _, f := range filters {
+		switch f.KeyValueFilter.Value.(type) {
+		case string:
+			f.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.keyword", f.KeyValueFilter.Key))
+		}
+	}
 }
 
 func (sr *spanReader) Initialize() error {
