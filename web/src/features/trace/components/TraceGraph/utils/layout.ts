@@ -129,8 +129,8 @@ const updateGraphNode = (
 };
 
 const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
-  const attr = { ...s.resource.attributes, ...s.span.attributes };
-  const typeNameMap = new Map<string, string[]>([
+  const spanAttributes = { ...s.resource.attributes, ...s.span.attributes };
+  const serviceTypeToNamesMap = new Map<string, string[]>([
     ["db.system", ["db.name", "net.peer.name"]],
     ["messaging.system", ["messaging.destination"]],
   ]);
@@ -140,13 +140,13 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
     image: "",
     type: "",
   };
-  var hasFoundType: boolean = false;
-  for (const [serviceTypeKey, serviceNameKeys] of typeNameMap) {
-    const serviceType = attr[serviceTypeKey];
+  let hasFoundType = false;
+  for (const [serviceTypeKey, serviceNameKeys] of serviceTypeToNamesMap) {
+    const serviceType = spanAttributes[serviceTypeKey];
     if (serviceType) {
       hasFoundType = true;
       for (const name of serviceNameKeys) {
-        const serviceName = attr[name];
+        const serviceName = spanAttributes[name];
         if (serviceName) {
           graphNodeData.name = serviceName.toString();
           graphNodeData.type = serviceType.toString();
@@ -158,7 +158,7 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
     }
   }
   if (!hasFoundType) {
-    graphNodeData.name = attr["service.name"].toString();
+    graphNodeData.name = spanAttributes["service.name"].toString();
     graphNodeData.type = "service";
   }
   graphNodeData.id = `${graphNodeData.name}-${graphNodeData.type}`;
