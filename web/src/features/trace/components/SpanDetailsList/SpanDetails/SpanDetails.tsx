@@ -56,22 +56,20 @@ function getBasicAttributes(span: InternalSpan): Attributes {
   };
 }
 
-function getSpanIcon(span: Readonly<InternalSpan>): string {
-  const attr = { ...span.resource.attributes, ...span.span.attributes };
+function getSpanResourceType(span: Readonly<InternalSpan>): string {
+  const attr = { ...span.span.attributes };
 
-  const typeNameSet = new Set<string>([
+  const resourceTypeSet = new Set<string>([
     "db.system",
     "db.type",
     "massaging.system",
   ]);
 
-  for (const [key, value] of Object.entries(attr)) {
-    if (typeNameSet.has(key)) {
-      return value.toString();
-    }
+  for (const key of resourceTypeSet) {
+    if (attr[key]) return attr[key].toString();
   }
 
-  return "defaultresourceicon";
+  return "";
 }
 
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
@@ -113,7 +111,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             />
             <ArrowForward style={styles.spanFlowArrowIcon} />
             <ResourceIcon
-              name={getSpanIcon(span)}
+              name={getSpanResourceType(span)}
               style={styles.spanDestIcon}
             />
           </Stack>
