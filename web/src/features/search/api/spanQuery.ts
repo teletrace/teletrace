@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {QueryClient, useInfiniteQuery} from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
 
 import { SearchRequest, SearchResponse } from "../types/spanQuery";
+import {queryClient} from "@/libs/react-query";
 
 type FetchSpansParams = { searchRequest: SearchRequest; pageParam: string };
 
@@ -33,7 +34,7 @@ export const fetchSpans = ({
 
 export const useSpansQuery = (
   searchRequest: SearchRequest,
-  updateIntervalMilli?: number
+  updateIntervalMilli?: number,
 ) => {
   const refetchInterval =
     updateIntervalMilli && updateIntervalMilli > 0

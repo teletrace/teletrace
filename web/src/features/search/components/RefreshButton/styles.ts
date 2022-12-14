@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-import { CSSProperties } from "react";
-
-const styles: { [name: string]: CSSProperties } = {
+const styles = {
+    container: {
+        display: "row",
+        verticalAlign: "center"
+    },
+    liveSpansIcon: {
+        color: "#00CDE7",
+        maxHeight: "8px",
+        maxWidth: "8px",
+        minHeight: "8px",
+        minWidth: "8px",
+        top: "50%",
+        marginBottom: "2px",
+    },
     lastUpdatedText: { fontSize: '14px', color: '#B6B7BE', fontFamily: 'inter' },
 };
 

@@ -1,14 +1,23 @@
-import {Refresh} from "@mui/icons-material";
-import {IconButton} from "@mui/material";
-import {useEffect, useRef, useState} from "react";
+import {Brightness1, Refresh} from "@mui/icons-material";
+import {Icon, IconButton, Stack} from "@mui/material";
+import {useEffect, useState} from "react";
 
+import {SearchRequest} from "@/features/search";
+
+import {useSpansQuery} from "../../api/spanQuery";
 import styles from "./styles";
+
 
 const A_FEW_SECONDS_AGO_THRESHOLD = 10;
 const SECONDS_IN_HOUR= 3600;
 const SECONDS_IN_DAY = 86400;
 
-export function RefreshButton() {
+interface RefreshButtonProps {
+    searchRequest: SearchRequest;
+    isLiveSpansOn: boolean;
+}
+
+export function RefreshButton({ searchRequest, isLiveSpansOn }: RefreshButtonProps) {
     const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
     const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] = useState<string>('a few seconds ago');
     const [rerenderInterval, setRerenderInterval] = useState<number>(A_FEW_SECONDS_AGO_THRESHOLD * 1000);
@@ -40,14 +49,30 @@ export function RefreshButton() {
     }, [lastRefreshed, rerenderInterval]);
 
 
+    const { remove: removeSpansQueryFromCache } = useSpansQuery(searchRequest)
+
+    const handleRefresh = () => {
+        setLastRefreshed(new Date());
+        removeSpansQueryFromCache()
+    }
+
     return (
-        <>
-            <IconButton onClick={() => setLastRefreshed(new Date())}>
-                <Refresh />
-            </IconButton>
+        <Stack direction="row" sx={{alignItems: "center", height: "40px"}}>
+            <Stack direction="row" sx={{width: "30px", justifyContent: "center"}}>
+                {
+                    isLiveSpansOn ?
+                    <Icon>
+                        <Brightness1 sx={styles.liveSpansIcon}/>
+                    </Icon>
+                    :
+                    <IconButton onClick={handleRefresh}>
+                        <Refresh />
+                    </IconButton>
+                }
+            </Stack>
             <span style={styles.lastUpdatedText}>
-                Updated {timeSinceLastRefreshString}
+                {isLiveSpansOn ? "Streaming ingested spans" : `Updated ${timeSinceLastRefreshString}`}
             </span>
-        </>
+        </Stack>
     );
 }

@@ -23,6 +23,7 @@ import MaterialReactTable, {
 import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
+import {SearchRequest} from "@/features/search";
 import { InternalSpan } from "@/types/span";
 import {
   formatDateAsDateTime,
@@ -31,18 +32,17 @@ import {
 } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/common";
 import { LiveSpansState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
 
+
 const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
-  filters?: SearchFilter[];
-  timeframe: Timeframe;
+  searchRequest: SearchRequest;
   liveSpans: LiveSpansState;
 }
 
@@ -52,8 +52,7 @@ interface SpansStateProps {
 }
 
 export function SpanTable({
-  filters = [],
-  timeframe,
+  searchRequest,
   liveSpans,
 }: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
@@ -76,12 +75,10 @@ export function SpanTable({
     ascending: !columnSort.desc,
   }));
 
-  const searchRequest = {
-    filters: filters,
-    timeframe: timeframe,
-    sort: sort,
-    metadata: undefined,
-  };
+  searchRequest.sort = sorting?.map((columnSort) => ({
+    field: columnSort.id,
+    ascending: !columnSort.desc,
+  }));
 
   const {
     data,
