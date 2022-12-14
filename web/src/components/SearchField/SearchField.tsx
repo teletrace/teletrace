@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HighlightOff, Search } from "@mui/icons-material";
+import { Close, Search } from "@mui/icons-material";
 import {
   IconButton,
   InputAdornment,
@@ -50,7 +50,7 @@ export const SearchField = ({
         endAdornment: value && value.length && (
           <InputAdornment position="end">
             <IconButton onClick={clearInput}>
-              <HighlightOff />
+              <Close />
             </IconButton>
           </InputAdornment>
         ),
