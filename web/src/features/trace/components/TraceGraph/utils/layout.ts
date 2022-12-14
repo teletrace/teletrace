@@ -140,23 +140,30 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
     image: "",
     type: "",
   };
-  for (const [key, value] of Object.entries(attr)) {
-    const names = typeNameMap.get(key);
-    if (names) {
-      graphNodeData.type = value.toString();
-      graphNodeData.image = value.toString();
-      names.forEach((n) => {
-        if (attr[n]) {
-          graphNodeData.name = attr[n].toString();
-          return;
+  var hasFoundType: boolean = false;
+  for (const [serviceTypeKey, serviceNameKeys] of typeNameMap) {
+    const serviceType = attr[serviceTypeKey];
+    if (serviceType) {
+      hasFoundType = true;
+      for (const name of serviceNameKeys) {
+        const serviceName = attr[name];
+        if (serviceName) {
+          graphNodeData.name = serviceName.toString();
+          graphNodeData.type = serviceType.toString();
+          graphNodeData.image = serviceType.toString();
+          console.log(graphNodeData.type)
+          break;
         }
-      });
-    } else {
-      graphNodeData.name = attr["service.name"].toString();
-      graphNodeData.type = "service";
+      }
+      break;
     }
   }
+  if (!hasFoundType) {
+    graphNodeData.name = attr["service.name"].toString();
+    graphNodeData.type = "service";
+  }
   graphNodeData.id = `${graphNodeData.name}-${graphNodeData.type}`;
+  console.log(graphNodeData.id);
   return graphNodeData;
 };
 
