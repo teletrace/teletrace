@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ func newTypedClient(logger *zap.Logger, cfg ElasticConfig) (*elasticsearch.Typed
 	}
 
 	es, err := elasticsearch.NewTypedClient(esConfig)
-
 	if err != nil {
 		logger.Error("Could not create a new typed elasticsearch client %+v", zap.Error(err))
 		return nil, err
@@ -62,7 +61,6 @@ func newRawClient(logger *zap.Logger, cfg ElasticConfig) (*elasticsearch.Client,
 	}
 
 	es, err := elasticsearch.NewClient(esConfig)
-
 	if err != nil {
 		logger.Error("Could not create a new raw elasticsearch client %+v", zap.Error(err))
 		return nil, err

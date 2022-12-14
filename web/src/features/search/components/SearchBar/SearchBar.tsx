@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ export function SearchBar({
         </Button>
         <FilterBuilderDialog
           timeframe={timeframe}
+          filters={filters}
           open={open}
           onClose={handleClose}
           onApply={onFilterAdded}

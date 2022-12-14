@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,21 +20,36 @@ import { axiosClient } from "@/libs/axios";
 
 import { SearchRequest, SearchResponse } from "../types/spanQuery";
 
-type FetchSpansParams = { pageParam: string; searchRequest: SearchRequest };
+type FetchSpansParams = { searchRequest: SearchRequest; pageParam: string };
 
 export const fetchSpans = ({
-  pageParam,
   searchRequest,
+  pageParam,
 }: FetchSpansParams): Promise<SearchResponse> => {
   searchRequest.metadata = { nextToken: pageParam };
+
   return axiosClient.post("/v1/search", searchRequest);
 };
 
-export const useSpansQuery = (searchRequest: SearchRequest) => {
+export const useSpansQuery = (
+  searchRequest: SearchRequest,
+  updateIntervalMilli?: number
+) => {
+  const refetchInterval =
+    updateIntervalMilli && updateIntervalMilli > 0
+      ? updateIntervalMilli
+      : false;
   return useInfiniteQuery({
-    queryKey: ["spans", searchRequest],
+    queryKey: [
+      "spans",
+      searchRequest.filters,
+      searchRequest.timeframe.endTimeUnixNanoSec,
+      searchRequest.timeframe.startTimeUnixNanoSec,
+    ],
     keepPreviousData: true,
-    queryFn: ({ pageParam }) => fetchSpans({ pageParam, searchRequest }),
+    queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
+    refetchInterval: refetchInterval,
+    cacheTime: refetchInterval ? refetchInterval : 5000,
   });
 };

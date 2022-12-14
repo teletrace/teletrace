@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,5 +33,15 @@ export const styles: Record<string, SxProps<Theme>> = {
   accordion: {
     "&:not(:last-child)": { borderBottom: 0 },
     "&:before": { display: "none" },
+  },
+
+  valueLabel: {
+    direction: "rtl",
+    textOverflow: "ellipsis",
+
+    "& span": {
+      direction: "ltr",
+      unicodeBidi: "bidi-override",
+    },
   },
 };

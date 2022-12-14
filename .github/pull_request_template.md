@@ -4,12 +4,13 @@
 2. Rebase your PR if it gets out of sync with main
 -->
 
-**What this PR does**:
+## What this PR does:
 
-**Which issue(s) this PR fixes**:
+## Which issue(s) this PR fixes:
+
 Fixes #<issue number>
 
-**Checklist**
+## Checklist
 
 - [ ] Tests updated
 - [ ] Documentation added

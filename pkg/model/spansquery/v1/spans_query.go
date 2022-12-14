@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,9 +38,11 @@ const (
 	OPERATOR_LTE          = "lte"
 )
 
-type SortField string
-type FilterQueryString string
-type ContinuationToken string
+type (
+	SortField         string
+	FilterQueryString string
+	ContinuationToken string
+)
 
 type Sort struct {
 	Field     SortField `json:"field"`

@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,10 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
-func CreateTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
+func CreateTimeframeFilters(tf *model.Timeframe) []model.SearchFilter {
+	if tf == nil {
+		return []model.SearchFilter{}
+	}
 	return []model.SearchFilter{
 		{
 			KeyValueFilter: &model.KeyValueFilter{
@@ -42,7 +45,6 @@ func CreateTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
 			},
 		},
 	}
-
 }
 
 func BuildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.RequestBuilder, error) {

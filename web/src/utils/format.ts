@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,15 @@
 
 import format from "date-fns/format";
 
+import { Timeframe } from "../features/search/types/common";
+
 export const formatDateAsDateTime = (
   date: Date | number,
-  { showMs = false } = {}
+  { showMs = false, showSec = true } = {}
 ) => {
-  const pattern = showMs ? "PP, HH:mm:ss.SSS" : "PP, HH:mm:ss";
+  const pattern = `PP, HH:mm${showSec ? ":ss" : ""}${
+    showSec && showMs ? ".SSS" : ""
+  }`;
   return format(date, pattern);
 };
 
@@ -34,6 +38,10 @@ export const nanoSecToMs = (nanoSec: number) => {
   return nanoSec / (1000 * 1000);
 };
 
+export const msToNanoSec = (ms: number) => {
+  return ms * 1000000;
+};
+
 export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
   const ms = nanoSecToMs(nanoSec);
   return Math.round(ms * 100) / 100;
@@ -42,4 +50,12 @@ export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
 export const formatNanoAsMsDateTime = (nanoSec: number) => {
   const ms = nanoSecToMs(nanoSec);
   return formatDateAsDateTime(ms, { showMs: true });
+};
+
+export const getCurrentTimestamp = (): Timeframe => {
+  const now = new Date().valueOf();
+  return {
+    startTimeUnixNanoSec: msToNanoSec(now - 3600000),
+    endTimeUnixNanoSec: msToNanoSec(now),
+  };
 };

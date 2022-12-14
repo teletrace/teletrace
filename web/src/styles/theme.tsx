@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -523,6 +523,10 @@ theme = createTheme(theme, {
     MuiTableRow: {
       styleOverrides: {
         root: {
+          "&.MuiTableRow-grey": {
+            backgroundColor: theme.palette.grey[700],
+            transition: "background-color 200ms linear",
+          },
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
@@ -549,6 +553,33 @@ theme = createTheme(theme, {
           },
           "&.MuiTableCell-body": {
             fontWeight: "normal",
+          },
+        },
+      },
+    },
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        root: {
+          backgroundColor: theme.palette.grey[900],
+          height: "32px",
+        },
+        grouped: {
+          borderTop: "none",
+          borderBottom: "none",
+          borderColor: "black",
+          color: theme.palette.grey[300],
+          "&.Mui-selected": {
+            color: "white",
+          },
+          "&:last-of-type": {
+            borderBottomRightRadius: "8px",
+            borderTopRightRadius: "8px",
+            borderRight: "none",
+          },
+          "&:first-of-type": {
+            borderBottomLeftRadius: "8px",
+            borderTopLeftRadius: "8px",
+            borderLeft: "none",
           },
         },
       },

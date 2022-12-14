@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ export const TagSidebar = ({
     },
     {
       title: "HTTP Route",
-      tag: "span.attributes.http.target",
+      tag: "span.attributes.http.route",
       isSearchable: true,
     },
     {

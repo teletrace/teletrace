@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HighlightOff, Search } from "@mui/icons-material";
+import { Close, Search } from "@mui/icons-material";
 import {
   IconButton,
   InputAdornment,
@@ -50,7 +50,7 @@ export const SearchField = ({
         endAdornment: value && value.length && (
           <InputAdornment position="end">
             <IconButton onClick={clearInput}>
-              <HighlightOff />
+              <Close />
             </IconButton>
           </InputAdornment>
         ),

@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/spanreader"
 	"path/filepath"
 	"strings"
 	"time"
@@ -29,9 +31,6 @@ import (
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-
-	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/spanreader"
 )
 
 const apiPrefix = "/v1"

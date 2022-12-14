@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package spanreaderes
 import (
 	"context"
 	"fmt"
+	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
@@ -42,10 +43,10 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 	if r.Sort == nil || len(r.Sort) == 0 {
 		r.Sort = []spansquery.Sort{{Field: spanIdField, Ascending: true}}
 	}
+	sr.convertFilterKeysToKeywords(r.SearchFilters)
 	sr.optimizeSort(r.Sort)
 
 	res, err := sr.searchController.Search(ctx, r)
-
 	if err != nil {
 		return nil, fmt.Errorf("Could not index document: %+v", err)
 	}
@@ -64,7 +65,6 @@ func (sr *spanReader) optimizeSort(s []spansquery.Sort) {
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
 	res, err := sr.tagsController.GetAvailableTags(ctx, r)
-
 	if err != nil {
 		return nil, fmt.Errorf("GetAvailableTags failed with error: %+v", err)
 	}
@@ -73,9 +73,10 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 }
 
 func (sr *spanReader) GetTagsValues(
-	ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	ctx context.Context, r tagsquery.TagValuesRequest, tags []string,
+) (map[string]*tagsquery.TagValuesResponse, error) {
+	sr.convertFilterKeysToKeywords(r.SearchFilters)
 	res, err := sr.tagsController.GetTagsValues(ctx, r, tags)
-
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
 	}
@@ -83,10 +84,19 @@ func (sr *spanReader) GetTagsValues(
 	return res, nil
 }
 
+func (sr *spanReader) convertFilterKeysToKeywords(filters []model.SearchFilter) {
+	// Converting every filter key to Elasticsearch 'keyword' which guarantees that the string will be a single token
+	for _, f := range filters {
+		switch f.KeyValueFilter.Value.(type) {
+		case string:
+			f.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.keyword", f.KeyValueFilter.Key))
+		}
+	}
+}
+
 func (sr *spanReader) Initialize() error {
 	// This method may be implemented for other databases, not needed in ES.
 	return nil
-
 }
 
 func NewSpanReader(ctx context.Context, logger *zap.Logger, cfg ElasticConfig) (spanreader.SpanReader, error) {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import { ArrowForward, ArrowForwardIosSharp } from "@mui/icons-material";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {
   Accordion,
   AccordionDetails,
@@ -33,6 +34,7 @@ import {
 } from "@/utils/format";
 
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
+import { SpanErrorDetails } from "../SpanErrorDetails";
 import { styles } from "./styles";
 
 export interface SpanDetailsProps {
@@ -59,55 +61,73 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
 
   const X_DIVIDER = "|";
 
+  const hasError: boolean = span.span.status.code === StatusCode.Error;
+
   return (
-    <Accordion
-      expanded={expanded}
-      onChange={(_, expanded) => onChange(expanded)}
-      disableGutters={true}
-      sx={styles.accordion}
+    <Box
+      sx={{
+        ...styles.spanMainContainer,
+        ...(hasError && styles.spanErrorMainContainer),
+      }}
     >
-      <AccordionSummary
-        expandIcon={<ArrowForwardIosSharp sx={styles.expandArrowIcon} />}
-        sx={{
-          ...styles.accordionSummary,
-          ...(expanded && styles.expandedAccordion),
-        }}
+      {hasError && (
+        <Box sx={styles.spanErrorIconContainer}>
+          <ErrorOutlineIcon style={styles.errorIcon} />
+          {expanded && <Box sx={styles.expandedSpanErrorContainer} />}
+        </Box>
+      )}
+      <Accordion
+        expanded={expanded}
+        onChange={(_, expanded) => onChange(expanded)}
+        disableGutters={true}
+        sx={styles.accordion}
       >
-        <Stack sx={styles.spanFlowIconsContainer}>
-          <ResourceIcon
-            name="defaultresourceicon"
-            style={styles.spanSourceIcon}
-          />
-          <ArrowForward style={styles.spanFlowArrowIcon} />
-          <ResourceIcon
-            name="defaultresourceicon"
-            style={styles.spanDestIcon}
-          />
-        </Stack>
-        <Stack>
-          <Typography sx={styles.spanName}>{span.span.name}</Typography>
-          <Typography sx={styles.spanTimes}>
-            {basicAttributes.duration}{" "}
-            <Box component={"span"} sx={styles.spanTimesDivider}>
-              {X_DIVIDER}
-            </Box>{" "}
-            {basicAttributes.start_time}
-          </Typography>
-        </Stack>
-      </AccordionSummary>
-      <AccordionDetails sx={styles.accordionDetails}>
-        <SpanAttributesGroup
-          title="Basic"
-          attributes={basicAttributes}
-          startExpanded
-        />
-        {Object.keys(span.span.attributes).length > 0 && (
+        <AccordionSummary
+          expandIcon={<ArrowForwardIosSharp sx={styles.expandArrowIcon} />}
+          sx={{
+            ...styles.accordionSummary,
+            ...(expanded && styles.expandedAccordion),
+          }}
+        >
+          <Stack sx={styles.spanFlowIconsContainer}>
+            <ResourceIcon
+              name="defaultresourceicon"
+              style={styles.spanSourceIcon}
+            />
+            <ArrowForward style={styles.spanFlowArrowIcon} />
+            <ResourceIcon
+              name="defaultresourceicon"
+              style={styles.spanDestIcon}
+            />
+          </Stack>
+          <Stack>
+            <Typography sx={styles.spanName}>{span.span.name}</Typography>
+            <Typography sx={styles.spanTimes}>
+              {basicAttributes.duration}{" "}
+              <Box component={"span"} sx={styles.spanTimesDivider}>
+                {X_DIVIDER}
+              </Box>{" "}
+              {basicAttributes.start_time}
+            </Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails sx={styles.accordionDetails}>
+          {hasError && (
+            <SpanErrorDetails errorMessage={span.span.status.message} />
+          )}
           <SpanAttributesGroup
-            title="Attributes"
-            attributes={span.span.attributes}
+            title="Basic"
+            attributes={basicAttributes}
+            startExpanded
           />
-        )}
-      </AccordionDetails>
-    </Accordion>
+          {Object.keys(span.span.attributes).length > 0 && (
+            <SpanAttributesGroup
+              title="Attributes"
+              attributes={span.span.attributes}
+            />
+          )}
+        </AccordionDetails>
+      </Accordion>
+    </Box>
   );
 };

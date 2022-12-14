@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,11 @@ type Metadata struct {
 	NextToken ContinuationToken `json:"nextToken"`
 }
 
-type FilterOperator string
-type FilterKey string
-type FilterValue any
+type (
+	FilterOperator string
+	FilterKey      string
+	FilterValue    any
+)
 
 type KeyValueFilter struct {
 	Key      FilterKey      `json:"key"`

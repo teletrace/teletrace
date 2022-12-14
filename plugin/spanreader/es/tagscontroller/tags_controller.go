@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
 
@@ -62,7 +63,14 @@ func (r *tagsController) GetAvailableTags(
 	// mappingData["keyword"]
 
 	if err != nil {
-		return result, fmt.Errorf("Could not get available tags: %v", err)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return tagsquery.GetAvailableTagsResponse{}, nil
+			}
+		default:
+			return result, fmt.Errorf("could not get available tags: %v", err)
+		}
 	}
 
 	return result, nil
@@ -74,13 +82,18 @@ func (r *tagsController) GetTagsValues(
 	tags []string,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 	tagsMappings, err := r.getTagsMappings(ctx, tags)
-
 	if err != nil {
-		return nil, fmt.Errorf("Could not get values for tags: %v", tags)
+		switch err := err.(type) {
+		case *errors.ElasticSearchError:
+			if err.ErrorType == errors.IndexNotFoundError {
+				return nil, nil
+			}
+		default:
+			return nil, fmt.Errorf("could not get values for tags: %v", tags)
+		}
 	}
 
 	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings)
-
 	if err != nil {
 		return map[string]*tagsquery.TagValuesResponse{}, err
 	}
@@ -96,7 +109,6 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 		r.rawClient.Indices.GetFieldMapping.WithContext(ctx),
 		r.rawClient.Indices.GetFieldMapping.WithIndex(r.idx),
 	)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to get field mapping: %v", err)
 	}
@@ -110,27 +122,36 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed to decode body: %v", err)
 	}
+
 	if res.StatusCode < 200 && res.StatusCode >= 300 {
 		return nil, fmt.Errorf("Could not get tags, got status: %+v", res.StatusCode)
 	}
 
-	// { "lupa-index": { "mappings": { ... }}}
-	body = body[r.idx].(map[string]any)["mappings"].(map[string]any)
+	// in case multiple indices are managed by a single alias (in rollover for example)
+	// we need to traverse all indices, not only r.idx.
+	// for example, we might have lupa-traces-000001 and lupa-traces-000002 aliased by lupa-traces,
+	// so we need to traverse body[*] to acquire the information per index.
 
+	// _ is the index name
+	// v is the response correlated for this index
 	for _, v := range body {
-		fieldMapping := v.(map[string]any)
+		indexMappings := v.(map[string]any)["mappings"].(map[string]any)
 
-		mappingData := fieldMapping["mapping"].(map[string]any)
-		if len(mappingData) > 1 {
-			return nil, fmt.Errorf(
-				"unknown scenario - mapping data contains more than one entry: %v", mappingData)
-		}
+		for _, v := range indexMappings {
+			fieldMapping := v.(map[string]any)
 
-		for _, valueData := range mappingData {
-			result = append(result, tagsquery.TagInfo{
-				Name: fieldMapping["full_name"].(string),
-				Type: valueData.(map[string]any)["type"].(string),
-			})
+			mappingData := fieldMapping["mapping"].(map[string]any)
+			if len(mappingData) > 1 {
+				return nil, fmt.Errorf(
+					"unknown scenario - mapping data contains more than one entry: %v", mappingData)
+			}
+
+			for _, valueData := range mappingData {
+				result = append(result, tagsquery.TagInfo{
+					Name: fieldMapping["full_name"].(string),
+					Type: valueData.(map[string]any)["type"].(string),
+				})
+			}
 		}
 	}
 
@@ -148,7 +169,7 @@ func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.
 			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
 		}
 		aggs[aggregationKey] = types.NewAggregationContainerBuilder()
-		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)))
+		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)).Size(100))
 	}
 	builder.Aggregations(aggs)
 }
@@ -177,7 +198,6 @@ func (r *tagsController) performGetTagsValuesRequest(
 		return nil, fmt.Errorf("failed to build query: %s", err)
 	}
 	res, err := r.client.API.Search().Request(req).Index(r.idx).Do(ctx)
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to perform search: %s", err)
 	}
@@ -192,7 +212,6 @@ func (r *tagsController) performGetTagsValuesRequest(
 func (r *tagsController) parseGetTagsValuesResponseBody(
 	body map[string]any,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
-
 	// To get an idea of how the response looks like, check the unit test at tags_controller_test.go
 
 	result := map[string]*tagsquery.TagValuesResponse{}

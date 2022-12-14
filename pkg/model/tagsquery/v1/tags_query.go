@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Epsagon
+ * Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import (
 )
 
 type TagValuesRequest struct {
-	Timeframe     model.Timeframe      `json:"timeframe"`
+	Timeframe     *model.Timeframe     `json:"timeframe"`
 	SearchFilters []model.SearchFilter `json:"filters"`
 }
 
 func (r *TagValuesRequest) Validate() error {
-	if r.Timeframe.EndTime < r.Timeframe.StartTime {
+	if r.Timeframe != nil && r.Timeframe.EndTime < r.Timeframe.StartTime {
 		return fmt.Errorf("endTime cannot be smaller than startTime")
 	}
 
@@ -44,8 +44,7 @@ type TagValuesResponse struct {
 	Values   []TagValueInfo  `json:"values"`
 }
 
-type GetAvailableTagsRequest struct {
-}
+type GetAvailableTagsRequest struct{}
 
 type GetAvailableTagsResponse struct {
 	Tags []TagInfo

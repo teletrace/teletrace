@@ -1,23 +1,42 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ""
-labels: ""
+name: "✨ New Feature"
+about: Suggest an idea
+title: "✨"
+labels: "Type: Feature"
 assignees: ""
 ---
 
-**Is your feature request related to a problem? Please describe.**
+<!-- These comments automatically delete -->
+<!-- **Tip:** Delete parts that are not relevant -->
+<!-- Next to Cc:, @ mention users who should be in the loop -->
+
+Cc:
+
+<!-- add intended user next to **Hi** -->
+
+Hi
+
+## Pain
 
 <!-- A clear and concise description of what the problem is. Ex. I'm always frustrated when [...] -->
 
-**Describe the solution you'd like**
+## Suggested Solution
 
 <!-- A clear and concise description of what you want to happen. -->
 
-**Describe alternatives you've considered**
+## Tasks
 
-<!-- A clear and concise description of any alternative solutions or features you've considered. -->
+<!--Add GitHub tasks-->
 
-**Additional context**
+- [ ] ...
+- [ ] ...
 
-<!-- Add any other context or screenshots about the feature request here. -->
+## More Information
+
+<!-- Add any other context here. -->
+
+## Screenshots
+
+<!-- If applicable, add screenshots to help explain your problem. -->
+
+Thanks!
