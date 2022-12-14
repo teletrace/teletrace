@@ -34,6 +34,7 @@ import {
 } from "@/utils/format";
 
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
+import { SpanErrorDetails } from "../SpanErrorDetails";
 import { styles } from "./styles";
 
 export interface SpanDetailsProps {
@@ -111,6 +112,9 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
           </Stack>
         </AccordionSummary>
         <AccordionDetails sx={styles.accordionDetails}>
+          {hasError && (
+            <SpanErrorDetails errorMessage={span.span.status.message} />
+          )}
           <SpanAttributesGroup
             title="Basic"
             attributes={basicAttributes}

@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import { Divider, Stack } from "@mui/material";
-import { Fragment, useCallback, useState } from "react";
+import { Divider, Stack, Typography } from "@mui/material";
+import { useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
+import { getCurrentTimestamp } from "@/utils/format";
 
+import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
+import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter, Timeframe } from "../types/common";
 
 export type FiltersState = {
@@ -29,16 +32,30 @@ export type FiltersState = {
   timeframe: Timeframe;
 };
 
+export type LiveSpansState = {
+  isOn: boolean;
+  intervalInMs: number;
+};
+
 export const SpanSearch = () => {
-  const now = new Date().valueOf();
-  const hourInMillis = 60 * 60 * 1000;
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
-    timeframe: {
-      startTimeUnixNanoSec: (now - hourInMillis * 24 * 7) * 1000 * 1000,
-      endTimeUnixNanoSec: now * 1000 * 1000,
-    },
+    timeframe: getCurrentTimestamp(),
   });
+
+  const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
+    isOn: false,
+    intervalInMs: 2000,
+  });
+
+  const onTimeframeChange = useCallback(
+    (timeframe: Timeframe) => {
+      return setFiltersState((prevState: FiltersState) => {
+        return { ...prevState, timeframe };
+      });
+    },
+    [setFiltersState]
+  );
 
   const onFilterChange = useCallback(
     (entry: SearchFilter, isDelete = false) => {
@@ -71,18 +88,43 @@ export const SpanSearch = () => {
     [setFiltersState]
   );
 
+  const toggleLiveSpans = (isOn: boolean) =>
+    setLiveSpansState((prevState) => ({ ...prevState, isOn: isOn }));
+
   return (
-    <Fragment>
+    <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>
       <Head
         title="Span Search"
         description="Designated page to span search's flow graph and timeline"
       />
+      <Stack
+        sx={{ paddingBottom: "12px", paddingTop: "24px" }}
+        display="flex"
+        flexDirection="row"
+      >
+        <Typography variant="h5" fontWeight="600">
+          Spans
+        </Typography>
+        <Stack marginLeft="auto" direction="row">
+          <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
+            <TimeFrameSelector
+              onChange={onTimeframeChange}
+              value={filtersState.timeframe}
+            />
+          </Stack>
+          <LiveSpanSwitch
+            isOn={liveSpansState.isOn}
+            onLiveSpansChange={toggleLiveSpans}
+            disabled={false}
+          />
+        </Stack>
+      </Stack>
 
       <Stack
         direction="row"
         spacing={2}
         alignItems="flex-start"
-        sx={{ height: "100%", minWidth: 0 }}
+        sx={{ height: "100%", minWidth: 0, minHeight: 0 }}
       >
         <aside style={{ display: "flex", maxHeight: "100%" }}>
           <TagSidebar
@@ -105,11 +147,12 @@ export const SpanSearch = () => {
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
           />
           <SpanTable
-            timeframe={filtersState.timeframe}
             filters={filtersState.filters}
+            timeframe={filtersState.timeframe}
+            liveSpans={liveSpansState}
           />
         </Stack>
       </Stack>
-    </Fragment>
+    </Stack>
   );
 };

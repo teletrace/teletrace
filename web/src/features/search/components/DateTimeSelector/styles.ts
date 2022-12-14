@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-import { SearchFilter, Timeframe } from "./common";
-
-export type TagValue = {
-  value: string | number;
-  count: number;
-};
-
-export type TagValuesRequest = {
-  filters: SearchFilter[];
-  timeframe?: Timeframe;
-};
-
-export type TagValuesResponse = {
-  values: TagValue[];
-  metadata?: { nextToken: string };
+export const styles = {
+  timeInput: {
+    width: "104px",
+    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
+  },
+  dateInput: {
+    width: "152px",
+    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
+  },
+  alert: {
+    paddingRight: "12px",
+    paddingLeft: "12px",
+    alignItems: "center",
+    backgroundColor: "rgba(239, 88, 84, 0.12)",
+    fontWeight: 400,
+    letterSpacing: 0.15,
+  },
 };
