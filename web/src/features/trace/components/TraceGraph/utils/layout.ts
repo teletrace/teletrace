@@ -151,7 +151,6 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
           graphNodeData.name = serviceName.toString();
           graphNodeData.type = serviceType.toString();
           graphNodeData.image = serviceType.toString();
-          console.log(graphNodeData.type)
           break;
         }
       }
@@ -163,7 +162,6 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
     graphNodeData.type = "service";
   }
   graphNodeData.id = `${graphNodeData.name}-${graphNodeData.type}`;
-  console.log(graphNodeData.id);
   return graphNodeData;
 };
 
