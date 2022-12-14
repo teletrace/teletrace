@@ -131,6 +131,7 @@ export const SpanSearch = () => {
             onChange={onFilterChange}
             filters={filtersState.filters}
             timeframe={filtersState.timeframe}
+            liveSpans={liveSpansState}
           />
         </aside>
 
@@ -145,6 +146,7 @@ export const SpanSearch = () => {
             filters={filtersState.filters}
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
+            liveSpans={liveSpansState}
           />
           <SpanTable
             filters={filtersState.filters}

@@ -35,6 +35,7 @@ import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
+import { LiveSpansState } from "../../routes/SpanSearch";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
@@ -46,6 +47,7 @@ export type TagValuesSelectorProps = {
   searchable?: boolean;
   filters: Array<SearchFilter>;
   timeframe: Timeframe;
+  liveSpans: LiveSpansState;
   onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
 };
@@ -57,6 +59,7 @@ export const TagValuesSelector = ({
   filters,
   timeframe,
   searchable,
+  liveSpans,
   onChange,
   render,
 }: TagValuesSelectorProps) => {
@@ -76,7 +79,8 @@ export const TagValuesSelector = ({
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     timeframe,
-    tagFilters
+    tagFilters,
+    liveSpans.isOn ? liveSpans.intervalInMs : 0
   );
   const tagOptions = data
 

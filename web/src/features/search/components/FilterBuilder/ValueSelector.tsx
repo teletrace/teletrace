@@ -17,6 +17,7 @@
 import { FormLabel, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
+import { LiveSpansState } from "../../routes/SpanSearch";
 import {
   FilterValueTypes,
   SearchFilter,
@@ -36,6 +37,7 @@ export type ValueSelectorProps = {
   valueInputMode: ValueInputMode;
   onChange: (value: FilterValueTypes) => void;
   error: boolean;
+  liveSpans: LiveSpansState;
 };
 
 export const ValueSelector = ({
@@ -46,6 +48,7 @@ export const ValueSelector = ({
   valueInputMode,
   onChange,
   error,
+  liveSpans,
 }: ValueSelectorProps) => {
   const errorHelperText = error ? "Value is required" : "";
 

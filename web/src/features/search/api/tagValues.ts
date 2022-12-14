@@ -74,7 +74,7 @@ export const useTagValues = (
         ? fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam })
         : Promise.resolve<TagValuesResponse>({ values: [] }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
-    refetchInterval: refetchInterval,
+    // refetchInterval: refetchInterval,
     cacheTime: refetchInterval ? refetchInterval : 5000,
   });
 };

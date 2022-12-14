@@ -18,6 +18,7 @@ import { Autocomplete, FormLabel, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
 import { useAvailableTags } from "../../api/availableTags";
+import { LiveSpansState } from "../../routes/SpanSearch";
 import { AvailableTag } from "../../types/availableTags";
 import { styles } from "./styles";
 
@@ -25,10 +26,18 @@ export type TagSelectorProps = {
   value: AvailableTag | null;
   onChange: (f: AvailableTag | null) => void;
   error: boolean;
+  liveSpans: LiveSpansState;
 };
 
-export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
-  const { data: availableTags, isLoading } = useAvailableTags();
+export const TagSelector = ({
+  value,
+  onChange,
+  error,
+  liveSpans,
+}: TagSelectorProps) => {
+  const { data: availableTags, isLoading } = useAvailableTags(
+    liveSpans.isOn ? liveSpans.intervalInMs : 0
+  );
 
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags

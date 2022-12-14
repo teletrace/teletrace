@@ -36,7 +36,7 @@ export const useAvailableTags = (updateIntervalMilli?: number) => {
     queryKey: ["availableTags"],
     queryFn: () => fetchAvailableTags(),
     getNextPageParam: () => undefined,
-    refetchInterval: refetchInterval,
+    //refetchInterval: refetchInterval,
     cacheTime: refetchInterval ? refetchInterval : 5000,
   });
 };
