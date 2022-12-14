@@ -30,9 +30,9 @@ import {
   KeyValueFilter,
   Operator,
   SearchFilter,
-  Timeframe,
   ValueInputMode,
 } from "../../types/common";
+import { TimeFrameTypes } from "../TimeFrameSelector";
 import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
@@ -43,7 +43,7 @@ export type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
-  timeframe: Timeframe;
+  timeframe: TimeFrameTypes;
   filters: Array<SearchFilter>;
 };
 

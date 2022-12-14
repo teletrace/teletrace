@@ -16,8 +16,6 @@
 
 import format from "date-fns/format";
 
-import { Timeframe } from "../features/search/types/common";
-
 export const formatDateAsDateTime = (
   date: Date | number,
   { showMs = false, showSec = true } = {}
@@ -50,12 +48,4 @@ export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
 export const formatNanoAsMsDateTime = (nanoSec: number) => {
   const ms = nanoSecToMs(nanoSec);
   return formatDateAsDateTime(ms, { showMs: true });
-};
-
-export const getCurrentTimestamp = (): Timeframe => {
-  const now = new Date().valueOf();
-  return {
-    startTimeUnixNanoSec: msToNanoSec(now - 3600000),
-    endTimeUnixNanoSec: msToNanoSec(now),
-  };
 };

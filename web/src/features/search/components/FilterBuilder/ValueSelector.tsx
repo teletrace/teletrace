@@ -20,16 +20,16 @@ import FormControl from "@mui/material/FormControl";
 import {
   FilterValueTypes,
   SearchFilter,
-  Timeframe,
   ValueInputMode,
 } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
+import { TimeFrameTypes } from "../TimeFrameSelector";
 import { AutoCompleteValueSelector } from "./AutoCompleteValueSelector";
 import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
-  timeframe: Timeframe;
+  timeframe: TimeFrameTypes;
   filters: Array<SearchFilter>;
   query?: TagValuesRequest;
   value: FilterValueTypes;

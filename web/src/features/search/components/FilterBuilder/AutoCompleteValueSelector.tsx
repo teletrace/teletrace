@@ -29,11 +29,12 @@ import { formatNumber } from "@/utils/format";
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { FilterValueTypes, SearchFilter, Timeframe } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
+import { TimeFrameTypes } from "../TimeFrameSelector";
 import { styles } from "./styles";
 
 const useGetTagOptions = (
   tag: string,
-  timeframe: Timeframe,
+  timeframe: TimeFrameTypes,
   filters: Array<SearchFilter>,
   selectedOptions: (string | number)[],
   search: string
@@ -60,7 +61,7 @@ const useGetTagOptions = (
 
 export type AutoCompleteValueSelectorProps = {
   tag: string;
-  timeframe: Timeframe;
+  timeframe: TimeFrameTypes;
   filters: Array<SearchFilter>;
   value: (string | number)[];
   onChange: (value: FilterValueTypes) => void;

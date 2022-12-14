@@ -31,7 +31,8 @@ import {
 } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/common";
+import { SearchFilter } from "../../types/common";
+import { TimeFrameTypes } from "../TimeFrameSelector";
 import { LiveSpansState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
@@ -42,7 +43,7 @@ const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
   filters?: SearchFilter[];
-  timeframe: Timeframe;
+  timeframe: TimeFrameTypes;
   liveSpans: LiveSpansState;
 }
 
@@ -76,13 +77,6 @@ export function SpanTable({
     ascending: !columnSort.desc,
   }));
 
-  const searchRequest = {
-    filters: filters,
-    timeframe: timeframe,
-    sort: sort,
-    metadata: undefined,
-  };
-
   const {
     data,
     fetchNextPage,
@@ -91,7 +85,13 @@ export function SpanTable({
     isFetching,
     isLoading,
     hasNextPage,
-  } = useSpansQuery(searchRequest, liveSpans.isOn ? liveSpans.intervalInMs : 0);
+  } = useSpansQuery({
+    filters: filters,
+    timeframe: timeframe,
+    sort: sort,
+    metadata: undefined,
+    updateIntervalMilli: liveSpans.isOn ? liveSpans.intervalInMs : 0,
+  });
 
   useEffect(
     () =>

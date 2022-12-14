@@ -18,12 +18,14 @@ import { useQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
 
-import { SearchFilter, Timeframe } from "../types/common";
+import { TimeFrameTypes } from "../components/TimeFrameSelector";
+import { SearchFilter } from "../types/common";
 import {
   TagValue,
   TagValuesRequest,
   TagValuesResponse,
 } from "../types/tagValues";
+import { calcTimeFrame } from "./utils";
 
 type FetchTagValuesParams = {
   tag: string;
@@ -97,11 +99,11 @@ const mergeTagValues = (
 
 export const useTagValuesWithAll = (
   tag: string,
-  timeframe: Timeframe,
+  timeframe: TimeFrameTypes,
   filters: SearchFilter[]
 ) => {
   const currentValuesRequest: TagValuesRequest = {
-    timeframe: timeframe,
+    timeframe: calcTimeFrame(timeframe),
     filters: filters,
   };
   const allValuesRequest: TagValuesRequest = { filters: [] };

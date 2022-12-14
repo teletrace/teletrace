@@ -18,13 +18,14 @@ import { Paper, Stack } from "@mui/material";
 
 import { StatusCode } from "@/types/span";
 
-import { SearchFilter, Timeframe } from "../../types/common";
+import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
+import { TimeFrameTypes } from "../TimeFrameSelector";
 import { styles } from "./styles";
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
-  timeframe: Timeframe;
+  timeframe: TimeFrameTypes;
   onChange: (entry: SearchFilter) => void;
 };
 

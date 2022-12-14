@@ -25,12 +25,11 @@ import { MouseEvent, useRef, useState } from "react";
 
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
-import { Timeframe } from "../../types/common";
+import { calcTimeFrame } from "../../api/utils";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
-  onChange: (timeframe: Timeframe) => void;
-  value: Timeframe;
+  onChange: (timeframe: TimeFrameTypes) => void;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -40,14 +39,16 @@ const options: RelativeTimeFrame[] = [
   { label: "1W", offsetRange: "1w", relativeTo: "now" },
 ];
 
-export const TimeFrameSelector = ({
-  onChange,
-  value: timeframe,
-}: TimeFrameSelectorProps) => {
+export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
+  const currentTimeStamp = calcTimeFrame({
+    label: "3D",
+    offsetRange: "3d",
+    relativeTo: "now",
+  });
   const customOption: CustomTimeFrame = {
     label: "Custom",
-    startTime: timeframe.startTimeUnixNanoSec,
-    endTime: timeframe.endTimeUnixNanoSec,
+    startTime: currentTimeStamp.startTimeUnixNanoSec,
+    endTime: currentTimeStamp.endTimeUnixNanoSec,
   };
 
   const buttonRef = useRef(null);
@@ -60,44 +61,6 @@ export const TimeFrameSelector = ({
     setAnchorEl(event.currentTarget);
   };
 
-  function isRelativeTimeFrame(
-    object: TimeFrameTypes
-  ): object is RelativeTimeFrame {
-    return "offsetRange" in object;
-  }
-
-  function isCustomTimeFrame(
-    object: TimeFrameTypes
-  ): object is CustomTimeFrame {
-    return "startTime" in object;
-  }
-
-  const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
-    const startTime = new Date();
-    const endTimeNumber = new Date().getTime();
-    const offset = timeFrame.offsetRange;
-    if (offset === "1h") startTime.setHours(startTime.getHours() - 1);
-    else if (offset === "1d") startTime.setDate(startTime.getDate() - 1);
-    else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
-    else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
-    const startTimeNumber = startTime.getTime();
-    timeframe.startTimeUnixNanoSec = startTimeNumber * 1000 * 1000;
-    timeframe.endTimeUnixNanoSec = endTimeNumber * 1000 * 1000;
-  };
-
-  const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
-    timeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
-    timeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
-  };
-
-  const calcTimeFrame = (timeframeType: TimeFrameTypes) => {
-    if (isRelativeTimeFrame(timeframeType)) {
-      toTimeframeFromRelative(timeframeType);
-    } else if (isCustomTimeFrame(timeframeType)) {
-      toTimeframeFromCustom(timeframeType);
-    }
-  };
-
   const handleBtnClicked = (
     event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
@@ -105,8 +68,7 @@ export const TimeFrameSelector = ({
     if (value?.label === "Custom") {
       handleCustomClick(event);
     }
-    calcTimeFrame(value);
-    onChange(timeframe);
+    //onChange(value);
     setIsSelected(value);
   };
 
@@ -117,8 +79,8 @@ export const TimeFrameSelector = ({
 
   const getTooltipTitle = (): string => {
     return `${formatNanoToTimeString(
-      timeframe?.startTimeUnixNanoSec || 0
-    )} -> ${formatNanoToTimeString(timeframe?.endTimeUnixNanoSec || 0)}`;
+      currentTimeStamp?.startTimeUnixNanoSec || 0
+    )} -> ${formatNanoToTimeString(currentTimeStamp?.endTimeUnixNanoSec || 0)}`;
   };
 
   return (
@@ -138,7 +100,7 @@ export const TimeFrameSelector = ({
       >
         <DateTimeSelector
           onChange={onChange}
-          value={timeframe}
+          value={customOption}
           onClose={() => setOpen(false)}
         />
       </Popover>
@@ -179,13 +141,13 @@ export const TimeFrameSelector = ({
   );
 };
 
-type RelativeTimeFrame = {
+export type RelativeTimeFrame = {
   label: string;
   relativeTo: string;
   offsetRange: string;
 };
 
-type CustomTimeFrame = {
+export type CustomTimeFrame = {
   label: string;
   startTime: number;
   endTime: number;

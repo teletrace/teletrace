@@ -35,8 +35,9 @@ import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { SearchFilter, Timeframe } from "../../types/common";
+import { SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
+import { TimeFrameTypes } from "../TimeFrameSelector";
 import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
@@ -45,7 +46,7 @@ export type TagValuesSelectorProps = {
   value: Array<string | number>;
   searchable?: boolean;
   filters: Array<SearchFilter>;
-  timeframe: Timeframe;
+  timeframe: TimeFrameTypes;
   onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
 };
@@ -79,7 +80,6 @@ export const TagValuesSelector = ({
     tagFilters
   );
   const tagOptions = data
-
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,

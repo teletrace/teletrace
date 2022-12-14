@@ -32,12 +32,12 @@ import { useState } from "react";
 
 import { msToNanoSec } from "@/utils/format";
 
-import { Timeframe } from "../../types/common";
+import { CustomTimeFrame } from "../TimeFrameSelector";
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
-  onChange: (timeframe: Timeframe) => void;
-  value: Timeframe;
+  onChange: (tf: CustomTimeFrame) => void;
+  value: CustomTimeFrame;
   onClose: () => void;
 };
 
@@ -47,10 +47,10 @@ export const DateTimeSelector = ({
   onClose,
 }: DateTimeSelectorProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
-    new Date(value.startTimeUnixNanoSec / 1000000)
+    new Date(value.startTime / 1000000)
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    new Date(value.endTimeUnixNanoSec / 1000000)
+    new Date(value.endTime / 1000000)
   );
   const [startTime, setStartTime] = useState<Date | null>(startDate);
   const [endTime, setEndTime] = useState<Date | null>(endDate);
@@ -80,8 +80,9 @@ export const DateTimeSelector = ({
     if (timeRange.startRange < timeRange.endRange) {
       setTimeValid(true);
       onChange({
-        startTimeUnixNanoSec: timeRange.startRange,
-        endTimeUnixNanoSec: timeRange.endRange,
+        label: value.label,
+        startTime: timeRange.startRange,
+        endTime: timeRange.endRange,
       });
       onClose();
     } else {

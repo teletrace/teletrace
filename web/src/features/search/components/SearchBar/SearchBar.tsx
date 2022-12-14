@@ -19,12 +19,13 @@ import { Button, Chip, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
-import { SearchFilter, Timeframe } from "../../types/common";
+import { SearchFilter } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
+import { TimeFrameTypes } from "../TimeFrameSelector";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
-  timeframe: Timeframe;
+  timeframe: TimeFrameTypes;
   onFilterAdded: (entry: SearchFilter) => void;
   onFilterDeleted: (entry: SearchFilter) => void;
 };

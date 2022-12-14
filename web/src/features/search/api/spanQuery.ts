@@ -18,9 +18,19 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
 
-import { SearchRequest, SearchResponse } from "../types/spanQuery";
+import { TimeFrameTypes } from "../components/TimeFrameSelector";
+import { SearchFilter } from "../types/common";
+import { SearchRequest, SearchResponse, Sort } from "../types/spanQuery";
+import { calcTimeFrame } from "./utils";
 
 type FetchSpansParams = { searchRequest: SearchRequest; pageParam: string };
+type UseSpansQueryParams = {
+  timeframe: TimeFrameTypes;
+  filters?: SearchFilter[];
+  sort?: Sort[];
+  metadata?: { nextToken: string };
+  updateIntervalMilli?: number;
+};
 
 export const fetchSpans = ({
   searchRequest,
@@ -31,20 +41,33 @@ export const fetchSpans = ({
   return axiosClient.post("/v1/search", searchRequest);
 };
 
-export const useSpansQuery = (
-  searchRequest: SearchRequest,
-  updateIntervalMilli?: number
-) => {
+export const useSpansQuery = ({
+  timeframe,
+  filters,
+  sort,
+  metadata,
+  updateIntervalMilli,
+}: UseSpansQueryParams) => {
   const refetchInterval =
     updateIntervalMilli && updateIntervalMilli > 0
       ? updateIntervalMilli
       : false;
+
+  const tf = calcTimeFrame(timeframe);
+
+  const searchRequest = {
+    filters: filters,
+    timeframe: tf,
+    sort: sort,
+    metadata: metadata,
+  };
+
   return useInfiniteQuery({
     queryKey: [
       "spans",
-      searchRequest.filters,
-      searchRequest.timeframe.endTimeUnixNanoSec,
-      searchRequest.timeframe.startTimeUnixNanoSec,
+      filters,
+      tf.startTimeUnixNanoSec,
+      tf.endTimeUnixNanoSec,
     ],
     keepPreviousData: true,
     queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
