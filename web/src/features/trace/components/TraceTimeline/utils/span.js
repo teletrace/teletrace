@@ -75,8 +75,6 @@ export const transformSpan = (span) => {
     process: {
       serviceName: span.resource.attributes["service.name"],
     },
-    attributes: {
-      ...span.span.attributes,
-    },
+    originalSpan: span,
   };
 };

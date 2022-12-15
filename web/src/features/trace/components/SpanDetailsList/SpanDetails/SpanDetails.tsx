@@ -96,7 +96,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             />
             <ArrowForward style={styles.spanFlowArrowIcon} />
             <ResourceIcon
-              name={getSpanResourceType(span.span.attributes)}
+              name={getSpanResourceType(span)}
               style={styles.spanDestIcon}
             />
           </Stack>

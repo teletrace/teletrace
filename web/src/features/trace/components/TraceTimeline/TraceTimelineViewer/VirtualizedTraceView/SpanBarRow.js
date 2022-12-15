@@ -55,7 +55,7 @@ export default class SpanBarRow extends React.PureComponent {
     const viewEnd = viewBounds.end;
     const icon = (
       <ResourceIcon
-        name={getSpanResourceType(span.attributes)}
+        name={getSpanResourceType(span.originalSpan)}
         style={{ height: "15px", width: "15px" }}
       />
     );
@@ -70,7 +70,6 @@ export default class SpanBarRow extends React.PureComponent {
       longLabel = `${label} | ${labelDetail}`;
       hintSide = "right";
     }
-
     return (
       <TimelineRow
         className={`
