@@ -57,7 +57,7 @@ function getBasicAttributes(span: InternalSpan): Attributes {
 }
 
 function getSpanResourceType(span: Readonly<InternalSpan>): string {
-  const attr = { ...span.span.attributes };
+  const spanAttr = span.span.attributes;
 
   const resourceTypeSet = new Set<string>([
     "db.system",
@@ -66,7 +66,7 @@ function getSpanResourceType(span: Readonly<InternalSpan>): string {
   ]);
 
   for (const key of resourceTypeSet) {
-    if (attr[key]) return attr[key].toString();
+    if (spanAttr[key]) return spanAttr[key].toString();
   }
 
   return "";
