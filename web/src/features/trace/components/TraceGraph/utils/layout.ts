@@ -129,33 +129,33 @@ const updateGraphNode = (
 };
 
 const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
-  const attr = { ...s.resource.attributes, ...s.span.attributes };
-  const typeNameMap = new Map<string, string[]>([
+  const spanAttributes = { ...s.resource.attributes, ...s.span.attributes };
+  const serviceTypeToNamesMap = new Map<string, string[]>([
     ["db.system", ["db.name", "net.peer.name"]],
     ["messaging.system", ["messaging.destination"]],
   ]);
   const graphNodeData: GraphNodeData = {
     id: "",
-    name: "",
+    name: spanAttributes["service.name"].toString(),
     image: "",
-    type: "",
+    type: "service",
   };
-  for (const [key, value] of Object.entries(attr)) {
-    const names = typeNameMap.get(key);
-    if (names) {
-      graphNodeData.type = value.toString();
-      graphNodeData.image = value.toString();
-      names.forEach((n) => {
-        if (attr[n]) {
-          graphNodeData.name = attr[n].toString();
-          return;
+  for (const [serviceTypeKey, serviceNameKeys] of serviceTypeToNamesMap) {
+    const serviceType = spanAttributes[serviceTypeKey];
+    if (serviceType) {
+      for (const name of serviceNameKeys) {
+        const serviceName = spanAttributes[name];
+        if (serviceName) {
+          graphNodeData.name = serviceName.toString();
+          graphNodeData.type = serviceType.toString();
+          graphNodeData.image = serviceType.toString();
+          break;
         }
-      });
-    } else {
-      graphNodeData.name = attr["service.name"].toString();
-      graphNodeData.type = "service";
+      }
+      break;
     }
   }
+
   graphNodeData.id = `${graphNodeData.name}-${graphNodeData.type}`;
   return graphNodeData;
 };
