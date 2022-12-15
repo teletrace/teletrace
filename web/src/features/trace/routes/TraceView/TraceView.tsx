@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import ReactSplit, { SplitDirection } from "@devbookhq/splitter";
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
@@ -27,6 +28,7 @@ import { TraceGraph } from "../../components/TraceGraph";
 import { GraphNode } from "../../components/TraceGraph/types";
 import { TraceTimeline } from "../../components/TraceTimeline";
 import { styles } from "./styles";
+import "./styles.css";
 
 interface TraceViewUrlParams extends Params {
   traceId: string;
@@ -40,6 +42,12 @@ export const TraceView = () => {
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [selectedSpanId, setSelectedSpanId] = useState<string | null>(spanId);
+
+  const [layoutSizes, setLayuotSizes] = useState([72, 28]);
+
+  function handleTimelineResizeChange(gutterIdx: number, allSizes: number[]) {
+    setLayuotSizes(allSizes);
+  }
 
   const handleSelectedNodeChange = (node: GraphNode | null) => {
     setSelectedNode(node);
@@ -69,37 +77,50 @@ export const TraceView = () => {
         title="Trace View"
         description="Designated page to view trace's flow graph and timeline"
       />
-      <Stack
-        direction="column"
-        divider={<Divider orientation="horizontal" flexItem />}
-        spacing={2}
-        sx={{ height: "100%" }}
+      <ReactSplit
+        direction={SplitDirection.Vertical}
+        initialSizes={layoutSizes}
+        onResizeFinished={handleTimelineResizeChange}
+        draggerClassName={"custom-dragger-horizontal"}
+        gutterClassName={"custom-gutter-horizontal"}
       >
-        <Stack
-          flex={1}
-          spacing={2}
-          direction="row"
-          sx={styles.graphSpanDetailsContainer}
-          divider={<Divider orientation="vertical" flexItem />}
-        >
-          <TraceGraph
-            setSelectedNode={handleSelectedNodeChange}
-            spans={trace}
-            initiallyFocusedSpanId={spanId}
-          />
-          <SpanDetailsList
-            spans={selectedNode?.spans}
-            selectedSpanId={selectedSpanId}
-            setSelectedSpanId={setSelectedSpanId}
-          />
-        </Stack>
-        <Stack
-          sx={styles.timelineWrapper}
-          divider={<Divider orientation="vertical" flexItem />}
-        >
-          <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
-        </Stack>
-      </Stack>
+        <ReactSplit>
+          <Stack
+            direction="column"
+            divider={<Divider orientation="horizontal" flexItem />}
+            spacing={2}
+            sx={{ height: "100%", overflow: "auto" }}
+          >
+            <Stack
+              flex={1}
+              spacing={2}
+              direction="row"
+              sx={styles.graphSpanDetailsContainer}
+              divider={<Divider orientation="vertical" flexItem />}
+            >
+              <TraceGraph
+                setSelectedNode={handleSelectedNodeChange}
+                spans={trace}
+                initiallyFocusedSpanId={spanId}
+              />
+
+              <SpanDetailsList
+                spans={selectedNode?.spans}
+                selectedSpanId={selectedSpanId}
+                setSelectedSpanId={setSelectedSpanId}
+              />
+            </Stack>
+          </Stack>
+        </ReactSplit>
+        <ReactSplit classes={["timeline-scroller"]}>
+          <Stack
+            sx={styles.timelineWrapper}
+            divider={<Divider orientation="vertical" flexItem />}
+          >
+            <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
+          </Stack>
+        </ReactSplit>
+      </ReactSplit>
     </>
   );
 };
