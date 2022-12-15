@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {Brightness1, Refresh} from "@mui/icons-material";
-import {CircularProgress, Icon, IconButton, Stack} from "@mui/material";
-import {useEffect, useState} from "react";
+import { Brightness1, Refresh } from "@mui/icons-material";
+import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
+import { useEffect, useState } from "react";
 
-import {useSpansQuery} from "../../api/spanQuery";
-import {SearchRequest} from "../../types/spanQuery";
+import { useSpansQuery } from "../../api/spanQuery";
+import { SearchRequest } from "../../types/spanQuery";
 import styles from "./styles";
 
 const A_FEW_SECONDS_AGO_THRESHOLD = 10;
@@ -32,8 +32,8 @@ interface RefreshButtonProps {
 }
 
 export function RefreshButton({
-    searchRequest,
-    isLiveSpansOn,
+  searchRequest,
+  isLiveSpansOn,
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
@@ -73,7 +73,8 @@ export function RefreshButton({
     return () => clearInterval(interval);
   }, [lastRefreshed, rerenderInterval]);
 
-  const { remove: removeSpansQueryFromCache, isFetching } = useSpansQuery(searchRequest);
+  const { remove: removeSpansQueryFromCache, isFetching } =
+    useSpansQuery(searchRequest);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
@@ -81,7 +82,7 @@ export function RefreshButton({
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
-    removeSpansQueryFromCache()
+    removeSpansQueryFromCache();
     setIsRefreshing(true);
   };
 
