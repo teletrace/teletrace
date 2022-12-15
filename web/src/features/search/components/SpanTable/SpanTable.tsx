@@ -66,11 +66,6 @@ export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
     newSpansIds: [],
   });
 
-  const sort = sorting?.map((columnSort) => ({
-    field: columnSort.id,
-    ascending: !columnSort.desc,
-  }));
-
   searchRequest.sort = sorting?.map((columnSort) => ({
     field: columnSort.id,
     ascending: !columnSort.desc,
