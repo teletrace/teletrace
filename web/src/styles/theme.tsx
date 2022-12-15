@@ -530,13 +530,14 @@ theme = createTheme(theme, {
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
-          "&.MuiTableRow-hover": {
-            cursor: "pointer",
-          },
           height: "45px",
           lineHeight: "unset",
           "&.MuiTableRow-root:not(.MuiTableRow-head)": {
             backgroundColor: theme.palette.grey[900],
+            "&:hover": {
+              cursor: "pointer",
+              backgroundColor: theme.palette.grey[700],
+            },
           },
         },
       },
