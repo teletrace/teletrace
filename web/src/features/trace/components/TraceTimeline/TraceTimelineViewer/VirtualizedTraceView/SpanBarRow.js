@@ -4,6 +4,7 @@ import IoArrowRightA from "react-icons/lib/io/arrow-right-a";
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { theme } from "@/styles";
 
+import { getSpanResourceType } from "../../../../utils/span-resource-type";
 import { formatDuration } from "../../utils/date.js";
 import TimelineRow from "../TimelineRow.js";
 import SpanBar from "./SpanBar.js";
@@ -54,7 +55,7 @@ export default class SpanBarRow extends React.PureComponent {
     const viewEnd = viewBounds.end;
     const icon = (
       <ResourceIcon
-        name="defaultresourceicon"
+        name={getSpanResourceType(span.attributes)}
         style={{ height: "15px", width: "15px" }}
       />
     );

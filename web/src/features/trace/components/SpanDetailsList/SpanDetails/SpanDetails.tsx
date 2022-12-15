@@ -33,6 +33,7 @@ import {
   roundNanoToTwoDecimalMs,
 } from "@/utils/format";
 
+import { getSpanResourceType } from "../../../utils/span-resource-type";
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
 import { SpanErrorDetails } from "../SpanErrorDetails";
 import { styles } from "./styles";
@@ -54,22 +55,6 @@ function getBasicAttributes(span: InternalSpan): Attributes {
     span_id: span.span.spanId,
     trace_id: span.span.traceId,
   };
-}
-
-function getSpanResourceType(span: Readonly<InternalSpan>): string {
-  const spanAttr = span.span.attributes;
-
-  const resourceTypeSet = new Set<string>([
-    "db.system",
-    "db.type",
-    "massaging.system",
-  ]);
-
-  for (const key of resourceTypeSet) {
-    if (spanAttr[key]) return spanAttr[key].toString();
-  }
-
-  return "";
 }
 
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
@@ -111,7 +96,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             />
             <ArrowForward style={styles.spanFlowArrowIcon} />
             <ResourceIcon
-              name={getSpanResourceType(span)}
+              name={getSpanResourceType(span.span.attributes)}
               style={styles.spanDestIcon}
             />
           </Stack>
