@@ -56,9 +56,24 @@ function getBasicAttributes(span: InternalSpan): Attributes {
   };
 }
 
+function getSpanResourceType(span: Readonly<InternalSpan>): string {
+  const spanAttr = span.span.attributes;
+
+  const resourceTypeSet = new Set<string>([
+    "db.system",
+    "db.type",
+    "massaging.system",
+  ]);
+
+  for (const key of resourceTypeSet) {
+    if (spanAttr[key]) return spanAttr[key].toString();
+  }
+
+  return "";
+}
+
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
-
   const X_DIVIDER = "|";
 
   const hasError: boolean = span.span.status.code === StatusCode.Error;
@@ -96,7 +111,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             />
             <ArrowForward style={styles.spanFlowArrowIcon} />
             <ResourceIcon
-              name="defaultresourceicon"
+              name={getSpanResourceType(span)}
               style={styles.spanDestIcon}
             />
           </Stack>
