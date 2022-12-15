@@ -24,11 +24,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { InternalSpan } from "@/types/span";
-import {
-  formatDateAsDateTime,
-  nanoSecToMs,
-  roundNanoToTwoDecimalMs,
-} from "@/utils/format";
+import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter, Timeframe } from "../../types/common";
