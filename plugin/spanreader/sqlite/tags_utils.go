@@ -48,6 +48,19 @@ var staticTagTypeMap = map[string]string{
 	"externalFields.durationNano":         NumberType,
 }
 
+var dynamicTables = []string{
+	"event_attributes",
+	"link_attributes",
+	"scope_attributes",
+	"span_attributes",
+	"resource_attributes",
+}
+
 func isDynamicTagsTable(tableName string) bool {
-	return tableName == "event_attributes" || tableName == "link_attributes" || tableName == "scope_attributes" || tableName == "span_attributes" || tableName == "resource_attributes"
+	for _, t := range dynamicTables {
+		if t == tableName {
+			return true
+		}
+	}
+	return false
 }

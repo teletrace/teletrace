@@ -46,35 +46,35 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
 	var tags tagsquery.GetAvailableTagsResponse
+	tag := tagsquery.TagInfo{}
 	for tagName, fieldType := range staticTagTypeMap {
-		tags.Tags = append(tags.Tags, tagsquery.TagInfo{
-			Name: tagName,
-			Type: fieldType,
-		})
+		tag.Name = tagName
+		tag.Type = fieldType
+		tags.Tags = append(tags.Tags, tag)
 	}
-	for tableKey, tableName := range sqliteTablesMap {
-		if isDynamicTagsTable(tableName) {
-			query := fmt.Sprintf("SELECT key, type FROM %s", tableName)
-			rows, err := sr.client.db.QueryContext(ctx, query)
-			if err != nil {
-				sr.logger.Error("failed to query available tags", zap.Error(err))
-				continue
-			}
-			for rows.Next() {
-				var key string
-				var attrType string
-				err = rows.Scan(&key, &attrType)
-				if err != nil {
-					sr.logger.Error("failed to get available tag", zap.Error(err))
-					continue
-				}
-				newTag := tagsquery.TagInfo{
-					Name: tableKey + "." + key,
-					Type: attrType,
-				}
-				tags.Tags = append(tags.Tags, newTag)
-			}
+
+	query := `SELECT DISTINCT "span.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM span_attributes t UNION ALL SELECT DISTINCT "span.event.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM event_attributes t UNION ALL SELECT DISTINCT "span.link.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM link_attributes t UNION ALL SELECT DISTINCT "scope.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM scope_attributes t UNION ALL SELECT DISTINCT "resource.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM resource_attributes t`
+
+	stmt, err := sr.client.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare query: %v", err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query tags: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var tableKey, tagName, tagType string
+		err = rows.Scan(&tableKey, &tagName, &tagType)
+		if err != nil {
+			sr.logger.Error("failed to get tag value", zap.Error(err))
+			continue
 		}
+		tag.Name = fmt.Sprintf("%s.%s", tableKey, tagName)
+		tag.Type = tagType
+		tags.Tags = append(tags.Tags, tag)
 	}
 	return &tags, nil
 }
