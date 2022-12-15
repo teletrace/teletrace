@@ -159,13 +159,6 @@ const TraceGraphImpl = ({
     }
   };
 
-  const onPaneClick = (event: ReactMouseEvent) => {
-    event.stopPropagation();
-    setSelectedNode(null);
-    setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
-    setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
-  };
-
   return (
     <Box sx={{ flex: 1 }}>
       {isLoading ? (
@@ -181,7 +174,6 @@ const TraceGraphImpl = ({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
-          onPaneClick={onPaneClick}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeMouseLeave={onNodeMouseLeave}
           selectNodesOnDrag={false}

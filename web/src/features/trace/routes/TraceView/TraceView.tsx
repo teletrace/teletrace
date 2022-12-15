@@ -17,10 +17,11 @@
 import ReactSplit, { SplitDirection } from "@devbookhq/splitter";
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
+import { InternalSpan } from "@/types/span";
 
 import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
@@ -34,14 +35,35 @@ interface TraceViewUrlParams extends Params {
   traceId: string;
 }
 
+function getRootSpan(spans: InternalSpan[]) {
+  return spans.find((span) => !span.span.parentSpanId);
+}
+
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
-  const [searchParams] = useSearchParams();
-  const spanId = searchParams.get("spanId");
-
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
+
+  const [initiallyFocusedSpanId, setInitiallyFocusedSpanId] = useState<
+    string | null
+  >(null);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
-  const [selectedSpanId, setSelectedSpanId] = useState<string | null>(spanId);
+  const [selectedSpanId, setSelectedSpanId] = useState<string | null>(null);
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (initiallyFocusedSpanId) {
+      return;
+    }
+    const urlSpanId = searchParams.get("spanId");
+    if (urlSpanId) {
+      setSelectedSpanId(urlSpanId);
+      setInitiallyFocusedSpanId(urlSpanId);
+    } else if (trace) {
+      const rootSpan = getRootSpan(trace);
+      setInitiallyFocusedSpanId(rootSpan?.span.spanId ?? null);
+    }
+  }, [searchParams, trace, initiallyFocusedSpanId]);
 
   const [layoutSizes, setLayuotSizes] = useState([72, 28]);
 
@@ -101,7 +123,7 @@ export const TraceView = () => {
               <TraceGraph
                 setSelectedNode={handleSelectedNodeChange}
                 spans={trace}
-                initiallyFocusedSpanId={spanId}
+                initiallyFocusedSpanId={initiallyFocusedSpanId}
               />
 
               <SpanDetailsList
