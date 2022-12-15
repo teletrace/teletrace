@@ -13,6 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import {keyframes} from "@emotion/react";
+
+const breathingAnimation = keyframes`
+  0% {
+      box-shadow: 
+      0 0 0 1px rgba(0, 205, 231, 0.3), 
+      0 0 0 2px rgba(0, 205, 231, 0.3), 
+      0 0 0 3px rgba(0, 205, 231, 0.3)
+  }
+ 
+ 50% {
+      box-shadow: 
+      0 0 0 2px rgba(0, 205, 231, 0.3), 
+      0 0 0 4px rgba(0, 205, 231, 0.3), 
+      0 0 0 6px rgba(0, 205, 231, 0.3) 
+ }
+ 
+ 100% {
+      box-shadow: 
+      0 0 0 1px rgba(0, 205, 231, 0.3), 
+      0 0 0 2px rgba(0, 205, 231, 0.3), 
+      0 0 0 3px rgba(0, 205, 231, 0.3)
+  }
+
+`;
 
 const styles = {
     container: {
@@ -20,13 +45,16 @@ const styles = {
         verticalAlign: "center"
     },
     liveSpansIcon: {
-        color: "#00CDE7",
+        color: "transparent",
+        background: "rgba(0, 205, 231, 1)",
+        borderRadius: "50%",
         maxHeight: "8px",
         maxWidth: "8px",
         minHeight: "8px",
         minWidth: "8px",
         top: "50%",
         marginBottom: "2px",
+        animation: `${breathingAnimation} 7s linear infinite`,
     },
     lastUpdatedText: { fontSize: '14px', color: '#B6B7BE', fontFamily: 'inter' },
 };
