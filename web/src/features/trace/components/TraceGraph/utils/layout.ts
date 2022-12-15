@@ -136,15 +136,13 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
   ]);
   const graphNodeData: GraphNodeData = {
     id: "",
-    name: "",
+    name: spanAttributes["service.name"].toString(),
     image: "",
-    type: "",
+    type: "service",
   };
-  let hasFoundType = false;
   for (const [serviceTypeKey, serviceNameKeys] of serviceTypeToNamesMap) {
     const serviceType = spanAttributes[serviceTypeKey];
     if (serviceType) {
-      hasFoundType = true;
       for (const name of serviceNameKeys) {
         const serviceName = spanAttributes[name];
         if (serviceName) {
@@ -157,10 +155,7 @@ const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
       break;
     }
   }
-  if (!hasFoundType) {
-    graphNodeData.name = spanAttributes["service.name"].toString();
-    graphNodeData.type = "service";
-  }
+
   graphNodeData.id = `${graphNodeData.name}-${graphNodeData.type}`;
   return graphNodeData;
 };
