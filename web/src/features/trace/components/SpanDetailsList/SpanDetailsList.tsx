@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 import { InternalSpan } from "@/types/span";
 
@@ -39,7 +39,7 @@ export const SpanDetailsList = ({
 
   return (
     <Box sx={styles.container}>
-      {spans ? (
+      {spans &&
         spans.map((span) => (
           <SpanDetails
             key={span.span.spanId}
@@ -49,10 +49,7 @@ export const SpanDetailsList = ({
               handleChange(span.span.spanId, expanded)
             }
           />
-        ))
-      ) : (
-        <Typography>Select graph node to explore spans</Typography>
-      )}
+        ))}
     </Box>
   );
 };
