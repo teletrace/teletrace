@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { Brightness1, Refresh } from "@mui/icons-material";
-import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import {Brightness1, Refresh} from "@mui/icons-material";
+import {CircularProgress, Icon, IconButton, Stack} from "@mui/material";
+import {useEffect, useState} from "react";
 
-import { SearchRequest } from "@/features/search";
+import {msToNanoSec} from "@/utils/format";
 
-import { useSpansQuery } from "../../api/spanQuery";
+import {useSpansQuery} from "../../api/spanQuery";
+import {Timeframe} from "../../types/common";
+import {SearchRequest} from "../../types/spanQuery";
 import styles from "./styles";
 
 const A_FEW_SECONDS_AGO_THRESHOLD = 10;
@@ -28,13 +30,17 @@ const SECONDS_IN_HOUR = 3600;
 const SECONDS_IN_DAY = 86400;
 
 interface RefreshButtonProps {
+  timeframe: Timeframe;
+  onTimeframeChange: (timeframe: Timeframe) => void;
   searchRequest: SearchRequest;
   isLiveSpansOn: boolean;
 }
 
 export function RefreshButton({
-  searchRequest,
-  isLiveSpansOn,
+    timeframe,
+    onTimeframeChange,
+    searchRequest,
+    isLiveSpansOn,
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
@@ -74,8 +80,7 @@ export function RefreshButton({
     return () => clearInterval(interval);
   }, [lastRefreshed, rerenderInterval]);
 
-  const { remove: removeSpansQueryFromCache, isFetching } =
-    useSpansQuery(searchRequest);
+  const { isFetching } = useSpansQuery(searchRequest);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
@@ -83,7 +88,10 @@ export function RefreshButton({
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
-    removeSpansQueryFromCache();
+    const timeframeDuration = timeframe.endTimeUnixNanoSec - timeframe.startTimeUnixNanoSec;
+    const now = msToNanoSec(new Date().valueOf());
+    const newTimeframe = { startTimeUnixNanoSec: now - timeframeDuration, endTimeUnixNanoSec: now }
+    onTimeframeChange(newTimeframe);
     setIsRefreshing(true);
   };
 
