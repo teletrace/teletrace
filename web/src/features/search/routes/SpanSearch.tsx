@@ -18,7 +18,7 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
-import {SearchRequest} from "@/features/search";
+import { SearchRequest } from "@/features/search";
 import { getCurrentTimestamp } from "@/utils/format";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
@@ -96,7 +96,7 @@ export const SpanSearch = () => {
   const searchRequest = {
     timeframe: filtersState.timeframe,
     filters: filtersState.filters,
-  }
+  };
 
   return (
     <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>
@@ -109,8 +109,21 @@ export const SpanSearch = () => {
         display="flex"
         flexDirection="row"
       >
-        <Typography variant="h5" fontWeight="600" style={{marginRight: "10px", alignSelf: "center", paddingBottom: "3px"}}>Spans</Typography>
-        <RefreshButton searchRequest={searchRequest} isLiveSpansOn={liveSpansState.isOn}/>
+        <Typography
+          variant="h5"
+          fontWeight="600"
+          style={{
+            marginRight: "10px",
+            alignSelf: "center",
+            paddingBottom: "3px",
+          }}
+        >
+          Spans
+        </Typography>
+        <RefreshButton
+          searchRequest={searchRequest}
+          isLiveSpansOn={liveSpansState.isOn}
+        />
 
         <Stack marginLeft="auto" direction="row">
           <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
@@ -153,10 +166,7 @@ export const SpanSearch = () => {
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
           />
-          <SpanTable
-            searchRequest={searchRequest}
-            liveSpans={liveSpansState}
-          />
+          <SpanTable searchRequest={searchRequest} liveSpans={liveSpansState} />
         </Stack>
       </Stack>
     </Stack>

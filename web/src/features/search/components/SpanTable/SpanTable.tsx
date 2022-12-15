@@ -23,7 +23,7 @@ import MaterialReactTable, {
 import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import {SearchRequest} from "@/features/search";
+import { SearchRequest } from "@/features/search";
 import { InternalSpan } from "@/types/span";
 import {
   formatDateAsDateTime,
@@ -36,7 +36,6 @@ import { LiveSpansState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
-
 
 const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
@@ -51,10 +50,7 @@ interface SpansStateProps {
   newSpansIds: string[];
 }
 
-export function SpanTable({
-  searchRequest,
-  liveSpans,
-}: SpanTableProps) {
+export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef = useRef<Virtualizer>(null);
 
