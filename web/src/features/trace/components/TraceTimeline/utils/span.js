@@ -8,7 +8,6 @@ export const getSpanDuration = (span) => span.duration;
 export const getSpanTimestamp = (span) => span.startTime;
 export const getSpanProcessId = (span) => span.processID;
 export const getSpanReferences = (span) => span.references || [];
-export const getSpanAttributes = (span) => span.attributes || {};
 
 export const getSpanProcess = (span) => {
   if (!span.process) {
