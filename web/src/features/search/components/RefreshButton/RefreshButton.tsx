@@ -1,5 +1,5 @@
 import { Brightness1, Refresh } from "@mui/icons-material";
-import { Icon, IconButton, Stack } from "@mui/material";
+import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 
 import { SearchRequest } from "@/features/search";
@@ -26,6 +26,7 @@ export function RefreshButton({
   const [rerenderInterval, setRerenderInterval] = useState<number>(
     A_FEW_SECONDS_AGO_THRESHOLD * 1000
   );
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,19 +58,29 @@ export function RefreshButton({
     return () => clearInterval(interval);
   }, [lastRefreshed, rerenderInterval]);
 
-  const { remove: removeSpansQueryFromCache } = useSpansQuery(searchRequest);
+  const { remove: removeSpansQueryFromCache, isFetching } =
+    useSpansQuery(searchRequest);
+
+  if (isRefreshing && !isFetching) {
+    setIsRefreshing(false);
+  }
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
     removeSpansQueryFromCache();
+    setIsRefreshing(true);
   };
 
   return (
-    <Stack direction="row" sx={{ alignItems: "center", height: "40px" }}>
-      <Stack direction="row" sx={{ width: "30px", justifyContent: "center" }}>
+    <Stack direction="row" sx={styles.container}>
+      <Stack direction="row" sx={styles.iconWrapper}>
         {isLiveSpansOn ? (
           <Icon>
             <Brightness1 sx={styles.liveSpansIcon} />
+          </Icon>
+        ) : isRefreshing ? (
+          <Icon>
+            <CircularProgress sx={styles.refreshingIcon} />
           </Icon>
         ) : (
           <IconButton onClick={handleRefresh}>
@@ -77,7 +88,7 @@ export function RefreshButton({
           </IconButton>
         )}
       </Stack>
-      <span style={styles.lastUpdatedText}>
+      <span style={styles.refreshStatusText}>
         {isLiveSpansOn
           ? "Streaming ingested spans"
           : `Updated ${timeSinceLastRefreshString}`}

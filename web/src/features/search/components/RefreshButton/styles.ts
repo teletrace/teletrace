@@ -15,34 +15,33 @@
  */
 import { keyframes } from "@emotion/react";
 
+const liveSpansIconTransparentColor = "rgba(0, 205, 231, 0.3)";
 const breathingAnimation = keyframes`
   0% {
       box-shadow:
-      0 0 0 1px rgba(0, 205, 231, 0.3),
-      0 0 0 2px rgba(0, 205, 231, 0.3),
-      0 0 0 3px rgba(0, 205, 231, 0.3)
+      0 0 0 1px ${liveSpansIconTransparentColor},
+      0 0 0 2px ${liveSpansIconTransparentColor},
+      0 0 0 3px ${liveSpansIconTransparentColor}
   }
 
  50% {
       box-shadow:
-      0 0 0 2px rgba(0, 205, 231, 0.3),
-      0 0 0 4px rgba(0, 205, 231, 0.3),
-      0 0 0 6px rgba(0, 205, 231, 0.3)
+      0 0 0 2px ${liveSpansIconTransparentColor},
+      0 0 0 4px ${liveSpansIconTransparentColor},
+      0 0 0 6px ${liveSpansIconTransparentColor}
  }
 
  100% {
       box-shadow:
-      0 0 0 1px rgba(0, 205, 231, 0.3),
-      0 0 0 2px rgba(0, 205, 231, 0.3),
-      0 0 0 3px rgba(0, 205, 231, 0.3)
+      0 0 0 1px ${liveSpansIconTransparentColor},
+      0 0 0 2px ${liveSpansIconTransparentColor},
+      0 0 0 3px ${liveSpansIconTransparentColor}
   }
 `;
 
 const styles = {
-  container: {
-    display: "row",
-    verticalAlign: "center",
-  },
+  container: { alignItems: "center", height: "40px" },
+  iconWrapper: { width: "30px", justifyContent: "center" },
   liveSpansIcon: {
     color: "transparent",
     background: "rgba(0, 205, 231, 1)",
@@ -55,7 +54,18 @@ const styles = {
     marginBottom: "2px",
     animation: `${breathingAnimation} 7s linear infinite`,
   },
-  lastUpdatedText: { fontSize: "14px", color: "#B6B7BE", fontFamily: "inter" },
+  refreshingIcon: {
+    maxHeight: "17px",
+    maxWidth: "17px",
+    minHeight: "17px",
+    minWidth: "17px",
+  },
+  refreshStatusText: {
+    marginLeft: "5px",
+    fontSize: "14px",
+    color: "#B6B7BE",
+    fontFamily: "inter",
+  },
 };
 
 export default styles;
