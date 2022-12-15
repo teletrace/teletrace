@@ -537,7 +537,7 @@ theme = createTheme(theme, {
             "&:hover": {
               cursor: "pointer",
               backgroundColor: theme.palette.grey[700],
-            }
+            },
           },
         },
       },
