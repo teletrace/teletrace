@@ -18,10 +18,7 @@ import {Brightness1, Refresh} from "@mui/icons-material";
 import {CircularProgress, Icon, IconButton, Stack} from "@mui/material";
 import {useEffect, useState} from "react";
 
-import {msToNanoSec} from "@/utils/format";
-
 import {useSpansQuery} from "../../api/spanQuery";
-import {Timeframe} from "../../types/common";
 import {SearchRequest} from "../../types/spanQuery";
 import styles from "./styles";
 
@@ -30,15 +27,11 @@ const SECONDS_IN_HOUR = 3600;
 const SECONDS_IN_DAY = 86400;
 
 interface RefreshButtonProps {
-  timeframe: Timeframe;
-  onTimeframeChange: (timeframe: Timeframe) => void;
   searchRequest: SearchRequest;
   isLiveSpansOn: boolean;
 }
 
 export function RefreshButton({
-    timeframe,
-    onTimeframeChange,
     searchRequest,
     isLiveSpansOn,
 }: RefreshButtonProps) {
@@ -80,7 +73,7 @@ export function RefreshButton({
     return () => clearInterval(interval);
   }, [lastRefreshed, rerenderInterval]);
 
-  const { isFetching } = useSpansQuery(searchRequest);
+  const { remove: removeSpansQueryFromCache, isFetching } = useSpansQuery(searchRequest);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
@@ -88,10 +81,7 @@ export function RefreshButton({
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
-    const timeframeDuration = timeframe.endTimeUnixNanoSec - timeframe.startTimeUnixNanoSec;
-    const now = msToNanoSec(new Date().valueOf());
-    const newTimeframe = { startTimeUnixNanoSec: now - timeframeDuration, endTimeUnixNanoSec: now }
-    onTimeframeChange(newTimeframe);
+    removeSpansQueryFromCache()
     setIsRefreshing(true);
   };
 

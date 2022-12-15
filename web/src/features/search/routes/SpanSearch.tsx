@@ -121,8 +121,6 @@ export const SpanSearch = () => {
         </Typography>
         <RefreshButton
           searchRequest={searchRequest}
-          timeframe={filtersState.timeframe}
-          onTimeframeChange={onTimeframeChange}
           isLiveSpansOn={liveSpansState.isOn}
         />
 
