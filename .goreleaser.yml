@@ -29,7 +29,7 @@ dockers:
     use: buildx
     build_flag_templates:
       - --platform=linux/amd64
-      - --build-arg BUILD_INFO={{ git describe --tags }}
+      - --build-arg=BUILD_INFO={{ .Summary }}
     goarch: amd64
     goos: linux
     extra_files:
@@ -50,7 +50,7 @@ dockers:
     use: buildx
     build_flag_templates:
       - --platform=linux/arm64/v8
-      - --build-arg BUILD_INFO={{ git describe --tags }}
+      - --build-arg=BUILD_INFO={{ .Summary }}
     goarch: arm64
     goos: linux
     extra_files:
@@ -71,7 +71,7 @@ dockers:
     use: buildx
     build_flag_templates:
       - --platform=linux/arm/v7
-      - --build-arg BUILD_INFO={{ git describe --tags }}
+      - --build-arg=BUILD_INFO={{ .Summary }}
     goarch: arm
     goarm: 7
     goos: linux
