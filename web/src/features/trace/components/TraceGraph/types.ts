@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { Edge, Node } from "reactflow";
 
 import { InternalSpan } from "@/types/span";
@@ -39,12 +38,6 @@ export interface EdgeData {
   time: string;
   count: number;
   hasError: boolean;
-}
-
-export interface TraceGraphProps {
-  setSelectedNode: (node: GraphNode | null) => void;
-  spans: InternalSpan[];
-  initiallyFocusedSpanId: string | null;
 }
 
 export enum EdgeColor {
