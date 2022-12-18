@@ -22,6 +22,7 @@ import { useSpansQuery } from "../../api/spanQuery";
 import { SearchRequest } from "../../types/spanQuery";
 import styles from "./styles";
 
+const A_FEW_SECONDS_AGO_STRING = "a few seconds ago";
 const A_FEW_SECONDS_AGO_THRESHOLD = 10;
 const SECONDS_IN_HOUR = 3600;
 const SECONDS_IN_DAY = 86400;
@@ -37,7 +38,7 @@ export function RefreshButton({
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
-    useState<string>("a few seconds ago");
+    useState<string>(A_FEW_SECONDS_AGO_STRING);
   const [rerenderInterval, setRerenderInterval] = useState<number>(
     A_FEW_SECONDS_AGO_THRESHOLD * 1000
   );
@@ -50,25 +51,32 @@ export function RefreshButton({
         ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
         : 0;
 
-      let timeSinceLastRefreshString = "";
-      if (timeSinceLastRefresh < 60) {
-        timeSinceLastRefreshString = "under a minute ago";
+      if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
+        setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING);
+        setRerenderInterval(A_FEW_SECONDS_AGO_THRESHOLD * 1000);
+      } else if (timeSinceLastRefresh < 60) {
+        setTimeSinceLastRefreshString("under a minute ago");
         setRerenderInterval(50 * 1000);
       } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
         const minutes = Math.round(timeSinceLastRefresh / 60);
-        timeSinceLastRefreshString = `${minutes} minute${
+        setTimeSinceLastRefreshString(`${minutes} minute${
           minutes === 1 ? "" : "s"
-        } ago`;
+        } ago`);
         setRerenderInterval(60 * 1000);
       } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
         const hours = Math.round(timeSinceLastRefresh / SECONDS_IN_HOUR);
-        timeSinceLastRefreshString = `${hours} hour${
+        setTimeSinceLastRefreshString(`${hours} hour${
           hours === 1 ? "" : "s"
-        } ago`;
+        } ago`);
+        setRerenderInterval(SECONDS_IN_HOUR * 1000);
+      } else {
+        const days = Math.round(timeSinceLastRefresh / SECONDS_IN_DAY);
+        setTimeSinceLastRefreshString(`${days} day${
+            days === 1 ? "" : "s"
+        } ago`);
         setRerenderInterval(SECONDS_IN_HOUR * 1000);
       }
 
-      setTimeSinceLastRefreshString(timeSinceLastRefreshString);
     }, rerenderInterval);
     return () => clearInterval(interval);
   }, [lastRefreshed, rerenderInterval]);
@@ -82,6 +90,8 @@ export function RefreshButton({
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
+    setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING)
+    setRerenderInterval(0)
     removeSpansQueryFromCache();
     setIsRefreshing(true);
   };

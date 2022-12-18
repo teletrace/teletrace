@@ -52,7 +52,7 @@ const styles = {
     minWidth: "8px",
     top: "50%",
     marginBottom: "2px",
-    animation: `${breathingAnimation} 7s linear infinite`,
+    animation: `${breathingAnimation} 4s linear infinite`,
   },
   refreshingIcon: {
     maxHeight: "17px",
