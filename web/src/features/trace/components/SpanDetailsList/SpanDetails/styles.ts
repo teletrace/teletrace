@@ -25,6 +25,10 @@ export const styles = {
     padding: "8px 8px 8px 25px",
     borderRadius: "8px",
     backgroundColor: "#1B1C21",
+    "& .MuiAccordionSummary-content": {
+      margin: 0,
+      alignItems: "center",
+    },
     "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
       transform: "rotate(90deg)",
     },
@@ -62,24 +66,10 @@ export const styles = {
     flex: "1",
     width: "1px",
   },
-  spanFlowIconsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: "17px",
-  },
-  spanSourceIcon: {
-    marginLeft: "22px",
+  spanIcon: {
     width: "22px",
     height: "22px",
-  },
-  spanFlowArrowIcon: {
-    fontSize: "16px",
-    margin: "0 8px",
-    color: "#96979E",
-  },
-  spanDestIcon: {
-    width: "22px",
-    height: "22px",
+    margin: "0 17px 0 23px",
   },
   spanName: {
     fontWeight: "700",
