@@ -15,7 +15,7 @@
  */
 
 import { Divider, Stack, Typography } from "@mui/material";
-import {useCallback, useState} from "react";
+import { useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
 import { getCurrentTimestamp } from "@/utils/format";
@@ -49,8 +49,9 @@ export const SpanSearch = () => {
     intervalInMs: 2000,
   });
 
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const handleIsRefreshing: (isRefreshing: boolean) => void = (isRefreshing) => setIsRefreshing(isRefreshing);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const handleIsRefreshing: (isRefreshing: boolean) => void = (isRefreshing) =>
+    setIsRefreshing(isRefreshing);
 
   const onTimeframeChange = useCallback(
     (timeframe: Timeframe) => {
@@ -170,7 +171,11 @@ export const SpanSearch = () => {
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
           />
-          <SpanTable searchRequest={searchRequest} liveSpans={liveSpansState} isRefreshing={isRefreshing}/>
+          <SpanTable
+            searchRequest={searchRequest}
+            liveSpans={liveSpansState}
+            isRefreshing={isRefreshing}
+          />
         </Stack>
       </Stack>
     </Stack>
