@@ -74,7 +74,7 @@ export function RefreshButton({
         setTimeSinceLastRefreshString(`${days} day${
             days === 1 ? "" : "s"
         } ago`);
-        setRerenderInterval(SECONDS_IN_HOUR * 1000);
+        setRerenderInterval(SECONDS_IN_DAY * 1000);
       }
 
     }, rerenderInterval);
