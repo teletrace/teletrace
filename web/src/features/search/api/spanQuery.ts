@@ -23,7 +23,13 @@ import { SearchFilter } from "../types/common";
 import { SearchRequest, SearchResponse, Sort } from "../types/spanQuery";
 import { calcTimeFrame } from "./utils";
 
-type FetchSpansParams = { searchRequest: SearchRequest; pageParam: string };
+type FetchSpansParams = {
+  pageParam: string;
+  timeframe: TimeFrameTypes;
+  filters?: SearchFilter[];
+  sort?: Sort[];
+  metadata?: { nextToken: string };
+};
 type UseSpansQueryParams = {
   timeframe: TimeFrameTypes;
   filters?: SearchFilter[];
@@ -33,10 +39,18 @@ type UseSpansQueryParams = {
 };
 
 export const fetchSpans = ({
-  searchRequest,
   pageParam,
+  timeframe,
+  filters,
+  sort,
 }: FetchSpansParams): Promise<SearchResponse> => {
-  searchRequest.metadata = { nextToken: pageParam };
+  const currentDatetime = new Date();
+  const searchRequest: SearchRequest = {
+    filters: filters,
+    sort: sort,
+    metadata: { nextToken: pageParam },
+    timeframe: calcTimeFrame(timeframe, currentDatetime),
+  };
 
   return axiosClient.post("/v1/search", searchRequest);
 };
@@ -45,7 +59,6 @@ export const useSpansQuery = ({
   timeframe,
   filters,
   sort,
-  metadata,
   updateIntervalMilli,
 }: UseSpansQueryParams) => {
   const refetchInterval =
@@ -53,26 +66,12 @@ export const useSpansQuery = ({
       ? updateIntervalMilli
       : false;
 
-  const tf = calcTimeFrame(timeframe);
-
-  const searchRequest = {
-    filters: filters,
-    timeframe: tf,
-    sort: sort,
-    metadata: metadata,
-  };
-
   return useInfiniteQuery({
-    queryKey: [
-      "spans",
-      filters,
-      tf.startTimeUnixNanoSec,
-      tf.endTimeUnixNanoSec,
-    ],
+    queryKey: ["spans", filters, timeframe],
     keepPreviousData: true,
-    queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
+    queryFn: ({ pageParam }) =>
+      fetchSpans({ pageParam, timeframe, filters, sort }),
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
     refetchInterval: refetchInterval,
-    cacheTime: refetchInterval ? refetchInterval : 5000,
   });
 };

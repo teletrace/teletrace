@@ -29,7 +29,8 @@ import { calcTimeFrame } from "./utils";
 
 type FetchTagValuesParams = {
   tag: string;
-  tagValuesRequest: TagValuesRequest;
+  timeframe?: TimeFrameTypes;
+  filters?: SearchFilter[];
   nextToken: string;
 };
 
@@ -42,8 +43,16 @@ type FetchTagValuesParams = {
  */
 export const fetchTagValues = ({
   tag,
-  tagValuesRequest,
+  timeframe,
+  filters,
 }: FetchTagValuesParams): Promise<TagValuesResponse> => {
+  const currentDatetime = new Date();
+  const tagValuesRequest: TagValuesRequest = {
+    filters: filters || [],
+    timeframe: timeframe
+      ? calcTimeFrame(timeframe, currentDatetime)
+      : undefined,
+  };
   return axiosClient.post(`/v1/tags/${tag}`, tagValuesRequest);
 };
 
@@ -55,20 +64,15 @@ export const fetchTagValues = ({
  */
 export const useTagValues = (
   tag: string,
-  tagValuesRequest: TagValuesRequest
+  filters?: SearchFilter[],
+  timeframe?: TimeFrameTypes
 ) => {
   return useQuery({
-    queryKey: [
-      "tagValues",
-      tag,
-      tagValuesRequest.timeframe?.startTimeUnixNanoSec,
-      tagValuesRequest.timeframe?.endTimeUnixNanoSec,
-      tagValuesRequest.filters,
-    ],
+    queryKey: ["tagValues", tag, filters, timeframe],
     keepPreviousData: true,
     queryFn: ({ pageParam }) =>
       tag
-        ? fetchTagValues({ tag, tagValuesRequest, nextToken: pageParam })
+        ? fetchTagValues({ tag, filters, timeframe, nextToken: pageParam })
         : Promise.resolve<TagValuesResponse>({ values: [] }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
   });
@@ -102,21 +106,16 @@ export const useTagValuesWithAll = (
   timeframe: TimeFrameTypes,
   filters: SearchFilter[]
 ) => {
-  const currentValuesRequest: TagValuesRequest = {
-    timeframe: calcTimeFrame(timeframe),
-    filters: filters,
-  };
-  const allValuesRequest: TagValuesRequest = { filters: [] };
   const {
     data: currentTagValues,
     isFetching: isFetchingCurrent,
     isError: isErrorCurrent,
-  } = useTagValues(tag, currentValuesRequest);
+  } = useTagValues(tag, filters, timeframe);
   const {
     data: allTagValues,
     isFetching: isFetchingAllValues,
     isError: isErrorAllValues,
-  } = useTagValues(tag, allValuesRequest);
+  } = useTagValues(tag, []);
   // const currentTagValues = currentTagPages?.pages.flatMap((page) => page.values)
   // const allTagValues = allTagPages?.pages.flatMap((page) => page.values)
   return {

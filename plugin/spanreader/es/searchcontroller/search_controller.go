@@ -102,7 +102,7 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 		builder = builder.SearchAfter(sortResultsBuilder)
 	}
 
-	builder = builder.Size(200) // Where to get this number from?
+	builder = builder.Size(30) // Where to get this number from?
 
 	return builder.Build(), nil
 }

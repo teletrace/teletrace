@@ -31,6 +31,7 @@ import {
 } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
+import { isCustomTimeFrame, isRelativeTimeFrame } from "../../api/utils";
 import { SearchFilter } from "../../types/common";
 import { TimeFrameTypes } from "../TimeFrameSelector";
 import { LiveSpansState } from "./../../routes/SpanSearch";
@@ -90,7 +91,10 @@ export function SpanTable({
     timeframe: timeframe,
     sort: sort,
     metadata: undefined,
-    updateIntervalMilli: liveSpans.isOn ? liveSpans.intervalInMs : 0,
+    updateIntervalMilli:
+      liveSpans.isOn && isRelativeTimeFrame(timeframe)
+        ? liveSpans.intervalInMs
+        : 0,
   });
 
   useEffect(
@@ -127,10 +131,11 @@ export function SpanTable({
     ) ?? [];
 
   // reset newSpansIds
-  useDebouncedCallback(
-    () => setSpansState({ spans: spans, newSpansIds: [] }),
-    500
-  )();
+  useDebouncedCallback(() => {
+    if (newSpansIds.length) {
+      setSpansState({ spans: spans, newSpansIds: [] });
+    }
+  }, 500)();
 
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {

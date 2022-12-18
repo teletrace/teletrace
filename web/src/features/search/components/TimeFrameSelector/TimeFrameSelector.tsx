@@ -119,22 +119,22 @@ export const TimeFrameSelector = ({ onChange }: TimeFrameSelectorProps) => {
         </ToggleButton>
 
         {options.map((tf) => (
-          <Tooltip
+          //<Tooltip
+          //  key={tf.label}
+          //  title={isSelected?.label === tf?.label ? getTooltipTitle() : ""}
+          //  placement="top-end"
+          //  arrow
+          //>
+          <ToggleButton
+            onClick={handleBtnClicked}
+            selected={isSelected?.label === tf?.label}
+            value={tf}
+            ref={buttonRef}
             key={tf.label}
-            title={isSelected?.label === tf?.label ? getTooltipTitle() : ""}
-            placement="top-end"
-            arrow
           >
-            <ToggleButton
-              onClick={handleBtnClicked}
-              selected={isSelected?.label === tf?.label}
-              value={tf}
-              ref={buttonRef}
-              key={tf.label}
-            >
-              {tf.label}
-            </ToggleButton>
-          </Tooltip>
+            {tf.label}
+          </ToggleButton>
+          //</Tooltip>
         ))}
       </ToggleButtonGroup>
     </div>
