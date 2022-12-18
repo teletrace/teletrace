@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-import { wrap } from "module";
-
 import { FilterList } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, Chip, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
-import { GridValidRowModel } from "@mui/x-data-grid";
 import { useState } from "react";
+
+import { theme } from "@/styles";
 
 import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
-import { theme } from "@/styles";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
