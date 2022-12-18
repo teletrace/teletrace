@@ -535,7 +535,7 @@ theme = createTheme(theme, {
           },
           height: "45px",
           lineHeight: "unset",
-          "&.MuiTableRow-root:not(.MuiTableRow-head)": {
+          ":not(.MuiTableRow-head, .MuiTableRow-grey, :hover)": {
             backgroundColor: theme.palette.grey[900],
           },
         },
