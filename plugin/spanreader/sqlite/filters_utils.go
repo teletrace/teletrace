@@ -17,6 +17,7 @@
 package sqlitespanreader
 
 import (
+	"fmt"
 	"oss-tracing/pkg/model"
 	"strings"
 
@@ -102,7 +103,7 @@ func isValidFilter(filter model.SearchFilter) bool {
 	if filter.KeyValueFilter == nil {
 		return false
 	}
-	if _, ok := sqliteFieldsMap[string(filter.KeyValueFilter.Key)]; !ok {
+	if filter.KeyValueFilter.Key == "" {
 		return false
 	}
 	if _, ok := sqliteOperatorMap[string(filter.KeyValueFilter.Operator)]; !ok {
@@ -111,18 +112,43 @@ func isValidFilter(filter model.SearchFilter) bool {
 	return true
 }
 
+func covertFilterToSqliteQuery(filter model.SearchFilter, dbTablesSet *Set) string {
+	if isValidFilter(filter) {
+		dbTableName := findTableName(string(filter.KeyValueFilter.Key))
+		if dbTableName != "" {
+			if !dbTablesSet.Contains(dbTableName) {
+				dbTablesSet.Add(dbTableName)
+			}
+			value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+			filterKey := fmt.Sprintf("%v", filter.KeyValueFilter.Key)
+			return fmt.Sprintf("%s %s %s", filterKey, sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value)
+		}
+	}
+	return ""
+}
+
+func newSearchFilter(filterKey string, filterOperator model.FilterOperator, filterValue model.FilterValue) model.SearchFilter {
+	return model.SearchFilter{
+		KeyValueFilter: &model.KeyValueFilter{
+			Key:      model.FilterKey(filterKey),
+			Operator: filterOperator,
+			Value:    filterValue,
+		},
+	}
+}
+
 func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
 	return []model.SearchFilter{
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.startTimeUnixNano",
+				Key:      "spans.start_time_unix_nano",
 				Operator: spansquery.OPERATOR_GTE,
 				Value:    tf.StartTime,
 			},
 		},
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.endTimeUnixNano",
+				Key:      "spans.end_time_unix_nano",
 				Operator: spansquery.OPERATOR_LTE,
 				Value:    tf.EndTime,
 			},

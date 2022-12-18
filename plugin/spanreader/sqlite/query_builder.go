@@ -34,82 +34,52 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 }
 
 func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
-	var filters []model.SearchFilter
-	filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
-	filters = append(filters, r.SearchFilters...)
-	dbTablesSet := make(map[string]bool)
-	dbFieldsSet := make(map[string]bool)
 	dbTableName := findTableName(tag)
 	if dbTableName != "" {
+		var filters []model.SearchFilter
+		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
+		filters = append(filters, r.SearchFilters...)
+		dbTablesSet := NewSet()
+		dbFieldsSet := NewSet()
 		var filterStrings []string
-		for _, filter := range filters {
-			if isValidFilter(filter) {
-				dbTableName := findTableName(string(filter.KeyValueFilter.Key))
-				if dbTableName != "" {
-					if _, ok := dbTablesSet[dbTableName]; !ok {
-						dbTablesSet[dbTableName] = true
-					}
-					value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", sqliteFieldsMap[string(filter.KeyValueFilter.Key)], sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value))
-				}
-			}
-		}
-		if _, ok := dbTablesSet[dbTableName]; !ok {
-			dbTablesSet[dbTableName] = true
-		}
+		dbTablesSet.Add(dbTableName)
 		if isDynamicTagsTable(dbTableName) {
 			dynamicTag := removeTablePrefixFromDynamicTag(tag)
 			if dynamicTag != "" {
-				dbFieldsSet[dbTableName+".value"] = true
-				filter := model.SearchFilter{
-					KeyValueFilter: &model.KeyValueFilter{
-						Key:      model.FilterKey(dbTableName + ".key"),
-						Operator: spansquery.OPERATOR_EQUALS,
-						Value:    dynamicTag,
-					},
-				}
-				filterStrings = append(filterStrings, fmt.Sprintf("%s %s '%s'", filter.KeyValueFilter.Key, sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], filter.KeyValueFilter.Value))
+				dbFieldsSet.Add(fmt.Sprintf("%s.%s", dbTableName, "value"))
+				filters = append(filters, newSearchFilter(fmt.Sprintf("%s.%s", dbTableName, "key"), spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", dynamicTag)))
 				switch dbTableName {
 				case "span_attributes":
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "span_attributes.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
+					filters = append(filters, newSearchFilter("span_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 				case "resource_attributes":
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "resource_attributes.resource_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.resource_id"))
+					filters = append(filters, newSearchFilter("resource_attributes.resource_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
 				case "links":
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "links.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
+					filters = append(filters, newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 				case "events":
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "events.span_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "spans.span_id"))
+					filters = append(filters, newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 				case "event_attributes":
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "event_attributes.event_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "events.id"))
+					filters = append(filters, newSearchFilter("event_attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
+					filters = append(filters, newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 				case "link_attributes":
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "link_attributes.link_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "links.id"))
+					filters = append(filters, newSearchFilter("link_attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
+					filters = append(filters, newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 				case "scope_attributes":
-					filterStrings = append(filterStrings, fmt.Sprintf("%s %s %s", "scope_attributes.scope_id", sqliteOperatorMap[string(spansquery.OPERATOR_EQUALS)], "scopes.id"))
+					filters = append(filters, newSearchFilter("scope_attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
 				}
-				dbTables := make([]string, 0, len(dbTablesSet))
-				for table := range dbTablesSet {
-					dbTables = append(dbTables, table)
-				}
-				dbFields := make([]string, 0, len(dbFieldsSet))
-				for field := range dbFieldsSet {
-					dbFields = append(dbFields, field)
-				}
-				return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFields, ","), strings.Join(dbTables, ","), strings.Join(filterStrings, " AND "), strings.Join(dbFields, ","))
 			}
 		} else {
 			if f, ok := sqliteFieldsMap[tag]; ok {
-				dbFieldsSet[f] = true
+				dbFieldsSet.Add(f)
 			}
-			dbTables := make([]string, 0, len(dbTablesSet))
-			for table := range dbTablesSet {
-				dbTables = append(dbTables, table)
-			}
-			dbFields := make([]string, 0, len(dbFieldsSet))
-			for field := range dbFieldsSet {
-				dbFields = append(dbFields, field)
-			}
-
-			return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFields, ","), strings.Join(dbTables, ","), strings.Join(filterStrings, " AND "), strings.Join(dbFields, ","))
 		}
+		for _, filter := range filters {
+			filterString := covertFilterToSqliteQuery(filter, dbTablesSet)
+			if filterString != "" {
+				filterStrings = append(filterStrings, filterString)
+			}
+		}
+		return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFieldsSet.Values(), ","), strings.Join(dbTablesSet.Values(), ","), strings.Join(filterStrings, " AND "), strings.Join(dbFieldsSet.Values(), ","))
+
 	}
 	return ""
 }
