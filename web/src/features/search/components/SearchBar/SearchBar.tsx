@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { FilterList, Close } from "@mui/icons-material";
+import { Close, FilterList } from "@mui/icons-material";
 import { Button, Chip, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
