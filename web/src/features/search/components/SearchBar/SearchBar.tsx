@@ -20,6 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Button, Chip, Paper, IconButton, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
 import { GridValidRowModel } from "@mui/x-data-grid";
+import { wrap } from "module";
 import { useState } from "react";
 
 import { SearchFilter, Timeframe } from "../../types/common";
@@ -53,13 +54,17 @@ export function SearchBar({
   };
 
   return (
-    <Paper sx={{ height: "40px", padding: "8px" }}>
+    <Paper sx={{ minHeight: "40px", padding: "8px" }}>
       <Stack
         direction="row"
         spacing={0.5}
         sx={{ justifyContent: "space-between" }}
       >
-        <Stack direction="row" spacing={0.5}>
+        <Stack
+          sx={{ flexWrap: "wrap", rowGap: "8px" }}
+          direction="row"
+          spacing={0.5}
+        >
           <Button
             variant="contained"
             size="small"
@@ -86,7 +91,7 @@ export function SearchBar({
             />
           ))}
         </Stack>
-        <Stack>
+        <Stack sx={{ justifyContent: "center" }}>
           <IconButton onClick={onClearFilters} size="small">
             <CloseIcon fontSize="inherit" />
           </IconButton>
