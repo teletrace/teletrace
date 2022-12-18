@@ -11,10 +11,10 @@ on:
 jobs:
   add-to-project:
     name: Add issue to project
-    if: ${{ !startsWith(env.USER_ID, 'BOT') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/add-to-project@v0.4.0
+        if: ${{ !startsWith(env.USER_ID, 'BOT') }}
         with:
           project-url: https://github.com/orgs/epsagon/projects/3
           github-token: ${{ secrets.PROJECT_ACCESS }}
