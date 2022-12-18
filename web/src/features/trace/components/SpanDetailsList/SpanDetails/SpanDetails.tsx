@@ -33,6 +33,7 @@ import {
   roundNanoToTwoDecimalMs,
 } from "@/utils/format";
 
+import { getSpanResourceType } from "../../../utils/span-resource-type";
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
 import { SpanErrorDetails } from "../SpanErrorDetails";
 import { styles } from "./styles";
@@ -58,7 +59,6 @@ function getBasicAttributes(span: InternalSpan): Attributes {
 
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
-
   const X_DIVIDER = "|";
 
   const hasError: boolean = span.span.status.code === StatusCode.Error;
@@ -96,7 +96,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             />
             <ArrowForward style={styles.spanFlowArrowIcon} />
             <ResourceIcon
-              name="defaultresourceicon"
+              name={getSpanResourceType(span)}
               style={styles.spanDestIcon}
             />
           </Stack>

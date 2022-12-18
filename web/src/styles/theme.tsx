@@ -530,8 +530,14 @@ theme = createTheme(theme, {
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
-          "&.MuiTableRow-hover": {
-            cursor: "pointer",
+          height: "45px",
+          lineHeight: "unset",
+          "&.MuiTableRow-root:not(.MuiTableRow-head)": {
+            backgroundColor: theme.palette.grey[900],
+            "&:hover": {
+              cursor: "pointer",
+              backgroundColor: theme.palette.grey[700],
+            },
           },
         },
       },
@@ -542,6 +548,9 @@ theme = createTheme(theme, {
           "&.MuiTableCell-head": {
             color: theme.palette.grey[300],
             fontWeight: 500,
+            verticalAlign: "middle",
+            paddingLeft: "16px",
+            paddingRight: "16px",
             "& .Mui-TableHeadCell-Content": {
               borderRight: `2px solid ${theme.palette.grey[500]}`,
             },
@@ -553,6 +562,9 @@ theme = createTheme(theme, {
           },
           "&.MuiTableCell-body": {
             fontWeight: "normal",
+            paddingLeft: "16px",
+            paddingRight: "16px",
+            borderBottomColor: theme.palette.grey[700],
           },
         },
       },
