@@ -72,6 +72,16 @@ To setup pre-commit hooks use the command: `pre-commit install`.
 
 To execute pre-commit hooks regardless of a commit, for example to fix CI errors, you can use the `pre-commit run --all-files` to execute all rules on all files.
 
+##### Makefile
+
+[Makefile](./Makefile) is used to handle standard project lifecycle tasks such as `lint` and `test`,
+to get a full list of the tasks available you can run `make list`, but as a general overview:
+
+- `make lint` will run project linters (`golangci-lint` for the backend and `eslint` for the frontend)
+- `make test` will run all tests for the project (using `go test` and `jest`)
+- `make all-in-one` will build the docker image for the `all-in-one` package
+- `make update-license-headers` will update all relevant source files to include license headers
+
 #### Project Layout
 
 This project is following the [standard go project layout](https://github.com/golang-standards/project-layout) in the backend and [bulletproof react](https://github.com/alan2207/bulletproof-react/) in the frontend, please read through their docs to make sure you know where each file should go.

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import { useMemo } from "react";
 
 import { InternalSpan } from "@/types/span";
 
@@ -27,11 +28,22 @@ interface SpanDetailsListProps {
   setSelectedSpanId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
+function sortSpansByStartTime(spans: InternalSpan[]) {
+  return [...spans].sort((spanA, spanB) => {
+    return spanA.span.startTimeUnixNano - spanB.span.startTimeUnixNano;
+  });
+}
+
 export const SpanDetailsList = ({
   spans,
   selectedSpanId,
   setSelectedSpanId,
 }: SpanDetailsListProps) => {
+  const sortedSpans = useMemo(
+    () => spans && sortSpansByStartTime(spans),
+    [spans]
+  );
+
   const handleChange = (spanId: string, expanded: boolean) => {
     const nextSelectedSpanId = expanded ? spanId : null;
     setSelectedSpanId(nextSelectedSpanId);
@@ -39,8 +51,8 @@ export const SpanDetailsList = ({
 
   return (
     <Box sx={styles.container}>
-      {spans ? (
-        spans.map((span) => (
+      {sortedSpans &&
+        sortedSpans.map((span) => (
           <SpanDetails
             key={span.span.spanId}
             span={span}
@@ -49,10 +61,7 @@ export const SpanDetailsList = ({
               handleChange(span.span.spanId, expanded)
             }
           />
-        ))
-      ) : (
-        <Typography>Select graph node to explore spans</Typography>
-      )}
+        ))}
     </Box>
   );
 };
