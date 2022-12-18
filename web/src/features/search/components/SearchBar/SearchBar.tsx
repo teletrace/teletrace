@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
+import { wrap } from "module";
+
 import { FilterList } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
-
-import { Button, Chip, Paper, IconButton, Divider } from "@mui/material";
+import { Button, Chip, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { GridValidRowModel } from "@mui/x-data-grid";
-import { wrap } from "module";
 import { useState } from "react";
 
 import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
+import { theme } from "@/styles";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
@@ -91,7 +92,11 @@ export function SearchBar({
             />
           ))}
         </Stack>
-        <Stack sx={{ justifyContent: "center" }}>
+        <Stack direction="row" sx={{ justifyContent: "center" }}>
+          <Divider
+            orientation="vertical"
+            sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
+          />
           <IconButton onClick={onClearFilters} size="small">
             <CloseIcon fontSize="inherit" />
           </IconButton>
