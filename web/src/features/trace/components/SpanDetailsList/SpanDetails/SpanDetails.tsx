@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ArrowForward, ArrowForwardIosSharp } from "@mui/icons-material";
+import { ArrowForwardIosSharp } from "@mui/icons-material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {
   Accordion,
@@ -33,6 +33,7 @@ import {
   roundNanoToTwoDecimalMs,
 } from "@/utils/format";
 
+import { getSpanResourceType } from "../../../utils/span-resource-type";
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
 import { SpanErrorDetails } from "../SpanErrorDetails";
 import { styles } from "./styles";
@@ -58,7 +59,6 @@ function getBasicAttributes(span: InternalSpan): Attributes {
 
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
-
   const X_DIVIDER = "|";
 
   const hasError: boolean = span.span.status.code === StatusCode.Error;
@@ -89,17 +89,10 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             ...(expanded && styles.expandedAccordion),
           }}
         >
-          <Stack sx={styles.spanFlowIconsContainer}>
-            <ResourceIcon
-              name="defaultresourceicon"
-              style={styles.spanSourceIcon}
-            />
-            <ArrowForward style={styles.spanFlowArrowIcon} />
-            <ResourceIcon
-              name="defaultresourceicon"
-              style={styles.spanDestIcon}
-            />
-          </Stack>
+          <ResourceIcon
+            name={getSpanResourceType(span)}
+            style={styles.spanIcon}
+          />
           <Stack>
             <Typography sx={styles.spanName}>{span.span.name}</Typography>
             <Typography sx={styles.spanTimes}>
