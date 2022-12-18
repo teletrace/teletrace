@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { FilterList } from "@mui/icons-material";
-import CloseIcon from "@mui/icons-material/Close";
+import { FilterList, Close } from "@mui/icons-material";
 import { Button, Chip, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
@@ -24,6 +23,7 @@ import { theme } from "@/styles";
 
 import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
+import { styles } from "./styles";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
@@ -53,17 +53,9 @@ export function SearchBar({
   };
 
   return (
-    <Paper sx={{ minHeight: "40px", padding: "8px" }}>
-      <Stack
-        direction="row"
-        spacing={0.5}
-        sx={{ justifyContent: "space-between" }}
-      >
-        <Stack
-          sx={{ flexWrap: "wrap", rowGap: "8px" }}
-          direction="row"
-          spacing={0.5}
-        >
+    <Paper sx={styles.searchBarPaper}>
+      <Stack direction="row" spacing={0.5} sx={styles.searchBar}>
+        <Stack sx={styles.filtersBar} direction="row" spacing={0.5}>
           <Button
             variant="contained"
             size="small"
@@ -90,13 +82,13 @@ export function SearchBar({
             />
           ))}
         </Stack>
-        <Stack direction="row" sx={{ justifyContent: "center" }}>
+        <Stack direction="row" sx={styles.clear}>
           <Divider
             orientation="vertical"
             sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
           />
           <IconButton onClick={onClearFilters} size="small">
-            <CloseIcon fontSize="inherit" />
+            <Close fontSize="inherit" />
           </IconButton>
         </Stack>
       </Stack>
