@@ -90,6 +90,46 @@ func findTableName(filterKey string) string {
 	return ""
 }
 
+func isValidTable(table string) bool {
+	for _, value := range sqliteTablesMap {
+		if value == table {
+			return true
+		}
+	}
+	return false
+}
+
+func normalizeFiltersForSqliteFormat(filters []model.SearchFilter) []model.SearchFilter {
+	var optimizedFilters []model.SearchFilter
+	for _, filter := range filters {
+		var filterValue string
+		values, ok := filter.KeyValueFilter.Value.([]interface{})
+		if ok {
+			var strOfValues []string
+			for _, value := range values {
+				str, ok := value.(string)
+				if !ok {
+					continue
+				}
+				strOfValues = append(strOfValues, fmt.Sprintf("'%v'", str))
+			}
+			filterValue = strings.Join(strOfValues, ",")
+		} else if str, ok := filter.KeyValueFilter.Value.(string); ok {
+			filterValue = str
+		} else {
+			continue
+		}
+		optimizedFilters = append(optimizedFilters, model.SearchFilter{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      filter.KeyValueFilter.Key,
+				Operator: filter.KeyValueFilter.Operator,
+				Value:    filterValue,
+			},
+		})
+	}
+	return optimizedFilters
+}
+
 func removeTablePrefixFromDynamicTag(tag string) string {
 	for _, tableKey := range tablesMapKeys {
 		if strings.HasPrefix(tag, tableKey) {
@@ -112,19 +152,8 @@ func isValidFilter(filter model.SearchFilter) bool {
 	return true
 }
 
-func covertFilterToSqliteQuery(filter model.SearchFilter, dbTablesSet *Set) string {
-	if isValidFilter(filter) {
-		dbTableName := findTableName(string(filter.KeyValueFilter.Key))
-		if dbTableName != "" {
-			if !dbTablesSet.Contains(dbTableName) {
-				dbTablesSet.Add(dbTableName)
-			}
-			value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
-			filterKey := fmt.Sprintf("%v", filter.KeyValueFilter.Key)
-			return fmt.Sprintf("%s %s %s", filterKey, sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value)
-		}
-	}
-	return ""
+func isNotEmptyString(str string) bool {
+	return str != ""
 }
 
 func newSearchFilter(filterKey string, filterOperator model.FilterOperator, filterValue model.FilterValue) model.SearchFilter {

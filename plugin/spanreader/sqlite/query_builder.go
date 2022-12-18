@@ -35,53 +35,26 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 
 func buildTagsValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
 	dbTableName := findTableName(tag)
-	if dbTableName != "" {
-		var filters []model.SearchFilter
-		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
-		filters = append(filters, r.SearchFilters...)
-		dbTablesSet := NewSet()
-		dbFieldsSet := NewSet()
-		var filterStrings []string
-		dbTablesSet.Add(dbTableName)
-		if isDynamicTagsTable(dbTableName) {
-			dynamicTag := removeTablePrefixFromDynamicTag(tag)
-			if dynamicTag != "" {
-				dbFieldsSet.Add(fmt.Sprintf("%s.%s", dbTableName, "value"))
-				filters = append(filters, newSearchFilter(fmt.Sprintf("%s.%s", dbTableName, "key"), spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", dynamicTag)))
-				switch dbTableName {
-				case "span_attributes":
-					filters = append(filters, newSearchFilter("span_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-				case "resource_attributes":
-					filters = append(filters, newSearchFilter("resource_attributes.resource_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
-				case "links":
-					filters = append(filters, newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-				case "events":
-					filters = append(filters, newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-				case "event_attributes":
-					filters = append(filters, newSearchFilter("event_attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
-					filters = append(filters, newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-				case "link_attributes":
-					filters = append(filters, newSearchFilter("link_attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
-					filters = append(filters, newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-				case "scope_attributes":
-					filters = append(filters, newSearchFilter("scope_attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
-				}
-			}
-		} else {
-			if f, ok := sqliteFieldsMap[tag]; ok {
-				dbFieldsSet.Add(f)
-			}
-		}
-		for _, filter := range filters {
-			filterString := covertFilterToSqliteQuery(filter, dbTablesSet)
-			if filterString != "" {
-				filterStrings = append(filterStrings, filterString)
-			}
-		}
-		return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s GROUP BY %s", strings.Join(dbFieldsSet.Values(), ","), strings.Join(dbTablesSet.Values(), ","), strings.Join(filterStrings, " AND "), strings.Join(dbFieldsSet.Values(), ","))
-
+	if !isValidTable(dbTableName) {
+		return ""
 	}
-	return ""
+	queryBuilder := newQueryBuilder()
+	queryBuilder.addFilters(createTimeframeFilters(*r.Timeframe))
+	queryBuilder.addFilters(normalizeFiltersForSqliteFormat(r.SearchFilters))
+	queryBuilder.addTable(dbTableName)
+	if isDynamicTagsTable(dbTableName) {
+		dynamicTag := removeTablePrefixFromDynamicTag(tag)
+		if isNotEmptyString(dynamicTag) {
+			queryBuilder.addDynamicTagField(dbTableName)
+			queryBuilder.addNewDynamicTagFilter(dbTableName, dynamicTag)
+		}
+	} else {
+		if f, ok := sqliteFieldsMap[tag]; ok {
+			queryBuilder.addField(f)
+		}
+	}
+
+	return queryBuilder.buildQuery()
 }
 
 func buildQueryByFilters(filters ...model.SearchFilter) string {
