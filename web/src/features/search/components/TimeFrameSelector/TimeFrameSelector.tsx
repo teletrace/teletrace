@@ -29,7 +29,7 @@ import { Timeframe } from "../../types/common";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
-  onChange: (timeframe: Timeframe) => void;
+  onChange: (timeframe: Timeframe, isRelative: boolean) => void;
   value: Timeframe;
 };
 
@@ -47,7 +47,7 @@ export const TimeFrameSelector = ({
   const customOption: CustomTimeFrame = {
     label: "Custom",
     startTime: timeframe.startTimeUnixNanoSec,
-    endTime: timeframe.endTimeUnixNanoSec,
+    endTime: new Date().getTime() * 1000 * 1000,
   };
 
   const buttonRef = useRef(null);
@@ -106,7 +106,7 @@ export const TimeFrameSelector = ({
       handleCustomClick(event);
     }
     calcTimeFrame(value);
-    onChange(timeframe);
+    onChange(timeframe, value.label !== "Custom");
     setIsSelected(value);
   };
 
@@ -138,7 +138,10 @@ export const TimeFrameSelector = ({
       >
         <DateTimeSelector
           onChange={onChange}
-          value={timeframe}
+          value={{
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            endTimeUnixNanoSec: new Date().getTime() * 1000 * 1000,
+          }}
           onClose={() => setOpen(false)}
         />
       </Popover>
@@ -157,22 +160,15 @@ export const TimeFrameSelector = ({
         </ToggleButton>
 
         {options.map((tf) => (
-          <Tooltip
+          <ToggleButton
+            onClick={handleBtnClicked}
+            selected={isSelected?.label === tf?.label}
+            value={tf}
+            ref={buttonRef}
             key={tf.label}
-            title={isSelected?.label === tf?.label ? getTooltipTitle() : ""}
-            placement="top-end"
-            arrow
           >
-            <ToggleButton
-              onClick={handleBtnClicked}
-              selected={isSelected?.label === tf?.label}
-              value={tf}
-              ref={buttonRef}
-              key={tf.label}
-            >
-              {tf.label}
-            </ToggleButton>
-          </Tooltip>
+            {tf.label}
+          </ToggleButton>
         ))}
       </ToggleButtonGroup>
     </div>

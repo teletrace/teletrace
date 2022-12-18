@@ -36,7 +36,7 @@ import { Timeframe } from "../../types/common";
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
-  onChange: (timeframe: Timeframe) => void;
+  onChange: (timeframe: Timeframe, isRelative: boolean) => void;
   value: Timeframe;
   onClose: () => void;
 };
@@ -79,14 +79,17 @@ export const DateTimeSelector = ({
     const timeRange = calcRange();
     if (timeRange.startRange < timeRange.endRange) {
       setTimeValid(true);
-      onChange({
-        startTimeUnixNanoSec: timeRange.startRange,
-        endTimeUnixNanoSec: timeRange.endRange,
-      });
+      onChange(
+        {
+          startTimeUnixNanoSec: timeRange.startRange,
+          endTimeUnixNanoSec: timeRange.endRange,
+        },
+        false
+      );
       onClose();
     } else {
       setTimeValid(false);
-      onChange(value);
+      onChange(value, false);
     }
   };
 

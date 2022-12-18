@@ -19,6 +19,7 @@ import { Button, Chip, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
+import { LiveSpansState } from "../../routes/SpanSearch";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 
@@ -27,6 +28,7 @@ export type SearchBarProps = {
   timeframe: Timeframe;
   onFilterAdded: (entry: SearchFilter) => void;
   onFilterDeleted: (entry: SearchFilter) => void;
+  liveSpans: LiveSpansState;
 };
 
 export function SearchBar({
@@ -34,6 +36,7 @@ export function SearchBar({
   timeframe,
   onFilterAdded,
   onFilterDeleted,
+  liveSpans,
 }: SearchBarProps) {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -65,6 +68,7 @@ export function SearchBar({
           onClose={handleClose}
           onApply={onFilterAdded}
           anchorEl={anchorEl}
+          liveSpans={liveSpans}
         />
         {filters.map((filter) => (
           <Chip

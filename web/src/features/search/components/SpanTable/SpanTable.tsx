@@ -91,7 +91,10 @@ export function SpanTable({
     isFetching,
     isLoading,
     hasNextPage,
-  } = useSpansQuery(searchRequest, liveSpans.isOn ? liveSpans.intervalInMs : 0);
+  } = useSpansQuery(
+    searchRequest,
+    liveSpans.isOn ? liveSpans.intervalInMilli : 0
+  );
 
   useEffect(
     () =>
