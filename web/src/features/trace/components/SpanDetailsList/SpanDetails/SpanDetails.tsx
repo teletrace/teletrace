@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ArrowForward, ArrowForwardIosSharp } from "@mui/icons-material";
+import { ArrowForwardIosSharp } from "@mui/icons-material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {
   Accordion,
@@ -89,17 +89,10 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             ...(expanded && styles.expandedAccordion),
           }}
         >
-          <Stack sx={styles.spanFlowIconsContainer}>
-            <ResourceIcon
-              name="defaultresourceicon"
-              style={styles.spanSourceIcon}
-            />
-            <ArrowForward style={styles.spanFlowArrowIcon} />
-            <ResourceIcon
-              name={getSpanResourceType(span)}
-              style={styles.spanDestIcon}
-            />
-          </Stack>
+          <ResourceIcon
+            name={getSpanResourceType(span)}
+            style={styles.spanIcon}
+          />
           <Stack>
             <Typography sx={styles.spanName}>{span.span.name}</Typography>
             <Typography sx={styles.spanTimes}>
