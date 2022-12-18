@@ -1,7 +1,7 @@
 /**
  * Copyright 2022 Cisco Systems, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ *   Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -30,11 +30,15 @@ const SECONDS_IN_DAY = 86400;
 interface RefreshButtonProps {
   searchRequest: SearchRequest;
   isLiveSpansOn: boolean;
+  isRefreshing: boolean;
+  handleIsRefreshing: (isRefreshing: boolean) => void;
 }
 
 export function RefreshButton({
   searchRequest,
   isLiveSpansOn,
+  isRefreshing,
+  handleIsRefreshing,
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
@@ -42,7 +46,6 @@ export function RefreshButton({
   const [rerenderInterval, setRerenderInterval] = useState<number>(
     A_FEW_SECONDS_AGO_THRESHOLD * 1000
   );
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -84,7 +87,7 @@ export function RefreshButton({
     useSpansQuery(searchRequest);
 
   if (isRefreshing && !isFetching) {
-    setIsRefreshing(false);
+    handleIsRefreshing(false);
   }
 
   const handleRefresh = () => {
@@ -92,7 +95,7 @@ export function RefreshButton({
     setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING);
     setRerenderInterval(0);
     removeSpansQueryFromCache();
-    setIsRefreshing(true);
+    handleIsRefreshing(true);
   };
 
   return (
