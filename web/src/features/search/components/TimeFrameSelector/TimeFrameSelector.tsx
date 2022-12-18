@@ -15,12 +15,7 @@
  */
 
 import { CalendarTodayOutlined } from "@mui/icons-material";
-import {
-  Popover,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-} from "@mui/material";
+import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
