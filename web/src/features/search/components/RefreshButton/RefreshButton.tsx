@@ -30,15 +30,11 @@ const SECONDS_IN_DAY = 86400;
 interface RefreshButtonProps {
   searchRequest: SearchRequest;
   isLiveSpansOn: boolean;
-  isRefreshing: boolean;
-  handleIsRefreshing: (isRefreshing: boolean) => void;
 }
 
 export function RefreshButton({
   searchRequest,
   isLiveSpansOn,
-  isRefreshing,
-  handleIsRefreshing,
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
@@ -46,6 +42,7 @@ export function RefreshButton({
   const [rerenderInterval, setRerenderInterval] = useState<number>(
     A_FEW_SECONDS_AGO_THRESHOLD * 1000
   );
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -87,7 +84,7 @@ export function RefreshButton({
     useSpansQuery(searchRequest);
 
   if (isRefreshing && !isFetching) {
-    handleIsRefreshing(false);
+    setIsRefreshing(false);
   }
 
   const handleRefresh = () => {
@@ -95,7 +92,9 @@ export function RefreshButton({
     setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING);
     setRerenderInterval(0);
     removeSpansQueryFromCache();
-    handleIsRefreshing(true);
+    const event = new Event("refresh");
+    document.dispatchEvent(event)
+    setIsRefreshing(true);
   };
 
   return (

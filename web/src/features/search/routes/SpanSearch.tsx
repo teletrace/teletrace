@@ -49,10 +49,6 @@ export const SpanSearch = () => {
     intervalInMs: 2000,
   });
 
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const handleIsRefreshing: (isRefreshing: boolean) => void = (isRefreshing) =>
-    setIsRefreshing(isRefreshing);
-
   const onTimeframeChange = useCallback(
     (timeframe: Timeframe) => {
       return setFiltersState((prevState: FiltersState) => {
@@ -126,8 +122,6 @@ export const SpanSearch = () => {
         <RefreshButton
           searchRequest={searchRequest}
           isLiveSpansOn={liveSpansState.isOn}
-          isRefreshing={isRefreshing}
-          handleIsRefreshing={handleIsRefreshing}
         />
 
         <Stack marginLeft="auto" direction="row">
@@ -174,7 +168,6 @@ export const SpanSearch = () => {
           <SpanTable
             searchRequest={searchRequest}
             liveSpans={liveSpansState}
-            isRefreshing={isRefreshing}
           />
         </Stack>
       </Stack>

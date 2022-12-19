@@ -39,7 +39,6 @@ const DEFAULT_SORT_ASC = false;
 interface SpanTableProps {
   searchRequest: SearchRequest;
   liveSpans: LiveSpansState;
-  isRefreshing: boolean;
 }
 
 interface SpansStateProps {
@@ -50,7 +49,6 @@ interface SpansStateProps {
 export function SpanTable({
   searchRequest,
   liveSpans,
-  isRefreshing,
 }: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef = useRef<Virtualizer>(null);
@@ -131,9 +129,9 @@ export function SpanTable({
 
   const tableWrapper = tableWrapperRef.current;
   if (tableWrapper) {
-    if (isRefreshing) {
+    document.addEventListener("refresh", () => {
       tableWrapper.scrollTop = 0;
-    }
+    });
 
     const firstRow = tableWrapper.querySelector<HTMLElement>(
       "tbody tr:first-child"
