@@ -25,11 +25,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { SearchRequest } from "@/features/search";
 import { InternalSpan } from "@/types/span";
-import {
-  formatDateAsDateTime,
-  nanoSecToMs,
-  roundNanoToTwoDecimalMs,
-} from "@/utils/format";
+import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { LiveSpansState } from "./../../routes/SpanSearch";
@@ -107,7 +103,7 @@ export function SpanTable({
         traceId: span.traceId,
         spanId: span.spanId,
         startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
-        duration: roundNanoToTwoDecimalMs(externalFields.durationNano),
+        duration: externalFields.durationNano,
         name: span.name,
         status: span.status.code,
         serviceName:

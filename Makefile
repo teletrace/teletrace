@@ -1,70 +1,73 @@
-OUT_DIR ?= out
-BIN_DIR := $(OUT_DIR)/bin
-VERBOSE ?= false
+ROOT :=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+WEB_ROOT := $(ROOT)/web
+SILENT ?= true
 
-ifneq (VERBOSE, true)
+OUT_DIR ?= $(ROOT)/out
+BIN_DIR := $(OUT_DIR)/bin
+
+ifneq ($(SILENT), false)
 .SILENT:
 endif
 
-.PHONY: all
-all: print-vars \
-	backend-build backend-test backend-lint backend-all \
-	frontend-install frontend-build frontend-test frontend-lint frontend-all \
-	docker-build-image
-test: backend-test frontend-test
+.PHONY: lint lint-fix test
+lint: frontend-lint backend-lint
+lint-fix: frontend-lint-fix backend-lint-fix
+test: frontend-test backend-test
 
-.PHONY: print-vars
-print-vars:
-	echo "VERBOSE: $(VERBOSE)"
-	echo "OUT_DIR: $(OUT_DIR)"
-	echo "BIN_DIR: $(BIN_DIR)"
+# frontend targets
+.PHONY: \
+	frontend-install \
+	frontend-lint \
+	frontend-lint-fix \
+	frontend-test \
+	frontend-build
 
-# backend
+frontend-install:
+	cd $(WEB_ROOT); yarn install
 
-.PHONY: backend-test
+frontend-lint: frontend-install
+	cd $(WEB_ROOT); yarn lint
+
+frontend-lint-fix: frontend-install
+	cd $(WEB_ROOT); yarn lint --fix
+
+frontend-test: frontend-install
+	cd $(WEB_ROOT); yarn test --watchAll=false --passWithNoTests
+
+frontend-build: frontend-install
+	cd $(WEB_ROOT); BUILD_PATH=$(BIN_DIR)/web yarn build
+
+
+# backend targets
+.PHONY: \
+	backend-lint \
+	backend-lint-fix \
+	backend-test
+
+backend-lint:
+	golangci-lint run --sort-results ./...
+
+backend-lint-fix:
+	golangci-lint run --sort-results --fix ./...
+
 backend-test:
 	go test -v ./...
 
-.PHONY: backend-lint
-backend-lint:
-	golangci-lint run --color always --sort-results ./...
 
-.PHONY: backend-build
-backend-build:
-	go build -o $(BIN_DIR)/oss-tracing ./cmd/all-in-one/main.go
+.PHONY: all-in-one
+all-in-one:
+	docker build --build-arg BUILD_INFO=$(git describe --tags) -f $(ROOT)/cmd/all-in-one/Dockerfile -t lupa-aio:latest .
 
-backend-all: backend-lint backend-test backend-build
-
-# frontend
-
-.PHONY: frontend-install
-# install dependencies
-frontend-install:
-	cd ./web; yarn install
-
-.PHONY: frontend-lint
-frontend-lint: frontend-install
-	cd ./web; yarn lint
-
-.PHONY: frontend-test
-frontend-test: frontend-install
-	cd ./web; yarn test -- --watchAll=false --passWithNoTests
-
-.PHONY: frontend-build
-frontend-build: frontend-install
-	 cd ./web; BUILD_PATH=../$(BIN_DIR)/web yarn build
-
-.PHONY: fronted-all
-frontend-all: frontend-install frontend-lint frontend-test frontend-build
-
-# docker
-
-.PHONY: docker-build-image
-docker-build-image:
-	docker build -t "epsagon/oss-tracing" cmd/all-in-one
+.PHONY: update-license-headers
+update-license-headers: bin/license-header-checker
+	bin/license-header-checker -v -a -r -i node_modules,web/src/features/trace/components/TraceTimeline .github/license_header.txt . ts tsx js go css
 
 bin/license-header-checker:
 	curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
 
-update-license-headers: bin/license-header-checker
-	bin/license-header-checker -v -a -r -i node_modules,web/src/features/trace/components/TraceTimeline .github/license_header.txt . ts tsx js go css
+.PHONY: list
+list:
+	@LC_ALL=C $(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | \
+		awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | \
+		sort | \
+		egrep -v -e '^[^[:alnum:]]' -e '^$@$$'

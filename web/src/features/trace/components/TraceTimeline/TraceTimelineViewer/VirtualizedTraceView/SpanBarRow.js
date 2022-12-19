@@ -1,9 +1,23 @@
+/*
+Copyright (c) 2017 Uber Technologies, Inc.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 import * as React from "react";
 import IoArrowRightA from "react-icons/lib/io/arrow-right-a";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { theme } from "@/styles";
 
+import { getSpanResourceType } from "../../../../utils/span-resource-type";
 import { formatDuration } from "../../utils/date.js";
 import TimelineRow from "../TimelineRow.js";
 import SpanBar from "./SpanBar.js";
@@ -54,7 +68,7 @@ export default class SpanBarRow extends React.PureComponent {
     const viewEnd = viewBounds.end;
     const icon = (
       <ResourceIcon
-        name="defaultresourceicon"
+        name={getSpanResourceType(span.originalSpan)}
         style={{ height: "15px", width: "15px" }}
       />
     );
@@ -69,7 +83,6 @@ export default class SpanBarRow extends React.PureComponent {
       longLabel = `${label} | ${labelDetail}`;
       hintSide = "right";
     }
-
     return (
       <TimelineRow
         className={`
