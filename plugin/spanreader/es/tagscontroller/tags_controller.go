@@ -151,7 +151,7 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 				fieldName := fieldMapping["full_name"].(string)
 				if _, ok := tagsMap[fieldName]; !ok {
 					tagsMap[fieldName] = tagsquery.TagInfo{
-						Name: fieldMapping["full_name"].(string),
+						Name: fieldName,
 						Type: valueData.(map[string]any)["type"].(string),
 					}
 				}
