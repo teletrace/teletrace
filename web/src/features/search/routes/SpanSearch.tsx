@@ -94,7 +94,7 @@ export const SpanSearch = () => {
       });
       return setTimeFrameState(timeframe);
     },
-    [toggleLiveSpans, setTimeFrameState, liveSpansState]
+    [liveSpansState, toggleLiveSpans, setTimeFrameState]
   );
 
   const onFilterChange = useCallback(
