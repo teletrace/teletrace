@@ -17,7 +17,7 @@
 import ReactSplit, { SplitDirection } from "@devbookhq/splitter";
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
@@ -71,12 +71,14 @@ export const TraceView = () => {
     setLayuotSizes(allSizes);
   }
 
-  const handleSelectedNodeChange = (node: GraphNode | null) => {
+  const handleInitialNodeSelection = useCallback((node: GraphNode) => {
     setSelectedNode(node);
-    if (!node) {
-      setSelectedSpanId(null);
-    }
-  };
+  }, []);
+
+  const handleSelectedNodeChange = useCallback((node: GraphNode) => {
+    setSelectedNode(node);
+    setSelectedSpanId(null);
+  }, []);
 
   if (isLoading) {
     return (
@@ -121,9 +123,10 @@ export const TraceView = () => {
               divider={<Divider orientation="vertical" flexItem />}
             >
               <TraceGraph
-                setSelectedNode={handleSelectedNodeChange}
                 spans={trace}
                 initiallyFocusedSpanId={initiallyFocusedSpanId}
+                onInitialNodeSelection={handleInitialNodeSelection}
+                onSelectedNodeChange={handleSelectedNodeChange}
               />
 
               <SpanDetailsList

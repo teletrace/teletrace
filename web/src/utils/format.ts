@@ -47,6 +47,11 @@ export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
   return Math.round(ms * 100) / 100;
 };
 
+export const formatDurationAsMs = (nanoSec: number) => {
+  const roundedMs = roundNanoToTwoDecimalMs(nanoSec);
+  return roundedMs < 0.01 ? "<0.01ms" : `${roundedMs}ms`;
+};
+
 export const formatNanoAsMsDateTime = (nanoSec: number) => {
   const ms = nanoSecToMs(nanoSec);
   return formatDateAsDateTime(ms, { showMs: true });
