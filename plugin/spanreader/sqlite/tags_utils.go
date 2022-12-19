@@ -16,6 +16,8 @@
 
 package sqlitespanreader
 
+import "fmt"
+
 const (
 	TextType   = "Str"
 	NumberType = "Int"
@@ -48,19 +50,22 @@ var staticTagTypeMap = map[string]string{
 	"externalFields.durationNano":         NumberType,
 }
 
-var dynamicTables = []string{
-	"event_attributes",
-	"link_attributes",
-	"scope_attributes",
-	"span_attributes",
-	"resource_attributes",
+var tablesTypeMap = map[string]bool{
+	"span_attributes":     true,
+	"events":              false,
+	"event_attributes":    true,
+	"links":               false,
+	"link_attributes":     true,
+	"resource_attributes": true,
+	"scope_attributes":    true,
+	"scopes":              false,
+	"spans":               false,
 }
 
 func isDynamicTagsTable(tableName string) bool {
-	for _, t := range dynamicTables {
-		if t == tableName {
-			return true
-		}
-	}
-	return false
+	return tablesTypeMap[tableName]
+}
+
+func createDynamicTagValueField(table string) string {
+	return fmt.Sprintf("%s.value", table)
 }

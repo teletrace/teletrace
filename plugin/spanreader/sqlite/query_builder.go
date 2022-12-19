@@ -25,22 +25,37 @@ import (
 )
 
 type QueryBuilder struct {
-	filters     []model.SearchFilter
-	dbTablesSet *Set
-	dbFieldsSet *Set
+	filters     []model.SearchFilter // Filters to be applied to the query
+	dbTablesSet *Set                 // Which tables are used in the query
+	dbFieldsSet *Set                 // Which fields are used in the query
 }
 
-func (qb *QueryBuilder) addFilter(filter model.SearchFilter) {
+func (qb *QueryBuilder) addFilter(filter model.SearchFilter) error {
+	dbTableName := findTableName(fmt.Sprintf("%v", filter.KeyValueFilter.Key))
+	if !isValidTable(dbTableName) {
+		return fmt.Errorf("invalid table name: %s", dbTableName)
+	}
 	if !isValidFilter(filter) {
-		return
+		return fmt.Errorf("invalid filter: %v", filter)
+	}
+	if !qb.doesTableExist(dbTableName) {
+		qb.addTable(dbTableName)
+	}
+	if isDynamicTagsTable(dbTableName) {
+		filter.KeyValueFilter.Key = model.FilterKey(createDynamicTagValueField(dbTableName))
 	}
 	qb.filters = append(qb.filters, filter)
+	return nil
 }
 
-func (qb *QueryBuilder) addFilters(filters []model.SearchFilter) {
+func (qb *QueryBuilder) addFilters(filters []model.SearchFilter) error {
 	for _, f := range filters {
-		qb.addFilter(f)
+		err := qb.addFilter(f)
+		if err != nil {
+			return fmt.Errorf("error adding filter: %v", err)
+		}
 	}
+	return nil
 }
 
 func (qb *QueryBuilder) addTable(tableName string) {
@@ -63,83 +78,114 @@ func (qb *QueryBuilder) getFilters() []model.SearchFilter {
 	return qb.filters
 }
 
-func (qb *QueryBuilder) tableExists(tableName string) bool {
+func (qb *QueryBuilder) doesTableExist(tableName string) bool {
 	return qb.dbTablesSet.Contains(tableName)
 }
 
-func (qb *QueryBuilder) addDynamicTagField(tableName string) {
-	qb.addField(fmt.Sprintf("%s.%s", tableName, "value"))
+func (qb *QueryBuilder) addDynamicTagValueField(tableName string) {
+	qb.addField(createDynamicTagValueField(tableName))
 }
 
-func (qb *QueryBuilder) addNewDynamicTagFilter(tableName string, tag string) {
-	qb.dbFieldsSet.Add(fmt.Sprintf("%s.%s", tableName, "value"))
-	switch tableName {
-	case "span_attributes":
-		qb.addTable("span_attributes")
-	case "resource_attributes":
-		qb.addTable("resource_attributes")
-	case "links":
-		qb.addTable("links")
-	case "events":
-		qb.addTable("events")
-	case "event_attributes":
-		qb.addTable("event_attributes")
-	case "link_attributes":
-		qb.addTable("link_attributes")
-	case "scope_attributes":
-		qb.addTable("scope_attributes")
+func (qb *QueryBuilder) addNewDynamicTagFilter(tableName string, tag string) error {
+	qb.addDynamicTagValueField(tableName)
+	err := qb.addFilter(newSearchFilter(fmt.Sprintf("%s.%s", tableName, "key"), spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", tag)))
+	if err != nil {
+		return fmt.Errorf("error adding dynamic tag filter: %v", err)
 	}
-	qb.addFilter(newSearchFilter(fmt.Sprintf("%s.%s", tableName, "key"), spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", tag)))
+	return nil
 }
 
 func (qb *QueryBuilder) covertFilterToSqliteQuery(filter model.SearchFilter) string {
-	if isValidFilter(filter) {
-		filterKey := fmt.Sprintf("%v", filter.KeyValueFilter.Key)
-		value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
-		dbTableName := findTableName(filterKey)
-		if !isValidTable(dbTableName) {
-			return ""
-		}
-		if isDynamicTagsTable(dbTableName) {
-			filterKey = fmt.Sprintf("%s.%s", dbTableName, "value")
-		}
-		if !qb.tableExists(dbTableName) {
-			qb.addTable(dbTableName)
-		}
-		return fmt.Sprintf("%s %s (%s)", filterKey, sqliteOperatorMap[string(filter.KeyValueFilter.Operator)], value) //  () for IN
+	filterKey := fmt.Sprintf("%v", filter.KeyValueFilter.Key)
+	value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+	switch filter.KeyValueFilter.Operator {
+	case spansquery.OPERATOR_EQUALS:
+		return fmt.Sprintf("%s = %s", filterKey, value)
+	case spansquery.OPERATOR_NOT_EQUALS:
+		return fmt.Sprintf("%s != %s", filterKey, value)
+	case spansquery.OPERATOR_GT:
+		return fmt.Sprintf("%s > %s", filterKey, value)
+	case spansquery.OPERATOR_GTE:
+		return fmt.Sprintf("%s >= %s", filterKey, value)
+	case spansquery.OPERATOR_LT:
+		return fmt.Sprintf("%s < %s", filterKey, value)
+	case spansquery.OPERATOR_LTE:
+		return fmt.Sprintf("%s <= %s", filterKey, value)
+	case spansquery.OPERATOR_EXISTS:
+		return fmt.Sprintf("%s IS NOT NULL", filterKey)
+	case spansquery.OPERATOR_NOT_EXISTS:
+		return fmt.Sprintf("%s IS NULL", filterKey)
+	case spansquery.OPERATOR_CONTAINS:
+		return fmt.Sprintf("%s LIKE '%%%s%%'", filterKey, value)
+	case spansquery.OPERATOR_NOT_CONTAINS:
+		return fmt.Sprintf("%s NOT LIKE '%%%s%%'", filterKey, value)
+	case spansquery.OPERATOR_IN:
+		return fmt.Sprintf("%s IN (%s)", filterKey, value)
+	case spansquery.OPERATOR_NOT_IN:
+		return fmt.Sprintf("%s NOT IN (%s)", filterKey, value)
+	default:
+		return ""
 	}
-	return ""
 }
 
-func (qb *QueryBuilder) optimizeFilters() {
+func (qb *QueryBuilder) addJoinConditions() {
 	for _, t := range qb.getTables() {
 		switch t {
 		case "span_attributes":
-			qb.addFilter(newSearchFilter("span_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err := qb.addFilter(newSearchFilter("span_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			if err != nil {
+				continue
+			}
 		case "resource_attributes":
-			qb.addFilter(newSearchFilter("resource_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
+			err := qb.addFilter(newSearchFilter("resource_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
+			if err != nil {
+				continue
+			}
 		case "links":
-			qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err := qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			if err != nil {
+				continue
+			}
 		case "events":
-			qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err := qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			if err != nil {
+				continue
+			}
 		case "event_attributes":
-			qb.addFilter(newSearchFilter("event_attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
-			qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err := qb.addFilter(newSearchFilter("event_attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
+			if err != nil {
+				continue
+			}
+			err = qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			if err != nil {
+				continue
+			}
 		case "link_attributes":
-			qb.addFilter(newSearchFilter("link_attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
-			qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err := qb.addFilter(newSearchFilter("link_attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
+			if err != nil {
+				continue
+			}
+			err = qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			if err != nil {
+				continue
+			}
 		case "scope_attributes":
-			qb.addFilter(newSearchFilter("scope_attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
+			err := qb.addFilter(newSearchFilter("scope_attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
+			if err != nil {
+				continue
+			}
 		}
 	}
 }
 
-func (qb *QueryBuilder) buildQuery() string {
-	qb.optimizeFilters()
+func (qb *QueryBuilder) getQueryParams() map[string]string {
+	qb.addJoinConditions()
 	filters := qb.buildFilters()
 	fields := qb.buildFields()
 	tables := qb.buildTables()
-	return fmt.Sprintf("SELECT %s ,COUNT(*) FROM %s %s", fields, tables, filters)
+	return map[string]string{
+		"tables": tables, "fields": fields, "filters": filters,
+	}
 }
 
 func (qb *QueryBuilder) buildTables() string {
@@ -153,12 +199,9 @@ func (qb *QueryBuilder) buildFields() string {
 func (qb *QueryBuilder) buildFilters() string {
 	var filterStrings []string
 	for _, filter := range qb.getFilters() {
-		filterString := qb.covertFilterToSqliteQuery(filter)
-		if filterString != "" {
-			filterStrings = append(filterStrings, filterString)
-		}
+		filterStrings = append(filterStrings, qb.covertFilterToSqliteQuery(filter))
 	}
-	return fmt.Sprintf("WHERE %s", strings.Join(filterStrings, " AND "))
+	return strings.Join(filterStrings, " AND ")
 }
 
 func newQueryBuilder() *QueryBuilder {

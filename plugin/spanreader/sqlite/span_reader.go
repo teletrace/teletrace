@@ -52,7 +52,7 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 		tag.Type = fieldType
 		tags.Tags = append(tags.Tags, tag)
 	}
-	query := getAllDynamicTagsQuery()
+	query := buildDynamicTagsQuery()
 
 	stmt, err := sr.client.db.PrepareContext(ctx, query)
 	if err != nil {
@@ -82,18 +82,25 @@ func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRe
 	result := make(map[string]*tagsquery.TagValuesResponse)
 	for _, tag := range tags {
 		var currentTagValues []tagsquery.TagValueInfo
-		query := getTagValuesQuery(r, tag)
+		query, err := buildTagValuesQuery(r, tag)
+		if err != nil {
+			sr.logger.Error("failed to build tag values query for: "+tag, zap.Error(err))
+			continue
+		}
 		rows, err := sr.client.db.QueryContext(ctx, query)
 		if err != nil {
-			sr.logger.Error("failed to query tags values", zap.Error(err))
+			sr.logger.Error("failed to query tags values for: "+tag, zap.Error(err))
 			continue
 		}
 		for rows.Next() {
-			var name string
+			var name any
 			var count int
 			err = rows.Scan(&name, &count)
 			if err != nil {
 				sr.logger.Error("failed to get tag value", zap.Error(err))
+				continue
+			}
+			if name == nil {
 				continue
 			}
 			currentTagValues = append(currentTagValues, tagsquery.TagValueInfo{

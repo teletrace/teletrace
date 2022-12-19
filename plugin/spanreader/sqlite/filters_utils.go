@@ -66,7 +66,7 @@ var sqliteFieldsMap = map[string]string{
 	"externalFields.durationNano":         "spans.duration",
 }
 
-var sqliteTablesMap = map[string]string{
+var sqliteTableNameMap = map[string]string{
 	"span.attributes":       "span_attributes",
 	"span.events":           "events",
 	"span.event.attributes": "event_attributes",
@@ -79,19 +79,19 @@ var sqliteTablesMap = map[string]string{
 }
 
 // should be ordered, regular map is not option
-var tablesMapKeys = []string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
+var filterTablesNames = []string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
 
 func findTableName(filterKey string) string {
-	for _, tableKey := range tablesMapKeys {
+	for _, tableKey := range filterTablesNames {
 		if strings.HasPrefix(filterKey, tableKey) {
-			return sqliteTablesMap[tableKey]
+			return sqliteTableNameMap[tableKey]
 		}
 	}
 	return ""
 }
 
 func isValidTable(table string) bool {
-	for _, value := range sqliteTablesMap {
+	for _, value := range sqliteTableNameMap {
 		if value == table {
 			return true
 		}
@@ -99,39 +99,33 @@ func isValidTable(table string) bool {
 	return false
 }
 
-func normalizeFiltersForSqliteFormat(filters []model.SearchFilter) []model.SearchFilter {
-	var optimizedFilters []model.SearchFilter
+func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
+	var convertedFilters []model.SearchFilter
 	for _, filter := range filters {
-		var filterValue string
+		var newFilterValue string
 		values, ok := filter.KeyValueFilter.Value.([]interface{})
 		if ok {
-			var strOfValues []string
+			var valuesStrSlice []string
 			for _, value := range values {
 				str, ok := value.(string)
 				if !ok {
 					continue
 				}
-				strOfValues = append(strOfValues, fmt.Sprintf("'%v'", str))
+				valuesStrSlice = append(valuesStrSlice, fmt.Sprintf("'%v'", str))
 			}
-			filterValue = strings.Join(strOfValues, ",")
+			newFilterValue = strings.Join(valuesStrSlice, ",")
 		} else if str, ok := filter.KeyValueFilter.Value.(string); ok {
-			filterValue = str
+			newFilterValue = str
 		} else {
 			continue
 		}
-		optimizedFilters = append(optimizedFilters, model.SearchFilter{
-			KeyValueFilter: &model.KeyValueFilter{
-				Key:      filter.KeyValueFilter.Key,
-				Operator: filter.KeyValueFilter.Operator,
-				Value:    filterValue,
-			},
-		})
+		convertedFilters = append(convertedFilters, newSearchFilter(string(filter.KeyValueFilter.Key), filter.KeyValueFilter.Operator, newFilterValue))
 	}
-	return optimizedFilters
+	return convertedFilters
 }
 
 func removeTablePrefixFromDynamicTag(tag string) string {
-	for _, tableKey := range tablesMapKeys {
+	for _, tableKey := range filterTablesNames {
 		if strings.HasPrefix(tag, tableKey) {
 			return strings.ReplaceAll(tag, tableKey+".", "")
 		}
@@ -146,14 +140,14 @@ func isValidFilter(filter model.SearchFilter) bool {
 	if filter.KeyValueFilter.Key == "" {
 		return false
 	}
-	if _, ok := sqliteOperatorMap[string(filter.KeyValueFilter.Operator)]; !ok {
+	if op, ok := sqliteOperatorMap[string(filter.KeyValueFilter.Operator)]; ok {
+		if op != "IS NOT NULL" && op != "IS NULL" && filter.KeyValueFilter.Value == "" {
+			return false
+		}
+	} else {
 		return false
 	}
 	return true
-}
-
-func isNotEmptyString(str string) bool {
-	return str != ""
 }
 
 func newSearchFilter(filterKey string, filterOperator model.FilterOperator, filterValue model.FilterValue) model.SearchFilter {
