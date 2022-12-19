@@ -52,8 +52,7 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 		tag.Type = fieldType
 		tags.Tags = append(tags.Tags, tag)
 	}
-
-	query := `SELECT DISTINCT "span.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM span_attributes t UNION ALL SELECT DISTINCT "span.event.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM event_attributes t UNION ALL SELECT DISTINCT "span.link.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM link_attributes t UNION ALL SELECT DISTINCT "scope.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM scope_attributes t UNION ALL SELECT DISTINCT "resource.attributes" as table_key, t.key as tag_name, t.type as tag_value FROM resource_attributes t`
+	query := getAllDynamicTagsQuery()
 
 	stmt, err := sr.client.db.PrepareContext(ctx, query)
 	if err != nil {
@@ -83,7 +82,7 @@ func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRe
 	result := make(map[string]*tagsquery.TagValuesResponse)
 	for _, tag := range tags {
 		var currentTagValues []tagsquery.TagValueInfo
-		query := buildTagsValuesQuery(r, tag)
+		query := getTagValuesQuery(r, tag)
 		rows, err := sr.client.db.QueryContext(ctx, query)
 		if err != nil {
 			sr.logger.Error("failed to query tags values", zap.Error(err))
