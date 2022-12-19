@@ -19,9 +19,9 @@ import { Button, Chip, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
-import { LiveSpansState } from "../../routes/SpanSearch";
 import { theme } from "@/styles";
 
+import { LiveSpansState } from "../../routes/SpanSearch";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { styles } from "./styles";
@@ -79,11 +79,11 @@ export function SearchBar({
           {filters.map((filter) => (
             <Chip
               key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator}`}
-                size="small"
-                label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
-                onDelete={() => onFilterDeleted(filter)}
-              />
-            ))}
+              size="small"
+              label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
+              onDelete={() => onFilterDeleted(filter)}
+            />
+          ))}
         </Stack>
         <Stack direction="row" sx={styles.clear}>
           <Divider
