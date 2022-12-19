@@ -184,6 +184,11 @@ export const SpanSearch = () => {
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
             liveSpans={liveSpansState}
+            onClearFilters={() =>
+              setFiltersState((prevState: FiltersState) => {
+                return { ...prevState, filters: [] };
+              })
+            }
           />
           <SpanTable
             filters={filtersState.filters}
