@@ -170,10 +170,7 @@ export const SpanSearch = () => {
               })
             }
           />
-          <SpanTable
-            searchRequest={searchRequest}
-            liveSpans={liveSpansState}
-          />
+          <SpanTable searchRequest={searchRequest} liveSpans={liveSpansState} />
         </Stack>
       </Stack>
     </Stack>

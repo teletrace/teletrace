@@ -16,12 +16,12 @@
 
 import { Brightness1, Refresh } from "@mui/icons-material";
 import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
-import {useRefreshRender} from "@/features/search/components/RefreshButton/useRefreshRender";
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchRequest } from "../../types/spanQuery";
 import styles from "./styles";
+import { useRefreshRender } from "./useRefreshRender";
 
 const A_FEW_SECONDS_AGO_STRING = "a few seconds ago";
 
@@ -36,7 +36,8 @@ export function RefreshButton({
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] = useRefreshRender(lastRefreshed)
+  const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
+    useRefreshRender(lastRefreshed);
 
   const { remove: removeSpansQueryFromCache, isFetching } =
     useSpansQuery(searchRequest);
@@ -47,10 +48,10 @@ export function RefreshButton({
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
-    setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING)
+    setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING);
     removeSpansQueryFromCache();
     const event = new Event("refresh");
-    document.dispatchEvent(event)
+    document.dispatchEvent(event);
     setIsRefreshing(true);
   };
 

@@ -46,10 +46,7 @@ interface SpansStateProps {
   newSpansIds: string[];
 }
 
-export function SpanTable({
-  searchRequest,
-  liveSpans,
-}: SpanTableProps) {
+export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef = useRef<Virtualizer>(null);
 
