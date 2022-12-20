@@ -16,7 +16,7 @@
 
 import { Brightness1, Refresh } from "@mui/icons-material";
 import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchRequest } from "../../types/spanQuery";
@@ -37,48 +37,22 @@ export function RefreshButton({
   isLiveSpansOn,
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
-  const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
-    useState<string>(A_FEW_SECONDS_AGO_STRING);
-  const [rerenderInterval, setRerenderInterval] = useState<number>(
-    A_FEW_SECONDS_AGO_THRESHOLD * 1000
-  );
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] = useState<string>(A_FEW_SECONDS_AGO_STRING);
 
   useEffect(() => {
-    const interval = setInterval(() => {
       const currentTime = new Date();
       const timeSinceLastRefresh = lastRefreshed
-        ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
-        : 0;
+          ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
+          : 0;
+      const timeoutDuration = calculateTimout(timeSinceLastRefresh) * 1000;
 
-      if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
-        setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING);
-        setRerenderInterval(A_FEW_SECONDS_AGO_THRESHOLD * 1000);
-      } else if (timeSinceLastRefresh < 60) {
-        setTimeSinceLastRefreshString("under a minute ago");
-        setRerenderInterval(50 * 1000);
-      } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
-        const minutes = Math.round(timeSinceLastRefresh / 60);
-        setTimeSinceLastRefreshString(
-          `${minutes} minute${minutes === 1 ? "" : "s"} ago`
-        );
-        setRerenderInterval(60 * 1000);
-      } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
-        const hours = Math.round(timeSinceLastRefresh / SECONDS_IN_HOUR);
-        setTimeSinceLastRefreshString(
-          `${hours} hour${hours === 1 ? "" : "s"} ago`
-        );
-        setRerenderInterval(SECONDS_IN_HOUR * 1000);
-      } else {
-        const days = Math.round(timeSinceLastRefresh / SECONDS_IN_DAY);
-        setTimeSinceLastRefreshString(
-          `${days} day${days === 1 ? "" : "s"} ago`
-        );
-        setRerenderInterval(SECONDS_IN_DAY * 1000);
-      }
-    }, rerenderInterval);
-    return () => clearInterval(interval);
-  }, [lastRefreshed, rerenderInterval]);
+      const timeout = setTimeout(() => {
+        setTimeSinceLastRefreshString(calculateNextTimeString(timeSinceLastRefresh));
+      }, timeoutDuration);
+
+      return () => clearTimeout(timeout)
+  }, [timeSinceLastRefreshString]);
 
   const { remove: removeSpansQueryFromCache, isFetching } =
     useSpansQuery(searchRequest);
@@ -89,8 +63,7 @@ export function RefreshButton({
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
-    setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING);
-    setRerenderInterval(0);
+    setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING)
     removeSpansQueryFromCache();
     const event = new Event("refresh");
     document.dispatchEvent(event)
@@ -121,4 +94,35 @@ export function RefreshButton({
       </span>
     </Stack>
   );
+}
+
+function calculateTimout(timeSinceLastRefresh: number): number {
+    if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
+        return A_FEW_SECONDS_AGO_THRESHOLD - timeSinceLastRefresh;
+    } else if (timeSinceLastRefresh < 60) {
+        return 60 - timeSinceLastRefresh;
+    } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
+        return 60;
+    } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
+        return SECONDS_IN_HOUR
+    } else {
+        return SECONDS_IN_DAY;
+    }
+
+}
+function calculateNextTimeString(timeSinceLastRefresh: number): string {
+    if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
+        return "under a minute ago";
+    } else if (timeSinceLastRefresh < 60) {
+        return "a minute ago";
+    } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
+        const minutes = Math.round(timeSinceLastRefresh / 60) + 1;
+        return `${minutes} minute${minutes === 1 ? "" : "s"} ago`
+    } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
+        const hours = Math.ceil(timeSinceLastRefresh / SECONDS_IN_HOUR);
+        return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    } else {
+        const days = Math.round(timeSinceLastRefresh / SECONDS_IN_DAY);
+        return `${days} day${days === 1 ? "" : "s"} ago`;
+    }
 }
