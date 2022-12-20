@@ -45,11 +45,12 @@ export function RefreshButton({
       const timeSinceLastRefresh = lastRefreshed
           ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
           : 0;
-      const timeoutDuration = calculateTimout(timeSinceLastRefresh) * 1000;
+      const nextRender = calcNextRender(timeSinceLastRefresh);
+
 
       const timeout = setTimeout(() => {
-        setTimeSinceLastRefreshString(calculateNextTimeString(timeSinceLastRefresh));
-      }, timeoutDuration);
+        setTimeSinceLastRefreshString(nextRender.displayString);
+      }, nextRender.timeout * 1000);
 
       return () => clearTimeout(timeout)
   }, [timeSinceLastRefreshString]);
@@ -96,33 +97,34 @@ export function RefreshButton({
   );
 }
 
-function calculateTimout(timeSinceLastRefresh: number): number {
+function calcNextRender(timeSinceLastRefresh: number): { displayString: string, timeout: number } {
     if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
-        return A_FEW_SECONDS_AGO_THRESHOLD - timeSinceLastRefresh;
+        return {
+            displayString: "under a minute ago",
+            timeout: A_FEW_SECONDS_AGO_THRESHOLD - timeSinceLastRefresh,
+        }
     } else if (timeSinceLastRefresh < 60) {
-        return 60 - timeSinceLastRefresh;
-    } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
-        return 60;
-    } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
-        return SECONDS_IN_HOUR
-    } else {
-        return SECONDS_IN_DAY;
-    }
-
-}
-function calculateNextTimeString(timeSinceLastRefresh: number): string {
-    if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
-        return "under a minute ago";
-    } else if (timeSinceLastRefresh < 60) {
-        return "a minute ago";
+        return {
+            displayString: "a minute ago",
+            timeout: 60 - timeSinceLastRefresh,
+        }
     } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
         const minutes = Math.round(timeSinceLastRefresh / 60) + 1;
-        return `${minutes} minute${minutes === 1 ? "" : "s"} ago`
+        return {
+            displayString: `${minutes} minute${minutes === 1 ? "" : "s"} ago`,
+            timeout: 60,
+        }
     } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
         const hours = Math.ceil(timeSinceLastRefresh / SECONDS_IN_HOUR);
-        return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+        return {
+            displayString:  `${hours} hour${hours === 1 ? "" : "s"} ago`,
+            timeout: SECONDS_IN_HOUR,
+        }
     } else {
         const days = Math.round(timeSinceLastRefresh / SECONDS_IN_DAY);
-        return `${days} day${days === 1 ? "" : "s"} ago`;
+        return {
+            displayString:  `${days} day${days === 1 ? "" : "s"} ago`,
+            timeout: SECONDS_IN_DAY,
+        }
     }
 }
