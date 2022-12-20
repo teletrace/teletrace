@@ -7,6 +7,7 @@ const SECONDS_IN_DAY = 86400;
 
 export function useRefreshRender(lastRefreshed: Date): [string, (timeSinceLastRefreshString: string) => void]  {
     const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] = useState<string>(A_FEW_SECONDS_AGO_STRING);
+
     useEffect(() => {
         const currentTime = new Date();
         const timeSinceLastRefresh = lastRefreshed
