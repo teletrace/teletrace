@@ -164,6 +164,11 @@ export const SpanSearch = () => {
             filters={filtersState.filters}
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
+            onClearFilters={() =>
+              setFiltersState((prevState: FiltersState) => {
+                return { ...prevState, filters: [] };
+              })
+            }
           />
           <SpanTable
             searchRequest={searchRequest}
