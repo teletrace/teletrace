@@ -92,17 +92,18 @@ export function SpanTable({
     liveSpans.isOn ? liveSpans.intervalInMilli : 0
   );
 
-  useEffect(
-    () =>
-      setSpansState((prevState) => {
-        const spans = data?.pages?.flatMap((page) => page.spans) || [];
-        return {
-          spans: spans,
-          newSpansIds: calcNewSpans(prevState.spans, spans),
-        };
-      }),
-    [data]
-  );
+  useEffect(() => {
+    setSpansState((prevState) => {
+      return { spans: prevState.spans, newSpansIds: [] };
+    });
+    setSpansState((prevState) => {
+      const spans = data?.pages?.flatMap((page) => page.spans) || [];
+      return {
+        spans: spans,
+        newSpansIds: calcNewSpans(prevState.spans, spans),
+      };
+    });
+  }, [data]);
 
   const { spans, newSpansIds } = spansState;
 
@@ -124,12 +125,6 @@ export function SpanTable({
         isNew: span.spanId in newSpansIds,
       })
     ) ?? [];
-
-  // reset newSpansIds
-  useDebouncedCallback(
-    () => setSpansState({ spans: spans, newSpansIds: [] }),
-    500
-  )();
 
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
@@ -208,6 +203,10 @@ export function SpanTable({
           className: newSpansIds.includes(row.original.spanId)
             ? "MuiTableRow-grey"
             : "",
+          sx: newSpansIds.includes(row.original.spanId)
+            ? styles.newTableRow
+            : null,
+          key: row.original.spanId, // required for new spans animation
         })}
         initialState={{ density: "compact" }}
       />
