@@ -97,9 +97,6 @@ export function SpanTable({
 
   useEffect(() => {
     setSpansState((prevState) => {
-      return { spans: prevState.spans, newSpansIds: [] };
-    });
-    setSpansState((prevState) => {
       const spans = data?.pages?.flatMap((page) => page.spans) || [];
       return {
         spans: spans,

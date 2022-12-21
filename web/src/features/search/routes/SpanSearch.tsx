@@ -32,7 +32,6 @@ export type FiltersState = {
 
 export type LiveSpansState = {
   isOn: boolean;
-  isDisabled?: boolean;
   intervalInMilli?: number;
 };
 
