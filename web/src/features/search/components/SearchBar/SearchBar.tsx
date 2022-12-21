@@ -21,14 +21,14 @@ import { useState } from "react";
 
 import { theme } from "@/styles";
 
-import { LiveSpansState } from "../../routes/SpanSearch";
-import { SearchFilter, Timeframe } from "../../types/common";
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
+import { SearchFilter } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { styles } from "./styles";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   onFilterAdded: (entry: SearchFilter) => void;
   onFilterDeleted: (entry: SearchFilter) => void;
   liveSpans: LiveSpansState;

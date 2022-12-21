@@ -27,14 +27,14 @@ import { useDebounce } from "use-debounce";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { LiveSpansState } from "../../routes/SpanSearch";
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { FilterValueTypes, SearchFilter, Timeframe } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 const useGetTagOptions = (
   tag: string,
-  timeframe: Timeframe,
+  timeframe: TimeFrameState,
   filters: Array<SearchFilter>,
   selectedOptions: (string | number)[],
   liveSpans: LiveSpansState,
@@ -49,7 +49,10 @@ const useGetTagOptions = (
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
       tag,
-      timeframe,
+      {
+        startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+        endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+      },
       searchQueryFilters,
       liveSpans.isOn ? liveSpans.intervalInMilli : 0
     );
@@ -67,7 +70,7 @@ const useGetTagOptions = (
 
 export type AutoCompleteValueSelectorProps = {
   tag: string;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
   value: (string | number)[];
   onChange: (value: FilterValueTypes) => void;

@@ -36,6 +36,12 @@ export type LiveSpansState = {
   intervalInMilli?: number;
 };
 
+export type TimeFrameState = {
+  startTimeUnixNanoSec: number;
+  endTimeUnixNanoSec: number;
+  isRelative: boolean;
+};
+
 export const SpanSearch = () => {
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
@@ -43,54 +49,52 @@ export const SpanSearch = () => {
 
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
     isOn: false,
-    isDisabled: false,
     intervalInMilli: 2000,
   });
 
-  const [timeFrameState, setTimeFrameState] = useState<Timeframe>({
+  const [timeFrameState, setTimeFrameState] = useState<TimeFrameState>({
     startTimeUnixNanoSec: (new Date().getTime() - 1000 * 60 * 60) * 1000 * 1000, // 1H
     endTimeUnixNanoSec: new Date().getTime() * 1000 * 1000,
+    isRelative: true,
   });
 
-  const toggleLiveSpans = ({ isOn, isDisabled }: LiveSpansState) => {
+  const toggleLiveSpans = ({ isOn }: LiveSpansState) => {
     setLiveSpansState((prevState) => ({
       ...prevState,
       isOn: isOn,
-      isDisabled: isDisabled === undefined ? prevState.isDisabled : isDisabled,
     }));
     if (isOn) {
       setTimeFrameState((prevState) => {
         return {
           startTimeUnixNanoSec: prevState.startTimeUnixNanoSec,
           endTimeUnixNanoSec: 0, // means up to Now
+          isRelative: prevState.isRelative,
         };
       });
     }
   };
 
   const onTimeframeChange = useCallback(
-    (timeframe: Timeframe, isRelative: boolean) => {
-      if (isRelative) {
+    (timeframe: TimeFrameState) => {
+      if (timeframe.isRelative) {
         if (liveSpansState.isOn) {
           toggleLiveSpans({
             isOn: true,
-            isDisabled: false,
           });
         } else {
           toggleLiveSpans({
             isOn: false,
-            isDisabled: false,
           });
         }
         return setTimeFrameState({
           endTimeUnixNanoSec: 0,
           startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+          isRelative: timeframe.isRelative,
         });
       }
       // disable liveSpans if user selected custom timeframe
       toggleLiveSpans({
         isOn: false,
-        isDisabled: true,
       });
       return setTimeFrameState(timeframe);
     },
@@ -152,7 +156,7 @@ export const SpanSearch = () => {
           <LiveSpanSwitch
             isOn={liveSpansState.isOn}
             onLiveSpansChange={toggleLiveSpans}
-            disabled={liveSpansState.isDisabled || false}
+            disabled={!timeFrameState.isRelative}
           />
         </Stack>
       </Stack>

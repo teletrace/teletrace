@@ -32,12 +32,12 @@ import { useState } from "react";
 
 import { msToNanoSec } from "@/utils/format";
 
-import { Timeframe } from "../../types/common";
+import { TimeFrameState } from "../../routes/SpanSearch";
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
-  onChange: (timeframe: Timeframe, isRelative: boolean) => void;
-  value: Timeframe;
+  onChange: (timeframe: TimeFrameState) => void;
+  value: TimeFrameState;
   onClose: () => void;
 };
 
@@ -79,17 +79,15 @@ export const DateTimeSelector = ({
     const timeRange = calcRange();
     if (timeRange.startRange < timeRange.endRange) {
       setTimeValid(true);
-      onChange(
-        {
-          startTimeUnixNanoSec: timeRange.startRange,
-          endTimeUnixNanoSec: timeRange.endRange,
-        },
-        false
-      );
+      onChange({
+        startTimeUnixNanoSec: timeRange.startRange,
+        endTimeUnixNanoSec: timeRange.endRange,
+        isRelative: false,
+      });
       onClose();
     } else {
       setTimeValid(false);
-      onChange(value, false);
+      onChange(value);
     }
   };
 

@@ -108,8 +108,8 @@ export const useTagValuesWithAll = (
   intervalInMilli?: number
 ) => {
   const currentValuesRequest: TagValuesRequest = {
-    timeframe: timeframe,
     filters: filters,
+    timeframe: timeframe,
   };
   const allValuesRequest: TagValuesRequest = { filters: [] };
   const {

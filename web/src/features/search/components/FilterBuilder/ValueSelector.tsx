@@ -17,11 +17,10 @@
 import { FormLabel, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import { LiveSpansState } from "../../routes/SpanSearch";
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import {
   FilterValueTypes,
   SearchFilter,
-  Timeframe,
   ValueInputMode,
 } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
@@ -30,7 +29,7 @@ import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
   query?: TagValuesRequest;
   value: FilterValueTypes;

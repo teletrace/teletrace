@@ -27,8 +27,8 @@ import { InternalSpan } from "@/types/span";
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/common";
-import { LiveSpansState } from "./../../routes/SpanSearch";
+import { SearchFilter } from "../../types/common";
+import { LiveSpansState, TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -38,7 +38,7 @@ const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
   filters?: SearchFilter[];
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   liveSpans: LiveSpansState;
 }
 
@@ -74,7 +74,10 @@ export function SpanTable({
 
   const searchRequest = {
     filters: filters,
-    timeframe: timeframe,
+    timeframe: {
+      startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+      endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+    },
     sort: sort,
     metadata: undefined,
   };

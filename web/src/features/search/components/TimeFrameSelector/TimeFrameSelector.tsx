@@ -20,12 +20,12 @@ import { MouseEvent, useRef, useState } from "react";
 
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
-import { Timeframe } from "../../types/common";
+import { TimeFrameState } from "../../routes/SpanSearch";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
-  onChange: (timeframe: Timeframe, isRelative: boolean) => void;
-  value: Timeframe;
+  onChange: (timeframe: TimeFrameState) => void;
+  value: TimeFrameState;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -101,7 +101,7 @@ export const TimeFrameSelector = ({
       handleCustomClick(event);
     }
     calcTimeFrame(value);
-    onChange(timeframe, value.label !== "Custom");
+    onChange({ ...timeframe, isRelative: value.label !== "Custom" });
     setIsSelected(value);
   };
 
@@ -136,6 +136,7 @@ export const TimeFrameSelector = ({
           value={{
             startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
             endTimeUnixNanoSec: new Date().getTime() * 1000 * 1000,
+            isRelative: timeframe.isRelative,
           }}
           onClose={() => setOpen(false)}
         />
