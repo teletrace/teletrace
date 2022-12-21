@@ -28,7 +28,7 @@ import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
-import { FilterValueTypes, SearchFilter, Timeframe } from "../../types/common";
+import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 

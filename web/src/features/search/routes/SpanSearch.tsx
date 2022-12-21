@@ -24,7 +24,7 @@ import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
-import { SearchFilter, Timeframe } from "../types/common";
+import { SearchFilter } from "../types/common";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;
