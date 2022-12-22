@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { Paper, Stack } from "@mui/material";
+import {Paper, Stack} from "@mui/material";
 
-import { StatusCode } from "@/types/span";
-
-import { SearchFilter, Timeframe } from "../../types/common";
-import { TagValuesSelector } from "../TagValuesSelector";
-import { styles } from "./styles";
+import {StatusCode} from "@/types/span";
 import {nanoSecToMs} from "@/utils/format";
+
+import {SearchFilter, Timeframe} from "../../types/common";
+import {SelectorType, TagValuesSelector} from "../TagValuesSelector";
+import {styles} from "./styles";
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
@@ -33,7 +33,7 @@ type TagOptions = {
   title: string;
   tag: string;
   isSearchable: boolean;
-  isSlider?: boolean;
+  selectorType: SelectorType;
   render?: (value: string | number) => React.ReactNode;
 };
 
@@ -54,36 +54,46 @@ export const TagSidebar = ({
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
+      selectorType: SelectorType.CheckboxList,
       render: (value) => StatusCode[parseInt(value.toString())],
     },
     {
       title: "Duration",
       tag: "externalFields.durationNano",
       isSearchable: false,
-      isSlider: true,
+      selectorType: SelectorType.RangeSlider,
       render: (value) => nanoSecToMs(value as number),
     },
     {
       title: "Service Name",
       tag: "resource.attributes.service.name",
+      selectorType: SelectorType.CheckboxList,
       isSearchable: true,
     },
     {
       title: "HTTP Route",
       tag: "span.attributes.http.route",
+      selectorType: SelectorType.CheckboxList,
       isSearchable: true,
     },
     {
       title: "HTTP Method",
       tag: "span.attributes.http.method",
+      selectorType: SelectorType.CheckboxList,
       isSearchable: true,
     },
     {
       title: "HTTP Status Code",
       tag: "span.attributes.http.status_code",
+      selectorType: SelectorType.CheckboxList,
       isSearchable: true,
     },
-    { title: "Instrumentation Library", tag: "scope.name", isSearchable: true },
+    {
+      title: "Instrumentation Library",
+      tag: "scope.name",
+      selectorType: SelectorType.CheckboxList,
+      isSearchable: true
+    },
   ];
 
   return (
@@ -113,7 +123,7 @@ export const TagSidebar = ({
               timeframe={timeframe}
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
-              isSlider={t.isSlider}
+              selectorType={t.selectorType}
               render={t.render}
             />
           );
