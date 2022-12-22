@@ -81,28 +81,26 @@ var sqliteTableNameMap = map[string]string{
 // should be ordered, regular map is not option
 var filterTablesNames = []string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
 
-func findTableName(filterKey string) string {
-	for _, tableKey := range filterTablesNames {
-		if strings.HasPrefix(filterKey, tableKey) {
-			return sqliteTableNameMap[tableKey]
-		}
-	}
-	return ""
-}
-
-func isValidTable(table string) bool {
-	for _, value := range sqliteTableNameMap {
-		if value == table {
-			return true
-		}
-	}
-	return false
-}
-
 func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 	var convertedFilters []model.SearchFilter
 	for _, filter := range filters {
+		filterKey := string(filter.KeyValueFilter.Key)
+		filterOperator := filter.KeyValueFilter.Operator
+		filterTable, err := newFilterTable(filterKey)
+		if err != nil {
+			continue
+		}
 		var newFilterValue string
+		if filterTable.isDynamicTable() {
+			filterKey = fmt.Sprintf("%s.key", filterTable.getTableKey())
+			convertedFilters = append(convertedFilters, newSearchFilter(filterKey, spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", filterTable.getTag())))
+			if filtersOperatorIsNullOrNotNull(filterOperator) {
+				continue
+			} else {
+				filterKey = createDynamicTagValueField(filterTable.getTableKey())
+			}
+		}
+
 		values, ok := filter.KeyValueFilter.Value.([]interface{})
 		if ok {
 			var valuesStrSlice []string
@@ -119,9 +117,13 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 		} else {
 			continue
 		}
-		convertedFilters = append(convertedFilters, newSearchFilter(string(filter.KeyValueFilter.Key), filter.KeyValueFilter.Operator, newFilterValue))
+		convertedFilters = append(convertedFilters, newSearchFilter(filterKey, filterOperator, newFilterValue))
 	}
 	return convertedFilters
+}
+
+func filtersOperatorIsNullOrNotNull(operator model.FilterOperator) bool {
+	return operator == spansquery.OPERATOR_EXISTS || operator == spansquery.OPERATOR_NOT_EXISTS
 }
 
 func removeTablePrefixFromDynamicTag(tag string) string {
@@ -164,14 +166,14 @@ func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
 	return []model.SearchFilter{
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "spans.start_time_unix_nano",
+				Key:      "span.start_time_unix_nano",
 				Operator: spansquery.OPERATOR_GTE,
 				Value:    tf.StartTime,
 			},
 		},
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "spans.end_time_unix_nano",
+				Key:      "span.end_time_unix_nano",
 				Operator: spansquery.OPERATOR_LTE,
 				Value:    tf.EndTime,
 			},

@@ -33,38 +33,49 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 	return qr
 }
 
-func getTagValuesQuery(r tagsquery.TagValuesRequest, tag string) string {
-	dbTableName := findTableName(tag)
-	if !isValidTable(dbTableName) {
-		return ""
+func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, error) {
+	var query string
+	filterTable, err := newFilterTable(tag)
+	if err != nil {
+		return query, fmt.Errorf("illegal tag name: %s", tag)
 	}
 	queryBuilder := newQueryBuilder()
-	queryBuilder.addFilters(createTimeframeFilters(*r.Timeframe))
-	queryBuilder.addFilters(normalizeFiltersForSqliteFormat(r.SearchFilters))
-	queryBuilder.addTable(dbTableName)
-	if isDynamicTagsTable(dbTableName) {
-		dynamicTag := removeTablePrefixFromDynamicTag(tag)
-		if isNotEmptyString(dynamicTag) {
-			queryBuilder.addDynamicTagField(dbTableName)
-			queryBuilder.addNewDynamicTagFilter(dbTableName, dynamicTag)
+	filters := createTimeframeFilters(*r.Timeframe)
+	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
+	err = queryBuilder.addFilters(filters)
+	if err != nil {
+		return query, err
+	}
+	queryBuilder.addTable(filterTable.getTableName())
+	if filterTable.isDynamicTable() {
+		queryBuilder.addDynamicTagValueField(filterTable.getTableName())
+		err := queryBuilder.addNewDynamicTagFilter(filterTable.getTableKey(), filterTable.getTag())
+		if err != nil {
+			return query, fmt.Errorf("illegal tag name: %s", tag)
 		}
 	} else {
-		if f, ok := sqliteFieldsMap[tag]; ok {
-			queryBuilder.addField(f)
+		if field, ok := sqliteFieldsMap[tag]; ok {
+			queryBuilder.addField(field)
+		} else {
+			return query, fmt.Errorf("illegal tag name: %s", tag)
 		}
 	}
-
-	return queryBuilder.buildQuery()
+	queryParams, err := queryBuilder.getQueryParams()
+	if err != nil {
+		return query, fmt.Errorf("failed to build query params: %v", err)
+	}
+	query = fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s", queryParams["fields"], queryParams["tables"], queryParams["filters"])
+	return query, nil
 }
 
-func getAllDynamicTagsQuery() string {
-	var queryStrings []string
-	for tableKey, table := range sqliteTablesMap {
+func buildDynamicTagsQuery() string {
+	var queries []string
+	for tableKey, table := range sqliteTableNameMap {
 		if isDynamicTagsTable(table) {
-			queryStrings = append(queryStrings, fmt.Sprintf("SELECT DISTINCT '%s' as table_key, t.key as tag_name, t.type as tag_type FROM %s t", tableKey, table))
+			queries = append(queries, fmt.Sprintf("SELECT DISTINCT '%s' as table_key, t.key as tag_name, t.type as tag_type FROM %s t", tableKey, table))
 		}
 	}
-	return strings.Join(queryStrings, " UNION ALL ")
+	return strings.Join(queries, " UNION ALL ")
 }
 
 func buildQueryByFilters(filters ...model.SearchFilter) string {
@@ -74,12 +85,12 @@ func buildQueryByFilters(filters ...model.SearchFilter) string {
 		if !isValidFilter(filter) {
 			continue
 		}
-		dbTableName := findTableName(string(filter.KeyValueFilter.Key))
-		if dbTableName == "" {
+		dbTableName, err := newFilterTable(string(filter.KeyValueFilter.Key))
+		if err != nil {
 			continue
 		}
-		if _, ok := dbTablesSet[dbTableName]; !ok {
-			dbTablesSet[dbTableName] = true
+		if _, ok := dbTablesSet[dbTableName.getTableName()]; !ok {
+			dbTablesSet[dbTableName.getTableName()] = true
 		}
 		value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
 		filterStrings = append(

@@ -31,18 +31,16 @@ type QueryBuilder struct {
 }
 
 func (qb *QueryBuilder) addFilter(filter model.SearchFilter) error {
-	dbTableName := findTableName(fmt.Sprintf("%v", filter.KeyValueFilter.Key))
-	if !isValidTable(dbTableName) {
-		return fmt.Errorf("invalid table name: %s", dbTableName)
+	filterTable, err := newFilterTable(fmt.Sprintf("%v", filter.KeyValueFilter.Key))
+	if err != nil {
+		return fmt.Errorf("invalid table name: %s", filterTable.getTableKey())
 	}
 	if !isValidFilter(filter) {
 		return fmt.Errorf("invalid filter: %v", filter)
 	}
-	if !qb.doesTableExist(dbTableName) {
-		qb.addTable(dbTableName)
-	}
-	if isDynamicTagsTable(dbTableName) {
-		filter.KeyValueFilter.Key = model.FilterKey(createDynamicTagValueField(dbTableName))
+	filter.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.%s", filterTable.getTableName(), filterTable.getTag()))
+	if !qb.doesTableExist(filterTable.getTableName()) {
+		qb.addTable(filterTable.getTableName())
 	}
 	qb.filters = append(qb.filters, filter)
 	return nil
@@ -87,7 +85,6 @@ func (qb *QueryBuilder) addDynamicTagValueField(tableName string) {
 }
 
 func (qb *QueryBuilder) addNewDynamicTagFilter(tableName string, tag string) error {
-	qb.addDynamicTagValueField(tableName)
 	err := qb.addFilter(newSearchFilter(fmt.Sprintf("%s.%s", tableName, "key"), spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", tag)))
 	if err != nil {
 		return fmt.Errorf("error adding dynamic tag filter: %v", err)
@@ -128,64 +125,51 @@ func (qb *QueryBuilder) covertFilterToSqliteQuery(filter model.SearchFilter) str
 	}
 }
 
-func (qb *QueryBuilder) addJoinConditions() {
+func (qb *QueryBuilder) addJoinConditions() error {
 	for _, t := range qb.getTables() {
+		var err error
 		switch t {
 		case "span_attributes":
-			err := qb.addFilter(newSearchFilter("span_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-			if err != nil {
-				continue
-			}
+			err = qb.addFilter(newSearchFilter("span.attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 		case "resource_attributes":
-			err := qb.addFilter(newSearchFilter("resource_attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
-			if err != nil {
-				continue
-			}
+			err = qb.addFilter(newSearchFilter("resource.attributes.resource_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
 		case "links":
-			err := qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-			if err != nil {
-				continue
-			}
+			err = qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 		case "events":
-			err := qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-			if err != nil {
-				continue
-			}
+			err = qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 		case "event_attributes":
-			err := qb.addFilter(newSearchFilter("event_attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
+			err = qb.addFilter(newSearchFilter("event.attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
 			if err != nil {
-				continue
+				return err
 			}
 			err = qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-			if err != nil {
-				continue
-			}
 		case "link_attributes":
-			err := qb.addFilter(newSearchFilter("link_attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
+			err = qb.addFilter(newSearchFilter("link.attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
 			if err != nil {
-				continue
+				return err
 			}
 			err = qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
-			if err != nil {
-				continue
-			}
 		case "scope_attributes":
-			err := qb.addFilter(newSearchFilter("scope_attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
-			if err != nil {
-				continue
-			}
+			err = qb.addFilter(newSearchFilter("scope.attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
+		}
+		if err != nil {
+			return err
 		}
 	}
+	return nil
 }
 
-func (qb *QueryBuilder) getQueryParams() map[string]string {
-	qb.addJoinConditions()
+func (qb *QueryBuilder) getQueryParams() (map[string]string, error) {
+	err := qb.addJoinConditions()
+	if err != nil {
+		return nil, fmt.Errorf("error adding join conditions: %v", err)
+	}
 	filters := qb.buildFilters()
 	fields := qb.buildFields()
 	tables := qb.buildTables()
 	return map[string]string{
 		"tables": tables, "fields": fields, "filters": filters,
-	}
+	}, nil
 }
 
 func (qb *QueryBuilder) buildTables() string {
