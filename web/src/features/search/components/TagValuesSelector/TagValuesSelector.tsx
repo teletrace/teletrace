@@ -27,13 +27,13 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {Fragment, useMemo, useState} from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import {CheckboxList} from "@/components/CheckboxList";
-import {RangeSlider} from "@/components/RangeSlider/RangeSlider";
+import { CheckboxList } from "@/components/CheckboxList";
+import { RangeSlider } from "@/components/RangeSlider/RangeSlider";
 import { SearchField } from "@/components/SearchField";
-import {formatNumber} from "@/utils/format";
+import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
@@ -97,7 +97,6 @@ export const TagValuesSelector = ({
       label: <CheckboxListLabel key={tag.value} tag={tag} render={render} />,
     }));
 
-
   return (
     <div>
       <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
@@ -129,16 +128,16 @@ export const TagValuesSelector = ({
                 <SearchField value={search} onChange={setSearch} />
               )}
 
-              {
-                selectorType === SelectorType.RangeSlider ?
-                    <RangeSlider data={data} render={render} />
-                    :
-                    <CheckboxList value={value}
-                      loading={false}
-                      options={tagOptions || []}
-                      onChange={onChange}
-                    />
-              }
+              {selectorType === SelectorType.RangeSlider ? (
+                <RangeSlider data={data} render={render} />
+              ) : (
+                <CheckboxList
+                  value={value}
+                  loading={false}
+                  options={tagOptions || []}
+                  onChange={onChange}
+                />
+              )}
             </Fragment>
           )}
         </AccordionDetails>

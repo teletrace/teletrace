@@ -17,7 +17,7 @@
 import { CSSProperties } from "react";
 
 export const styles: Record<string, CSSProperties> = {
-    rangeInput: {
-        width: "100px",
-    },
+  rangeInput: {
+    width: "100px",
+  },
 };

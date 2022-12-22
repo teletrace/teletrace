@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {Paper, Stack} from "@mui/material";
+import { Paper, Stack } from "@mui/material";
 
-import {StatusCode} from "@/types/span";
-import {nanoSecToMs} from "@/utils/format";
+import { StatusCode } from "@/types/span";
+import { nanoSecToMs } from "@/utils/format";
 
-import {SearchFilter, Timeframe} from "../../types/common";
-import {SelectorType, TagValuesSelector} from "../TagValuesSelector";
-import {styles} from "./styles";
+import { SearchFilter, Timeframe } from "../../types/common";
+import { SelectorType, TagValuesSelector } from "../TagValuesSelector";
+import { styles } from "./styles";
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
@@ -92,7 +92,7 @@ export const TagSidebar = ({
       title: "Instrumentation Library",
       tag: "scope.name",
       selectorType: SelectorType.CheckboxList,
-      isSearchable: true
+      isSearchable: true,
     },
   ];
 
