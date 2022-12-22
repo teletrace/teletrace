@@ -23,16 +23,17 @@ import {
   Alert,
   Button,
   CircularProgress,
+  Slider,
   Stack,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Fragment, useMemo, useState } from "react";
+import {Fragment, useEffect, useMemo, useState} from "react";
 import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
-import { formatNumber } from "@/utils/format";
+import {formatNumber, msToNanoSec} from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { SearchFilter, Timeframe } from "../../types/common";
@@ -46,6 +47,7 @@ export type TagValuesSelectorProps = {
   searchable?: boolean;
   filters: Array<SearchFilter>;
   timeframe: Timeframe;
+  isSlider?: boolean;
   onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
 };
@@ -59,13 +61,17 @@ export const TagValuesSelector = ({
   searchable,
   onChange,
   render,
+  isSlider,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
+  const [sliderValue, setSliderValue] = useState<number[]>([0, 0]);
   const [debouncedSearch] = useDebounce(search, 500);
   const clearTags = () => onChange?.([]);
+
   const tagSearchFilter: SearchFilter = {
     keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
   };
+
   const tagFilters: Array<SearchFilter> = useMemo(
     () =>
       tagSearchFilter.keyValueFilter.value
@@ -73,18 +79,36 @@ export const TagValuesSelector = ({
         : filters,
     [filters, tagSearchFilter]
   );
+
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     timeframe,
     tagFilters
   );
-  const tagOptions = data
 
+  let slider: JSX.Element = <p>Failed to display slider</p>;
+  if (data && data.length > 0 && isSlider) {
+    const min = data[0].value as number;
+    const max = data[data.length - 1].value as number;
+    const finalMin = render ? render(min) as number : min;
+    const finalMax = render ? render(max) as number : max;
+    slider = <Slider
+        getAriaLabel={() => "Custom marks"}
+        valueLabelDisplay="auto"
+        value={[sliderValue[0], sliderValue[1]]}
+        min={finalMin}
+        max={finalMax}
+        onChange={(_: Event, newSliderValue: number | number[]) => {setSliderValue(newSliderValue as number[])}}
+    />
+  }
+
+  const tagOptions = data
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
       label: <CheckboxListLabel key={tag.value} tag={tag} render={render} />,
     }));
+
 
   return (
     <div>
@@ -117,12 +141,17 @@ export const TagValuesSelector = ({
                 <SearchField value={search} onChange={setSearch} />
               )}
 
-              <CheckboxList
-                value={value}
-                loading={false}
-                options={tagOptions || []}
-                onChange={onChange}
-              />
+              {
+                isSlider ?
+                  slider
+                  :
+                  <CheckboxList
+                    value={value}
+                    loading={false}
+                    options={tagOptions || []}
+                    onChange={onChange}
+                  />
+              }
             </Fragment>
           )}
         </AccordionDetails>

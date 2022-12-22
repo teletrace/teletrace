@@ -21,6 +21,7 @@ import { StatusCode } from "@/types/span";
 import { SearchFilter, Timeframe } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
+import {nanoSecToMs} from "@/utils/format";
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
@@ -32,6 +33,7 @@ type TagOptions = {
   title: string;
   tag: string;
   isSearchable: boolean;
+  isSlider?: boolean;
   render?: (value: string | number) => React.ReactNode;
 };
 
@@ -53,6 +55,13 @@ export const TagSidebar = ({
       tag: "span.status.code",
       isSearchable: false,
       render: (value) => StatusCode[parseInt(value.toString())],
+    },
+    {
+      title: "Duration",
+      tag: "externalFields.durationNano",
+      isSearchable: false,
+      isSlider: true,
+      render: (value) => nanoSecToMs(value as number),
     },
     {
       title: "Service Name",
@@ -104,6 +113,7 @@ export const TagSidebar = ({
               timeframe={timeframe}
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
+              isSlider={t.isSlider}
               render={t.render}
             />
           );
