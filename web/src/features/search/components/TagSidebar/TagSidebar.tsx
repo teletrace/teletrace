@@ -58,7 +58,7 @@ export const TagSidebar = ({
       render: (value) => StatusCode[parseInt(value.toString())],
     },
     {
-      title: "Duration",
+      title: "Duration (ms)",
       tag: "externalFields.durationNano",
       isSearchable: false,
       selectorType: SelectorType.RangeSlider,
