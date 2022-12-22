@@ -44,7 +44,7 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
         sx={expanded ? styles.textContainerExpanded : styles.textContainer}
       >
         <Typography sx={styles.typography}>
-          {errorMessage ? errorMessage : "No Error Message Found"}
+          {errorMessage ? errorMessage : "No error message found"}
         </Typography>
       </Box>
       {showButton && (
@@ -55,7 +55,7 @@ export const SpanErrorDetails = ({ errorMessage }: SpanErrorDetailsProps) => {
             sx={styles.readMoreButton}
             disableRipple
           >
-            {expanded ? "Show Less" : "Read More"}
+            {expanded ? "Show Less" : "Show More"}
           </Button>
         </Box>
       )}

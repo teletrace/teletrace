@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-import { FilterList } from "@mui/icons-material";
-import { Button, Chip, Paper } from "@mui/material";
+import { Close, FilterList } from "@mui/icons-material";
+import { Button, Chip, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
+import { theme } from "@/styles";
+
 import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
+import { styles } from "./styles";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
   timeframe: Timeframe;
   onFilterAdded: (entry: SearchFilter) => void;
   onFilterDeleted: (entry: SearchFilter) => void;
+  onClearFilters: () => void;
 };
 
 export function SearchBar({
@@ -34,6 +38,7 @@ export function SearchBar({
   timeframe,
   onFilterAdded,
   onFilterDeleted,
+  onClearFilters,
 }: SearchBarProps) {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -48,32 +53,44 @@ export function SearchBar({
   };
 
   return (
-    <Paper sx={{ height: "40px", padding: "8px" }}>
-      <Stack direction="row" spacing={0.5}>
-        <Button
-          variant="contained"
-          size="small"
-          startIcon={<FilterList />}
-          onClick={handleOpen}
-        >
-          Add Filter
-        </Button>
-        <FilterBuilderDialog
-          timeframe={timeframe}
-          filters={filters}
-          open={open}
-          onClose={handleClose}
-          onApply={onFilterAdded}
-          anchorEl={anchorEl}
-        />
-        {filters.map((filter) => (
-          <Chip
-            key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator}`}
+    <Paper sx={styles.searchBarPaper}>
+      <Stack direction="row" spacing={0.5} sx={styles.searchBar}>
+        <Stack sx={styles.filtersBar} direction="row" spacing={0.5}>
+          <Button
+            variant="contained"
             size="small"
-            label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
-            onDelete={() => onFilterDeleted(filter)}
+            startIcon={<FilterList />}
+            onClick={handleOpen}
+          >
+            Add Filter
+          </Button>
+
+          <FilterBuilderDialog
+            timeframe={timeframe}
+            filters={filters}
+            open={open}
+            onClose={handleClose}
+            onApply={onFilterAdded}
+            anchorEl={anchorEl}
           />
-        ))}
+          {filters.map((filter) => (
+            <Chip
+              key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator}`}
+              size="small"
+              label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
+              onDelete={() => onFilterDeleted(filter)}
+            />
+          ))}
+        </Stack>
+        <Stack direction="row" sx={styles.clear}>
+          <Divider
+            orientation="vertical"
+            sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
+          />
+          <IconButton onClick={onClearFilters} size="small">
+            <Close fontSize="inherit" />
+          </IconButton>
+        </Stack>
       </Stack>
     </Paper>
   );
