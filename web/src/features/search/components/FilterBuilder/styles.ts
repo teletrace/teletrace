@@ -39,4 +39,13 @@ export const styles = {
       },
     },
   },
+  textValueInput: {
+    "& .MuiInputBase-root": {
+      paddingRight: "unset",
+    },
+    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
+  },
+  tagsDropdown: {
+    minWidth: "472px",
+  },
 };

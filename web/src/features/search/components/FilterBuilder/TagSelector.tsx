@@ -52,6 +52,7 @@ export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
         size="small"
         options={availableTagsOptions || []}
         getOptionLabel={(option) => option.name}
+        componentsProps={{ paper: { sx: styles.tagsDropdown } }}
         renderInput={(params) => (
           <TextField
             {...params}

@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { FormLabel, TextField } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import {
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
 import {
@@ -71,12 +77,22 @@ export const ValueSelector = ({
         ) : null}
         {valueInputMode === "text" ? (
           <TextField
+            sx={styles.textValueInput}
             error={error}
             helperText={errorHelperText}
             size="small"
             variant="outlined"
             value={value}
             onChange={handleInputChange}
+            InputProps={{
+              endAdornment: value && (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => onChange("")}>
+                    <Close />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         ) : null}
         {valueInputMode === "numeric" ? (
