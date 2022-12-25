@@ -24,13 +24,13 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { AvailableTag } from "../../types/availableTags";
 import {
   FilterValueTypes,
   KeyValueFilter,
   Operator,
   SearchFilter,
-  Timeframe,
   ValueInputMode,
 } from "../../types/common";
 import { OperatorSelector } from "./OperatorSelector";
@@ -43,8 +43,9 @@ export type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
+  liveSpans: LiveSpansState;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -79,6 +80,7 @@ export const FilterBuilderDialog = ({
   open,
   anchorEl,
   onApply,
+  liveSpans,
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const initialState: FilterBuilderDialogState = {
@@ -242,6 +244,7 @@ export const FilterBuilderDialog = ({
                   value={dialogState.value}
                   onChange={onValueChange}
                   valueInputMode={valueInputMode}
+                  liveSpans={liveSpans}
                   error={dialogState.formError.value}
                 />
               </Stack>

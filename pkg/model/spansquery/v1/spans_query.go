@@ -66,7 +66,7 @@ type SearchResponse struct {
 }
 
 func (sr *SearchRequest) Validate() error {
-	if sr.Timeframe.EndTime < sr.Timeframe.StartTime {
+	if (sr.Timeframe.EndTime < sr.Timeframe.StartTime) && (sr.Timeframe.EndTime != 0) {
 		return fmt.Errorf("endTime cannot be smaller than startTime")
 	}
 

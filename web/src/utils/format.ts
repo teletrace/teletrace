@@ -16,8 +16,6 @@
 
 import format from "date-fns/format";
 
-import { Timeframe } from "../features/search/types/common";
-
 export const formatDateAsDateTime = (
   date: Date | number,
   { showMs = false, showSec = true } = {}
@@ -57,10 +55,8 @@ export const formatNanoAsMsDateTime = (nanoSec: number) => {
   return formatDateAsDateTime(ms, { showMs: true });
 };
 
-export const getCurrentTimestamp = (): Timeframe => {
-  const now = new Date().valueOf();
-  return {
-    startTimeUnixNanoSec: msToNanoSec(now - 3600000),
-    endTimeUnixNanoSec: msToNanoSec(now),
-  };
+export const getCurrentTimestamp = (): number => {
+  return msToNanoSec(new Date().getTime());
 };
+
+export const ONE_HOUR_IN_NS = msToNanoSec(60 * 60 * 1000);

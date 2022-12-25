@@ -24,13 +24,6 @@ import { AvailableTagsResponse } from "../types/availableTags";
  * fetch available tags
  */
 
-//  export const fetchSpans = ({
-//   pageParam,
-//   searchRequest,
-// }: FetchSpansParams): Promise<SearchResponse> => {
-
-// type FetchAvailableTagsParams = { pageParam: string};
-
 export const fetchAvailableTags = (): Promise<AvailableTagsResponse> => {
   // const availableTagsRequest: AvailableTagsRequest = {metadata: {nextToken: nextToken}}
   return axiosClient.get("/v1/tags");
