@@ -523,10 +523,6 @@ theme = createTheme(theme, {
     MuiTableRow: {
       styleOverrides: {
         root: {
-          "&.MuiTableRow-grey": {
-            backgroundColor: theme.palette.grey[700],
-            transition: "background-color 200ms linear",
-          },
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
@@ -539,7 +535,7 @@ theme = createTheme(theme, {
               backgroundColor: theme.palette.grey[700],
             },
           },
-          ":not(.MuiTableRow-head, .MuiTableRow-grey, :hover)": {
+          ":not(.MuiTableRow-head, :hover)": {
             backgroundColor: theme.palette.grey[900],
           },
         },

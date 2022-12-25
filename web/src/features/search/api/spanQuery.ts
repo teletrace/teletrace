@@ -45,6 +45,7 @@ export const useSpansQuery = (
       searchRequest.filters,
       searchRequest.timeframe.endTimeUnixNanoSec,
       searchRequest.timeframe.startTimeUnixNanoSec,
+      searchRequest.sort,
     ],
     keepPreviousData: true,
     queryFn: ({ pageParam }) => fetchSpans({ searchRequest, pageParam }),
