@@ -25,6 +25,7 @@ import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter } from "../types/common";
+import { getCurrentTimestamp, ONE_HOUR_IN_NS } from "@/utils/format";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;
@@ -52,8 +53,8 @@ export const SpanSearch = () => {
   });
 
   const [timeFrameState, setTimeFrameState] = useState<TimeFrameState>({
-    startTimeUnixNanoSec: (new Date().getTime() - 1000 * 60 * 60) * 1000 * 1000, // 1H
-    endTimeUnixNanoSec: new Date().getTime() * 1000 * 1000,
+    startTimeUnixNanoSec: getCurrentTimestamp() - ONE_HOUR_IN_NS,
+    endTimeUnixNanoSec: getCurrentTimestamp(),
     isRelative: true,
   });
 

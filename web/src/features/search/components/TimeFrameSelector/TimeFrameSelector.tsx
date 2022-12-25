@@ -18,7 +18,12 @@ import { CalendarTodayOutlined } from "@mui/icons-material";
 import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
+import {
+  formatDateAsDateTime,
+  getCurrentTimestamp,
+  msToNanoSec,
+  nanoSecToMs,
+} from "@/utils/format";
 
 import { TimeFrameState } from "../../routes/SpanSearch";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
@@ -42,7 +47,7 @@ export const TimeFrameSelector = ({
   const customOption: CustomTimeFrame = {
     label: "Custom",
     startTime: timeframe.startTimeUnixNanoSec,
-    endTime: new Date().getTime() * 1000 * 1000,
+    endTime: getCurrentTimestamp(),
   };
 
   const buttonRef = useRef(null);
@@ -76,8 +81,8 @@ export const TimeFrameSelector = ({
     else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
     else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
     const startTimeNumber = startTime.getTime();
-    timeframe.startTimeUnixNanoSec = startTimeNumber * 1000 * 1000;
-    timeframe.endTimeUnixNanoSec = endTimeNumber * 1000 * 1000;
+    timeframe.startTimeUnixNanoSec = msToNanoSec(startTimeNumber);
+    timeframe.endTimeUnixNanoSec = msToNanoSec(endTimeNumber);
   };
 
   const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
@@ -135,7 +140,7 @@ export const TimeFrameSelector = ({
           onChange={onChange}
           value={{
             startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-            endTimeUnixNanoSec: new Date().getTime() * 1000 * 1000,
+            endTimeUnixNanoSec: getCurrentTimestamp(),
             isRelative: timeframe.isRelative,
           }}
           onClose={() => setOpen(false)}
