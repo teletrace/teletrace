@@ -20,6 +20,11 @@ import { useState } from "react";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchRequest } from "../../types/spanQuery";
+import {
+  A_FEW_SECONDS_AGO_THRESHOLD,
+  SECONDS_IN_DAY,
+  SECONDS_IN_HOUR,
+} from "./constants";
 import styles from "./styles";
 import { useRefreshRender } from "./useRefreshRender";
 
@@ -28,19 +33,25 @@ const A_FEW_SECONDS_AGO_STRING = "a few seconds ago";
 interface RefreshButtonProps {
   searchRequest: SearchRequest;
   isLiveSpansOn: boolean;
+  onRefreshTimeframe: () => void;
 }
 
 export function RefreshButton({
   searchRequest,
   isLiveSpansOn,
+  onRefreshTimeframe,
 }: RefreshButtonProps) {
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [timeSinceLastRefreshString, setTimeSinceLastRefreshString] =
-    useRefreshRender(lastRefreshed);
 
-  const { remove: removeSpansQueryFromCache, isFetching } =
-    useSpansQuery(searchRequest);
+  const currentTime = new Date();
+  const timeSinceLastRefresh = lastRefreshed
+    ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
+    : 0;
+
+  const onRefreshRender = useRefreshRender(timeSinceLastRefresh);
+
+  const { isFetching } = useSpansQuery(searchRequest);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
@@ -48,11 +59,11 @@ export function RefreshButton({
 
   const handleRefresh = () => {
     setLastRefreshed(new Date());
-    setTimeSinceLastRefreshString(A_FEW_SECONDS_AGO_STRING);
-    removeSpansQueryFromCache();
+    onRefreshTimeframe();
     const event = new Event("refresh");
     document.dispatchEvent(event);
     setIsRefreshing(true);
+    onRefreshRender();
   };
 
   return (
@@ -75,8 +86,25 @@ export function RefreshButton({
       <span style={styles.refreshStatusText}>
         {isLiveSpansOn
           ? "Streaming ingested spans"
-          : `Updated ${timeSinceLastRefreshString}`}
+          : `Updated ${calcDisplayString(timeSinceLastRefresh)}`}
       </span>
     </Stack>
   );
+}
+
+function calcDisplayString(timeSinceLastRefresh: number): string {
+  if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
+    return A_FEW_SECONDS_AGO_STRING;
+  } else if (timeSinceLastRefresh < 60) {
+    return "under a minute ago";
+  } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
+    const minutes = Math.round(timeSinceLastRefresh / 60) + 1;
+    return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
+    const hours = Math.ceil(timeSinceLastRefresh / SECONDS_IN_HOUR);
+    return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  } else {
+    const days = Math.round(timeSinceLastRefresh / SECONDS_IN_DAY);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+  }
 }

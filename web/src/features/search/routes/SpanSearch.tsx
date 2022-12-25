@@ -165,6 +165,13 @@ export const SpanSearch = () => {
         <RefreshButton
           searchRequest={searchRequest}
           isLiveSpansOn={liveSpansState.isOn}
+          onRefreshTimeframe={() =>
+            setTimeFrameState({
+              startTimeUnixNanoSec: timeFrameState.startTimeUnixNanoSec,
+              endTimeUnixNanoSec: timeFrameState.endTimeUnixNanoSec,
+              isRelative: timeFrameState.isRelative,
+            })
+          }
         />
 
         <Stack marginLeft="auto" direction="row">
