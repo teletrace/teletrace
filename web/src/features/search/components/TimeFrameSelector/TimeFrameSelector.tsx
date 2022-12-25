@@ -15,22 +15,22 @@
  */
 
 import { CalendarTodayOutlined } from "@mui/icons-material";
-import {
-  Popover,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-} from "@mui/material";
+import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
+import {
+  formatDateAsDateTime,
+  getCurrentTimestamp,
+  msToNanoSec,
+  nanoSecToMs,
+} from "@/utils/format";
 
-import { Timeframe } from "../../types/common";
+import { TimeFrameState } from "../../routes/SpanSearch";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
-  onChange: (timeframe: Timeframe) => void;
-  value: Timeframe;
+  onChange: (timeframe: TimeFrameState) => void;
+  value: TimeFrameState;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -47,7 +47,7 @@ export const TimeFrameSelector = ({
   const customOption: CustomTimeFrame = {
     label: "Custom",
     startTime: timeframe.startTimeUnixNanoSec,
-    endTime: timeframe.endTimeUnixNanoSec,
+    endTime: getCurrentTimestamp(),
   };
 
   const buttonRef = useRef(null);
@@ -81,8 +81,8 @@ export const TimeFrameSelector = ({
     else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
     else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
     const startTimeNumber = startTime.getTime();
-    timeframe.startTimeUnixNanoSec = startTimeNumber * 1000 * 1000;
-    timeframe.endTimeUnixNanoSec = endTimeNumber * 1000 * 1000;
+    timeframe.startTimeUnixNanoSec = msToNanoSec(startTimeNumber);
+    timeframe.endTimeUnixNanoSec = msToNanoSec(endTimeNumber);
   };
 
   const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
@@ -106,7 +106,7 @@ export const TimeFrameSelector = ({
       handleCustomClick(event);
     }
     calcTimeFrame(value);
-    onChange(timeframe);
+    onChange({ ...timeframe, isRelative: value.label !== "Custom" });
     setIsSelected(value);
   };
 
@@ -138,7 +138,11 @@ export const TimeFrameSelector = ({
       >
         <DateTimeSelector
           onChange={onChange}
-          value={timeframe}
+          value={{
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            endTimeUnixNanoSec: getCurrentTimestamp(),
+            isRelative: timeframe.isRelative,
+          }}
           onClose={() => setOpen(false)}
         />
       </Popover>
@@ -157,22 +161,15 @@ export const TimeFrameSelector = ({
         </ToggleButton>
 
         {options.map((tf) => (
-          <Tooltip
+          <ToggleButton
+            onClick={handleBtnClicked}
+            selected={isSelected?.label === tf?.label}
+            value={tf}
+            ref={buttonRef}
             key={tf.label}
-            title={isSelected?.label === tf?.label ? getTooltipTitle() : ""}
-            placement="top-end"
-            arrow
           >
-            <ToggleButton
-              onClick={handleBtnClicked}
-              selected={isSelected?.label === tf?.label}
-              value={tf}
-              ref={buttonRef}
-              key={tf.label}
-            >
-              {tf.label}
-            </ToggleButton>
-          </Tooltip>
+            {tf.label}
+          </ToggleButton>
         ))}
       </ToggleButtonGroup>
     </div>

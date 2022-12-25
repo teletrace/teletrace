@@ -23,12 +23,12 @@ import MaterialReactTable, {
 import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { SearchRequest } from "@/features/search";
 import { InternalSpan } from "@/types/span";
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { LiveSpansState } from "./../../routes/SpanSearch";
+import { SearchFilter } from "../../types/common";
+import { LiveSpansState, TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -37,6 +37,8 @@ const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
+  filters?: SearchFilter[];
+  timeframe: TimeFrameState;
   searchRequest: SearchRequest;
   liveSpans: LiveSpansState;
 }
@@ -46,7 +48,11 @@ interface SpansStateProps {
   newSpansIds: string[];
 }
 
-export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
+export function SpanTable({
+  filters = [],
+  timeframe,
+  liveSpans,
+}: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef = useRef<Virtualizer>(null);
 
@@ -67,6 +73,16 @@ export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
     ascending: !columnSort.desc,
   }));
 
+  const searchRequest = {
+    filters: filters,
+    timeframe: {
+      startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+      endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+    },
+    sort: sort,
+    metadata: undefined,
+  };
+
   const {
     data,
     fetchNextPage,
@@ -75,19 +91,20 @@ export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
     isFetching,
     isLoading,
     hasNextPage,
-  } = useSpansQuery(searchRequest, liveSpans.isOn ? liveSpans.intervalInMs : 0);
-
-  useEffect(
-    () =>
-      setSpansState((prevState) => {
-        const spans = data?.pages?.flatMap((page) => page.spans) || [];
-        return {
-          spans: spans,
-          newSpansIds: calcNewSpans(prevState.spans, spans),
-        };
-      }),
-    [data]
+  } = useSpansQuery(
+    searchRequest,
+    liveSpans.isOn ? liveSpans.intervalInMilli : 0
   );
+
+  useEffect(() => {
+    setSpansState((prevState) => {
+      const spans = data?.pages?.flatMap((page) => page.spans) || [];
+      return {
+        spans: spans,
+        newSpansIds: calcNewSpans(prevState.spans, spans),
+      };
+    });
+  }, [data]);
 
   const { spans, newSpansIds } = spansState;
 
@@ -109,12 +126,6 @@ export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
         isNew: span.spanId in newSpansIds,
       })
     ) ?? [];
-
-  // reset newSpansIds
-  useDebouncedCallback(
-    () => setSpansState({ spans: spans, newSpansIds: [] }),
-    500
-  )();
 
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
@@ -197,6 +208,10 @@ export function SpanTable({ searchRequest, liveSpans }: SpanTableProps) {
           className: newSpansIds.includes(row.original.spanId)
             ? "MuiTableRow-grey"
             : "",
+          sx: newSpansIds.includes(row.original.spanId)
+            ? styles.newTableRow
+            : null,
+          key: row.original.spanId, // required for new spans animation
         })}
         initialState={{ density: "compact" }}
       />
