@@ -18,6 +18,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
@@ -28,6 +29,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/baggage"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -121,6 +123,15 @@ func main() {
 		ctx := req.Context()
 		span := trace.SpanFromContext(ctx)
 		bag := baggage.FromContext(ctx)
+
+		if sleep < 10 {
+			defer span.End()
+			serverErr := fmt.Errorf("Internal Server Error - Randomized for Sampling")
+			http.Error(w, serverErr.Error(), http.StatusInternalServerError)
+			span.RecordError(serverErr)
+			span.SetStatus(codes.Error, serverErr.Error())
+			return
+		}
 
 		var baggageAttributes []attribute.KeyValue
 		baggageAttributes = append(baggageAttributes, serverAttribute)
