@@ -23,7 +23,7 @@ export const styles = {
     display: "flex",
   },
   tagsDropdown: {
-    minWidth: "472px",
+    minWidth: "498px",
   },
   operatorSelector: {
     width: "166px",
