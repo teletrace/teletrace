@@ -34,38 +34,36 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 }
 
 func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, error) {
-	var query string
-	filterTable, err := newFilterTable(tag)
+	sqliteFilter, err := newSqliteFilter(tag)
 	if err != nil {
-		return query, fmt.Errorf("illegal tag name: %s", tag)
+		return "", fmt.Errorf("illegal tag name: %s", tag)
 	}
 	queryBuilder := newQueryBuilder()
 	filters := createTimeframeFilters(*r.Timeframe)
 	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
 	err = queryBuilder.addFilters(filters)
 	if err != nil {
-		return query, err
+		return "", err
 	}
-	queryBuilder.addTable(filterTable.getTableName())
-	if filterTable.isDynamicTable() {
-		queryBuilder.addDynamicTagValueField(filterTable.getTableName())
-		err := queryBuilder.addNewDynamicTagFilter(filterTable.getTableKey(), filterTable.getTag())
+	queryBuilder.addTable(sqliteFilter.getTableName())
+	if sqliteFilter.isDynamicTable() {
+		queryBuilder.addDynamicTagValueField(sqliteFilter.getTableName())
+		err := queryBuilder.addNewDynamicTagFilter(sqliteFilter.getTableKey(), sqliteFilter.getTag())
 		if err != nil {
-			return query, fmt.Errorf("illegal tag name: %s", tag)
+			return "", fmt.Errorf("illegal tag name: %s", tag)
 		}
 	} else {
 		if field, ok := sqliteFieldsMap[tag]; ok {
 			queryBuilder.addField(field)
 		} else {
-			return query, fmt.Errorf("illegal tag name: %s", tag)
+			return "", fmt.Errorf("illegal tag name: %s", tag)
 		}
 	}
-	queryParams, err := queryBuilder.getQueryParams()
+	queryParams, err := queryBuilder.buildQueryParams()
 	if err != nil {
-		return query, fmt.Errorf("failed to build query params: %v", err)
+		return "", fmt.Errorf("failed to build query params: %v", err)
 	}
-	query = fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s", queryParams["fields"], queryParams["tables"], queryParams["filters"])
-	return query, nil
+	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s", queryParams.fields, queryParams.tables, queryParams.filters), nil
 }
 
 func buildDynamicTagsQuery() string {
@@ -85,7 +83,7 @@ func buildQueryByFilters(filters ...model.SearchFilter) string {
 		if !isValidFilter(filter) {
 			continue
 		}
-		dbTableName, err := newFilterTable(string(filter.KeyValueFilter.Key))
+		dbTableName, err := newSqliteFilter(string(filter.KeyValueFilter.Key))
 		if err != nil {
 			continue
 		}

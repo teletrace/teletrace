@@ -24,6 +24,20 @@ import (
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
 
+type SqliteQueryParamsResponse struct {
+	tables  string
+	fields  string
+	filters string
+}
+
+func newSqliteQueryParamsResponse(fields string, tables string, filters string) *SqliteQueryParamsResponse {
+	return &SqliteQueryParamsResponse{
+		fields:  fields,
+		tables:  tables,
+		filters: filters,
+	}
+}
+
 type QueryBuilder struct {
 	filters     []model.SearchFilter // Filters to be applied to the query
 	dbTablesSet *Set                 // Which tables are used in the query
@@ -31,16 +45,16 @@ type QueryBuilder struct {
 }
 
 func (qb *QueryBuilder) addFilter(filter model.SearchFilter) error {
-	filterTable, err := newFilterTable(fmt.Sprintf("%v", filter.KeyValueFilter.Key))
+	sqliteFilter, err := newSqliteFilter(fmt.Sprintf("%v", filter.KeyValueFilter.Key))
 	if err != nil {
-		return fmt.Errorf("invalid table name: %s", filterTable.getTableKey())
+		return fmt.Errorf("invalid table name: %s", sqliteFilter.getTableKey())
 	}
 	if !isValidFilter(filter) {
 		return fmt.Errorf("invalid filter: %v", filter)
 	}
-	filter.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.%s", filterTable.getTableName(), filterTable.getTag()))
-	if !qb.doesTableExist(filterTable.getTableName()) {
-		qb.addTable(filterTable.getTableName())
+	filter.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.%s", sqliteFilter.getTableName(), sqliteFilter.getTag()))
+	if !qb.doesTableExist(sqliteFilter.getTableName()) {
+		qb.addTable(sqliteFilter.getTableName())
 	}
 	qb.filters = append(qb.filters, filter)
 	return nil
@@ -159,7 +173,7 @@ func (qb *QueryBuilder) addJoinConditions() error {
 	return nil
 }
 
-func (qb *QueryBuilder) getQueryParams() (map[string]string, error) {
+func (qb *QueryBuilder) buildQueryParams() (*SqliteQueryParamsResponse, error) {
 	err := qb.addJoinConditions()
 	if err != nil {
 		return nil, fmt.Errorf("error adding join conditions: %v", err)
@@ -167,9 +181,7 @@ func (qb *QueryBuilder) getQueryParams() (map[string]string, error) {
 	filters := qb.buildFilters()
 	fields := qb.buildFields()
 	tables := qb.buildTables()
-	return map[string]string{
-		"tables": tables, "fields": fields, "filters": filters,
-	}, nil
+	return newSqliteQueryParamsResponse(fields, tables, filters), nil
 }
 
 func (qb *QueryBuilder) buildTables() string {

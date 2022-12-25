@@ -78,6 +78,11 @@ var sqliteTableNameMap = map[string]string{
 	"span":                  "spans",
 }
 
+var sqliteTagsMap = map[string]string{
+	"spanId":  "span_id",
+	"traceId": "trace_id",
+}
+
 // should be ordered, regular map is not option
 var filterTablesNames = []string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
 
@@ -86,32 +91,26 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 	for _, filter := range filters {
 		filterKey := string(filter.KeyValueFilter.Key)
 		filterOperator := filter.KeyValueFilter.Operator
-		filterTable, err := newFilterTable(filterKey)
+		sqliteFilter, err := newSqliteFilter(filterKey)
 		if err != nil {
 			continue
 		}
 		var newFilterValue string
-		if filterTable.isDynamicTable() {
-			filterKey = fmt.Sprintf("%s.key", filterTable.getTableKey())
-			convertedFilters = append(convertedFilters, newSearchFilter(filterKey, spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", filterTable.getTag())))
-			if filtersOperatorIsNullOrNotNull(filterOperator) {
-				continue
-			} else {
-				filterKey = createDynamicTagValueField(filterTable.getTableKey())
+
+		if isExistenceCheckFilter(filterOperator) {
+			if sqliteFilter.isDynamicTable() {
+				filterKey = fmt.Sprintf("%s.key", sqliteFilter.getTableKey())
 			}
+			convertedFilters = append(convertedFilters, newSearchFilter(filterKey, spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", sqliteFilter.getTag())))
+			continue
+		}
+		if sqliteFilter.isDynamicTable() {
+			filterKey = createDynamicTagValueField(sqliteFilter.getTableKey())
 		}
 
 		values, ok := filter.KeyValueFilter.Value.([]interface{})
 		if ok {
-			var valuesStrSlice []string
-			for _, value := range values {
-				str, ok := value.(string)
-				if !ok {
-					continue
-				}
-				valuesStrSlice = append(valuesStrSlice, fmt.Sprintf("'%v'", str))
-			}
-			newFilterValue = strings.Join(valuesStrSlice, ",")
+			newFilterValue = convertSliceOfValuesToString(values)
 		} else if str, ok := filter.KeyValueFilter.Value.(string); ok {
 			newFilterValue = str
 		} else {
@@ -122,14 +121,30 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 	return convertedFilters
 }
 
-func filtersOperatorIsNullOrNotNull(operator model.FilterOperator) bool {
+func convertSliceOfValuesToString(values []interface{}) string {
+	var valuesStrSlice []string
+	for _, value := range values {
+		str, ok := value.(string)
+		if !ok {
+			continue
+		}
+		valuesStrSlice = append(valuesStrSlice, fmt.Sprintf("'%v'", str))
+	}
+	return strings.Join(valuesStrSlice, ",")
+}
+
+func isExistenceCheckFilter(operator model.FilterOperator) bool {
 	return operator == spansquery.OPERATOR_EXISTS || operator == spansquery.OPERATOR_NOT_EXISTS
 }
 
 func removeTablePrefixFromDynamicTag(tag string) string {
 	for _, tableKey := range filterTablesNames {
 		if strings.HasPrefix(tag, tableKey) {
-			return strings.ReplaceAll(tag, tableKey+".", "")
+			newTag := strings.ReplaceAll(tag, tableKey+".", "")
+			if value, ok := sqliteTagsMap[newTag]; ok {
+				return value
+			}
+			return newTag
 		}
 	}
 	return ""
