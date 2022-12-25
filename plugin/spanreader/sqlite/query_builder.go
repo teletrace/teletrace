@@ -148,21 +148,21 @@ func (qb *QueryBuilder) addJoinConditions() error {
 		case "resource_attributes":
 			err = qb.addFilter(newSearchFilter("resource.attributes.resource_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
 		case "links":
-			err = qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 		case "events":
-			err = qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 		case "event_attributes":
-			err = qb.addFilter(newSearchFilter("event.attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
+			err = qb.addFilter(newSearchFilter("span.event.attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
 			if err != nil {
 				return err
 			}
-			err = qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 		case "link_attributes":
-			err = qb.addFilter(newSearchFilter("link.attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
+			err = qb.addFilter(newSearchFilter("span.link.attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
 			if err != nil {
 				return err
 			}
-			err = qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 		case "scope_attributes":
 			err = qb.addFilter(newSearchFilter("scope.attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
 		}
@@ -189,6 +189,9 @@ func (qb *QueryBuilder) buildTables() string {
 }
 
 func (qb *QueryBuilder) buildFields() string {
+	if len(qb.getFields()) == 0 {
+		return "*"
+	}
 	return strings.Join(qb.getFields(), ",")
 }
 

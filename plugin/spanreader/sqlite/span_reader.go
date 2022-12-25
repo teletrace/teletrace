@@ -23,6 +23,8 @@ import (
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
 
+	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+
 	"go.uber.org/zap"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
@@ -39,8 +41,98 @@ func (sr *spanReader) Initialize() error {
 	return nil
 }
 
+func newInternalSpan() *internalspan.InternalSpan {
+	return &internalspan.InternalSpan{
+		Resource: &internalspan.Resource{
+			Attributes: make(map[string]any),
+		},
+		Scope: &internalspan.InstrumentationScope{
+			Attributes: make(map[string]any),
+		},
+		Span: &internalspan.Span{
+			Attributes: make(map[string]any),
+			Status:     &internalspan.SpanStatus{},
+			Events: []*internalspan.SpanEvent{
+				{
+					Attributes: make(map[string]any),
+				},
+			},
+			Links: []*internalspan.SpanLink{
+				{
+					Attributes: make(map[string]any),
+				},
+			},
+		},
+		ExternalFields:        &internalspan.ExternalFields{},
+		IngestionTimeUnixNano: 0,
+	}
+}
+
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	_ = buildSearchQuery(r)
+	// var result spansquery.SearchResponse
+	query, err := buildSearchQuery(r)
+	if err != nil {
+		return nil, err
+	}
+	stmt, err := sr.client.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare query: %v", err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query spans: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		internalSpan := newInternalSpan()
+		var spanId, traceId, traceState, parentSpanId, spanName,
+			spanKind, statusMessage, statusCode, spanAttributes, scopeName,
+			scopeVersion, scopeAttributes, eventsName, eventsAttributes, linksTraceState, linksAttributes, resourceAttributes, startTimeUnixNano, endTimeUnixNano,
+			droppedSpanAttributesCount, resourceDroppedAttributesCount,
+			droppedEventsCount, droppedLinksCount, durationNano, ingestionTimeUnixNano, scopeDroppedAttributesCount,
+			eventsTimeUnixNano, eventsDroppedAttributesCount, linksDroppedAttributesCount any
+		err = rows.Scan(
+			&spanId,
+			&traceId,
+			&traceState,
+			&parentSpanId,
+			&spanName,
+			&spanKind,
+			&startTimeUnixNano,
+			&endTimeUnixNano,
+			&droppedSpanAttributesCount,
+			&statusMessage,
+			&statusCode,
+			&resourceDroppedAttributesCount,
+			&droppedEventsCount,
+			&droppedLinksCount,
+			&durationNano,
+			&ingestionTimeUnixNano,
+			&spanAttributes,
+			&scopeName,
+			&scopeVersion,
+			&scopeDroppedAttributesCount,
+			&scopeAttributes,
+			&eventsTimeUnixNano,
+			&eventsName,
+			&eventsDroppedAttributesCount,
+			&eventsAttributes,
+			//&internalSpan.Span.Links[0].TraceId,
+			//&internalSpan.Span.Links[0].SpanId,
+			&linksTraceState,
+			&linksDroppedAttributesCount,
+			&linksAttributes,
+			&resourceAttributes,
+		)
+		if err != nil {
+			sr.logger.Error("failed to get span value", zap.Error(err))
+			continue
+		}
+
+		fmt.Println(internalSpan)
+	}
+	fmt.Printf("query: %s", query)
 	return nil, nil
 }
 
