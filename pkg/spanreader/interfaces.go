@@ -26,5 +26,5 @@ type SpanReader interface {
 	Initialize() error
 	Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error)
 	GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error)
-	GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
+	GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string, isEdgeValues bool) (map[string]*tagsquery.TagValuesResponse, error)
 }

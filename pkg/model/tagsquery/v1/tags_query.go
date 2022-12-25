@@ -39,9 +39,15 @@ type TagValueInfo struct {
 	Count int `json:"count"`
 }
 
+type TagValueEdges struct {
+	Min any
+	Max any
+}
+
 type TagValuesResponse struct {
 	Metadata *model.Metadata `json:"metadata"`
 	Values   []TagValueInfo  `json:"values"`
+	Edges    TagValueEdges   `json:"edges"`
 }
 
 type GetAvailableTagsRequest struct{}

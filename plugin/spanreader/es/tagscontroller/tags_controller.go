@@ -80,6 +80,7 @@ func (r *tagsController) GetTagsValues(
 	ctx context.Context,
 	request tagsquery.TagValuesRequest,
 	tags []string,
+	isEdgeValues bool,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 	tagsMappings, err := r.getTagsMappings(ctx, tags)
 	if err != nil {
@@ -93,7 +94,7 @@ func (r *tagsController) GetTagsValues(
 		}
 	}
 
-	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings)
+	body, err := r.performGetTagsValuesRequest(ctx, request, tagsMappings, isEdgeValues)
 	if err != nil {
 		return map[string]*tagsquery.TagValuesResponse{}, err
 	}
@@ -167,7 +168,7 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 	return result, nil
 }
 
-func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.TagInfo) {
+func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.TagInfo, isEdgeValues bool) error {
 	aggs := make(map[string]*types.AggregationContainerBuilder, len(tagsMappings))
 	for _, mapping := range tagsMappings {
 		aggregationKey := mapping.Name
@@ -176,12 +177,35 @@ func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.
 			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
 		}
 		aggs[aggregationKey] = types.NewAggregationContainerBuilder()
+
 		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)).Size(100))
+
+		supportedEdgeValuesTagTypes := []string{"long", "integer", "double", "float", "unsigned_long"}
+		if isEdgeValues {
+			isTypeSupported := false
+			for _, t := range supportedEdgeValuesTagTypes {
+				if t == mapping.Type {
+					isTypeSupported = true
+				}
+			}
+
+			if !isTypeSupported {
+				return fmt.Errorf(
+					"edge values query was requested for type '%s', but it is not supported types are supported",
+					mapping.Type)
+			}
+
+			aggs[aggregationKey].Min(types.NewMinAggregationBuilder().Field("min"))
+			aggs[aggregationKey].Max(types.NewMaxAggregationBuilder().Field("max"))
+		}
+
 	}
 	builder.Aggregations(aggs)
+	return nil
 }
 
-func buildTagsValuesRequest(request tagsquery.TagValuesRequest, tagsMappings []tagsquery.TagInfo) (*search.Request, error) {
+func buildTagsValuesRequest(
+	request tagsquery.TagValuesRequest, tagsMappings []tagsquery.TagInfo, isEdgeValues bool) (*search.Request, error) {
 	builder := search.NewRequestBuilder()
 	timeframeFilters := spanreaderes.CreateTimeframeFilters(request.Timeframe)
 	filters := append(request.SearchFilters, timeframeFilters...)
@@ -190,7 +214,7 @@ func buildTagsValuesRequest(request tagsquery.TagValuesRequest, tagsMappings []t
 		return nil, err
 	}
 	builder.Size(0)
-	buildAggregations(builder, tagsMappings)
+	buildAggregations(builder, tagsMappings, isEdgeValues)
 	return builder.Build(), nil
 }
 
@@ -199,8 +223,9 @@ func (r *tagsController) performGetTagsValuesRequest(
 	ctx context.Context,
 	request tagsquery.TagValuesRequest,
 	tagsMappings []tagsquery.TagInfo,
+	isEdgeValues bool,
 ) (map[string]any, error) {
-	req, err := buildTagsValuesRequest(request, tagsMappings)
+	req, err := buildTagsValuesRequest(request, tagsMappings, isEdgeValues)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query: %s", err)
 	}

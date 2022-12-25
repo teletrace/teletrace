@@ -17,10 +17,12 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -88,8 +90,18 @@ func (api *API) tagsValues(c *gin.Context) {
 		return
 	}
 	tag := c.Param("tag")
+	isEdgeValuesParam := c.Request.URL.Query().Get("isEdgeValues")
+	fmt.Printf("isEdgeValues: %v", isEdgeValuesParam)
+	isEdgeValues := false
+	var err error
+	if isEdgeValuesParam != "" {
+		isEdgeValues, err = strconv.ParseBool(isEdgeValuesParam)
+		if err != nil {
+			respondWithError(http.StatusBadRequest, err, c)
+		}
+	}
 
-	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag})
+	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag}, isEdgeValues)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return

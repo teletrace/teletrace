@@ -73,10 +73,10 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 }
 
 func (sr *spanReader) GetTagsValues(
-	ctx context.Context, r tagsquery.TagValuesRequest, tags []string,
+	ctx context.Context, r tagsquery.TagValuesRequest, tags []string, isEdgeValues bool,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 	sr.convertFilterKeysToKeywords(r.SearchFilters)
-	res, err := sr.tagsController.GetTagsValues(ctx, r, tags)
+	res, err := sr.tagsController.GetTagsValues(ctx, r, tags, isEdgeValues)
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
 	}
