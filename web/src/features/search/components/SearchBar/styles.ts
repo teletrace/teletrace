@@ -14,4 +14,9 @@
  * limitations under the License.
  */
 
-export { TraceTimeline } from "./TraceTimeline";
+export const styles = {
+  searchBarPaper: { minHeight: "40px", padding: "8px" },
+  searchBar: { justifyContent: "space-between" },
+  filtersBar: { flexWrap: "wrap", rowGap: "8px" },
+  clear: { justifyContent: "center" },
+};

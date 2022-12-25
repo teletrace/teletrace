@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import { FormLabel, TextField } from "@mui/material";
+import { Close } from "@mui/icons-material";
+import {
+  FormLabel,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import {
   FilterValueTypes,
   SearchFilter,
-  Timeframe,
   ValueInputMode,
 } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
@@ -29,12 +35,13 @@ import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
   query?: TagValuesRequest;
   value: FilterValueTypes;
   valueInputMode: ValueInputMode;
   onChange: (value: FilterValueTypes) => void;
+  liveSpans: LiveSpansState;
   error: boolean;
 };
 
@@ -45,6 +52,7 @@ export const ValueSelector = ({
   value,
   valueInputMode,
   onChange,
+  liveSpans,
   error,
 }: ValueSelectorProps) => {
   const errorHelperText = error ? "Value is required" : "";
@@ -66,17 +74,28 @@ export const ValueSelector = ({
             timeframe={timeframe}
             value={Array.isArray(value) ? value : [value]}
             onChange={onChange}
+            liveSpans={liveSpans}
             tag={tag}
           />
         ) : null}
         {valueInputMode === "text" ? (
           <TextField
+            sx={styles.textValueInput}
             error={error}
             helperText={errorHelperText}
             size="small"
             variant="outlined"
             value={value}
             onChange={handleInputChange}
+            InputProps={{
+              endAdornment: value && (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => onChange("")}>
+                    <Close />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         ) : null}
         {valueInputMode === "numeric" ? (
