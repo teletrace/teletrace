@@ -16,21 +16,28 @@
 
 export const styles = {
   filterBuilder: {
-    width: "520px",
+    width: "546px",
+  },
+  tagsSelector: {
+    flex: 1,
+    display: "flex",
+  },
+  tagsDropdown: {
+    minWidth: "472px",
   },
   operatorSelector: {
-    flex: 2,
+    width: "166px",
     display: "flex",
   },
-  filterSelector: {
-    flex: 5,
-    display: "flex",
+  operatorsDropdown: {
+    paddingRight: "12px",
+    paddingLeft: "12px",
   },
   valueSelector: {
     flex: 1,
     display: "flex",
   },
-  valueInput: {
+  selectValueInput: {
     "& .MuiAutocomplete-inputRoot": {
       height: "fit-content",
       "&.MuiInputBase-sizeSmall": {
@@ -44,8 +51,5 @@ export const styles = {
       paddingRight: "unset",
     },
     "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  tagsDropdown: {
-    minWidth: "472px",
   },
 };

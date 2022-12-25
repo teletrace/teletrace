@@ -129,7 +129,7 @@ export const AutoCompleteValueSelector = ({
           {...params}
           error={error}
           helperText={errorHelperText}
-          sx={styles.valueInput}
+          sx={styles.selectValueInput}
         />
       )}
       renderOption={(props, option) => (

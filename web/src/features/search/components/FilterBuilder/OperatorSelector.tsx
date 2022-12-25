@@ -53,7 +53,11 @@ export const OperatorSelector = ({
       <FormLabel required={false}>Operator</FormLabel>
       <Select id="operator" size="small" value={value} onChange={handleChange}>
         {operatorsList?.map((operator) => (
-          <MenuItem key={operator} value={operator}>
+          <MenuItem
+            sx={styles.operatorsDropdown}
+            key={operator}
+            value={operator}
+          >
             {operatorToDisplayName[operator]}
           </MenuItem>
         ))}

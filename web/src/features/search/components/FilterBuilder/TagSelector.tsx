@@ -42,7 +42,7 @@ export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
   };
 
   return (
-    <FormControl required sx={styles.filterSelector}>
+    <FormControl required sx={styles.tagsSelector}>
       <FormLabel required={false}>Key</FormLabel>
       <Autocomplete
         openOnFocus
