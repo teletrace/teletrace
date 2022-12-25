@@ -83,6 +83,11 @@ var sqliteTagsMap = map[string]string{
 	"traceId": "trace_id",
 }
 
+var existenceCheckFiltersMap = map[model.FilterOperator]model.FilterOperator{
+	spansquery.OPERATOR_EXISTS:     spansquery.OPERATOR_EQUALS,
+	spansquery.OPERATOR_NOT_EXISTS: spansquery.OPERATOR_NOT_EQUALS,
+}
+
 // should be ordered, regular map is not option
 var filterTablesNames = []string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
 
@@ -91,21 +96,19 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 	for _, filter := range filters {
 		filterKey := string(filter.KeyValueFilter.Key)
 		filterOperator := filter.KeyValueFilter.Operator
-		sqliteFilter, err := newSqliteFilter(filterKey)
+		prepareSqliteFilter, err := newSqliteFilter(filterKey)
 		if err != nil {
 			continue
 		}
 		var newFilterValue string
 
-		if isExistenceCheckFilter(filterOperator) {
-			if sqliteFilter.isDynamicTable() {
-				filterKey = fmt.Sprintf("%s.key", sqliteFilter.getTableKey())
+		if prepareSqliteFilter.isDynamicTable() {
+			if mappedOperator, ok := existenceCheckFiltersMap[filterOperator]; ok {
+				filterKey = fmt.Sprintf("%s.key", prepareSqliteFilter.getTableKey())
+				convertedFilters = append(convertedFilters, newSearchFilter(filterKey, mappedOperator, fmt.Sprintf("'%s'", prepareSqliteFilter.getTag())))
+				continue
 			}
-			convertedFilters = append(convertedFilters, newSearchFilter(filterKey, spansquery.OPERATOR_EQUALS, fmt.Sprintf("'%s'", sqliteFilter.getTag())))
-			continue
-		}
-		if sqliteFilter.isDynamicTable() {
-			filterKey = createDynamicTagValueField(sqliteFilter.getTableKey())
+			filterKey = createDynamicTagValueField(prepareSqliteFilter.getTableKey())
 		}
 
 		values, ok := filter.KeyValueFilter.Value.([]interface{})
@@ -131,10 +134,6 @@ func convertSliceOfValuesToString(values []interface{}) string {
 		valuesStrSlice = append(valuesStrSlice, fmt.Sprintf("'%v'", str))
 	}
 	return strings.Join(valuesStrSlice, ",")
-}
-
-func isExistenceCheckFilter(operator model.FilterOperator) bool {
-	return operator == spansquery.OPERATOR_EXISTS || operator == spansquery.OPERATOR_NOT_EXISTS
 }
 
 func removeTablePrefixFromDynamicTag(tag string) string {

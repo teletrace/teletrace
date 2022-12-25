@@ -21,34 +21,34 @@ import (
 	"strings"
 )
 
-type sqliteFilterStruct struct {
+type sqliteFilter struct {
 	tableName string
 	tableKey  string
 	tag       string
 	isDynamic bool
 }
 
-func (ft *sqliteFilterStruct) getTableName() string {
+func (ft *sqliteFilter) getTableName() string {
 	return ft.tableName
 }
 
-func (ft *sqliteFilterStruct) getTableKey() string {
+func (ft *sqliteFilter) getTableKey() string {
 	return ft.tableKey
 }
 
-func (ft *sqliteFilterStruct) getTag() string {
+func (ft *sqliteFilter) getTag() string {
 	return ft.tag
 }
 
-func (ft *sqliteFilterStruct) isDynamicTable() bool {
+func (ft *sqliteFilter) isDynamicTable() bool {
 	return ft.isDynamic
 }
 
-func newSqliteFilter(filterKey string) (*sqliteFilterStruct, error) {
+func newSqliteFilter(filterKey string) (*sqliteFilter, error) {
 	for _, tableKey := range filterTablesNames {
 		if strings.HasPrefix(filterKey, tableKey) {
 			tableName := sqliteTableNameMap[tableKey]
-			return &sqliteFilterStruct{
+			return &sqliteFilter{
 				tableName: tableName,
 				tableKey:  tableKey,
 				tag:       removeTablePrefixFromDynamicTag(filterKey),

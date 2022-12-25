@@ -45,16 +45,16 @@ type QueryBuilder struct {
 }
 
 func (qb *QueryBuilder) addFilter(filter model.SearchFilter) error {
-	sqliteFilter, err := newSqliteFilter(fmt.Sprintf("%v", filter.KeyValueFilter.Key))
+	prepareSqliteFilter, err := newSqliteFilter(fmt.Sprintf("%v", filter.KeyValueFilter.Key))
 	if err != nil {
-		return fmt.Errorf("invalid table name: %s", sqliteFilter.getTableKey())
+		return fmt.Errorf("invalid table name: %s", prepareSqliteFilter.getTableKey())
 	}
 	if !isValidFilter(filter) {
 		return fmt.Errorf("invalid filter: %v", filter)
 	}
-	filter.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.%s", sqliteFilter.getTableName(), sqliteFilter.getTag()))
-	if !qb.doesTableExist(sqliteFilter.getTableName()) {
-		qb.addTable(sqliteFilter.getTableName())
+	filter.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.%s", prepareSqliteFilter.getTableName(), prepareSqliteFilter.getTag()))
+	if !qb.doesTableExist(prepareSqliteFilter.getTableName()) {
+		qb.addTable(prepareSqliteFilter.getTableName())
 	}
 	qb.filters = append(qb.filters, filter)
 	return nil

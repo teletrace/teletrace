@@ -34,7 +34,7 @@ func buildSearchQuery(r spansquery.SearchRequest) string { // create a query str
 }
 
 func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, error) {
-	sqliteFilter, err := newSqliteFilter(tag)
+	prepareSqliteFilter, err := newSqliteFilter(tag)
 	if err != nil {
 		return "", fmt.Errorf("illegal tag name: %s", tag)
 	}
@@ -45,10 +45,10 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 	if err != nil {
 		return "", err
 	}
-	queryBuilder.addTable(sqliteFilter.getTableName())
-	if sqliteFilter.isDynamicTable() {
-		queryBuilder.addDynamicTagValueField(sqliteFilter.getTableName())
-		err := queryBuilder.addNewDynamicTagFilter(sqliteFilter.getTableKey(), sqliteFilter.getTag())
+	queryBuilder.addTable(prepareSqliteFilter.getTableName())
+	if prepareSqliteFilter.isDynamicTable() {
+		queryBuilder.addDynamicTagValueField(prepareSqliteFilter.getTableName())
+		err := queryBuilder.addNewDynamicTagFilter(prepareSqliteFilter.getTableKey(), prepareSqliteFilter.getTag())
 		if err != nil {
 			return "", fmt.Errorf("illegal tag name: %s", tag)
 		}
