@@ -27,8 +27,8 @@ import { InternalSpan } from "@/types/span";
 import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/common";
-import { LiveSpansState } from "./../../routes/SpanSearch";
+import { SearchFilter } from "../../types/common";
+import { LiveSpansState, TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -38,7 +38,7 @@ const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
   filters?: SearchFilter[];
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   liveSpans: LiveSpansState;
 }
 
@@ -74,7 +74,10 @@ export function SpanTable({
 
   const searchRequest = {
     filters: filters,
-    timeframe: timeframe,
+    timeframe: {
+      startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+      endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+    },
     sort: sort,
     metadata: undefined,
   };
@@ -87,19 +90,20 @@ export function SpanTable({
     isFetching,
     isLoading,
     hasNextPage,
-  } = useSpansQuery(searchRequest, liveSpans.isOn ? liveSpans.intervalInMs : 0);
-
-  useEffect(
-    () =>
-      setSpansState((prevState) => {
-        const spans = data?.pages?.flatMap((page) => page.spans) || [];
-        return {
-          spans: spans,
-          newSpansIds: calcNewSpans(prevState.spans, spans),
-        };
-      }),
-    [data]
+  } = useSpansQuery(
+    searchRequest,
+    liveSpans.isOn ? liveSpans.intervalInMilli : 0
   );
+
+  useEffect(() => {
+    setSpansState((prevState) => {
+      const spans = data?.pages?.flatMap((page) => page.spans) || [];
+      return {
+        spans: spans,
+        newSpansIds: calcNewSpans(prevState.spans, spans),
+      };
+    });
+  }, [data]);
 
   const { spans, newSpansIds } = spansState;
 
@@ -121,12 +125,6 @@ export function SpanTable({
         isNew: span.spanId in newSpansIds,
       })
     ) ?? [];
-
-  // reset newSpansIds
-  useDebouncedCallback(
-    () => setSpansState({ spans: spans, newSpansIds: [] }),
-    500
-  )();
 
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
@@ -205,6 +203,10 @@ export function SpanTable({
           className: newSpansIds.includes(row.original.spanId)
             ? "MuiTableRow-grey"
             : "",
+          sx: newSpansIds.includes(row.original.spanId)
+            ? styles.newTableRow
+            : null,
+          key: row.original.spanId, // required for new spans animation
         })}
         initialState={{ density: "compact" }}
       />

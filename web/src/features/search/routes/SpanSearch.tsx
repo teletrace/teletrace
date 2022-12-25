@@ -18,43 +18,89 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
-import { getCurrentTimestamp } from "@/utils/format";
+import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
-import { SearchFilter, Timeframe } from "../types/common";
+import { SearchFilter } from "../types/common";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;
-  timeframe: Timeframe;
 };
 
 export type LiveSpansState = {
   isOn: boolean;
-  intervalInMs: number;
+  intervalInMilli?: number;
+};
+
+export type TimeFrameState = {
+  startTimeUnixNanoSec: number;
+  endTimeUnixNanoSec: number;
+  isRelative: boolean;
 };
 
 export const SpanSearch = () => {
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
-    timeframe: getCurrentTimestamp(),
   });
 
   const [liveSpansState, setLiveSpansState] = useState<LiveSpansState>({
     isOn: false,
-    intervalInMs: 2000,
+    intervalInMilli: 2000,
   });
 
-  const onTimeframeChange = useCallback(
-    (timeframe: Timeframe) => {
-      return setFiltersState((prevState: FiltersState) => {
-        return { ...prevState, timeframe };
+  const now = getCurrentTimestamp();
+
+  const [timeFrameState, setTimeFrameState] = useState<TimeFrameState>({
+    startTimeUnixNanoSec: now - ONE_HOUR_IN_NS,
+    endTimeUnixNanoSec: now,
+    isRelative: true,
+  });
+
+  const toggleLiveSpans = ({ isOn }: LiveSpansState) => {
+    setLiveSpansState((prevState) => ({
+      ...prevState,
+      isOn: isOn,
+    }));
+    if (isOn) {
+      setTimeFrameState((prevState) => {
+        return {
+          startTimeUnixNanoSec: prevState.startTimeUnixNanoSec,
+          endTimeUnixNanoSec: 0, // means up to Now
+          isRelative: prevState.isRelative,
+        };
       });
+    }
+  };
+
+  const onTimeframeChange = useCallback(
+    (timeframe: TimeFrameState) => {
+      if (timeframe.isRelative) {
+        if (liveSpansState.isOn) {
+          toggleLiveSpans({
+            isOn: true,
+          });
+        } else {
+          toggleLiveSpans({
+            isOn: false,
+          });
+        }
+        return setTimeFrameState({
+          endTimeUnixNanoSec: 0,
+          startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+          isRelative: timeframe.isRelative,
+        });
+      }
+      // disable liveSpans if user selected custom timeframe
+      toggleLiveSpans({
+        isOn: false,
+      });
+      return setTimeFrameState(timeframe);
     },
-    [setFiltersState]
+    [liveSpansState, toggleLiveSpans, setTimeFrameState]
   );
 
   const onFilterChange = useCallback(
@@ -82,14 +128,11 @@ export const SpanSearch = () => {
             newFilters.push(entry);
           }
         }
-        return { timeframe: prevState.timeframe, filters: newFilters };
+        return { filters: newFilters };
       });
     },
     [setFiltersState]
   );
-
-  const toggleLiveSpans = (isOn: boolean) =>
-    setLiveSpansState((prevState) => ({ ...prevState, isOn: isOn }));
 
   return (
     <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>
@@ -109,13 +152,13 @@ export const SpanSearch = () => {
           <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
             <TimeFrameSelector
               onChange={onTimeframeChange}
-              value={filtersState.timeframe}
+              value={timeFrameState}
             />
           </Stack>
           <LiveSpanSwitch
             isOn={liveSpansState.isOn}
             onLiveSpansChange={toggleLiveSpans}
-            disabled={false}
+            disabled={!timeFrameState.isRelative}
           />
         </Stack>
       </Stack>
@@ -130,7 +173,8 @@ export const SpanSearch = () => {
           <TagSidebar
             onChange={onFilterChange}
             filters={filtersState.filters}
-            timeframe={filtersState.timeframe}
+            timeframe={timeFrameState}
+            liveSpans={liveSpansState}
           />
         </aside>
 
@@ -141,10 +185,11 @@ export const SpanSearch = () => {
           sx={{ height: "100%", width: "100%", minWidth: 0 }}
         >
           <SearchBar
-            timeframe={filtersState.timeframe}
+            timeframe={timeFrameState}
             filters={filtersState.filters}
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
+            liveSpans={liveSpansState}
             onClearFilters={() =>
               setFiltersState((prevState: FiltersState) => {
                 return { ...prevState, filters: [] };
@@ -153,7 +198,7 @@ export const SpanSearch = () => {
           />
           <SpanTable
             filters={filtersState.filters}
-            timeframe={filtersState.timeframe}
+            timeframe={timeFrameState}
             liveSpans={liveSpansState}
           />
         </Stack>

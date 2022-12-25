@@ -21,15 +21,17 @@ import { useState } from "react";
 
 import { theme } from "@/styles";
 
-import { SearchFilter, Timeframe } from "../../types/common";
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
+import { SearchFilter } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { styles } from "./styles";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   onFilterAdded: (entry: SearchFilter) => void;
   onFilterDeleted: (entry: SearchFilter) => void;
+  liveSpans: LiveSpansState;
   onClearFilters: () => void;
 };
 
@@ -38,6 +40,7 @@ export function SearchBar({
   timeframe,
   onFilterAdded,
   onFilterDeleted,
+  liveSpans,
   onClearFilters,
 }: SearchBarProps) {
   const [open, setOpen] = useState(false);
@@ -64,7 +67,6 @@ export function SearchBar({
           >
             Add Filter
           </Button>
-
           <FilterBuilderDialog
             timeframe={timeframe}
             filters={filters}
@@ -72,6 +74,7 @@ export function SearchBar({
             onClose={handleClose}
             onApply={onFilterAdded}
             anchorEl={anchorEl}
+            liveSpans={liveSpans}
           />
           {filters.map((filter) => (
             <Chip
