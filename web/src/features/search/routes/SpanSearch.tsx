@@ -52,9 +52,11 @@ export const SpanSearch = () => {
     intervalInMilli: 2000,
   });
 
+  const now = getCurrentTimestamp();
+
   const [timeFrameState, setTimeFrameState] = useState<TimeFrameState>({
-    startTimeUnixNanoSec: getCurrentTimestamp() - ONE_HOUR_IN_NS,
-    endTimeUnixNanoSec: getCurrentTimestamp(),
+    startTimeUnixNanoSec: now - ONE_HOUR_IN_NS,
+    endTimeUnixNanoSec: now,
     isRelative: true,
   });
 
