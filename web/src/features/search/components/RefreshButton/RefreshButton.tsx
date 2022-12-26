@@ -28,8 +28,6 @@ import {
 import styles from "./styles";
 import { useRefreshRender } from "./useRefreshRender";
 
-const A_FEW_SECONDS_AGO_STRING = "a few seconds ago";
-
 interface RefreshButtonProps {
   searchRequest: SearchRequest;
   isLiveSpansOn: boolean;
@@ -98,7 +96,7 @@ export function RefreshButton({
 
 function calcDisplayString(timeSinceLastRefresh: number): string {
   if (timeSinceLastRefresh < A_FEW_SECONDS_AGO_THRESHOLD) {
-    return A_FEW_SECONDS_AGO_STRING;
+    return "a few seconds ago";
   } else if (timeSinceLastRefresh < 60) {
     return "under a minute ago";
   } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
