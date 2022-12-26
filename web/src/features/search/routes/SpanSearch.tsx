@@ -171,7 +171,11 @@ export const SpanSearch = () => {
           isLiveSpansOn={liveSpansState.isOn}
           onRefreshTimeframe={() => {
             setTimeFrameState({
-              startTimeUnixNanoSec: timeFrameState.startTimeUnixNanoSec,
+              startTimeUnixNanoSec: timeFrameState.isRelative
+                ? msToNanoSec(new Date().getTime()) -
+                  (timeFrameState.endTimeUnixNanoSec -
+                    timeFrameState.startTimeUnixNanoSec)
+                : timeFrameState.startTimeUnixNanoSec,
               endTimeUnixNanoSec: timeFrameState.isRelative
                 ? msToNanoSec(new Date().getTime())
                 : timeFrameState.endTimeUnixNanoSec,
