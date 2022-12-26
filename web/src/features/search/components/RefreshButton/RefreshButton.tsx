@@ -46,7 +46,7 @@ export function RefreshButton({
     ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
     : 0;
 
-  const onRefreshRender = usePeriodicRender(
+  const triggerPeriodicRender = usePeriodicRender(
     timeSinceLastRefresh,
     calcNextRenderTime
   );
@@ -67,7 +67,7 @@ export function RefreshButton({
     const event = new Event("refresh");
     document.dispatchEvent(event);
     setIsRefreshing(true);
-    onRefreshRender();
+    triggerPeriodicRender();
   };
 
   return (
