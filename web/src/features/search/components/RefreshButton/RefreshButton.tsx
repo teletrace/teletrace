@@ -56,7 +56,6 @@ export function RefreshButton({
   useEffect(() => {
     if (isLiveSpansOn) {
       setLastRefreshed(new Date());
-      forceRerender();
     }
   }, [isFetching]);
 
