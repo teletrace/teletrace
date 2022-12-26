@@ -58,7 +58,7 @@ func initProvider() func() {
 
 	otelAgentAddr, ok := os.LookupEnv("OTEL_EXPORTER_OTLP_ENDPOINT")
 	if !ok {
-		otelAgentAddr = "0.0.0.0:4320"
+		otelAgentAddr = "0.0.0.0:4317"
 	}
 
 	traceClient := otlptracegrpc.NewClient(
