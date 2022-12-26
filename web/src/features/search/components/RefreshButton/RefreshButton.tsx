@@ -16,7 +16,7 @@
 
 import { Brightness1, Refresh } from "@mui/icons-material";
 import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchRequest } from "../../types/spanQuery";
@@ -52,6 +52,10 @@ export function RefreshButton({
   const onRefreshRender = useRefreshRender(timeSinceLastRefresh);
 
   const { isFetching } = useSpansQuery(searchRequest);
+
+  useEffect(() => {
+    if (isLiveSpansOn) setLastRefreshed(new Date());
+  }, [isFetching]);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
@@ -98,7 +102,7 @@ function calcDisplayString(timeSinceLastRefresh: number): string {
   } else if (timeSinceLastRefresh < 60) {
     return "under a minute ago";
   } else if (timeSinceLastRefresh < SECONDS_IN_HOUR) {
-    const minutes = Math.round(timeSinceLastRefresh / 60) + 1;
+    const minutes = Math.round(timeSinceLastRefresh / 60);
     return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
   } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
     const hours = Math.ceil(timeSinceLastRefresh / SECONDS_IN_HOUR);

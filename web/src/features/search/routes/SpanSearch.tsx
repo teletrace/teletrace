@@ -18,7 +18,11 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
-import {ONE_HOUR_IN_NS, getCurrentTimestamp, msToNanoSec} from "@/utils/format";
+import {
+  ONE_HOUR_IN_NS,
+  getCurrentTimestamp,
+  msToNanoSec,
+} from "@/utils/format";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { RefreshButton } from "../components/RefreshButton";
@@ -168,8 +172,9 @@ export const SpanSearch = () => {
           onRefreshTimeframe={() => {
             setTimeFrameState({
               startTimeUnixNanoSec: timeFrameState.startTimeUnixNanoSec,
-              endTimeUnixNanoSec: timeFrameState.isRelative ?
-                  msToNanoSec(new Date().getTime()) : timeFrameState.endTimeUnixNanoSec,
+              endTimeUnixNanoSec: timeFrameState.isRelative
+                ? msToNanoSec(new Date().getTime())
+                : timeFrameState.endTimeUnixNanoSec,
               isRelative: timeFrameState.isRelative,
             });
           }}
