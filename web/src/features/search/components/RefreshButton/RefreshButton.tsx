@@ -18,10 +18,10 @@ import { Brightness1, Refresh } from "@mui/icons-material";
 import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 
+import { usePeriodicRender } from "../../../../hooks/usePeriodicRender";
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchRequest } from "../../types/spanQuery";
 import styles from "./styles";
-import { usePeriodicRender } from "../../../../hooks/usePeriodicRender";
 
 const A_FEW_SECONDS_AGO_THRESHOLD = 10;
 const SECONDS_IN_HOUR = 3600;
