@@ -145,26 +145,35 @@ func (qb *QueryBuilder) addJoinConditions() error {
 		switch t {
 		case "span_attributes":
 			err = qb.addFilter(newSearchFilter("span.attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans") // added cause filter value is column name
 		case "resource_attributes":
 			err = qb.addFilter(newSearchFilter("resource.attributes.resource_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
+			qb.addTable("spans")
 		case "links":
 			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "events":
 			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "event_attributes":
 			err = qb.addFilter(newSearchFilter("span.event.attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
 			if err != nil {
 				return err
 			}
+			qb.addTable("events")
 			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "link_attributes":
 			err = qb.addFilter(newSearchFilter("span.link.attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
 			if err != nil {
 				return err
 			}
+			qb.addTable("links")
 			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "scope_attributes":
 			err = qb.addFilter(newSearchFilter("scope.attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
+			qb.addTable("spans")
 		}
 		if err != nil {
 			return err
@@ -203,7 +212,7 @@ func (qb *QueryBuilder) buildFilters() string {
 	if len(filterStrings) == 0 {
 		return "" // for cases without filters
 	}
-	return "WHERE " + strings.Join(filterStrings, " AND ")
+	return strings.Join(filterStrings, " AND ")
 }
 
 func newQueryBuilder() *QueryBuilder {
