@@ -200,7 +200,10 @@ func (qb *QueryBuilder) buildFilters() string {
 	for _, filter := range qb.getFilters() {
 		filterStrings = append(filterStrings, qb.covertFilterToSqliteQuery(filter))
 	}
-	return strings.Join(filterStrings, " AND ")
+	if len(filterStrings) == 0 {
+		return "" // for cases without filters
+	}
+	return "WHERE " + strings.Join(filterStrings, " AND ")
 }
 
 func newQueryBuilder() *QueryBuilder {
