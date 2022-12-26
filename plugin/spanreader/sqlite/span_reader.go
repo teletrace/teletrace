@@ -23,6 +23,8 @@ import (
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
 
+	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+
 	"go.uber.org/zap"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
@@ -41,6 +43,7 @@ func (sr *spanReader) Initialize() error {
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
 	var result spansquery.SearchResponse
+	result.Spans = make([]*internalspan.InternalSpan, 0) // can't be nil
 	query, err := buildSearchQuery(r)
 	if err != nil {
 		return nil, err
