@@ -41,6 +41,8 @@ import (
 )
 
 var rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+var counter int
+var errorProb int = 5
 
 // Initializes an OTLP exporter, and configures the corresponding trace and
 // metric providers.
@@ -106,6 +108,7 @@ func main() {
 	handler := http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		//  random sleep to simulate latency
 		var sleep int64
+		counter++
 
 		switch modulus := time.Now().Unix() % 5; modulus {
 		case 0:
@@ -124,7 +127,7 @@ func main() {
 		span := trace.SpanFromContext(ctx)
 		bag := baggage.FromContext(ctx)
 
-		if sleep < 10 {
+		if counter % errorProb == 0 {
 			defer span.End()
 			serverErr := fmt.Errorf("Internal Server Error - Randomized for Sampling")
 			http.Error(w, serverErr.Error(), http.StatusInternalServerError)

@@ -28,7 +28,5 @@ services:
       - lupa
 
   otel-collector:
-    volumes:
-      - ./otel-collector-local.yaml:/etc/otel-collector.yaml
     ports:
       - "4320:4320" # OTLP gRPC receiver
