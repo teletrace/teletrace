@@ -1,0 +1,41 @@
+version: "3"
+services:
+  demo-client:
+    build:
+      dockerfile: Dockerfile
+      context: ../demo/client
+    restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4320
+      - DEMO_SERVER_ENDPOINT=http://demo-server:7080/hello
+    depends_on:
+      - demo-server
+    networks:
+      - lupa
+
+  demo-server:
+    build:
+      dockerfile: Dockerfile
+      context: ../demo/server
+    restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4320
+    ports:
+      - "7080"
+    depends_on:
+      - otel-collector
+    networks:
+      - lupa
+
+  otel-collector:
+    image: otel/opentelemetry-collector:${OTEL_COLLECTOR_VERSION}
+    command: ["--config=/etc/otel-collector.yaml"]
+    volumes:
+      - ./otel-collector-local.yaml:/etc/otel-collector.yaml
+    ports:
+      - "4320:4320" # OTLP gRPC receiver
+    depends_on:
+      lupa-api:
+        condition: service_healthy
+    networks:
+      - lupa

@@ -1,5 +1,5 @@
 exporters:
-  otlp:
+  otlp/2:
     endpoint: lupa-api:4317
     tls:
       insecure: true
@@ -8,6 +8,7 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: "0.0.0.0:4320"
 
 processors:
   batch:
@@ -17,4 +18,4 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp]
+      exporters: [otlp/2]
