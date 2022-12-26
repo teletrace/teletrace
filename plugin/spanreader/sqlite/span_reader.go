@@ -19,7 +19,6 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
-
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"

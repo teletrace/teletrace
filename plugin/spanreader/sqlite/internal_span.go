@@ -66,19 +66,19 @@ func (sq *sqliteSpan) getInternalSpanKind() int32 {
 }
 
 func (sq *sqliteSpan) getInternalStartTimeUnixNano() uint64 {
-	startTime, err := strconv.ParseUint(fmt.Sprintf("%s", sq.startTimeUnixNano), 10, 64)
+	startTime, err := strconv.Atoi(fmt.Sprintf("%s", sq.startTimeUnixNano))
 	if err != nil {
 		return 0
 	}
-	return startTime
+	return uint64(startTime)
 }
 
 func (sq *sqliteSpan) getInternalEndTimeUnixNano() uint64 {
-	endTime, err := strconv.ParseUint(fmt.Sprintf("%s", sq.endTimeUnixNano), 10, 64)
+	endTime, err := strconv.Atoi(fmt.Sprintf("%s", sq.endTimeUnixNano))
 	if err != nil {
 		return 0
 	}
-	return endTime
+	return uint64(endTime)
 }
 
 func (sq *sqliteSpan) getInternalDroppedSpanAttributesCount() uint32 {
@@ -114,19 +114,19 @@ func (sq *sqliteSpan) getInternalDroppedLinksCount() uint32 {
 }
 
 func (sq *sqliteSpan) getInternalDurationNano() uint64 {
-	durationNano, err := strconv.ParseUint(fmt.Sprintf("%s", sq.durationNano), 10, 64)
+	durationNano, err := strconv.Atoi(fmt.Sprintf("%s", sq.durationNano))
 	if err != nil {
 		return 0
 	}
-	return durationNano
+	return uint64(durationNano)
 }
 
 func (sq *sqliteSpan) getInternalIngestionTimeUnixNano() uint64 {
-	ingestionTime, err := strconv.ParseUint(fmt.Sprintf("%s", sq.ingestionTimeUnixNano), 10, 64)
+	ingestionTime, err := strconv.Atoi(fmt.Sprintf("%s", sq.ingestionTimeUnixNano))
 	if err != nil {
 		return 0
 	}
-	return ingestionTime
+	return uint64(ingestionTime)
 }
 
 func (sq *sqliteSpan) getInternalScopeDroppedAttributesCount() uint32 {
@@ -178,11 +178,11 @@ func (sq *sqliteSpan) getInternalEventsName() string {
 }
 
 func (sq *sqliteSpan) getInternalEventsTimeUnixNano() uint64 {
-	eventsTime, err := strconv.ParseUint(fmt.Sprintf("%s", sq.eventsTimeUnixNano), 10, 64)
+	eventsTime, err := strconv.Atoi(fmt.Sprintf("%s", sq.eventsTimeUnixNano))
 	if err != nil {
 		return 0
 	}
-	return eventsTime
+	return uint64(eventsTime)
 }
 
 func (sq *sqliteSpan) getInternalLinksTraceId() string {
