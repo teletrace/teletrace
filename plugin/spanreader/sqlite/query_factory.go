@@ -18,6 +18,7 @@ package sqlitespanreader
 
 import (
 	"fmt"
+	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"strings"
 
@@ -53,7 +54,10 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 		return "", fmt.Errorf("illegal tag name: %s", tag)
 	}
 	queryBuilder := newQueryBuilder()
-	filters := createTimeframeFilters(*r.Timeframe)
+	var filters []model.SearchFilter
+	if r.Timeframe != nil {
+		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
+	}
 	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
 	err = queryBuilder.addFilters(filters)
 	if err != nil {
@@ -77,7 +81,7 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 	if err != nil {
 		return "", fmt.Errorf("failed to build query params: %v", err)
 	}
-	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s WHERE %s", queryParams.fields, queryParams.tables, queryParams.filters), nil
+	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s %s", queryParams.fields, queryParams.tables, queryParams.filters), nil
 }
 
 func buildDynamicTagsQuery() string {
