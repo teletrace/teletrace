@@ -24,7 +24,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { InternalSpan } from "@/types/span";
-import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
+import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter } from "../../types/common";
@@ -113,7 +113,7 @@ export function SpanTable({
         id: span.spanId,
         traceId: span.traceId,
         spanId: span.spanId,
-        startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
+        startTime: formatNanoAsMsDateTime(span.startTimeUnixNano),
         duration: externalFields.durationNano,
         name: span.name,
         status: span.status.code,
