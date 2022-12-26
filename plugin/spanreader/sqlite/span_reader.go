@@ -19,6 +19,7 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
+
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
@@ -58,6 +59,7 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 		return nil, fmt.Errorf("failed to query spans: %v", err)
 	}
 	defer rows.Close()
+	var nextToken spansquery.ContinuationToken
 	for rows.Next() {
 		sqliteSpan := newSqliteInternalSpan()
 		err = rows.Scan(
@@ -101,6 +103,12 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 			continue
 		}
 		result.Spans = append(result.Spans, internalSpan)
+		nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", sqliteSpan.startTimeUnixNano))
+	}
+	if nextToken != "" {
+		result.Metadata = &spansquery.Metadata{
+			NextToken: nextToken,
+		}
 	}
 	return &result, nil
 }
