@@ -40,10 +40,12 @@ Hi
 
 <!-- How does new epic interacts with current application elements. -->
 
+## Tasks
+
 <!--Add GitHub tasks-->
 
 ```[tasklist]
-## Tasks
+### Steps to completion
 - [ ] ...
 - [ ] ...
 ```
