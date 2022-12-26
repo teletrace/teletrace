@@ -1,5 +1,7 @@
 // Copyright The OpenTelemetry Authors
-//
+// Modifications copyright (C) 2022 Cisco Systems, Inc.
+// Link to original file
+// https://github.com/open-telemetry/opentelemetry-go-contrib/blob/v0.14.0/instrumentation/net/http/otelhttp/example/server/server.go
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -127,6 +129,7 @@ func main() {
 		span := trace.SpanFromContext(ctx)
 		bag := baggage.FromContext(ctx)
 
+		// Sdding errors generation
 		if counter % errorProb == 0 {
 			defer span.End()
 			serverErr := fmt.Errorf("Internal Server Error - Randomized for Sampling")

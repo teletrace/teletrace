@@ -6,7 +6,7 @@ services:
       context: ../demo/client
     restart: always
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4320
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
       - DEMO_SERVER_ENDPOINT=http://demo-server:7080/hello
     depends_on:
       - demo-server
@@ -19,14 +19,10 @@ services:
       context: ../demo/server
     restart: always
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4320
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
     ports:
       - "7080"
     depends_on:
       - otel-collector
     networks:
       - lupa
-
-  otel-collector:
-    ports:
-      - "4320:4320" # OTLP gRPC receiver
