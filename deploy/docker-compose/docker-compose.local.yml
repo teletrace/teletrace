@@ -28,14 +28,7 @@ services:
       - lupa
 
   otel-collector:
-    image: otel/opentelemetry-collector:${OTEL_COLLECTOR_VERSION}
-    command: ["--config=/etc/otel-collector.yaml"]
     volumes:
       - ./otel-collector-local.yaml:/etc/otel-collector.yaml
     ports:
       - "4320:4320" # OTLP gRPC receiver
-    depends_on:
-      lupa-api:
-        condition: service_healthy
-    networks:
-      - lupa
