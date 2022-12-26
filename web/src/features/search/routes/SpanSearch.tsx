@@ -144,6 +144,8 @@ export const SpanSearch = () => {
     filters: filtersState.filters,
   };
 
+  const delta = (timeFrameState.endTimeUnixNanoSec - timeFrameState.startTimeUnixNanoSec)
+
   return (
     <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>
       <Head
@@ -172,9 +174,7 @@ export const SpanSearch = () => {
           onRefreshTimeframe={() => {
             setTimeFrameState({
               startTimeUnixNanoSec: timeFrameState.isRelative
-                ? msToNanoSec(new Date().getTime()) -
-                  (timeFrameState.endTimeUnixNanoSec -
-                    timeFrameState.startTimeUnixNanoSec)
+                ? msToNanoSec(new Date().getTime()) - (timeFrameState.endTimeUnixNanoSec - timeFrameState.startTimeUnixNanoSec)
                 : timeFrameState.startTimeUnixNanoSec,
               endTimeUnixNanoSec: timeFrameState.isRelative
                 ? msToNanoSec(new Date().getTime())
