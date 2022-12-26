@@ -54,9 +54,7 @@ export function RefreshButton({
   const { isFetching } = useSpansQuery(searchRequest);
 
   useEffect(() => {
-    if (isLiveSpansOn) {
-      setLastRefreshed(new Date());
-    }
+    if (isLiveSpansOn) setLastRefreshed(new Date());
   }, [isFetching]);
 
   if (isRefreshing && !isFetching) {
