@@ -20,7 +20,7 @@ export const formatDateAsDateTime = (
   date: Date | number,
   { showMs = false, showSec = true } = {}
 ) => {
-  const pattern = `PP, HH:mm${showSec ? ":ss" : ""}${
+  const pattern = `PP HH:mm${showSec ? ":ss" : ""}${
     showSec && showMs ? ".SSS" : ""
   }`;
   return format(date, pattern);
