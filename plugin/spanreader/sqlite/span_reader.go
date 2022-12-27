@@ -44,11 +44,11 @@ func (sr *spanReader) Initialize() error {
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
 	var result spansquery.SearchResponse
 	result.Spans = make([]*internalspan.InternalSpan, 0) // can't be nil
-	query, err := buildSearchQuery(r)
+	searchQueryResponse, err := buildSearchQuery(r)
 	if err != nil {
 		return nil, err
 	}
-	stmt, err := sr.client.db.PrepareContext(ctx, query)
+	stmt, err := sr.client.db.PrepareContext(ctx, searchQueryResponse.query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare query: %v", err)
 	}
@@ -102,7 +102,13 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 			continue
 		}
 		result.Spans = append(result.Spans, internalSpan)
-		nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", sqliteSpan.startTimeUnixNano))
+		switch searchQueryResponse.sort {
+		case "duration":
+			nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", sqliteSpan.durationNano))
+		default:
+			nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", sqliteSpan.startTimeUnixNano))
+		}
+
 	}
 	if nextToken != "" {
 		result.Metadata = &spansquery.Metadata{

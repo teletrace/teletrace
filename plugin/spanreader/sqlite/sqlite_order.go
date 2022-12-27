@@ -24,20 +24,27 @@ import (
 )
 
 type sqliteOrder struct {
-	fieldName string
+	tag       string
 	tableName string
+	tableKey  string
 	orderBy   string
+}
+
+var orderSqliteFieldsMap = map[string]string{
+	"externalFields.durationNano": "span.duration",
+	"span.startTimeUnixNano":      "span.start_time_unix_nano",
 }
 
 func newSqliteOrder(order spansquery.Sort) (*sqliteOrder, error) {
 	orderField := fmt.Sprintf("%v", order.Field)
-	if fieldName, ok := sqliteFieldsMap[orderField]; ok {
+	if sqlField, ok := orderSqliteFieldsMap[orderField]; ok {
 		for _, tableKey := range filterTablesNames {
-			if strings.HasPrefix(orderField, tableKey) {
+			if strings.HasPrefix(sqlField, tableKey) {
 				tableName := sqliteTableNameMap[tableKey]
 				return &sqliteOrder{
-					fieldName: fieldName,
 					tableName: tableName,
+					tableKey:  tableKey,
+					tag:       removeTablePrefixFromDynamicTag(sqlField),
 					orderBy:   orderType(order),
 				}, nil
 			}
@@ -54,8 +61,16 @@ func (so *sqliteOrder) getTableName() string {
 	return so.tableName
 }
 
+func (so *sqliteOrder) getTableKey() string {
+	return so.tableKey
+}
+
+func (so *sqliteOrder) getTag() string {
+	return so.tag
+}
+
 func (so *sqliteOrder) getFieldName() string {
-	return so.fieldName
+	return fmt.Sprintf("%s.%s", so.tableName, so.tag)
 }
 
 func (so *sqliteOrder) getOrderBy() string {
