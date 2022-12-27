@@ -108,7 +108,7 @@ function calcDisplayString(timeSinceLastRefresh: number): string {
     const minutes = Math.round(timeSinceLastRefresh / 60);
     return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
   } else if (timeSinceLastRefresh < SECONDS_IN_DAY) {
-    const hours = Math.ceil(timeSinceLastRefresh / SECONDS_IN_HOUR);
+    const hours = Math.round(timeSinceLastRefresh / SECONDS_IN_HOUR);
     return `${hours} hour${hours === 1 ? "" : "s"} ago`;
   } else {
     const days = Math.round(timeSinceLastRefresh / SECONDS_IN_DAY);
