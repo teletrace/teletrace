@@ -208,6 +208,7 @@ export function SpanTable({
             : null,
           key: row.original.spanId, // required for new spans animation
         })}
+        getRowId={(originalRow) => originalRow.spanId}
         initialState={{ density: "compact" }}
       />
     </div>

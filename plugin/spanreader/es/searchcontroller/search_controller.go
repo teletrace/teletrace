@@ -20,10 +20,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 	"net/http"
 	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+
+	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
@@ -125,7 +126,6 @@ func addSortField(fieldName spansquery.SortField, ascending bool, sorts []types.
 }
 
 func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
-
 	sorts := []types.SortCombinations{}
 	tieBreakerFound := false
 	for _, _s := range s {
