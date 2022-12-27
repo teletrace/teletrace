@@ -32,6 +32,19 @@ export const operatorsList = [
   "lte",
 ] as const;
 
+export const operatorsFormat = {
+  in: "IN",
+  not_in: "NOT IN",
+  contains: "CONTAINS",
+  not_contains: "NOT CONTAINS",
+  exists: "EXISTS",
+  not_exists: "NOT EXISTS",
+  gt: ">",
+  gte: "≥",
+  lt: "<",
+  lte: "≤",
+} as const;
+
 export type Operator = typeof operatorsList[number];
 
 export type FilterValueTypes = string | number | Array<string | number>;
