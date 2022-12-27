@@ -77,7 +77,6 @@ export const TagSidebar = ({
       tag: "span.attributes.http.status_code",
       isSearchable: true,
     },
-    { title: "Instrumentation Library", tag: "scope.name", isSearchable: true },
   ];
 
   return (
