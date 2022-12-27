@@ -36,17 +36,17 @@ var orderSqliteFieldsMap = map[string]string{
 }
 
 func newSqliteOrder(order spansquery.Sort) (*sqliteOrder, error) {
+	var so sqliteOrder
 	orderField := fmt.Sprintf("%v", order.Field)
 	if sqlField, ok := orderSqliteFieldsMap[orderField]; ok {
 		for _, tableKey := range filterTablesNames {
 			if strings.HasPrefix(sqlField, tableKey) {
 				tableName := sqliteTableNameMap[tableKey]
-				return &sqliteOrder{
-					tableName: tableName,
-					tableKey:  tableKey,
-					tag:       removeTablePrefixFromDynamicTag(sqlField),
-					orderBy:   orderType(order),
-				}, nil
+				so.tableName = tableName
+				so.tableKey = tableKey
+				so.tag = removeTablePrefixFromDynamicTag(sqlField)
+				so.orderBy = orderType(order)
+				return &so, nil
 			}
 		}
 	}
@@ -77,9 +77,11 @@ func (so *sqliteOrder) getOrderBy() string {
 	return so.orderBy
 }
 
+var orderTypeMap = map[bool]string{
+	true:  "ASC",
+	false: "DESC",
+}
+
 func orderType(order spansquery.Sort) string {
-	if order.Ascending {
-		return "ASC"
-	}
-	return "DESC"
+	return orderTypeMap[order.Ascending]
 }
