@@ -18,7 +18,8 @@ import { Brightness1, Refresh } from "@mui/icons-material";
 import { CircularProgress, Icon, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 
-import { usePeriodicRender } from "../../../../hooks/usePeriodicRender";
+import { usePeriodicRender } from "@/hooks/usePeriodicRender";
+
 import { useSpansQuery } from "../../api/spanQuery";
 import {TimeFrameState} from "../../routes/SpanSearch";
 import {SearchFilter} from "../../types/common";
@@ -72,7 +73,6 @@ export function RefreshButton({
     const event = new Event("refresh");
     document.dispatchEvent(event);
     setIsRefreshing(true);
-    forceRerender();
   };
 
   return (

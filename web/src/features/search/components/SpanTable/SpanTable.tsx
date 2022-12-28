@@ -91,6 +91,8 @@ export function SpanTable({
     liveSpans.isOn ? liveSpans.intervalInMilli : 0
   );
 
+  console.log(data);
+
   useEffect(() => {
     setTableSpans((prevTableSpans) => {
       const newSpans = data?.pages?.flatMap((page) => page.spans) || [];

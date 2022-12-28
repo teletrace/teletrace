@@ -17,6 +17,7 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+// Allows a component to periodically rerender without any particular state change
 export function usePeriodicRender(
   timeSinceLastRefresh: number,
   calcNextRenderTime: (timeSinceLastRender: number) => number
