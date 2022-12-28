@@ -15,7 +15,7 @@
  */
 
 import { Divider, Stack, Typography } from "@mui/material";
-import {useCallback, useState} from "react";
+import { useCallback, useState } from "react";
 
 import { Head } from "@/components/Head";
 import {
@@ -169,10 +169,10 @@ export const SpanSearch = () => {
             const tf = {
               startTimeUnixNanoSec: timeFrameState.startTimeUnixNanoSec,
               endTimeUnixNanoSec: timeFrameState.isRelative
-                  ? msToNanoSec(new Date().getTime())
-                  : timeFrameState.endTimeUnixNanoSec,
+                ? msToNanoSec(new Date().getTime())
+                : timeFrameState.endTimeUnixNanoSec,
               isRelative: timeFrameState.isRelative,
-            }
+            };
 
             setTimeFrameState(tf);
           }}

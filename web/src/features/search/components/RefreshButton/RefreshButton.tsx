@@ -21,8 +21,8 @@ import { useEffect, useState } from "react";
 import { usePeriodicRender } from "@/hooks/usePeriodicRender";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import {TimeFrameState} from "../../routes/SpanSearch";
-import {SearchFilter} from "../../types/common";
+import { TimeFrameState } from "../../routes/SpanSearch";
+import { SearchFilter } from "../../types/common";
 import styles from "./styles";
 
 const A_FEW_SECONDS_AGO_THRESHOLD = 10;
@@ -37,7 +37,8 @@ interface RefreshButtonProps {
 }
 
 export function RefreshButton({
-    timeframe, filters,
+  timeframe,
+  filters,
   isLiveSpansOn,
   onRefreshTimeframe,
 }: RefreshButtonProps) {
@@ -54,7 +55,10 @@ export function RefreshButton({
     calcNextRenderTime
   );
 
-  const { isFetching } = useSpansQuery({ timeframe: timeframe, filters: filters });
+  const { isFetching } = useSpansQuery({
+    timeframe: timeframe,
+    filters: filters,
+  });
 
   useEffect(() => {
     if (isLiveSpansOn) {
