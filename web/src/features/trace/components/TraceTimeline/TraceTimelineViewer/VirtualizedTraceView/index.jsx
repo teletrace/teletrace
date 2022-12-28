@@ -15,15 +15,15 @@ limitations under the License.
 import cx from "classnames";
 import * as React from "react";
 
-import colorGenerator from "../../utils/color-generator.js";
+import colorGenerator from "../../utils/color-generator.jsx";
 import {
   createViewedBoundsFunc,
   findServerChildSpan,
   isColdStartSpan,
   isErrorSpan,
-} from "../../utils/index.js";
-import ListView from "./ListView/index.js";
-import SpanBarRow from "./SpanBarRow.js";
+} from "../../utils/index.jsx";
+import ListView from "./ListView/index.jsx";
+import SpanBarRow from "./SpanBarRow.jsx";
 
 import "./styles.css";
 

@@ -14,7 +14,7 @@ limitations under the License.
 
 import Combokeys from "combokeys";
 
-import keyboardMappings from "./keyboard-mappings.js";
+import keyboardMappings from "./keyboard-mappings.jsx";
 
 let instance;
 

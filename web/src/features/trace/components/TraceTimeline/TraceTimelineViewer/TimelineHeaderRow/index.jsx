@@ -14,11 +14,11 @@ limitations under the License.
 
 import * as React from "react";
 
-import Ticks from "../Ticks.js";
-import TimelineRow from "../TimelineRow.js";
-import TimelineColumnResizer from "./TimelineColumnResizer.js";
+import Ticks from "../Ticks.jsx";
+import TimelineRow from "../TimelineRow.jsx";
+import TimelineColumnResizer from "./TimelineColumnResizer.jsx";
 // eslint-disable-next-line import/no-cycle
-import TimelineViewingLayer from "./TimelineViewingLayer.js";
+import TimelineViewingLayer from "./TimelineViewingLayer.jsx";
 
 import "./styles.css";
 

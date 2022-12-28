@@ -45,7 +45,7 @@ export const AppProviders = ({
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
-            {process.env.NODE_ENV !== "test" && !isStorybook && (
+            {import.meta.env.MODE !== "test" && !isStorybook && (
               <ReactQueryDevtools position="bottom-right" />
             )}
             <BrowserRouter>{children}</BrowserRouter>

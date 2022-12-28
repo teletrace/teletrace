@@ -14,7 +14,7 @@ limitations under the License.
 
 import * as React from "react";
 
-import Positions from "./Positions.js";
+import Positions from "./Positions.jsx";
 
 const DEFAULT_INITIAL_DRAW = 300;
 

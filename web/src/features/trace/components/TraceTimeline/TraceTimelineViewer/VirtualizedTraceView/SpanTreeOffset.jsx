@@ -18,7 +18,7 @@ import { PureComponent } from "react";
 
 import { theme } from "@/styles";
 
-import spanAncestorIds from "../../utils/span-ancestor-ids.js";
+import spanAncestorIds from "../../utils/span-ancestor-ids.jsx";
 
 class SpanTreeOffset extends PureComponent {
   constructor(props) {

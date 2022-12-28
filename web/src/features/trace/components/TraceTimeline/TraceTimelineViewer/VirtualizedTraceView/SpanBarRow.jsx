@@ -19,10 +19,10 @@ import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { theme } from "@/styles";
 
 import { getSpanResourceType } from "../../../../utils/span-resource-type";
-import { formatDuration } from "../../utils/date.js";
-import TimelineRow from "../TimelineRow.js";
-import SpanBar from "./SpanBar.js";
-import SpanTreeOffset from "./SpanTreeOffset.js";
+import { formatDuration } from "../../utils/date.jsx";
+import TimelineRow from "../TimelineRow.jsx";
+import SpanBar from "./SpanBar.jsx";
+import SpanTreeOffset from "./SpanTreeOffset.jsx";
 
 /**
  * This was originally a stateless function, but changing to a PureComponent

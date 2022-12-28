@@ -14,10 +14,10 @@ limitations under the License.
 
 import * as React from "react";
 
-import CanvasSpanGraph from "./CanvasSpanGraph.js";
-import TickLabels from "./TickLabels.js";
+import CanvasSpanGraph from "./CanvasSpanGraph.jsx";
+import TickLabels from "./TickLabels.jsx";
 // eslint-disable-next-line import/no-cycle
-import ViewingLayer from "./ViewingLayer/index.js";
+import ViewingLayer from "./ViewingLayer/index.jsx";
 
 import "./styles.css";
 

@@ -16,8 +16,8 @@ import cx from "classnames";
 import * as React from "react";
 
 // eslint-disable-next-line import/no-cycle
-import { VIEW_MIN_RANGE } from "../../TimelineViewer.js";
-import DraggableManager from "../../utils/DraggableManager.js";
+import { VIEW_MIN_RANGE } from "../../TimelineViewer.jsx";
+import DraggableManager from "../../utils/DraggableManager.jsx";
 
 /**
  * Map from a sub range to the greater view range, e.g, when the view range is

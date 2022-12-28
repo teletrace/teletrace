@@ -15,7 +15,7 @@ limitations under the License.
 import cx from "classnames";
 import * as React from "react";
 
-import DraggableManager from "../../utils/DraggableManager.js";
+import DraggableManager from "../../utils/DraggableManager.jsx";
 
 export default class TimelineColumnResizer extends React.PureComponent {
   constructor(props) {

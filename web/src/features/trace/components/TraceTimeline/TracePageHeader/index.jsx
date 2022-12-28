@@ -16,9 +16,9 @@ import { Button } from "@mui/material";
 import dayjs from "dayjs";
 
 // eslint-disable-next-line import/no-cycle
-import LabeledList from "../LabeledList.js";
-import { ONE_MILLISECOND, formatDuration } from "../utils/date.js";
-import SpanGraph from "./SpanGraph/index.js";
+import LabeledList from "../LabeledList.jsx";
+import { ONE_MILLISECOND, formatDuration } from "../utils/date.jsx";
+import SpanGraph from "./SpanGraph/index.jsx";
 import "./styles.css";
 
 export const HEADER_ITEMS = [

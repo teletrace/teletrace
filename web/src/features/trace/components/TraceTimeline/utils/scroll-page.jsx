@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import Tween from "./Tween.js";
+import Tween from "./Tween.jsx";
 
 const DURATION_MS = 350;
 

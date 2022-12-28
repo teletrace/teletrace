@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { formatDuration } from "../utils/date.js";
+import { formatDuration } from "../utils/date.jsx";
 
 export default function Ticks(props) {
   const { endTime, numTicks, showLabels, startTime } = props;

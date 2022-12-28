@@ -16,12 +16,12 @@ import cx from "classnames";
 import * as React from "react";
 
 // eslint-disable-next-line import/no-cycle
-import { VIEW_MIN_RANGE } from "../../../TimelineViewer.js";
+import { VIEW_MIN_RANGE } from "../../../TimelineViewer.jsx";
 import DraggableManager, {
   updateTypes,
-} from "../../../utils/DraggableManager.js";
-import GraphTicks from "../GraphTicks.js";
-import Scrubber from "../Scrubber/index.js";
+} from "../../../utils/DraggableManager.jsx";
+import GraphTicks from "../GraphTicks.jsx";
+import Scrubber from "../Scrubber/index.jsx";
 
 import "./styles.css";
 

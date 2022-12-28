@@ -15,8 +15,8 @@ limitations under the License.
 import { PureComponent } from "react";
 
 // eslint-disable-next-line import/no-cycle
-import TimelineHeaderRow from "./TimelineHeaderRow/index.js";
-import VirtualizedTraceView from "./VirtualizedTraceView/index.js";
+import TimelineHeaderRow from "./TimelineHeaderRow/index.jsx";
+import VirtualizedTraceView from "./VirtualizedTraceView/index.jsx";
 
 import "./styles.css";
 

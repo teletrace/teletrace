@@ -17,19 +17,19 @@ import _mapValues from "lodash-es/mapValues";
 import { Component } from "react";
 
 // eslint-disable-next-line import/no-cycle
-import TracePageHeader from "./TracePageHeader/index.js";
+import TracePageHeader from "./TracePageHeader/index.jsx";
 // eslint-disable-next-line import/no-cycle
-import TraceTimelineViewer from "./TraceTimelineViewer/index.js";
+import TraceTimelineViewer from "./TraceTimelineViewer/index.jsx";
 import {
   merge as mergeShortcuts,
   reset as resetShortcuts,
-} from "./utils/keyboard-shortcuts.js";
+} from "./utils/keyboard-shortcuts.jsx";
 import {
   cancel as cancelScroll,
   scrollBy,
   scrollTo,
-} from "./utils/scroll-page.js";
-import ScrollManager from "./utils/ScrollManager.js";
+} from "./utils/scroll-page.jsx";
+import ScrollManager from "./utils/ScrollManager.jsx";
 
 import "u-basscss/css/flexbox.css";
 import "u-basscss/css/layout.css";

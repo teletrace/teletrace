@@ -14,9 +14,9 @@ limitations under the License.
 
 import isEqual from "lodash-es/isEqual";
 
-import TreeNode from "../TreeNode.js";
-import { formatMillisecondTime, formatSecondTime } from "./date.js";
-import { getProcessServiceName } from "./process.js";
+import TreeNode from "../TreeNode.jsx";
+import { formatMillisecondTime, formatSecondTime } from "./date.jsx";
+import { getProcessServiceName } from "./process.jsx";
 import {
   getSpanDuration,
   getSpanId,
@@ -26,7 +26,7 @@ import {
   getSpanTimestamp,
   sortSpans,
   transformSpan,
-} from "./span.js";
+} from "./span.jsx";
 
 function numberSortComparator(itemA, itemB) {
   return itemA - itemB;

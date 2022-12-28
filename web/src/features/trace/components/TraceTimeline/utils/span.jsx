@@ -14,7 +14,7 @@ limitations under the License.
 
 import sortBy from "lodash-es/sortBy";
 
-import { getProcessServiceName } from "./process.js";
+import { getProcessServiceName } from "./process.jsx";
 
 export const getSpanId = (span) => span.spanID;
 export const getSpanName = (span) => span.operationName;

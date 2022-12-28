@@ -14,8 +14,8 @@ limitations under the License.
 
 import * as React from "react";
 
-import colorGenerator from "../../utils/color-generator.js";
-import renderIntoCanvas from "./render-into-canvas.js";
+import colorGenerator from "../../utils/color-generator.jsx";
+import renderIntoCanvas from "./render-into-canvas.jsx";
 
 const getColor = (str) => colorGenerator.getRgbColorByKey(str);
 
