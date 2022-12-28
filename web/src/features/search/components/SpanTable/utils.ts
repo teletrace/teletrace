@@ -15,16 +15,22 @@
  */
 
 import { InternalSpan } from "@/types/span";
+import { TableSpan } from "./columns";
 
 export const calcNewSpans = (
-  prevSpans: InternalSpan[],
-  spans: InternalSpan[]
-): string[] => {
-  const prevSpansIds = prevSpans.map((span) => span.span.spanId);
-  if (prevSpans.length == 0) {
+  prevTableSpans: TableSpan[],
+  spans: InternalSpan[],
+  liveSpansEnabled: boolean
+): Set<string> => {
+  if (prevTableSpans.length == 0 || !liveSpansEnabled) {
     // prevent showing all new spans on filter change
-    return [];
+    return new Set();
   }
-  const spansIds = spans.map((span) => span.span.spanId);
-  return spansIds.filter((spanId) => !prevSpansIds.includes(spanId));
+  const prevSpansIds = new Set(prevTableSpans.map((span) => span.spanId));
+
+  return new Set(
+    spans
+      .filter((span) => !prevSpansIds.has(span.span.spanId))
+      .map((span) => span.span.spanId)
+  );
 };
