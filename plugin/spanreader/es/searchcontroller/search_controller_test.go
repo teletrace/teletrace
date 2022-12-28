@@ -130,7 +130,7 @@ func TestParseSpansResponse(t *testing.T) {
 	//nolint:ineffassign
 	spans, err := parseSpansResponse(res)
 
-	expectedNextToken := "12345678"
+	expectedNextToken := "[\"12345678\"]"
 	assert.Len(t, spans.Spans, 1)
 	assert.NotNil(t, spans.Metadata)
 	assert.Equal(t, spans.Metadata.NextToken, spansquery.ContinuationToken(expectedNextToken))
@@ -157,7 +157,8 @@ func TestBuildSearchRequest_WithNextToken(t *testing.T) {
 	//nolint:ineffassign
 	searchReq, err := getSearchRequestMock()
 	spanId := "12345678"
-	searchReq.Metadata = &spansquery.Metadata{NextToken: spansquery.ContinuationToken(spanId)}
+	nextToken, _ := json.Marshal([]string{spanId})
+	searchReq.Metadata = &spansquery.Metadata{NextToken: spansquery.ContinuationToken(nextToken)}
 
 	assert.Nil(t, err)
 
