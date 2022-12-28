@@ -28,6 +28,7 @@ module.exports = {
     "plugin:react/jsx-runtime",
     "plugin:import/recommended",
     "plugin:import/typescript",
+    "plugin:storybook/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -57,6 +58,7 @@ module.exports = {
         patterns: ["@/features/*/*"], // validate import style, forces us to mindfully export stuff from a feature
       },
     ],
+
     "sort-imports": [
       "error",
       {
