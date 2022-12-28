@@ -38,7 +38,8 @@ export const styles = {
   },
   value: {
     fontWeight: "700",
-    ...ellipsisOverflow,
+    overflow: "hidden",
+    whiteSpace: "noWrap",
   },
   copy: {
     cursor: "pointer",

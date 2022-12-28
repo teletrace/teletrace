@@ -16,7 +16,7 @@
 
 import { ContentCopy } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AttributeKey, AttributeValue } from "@/types/span";
 
@@ -30,6 +30,52 @@ interface SpanAttributeProps {
 export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
   const [isCopyTooltipVisible, setIsCopyTooltipVisible] = useState(false);
 
+  const typographyRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const halveString = (
+      element: HTMLElement,
+      originalString: string,
+      ellipsis = "..."
+    ) => {
+      let halvingFactor = 2;
+      const maxHalvingFactor = 16;
+      while (
+        halvingFactor < maxHalvingFactor &&
+        element.scrollWidth > element.offsetWidth
+      ) {
+        const pivot = Math.floor(originalString.length / halvingFactor) / 2;
+        element.innerHTML = `${originalString.substring(0, pivot)}
+          ${ellipsis}
+          ${originalString.substring(originalString.length - pivot)}`;
+        halvingFactor *= 2;
+      }
+    };
+    const handleResize = () => {
+      const typographyElement = typographyRef.current;
+      if (!typographyElement) return;
+
+      const parentElement = typographyElement.parentElement;
+      if (!parentElement) return;
+
+      const str = attValue.toString();
+      if (typographyElement.scrollWidth > typographyElement.offsetWidth) {
+        halveString(typographyElement, str);
+      } else {
+        typographyElement.textContent = attValue.toString();
+        if (typographyElement.scrollWidth > typographyElement.offsetWidth) {
+          halveString(typographyElement, str);
+        }
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const onCopyClick = (): void => {
     navigator.clipboard.writeText(attValue.toString());
     setIsCopyTooltipVisible(true);
@@ -40,7 +86,7 @@ export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
       <Typography component="span" sx={styles.key}>
         {attKey}
       </Typography>
-      <Typography component="span" sx={styles.value}>
+      <Typography ref={typographyRef} component="span" sx={styles.value}>
         {attValue.toString()}
       </Typography>
       <Tooltip
