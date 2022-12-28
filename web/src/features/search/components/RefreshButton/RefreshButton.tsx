@@ -20,7 +20,8 @@ import { useEffect, useState } from "react";
 
 import { usePeriodicRender } from "../../../../hooks/usePeriodicRender";
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchRequest } from "../../types/spanQuery";
+import {TimeFrameState} from "../../routes/SpanSearch";
+import {SearchFilter} from "../../types/common";
 import styles from "./styles";
 
 const A_FEW_SECONDS_AGO_THRESHOLD = 10;
@@ -28,13 +29,14 @@ const SECONDS_IN_HOUR = 3600;
 const SECONDS_IN_DAY = 86400;
 
 interface RefreshButtonProps {
-  searchRequest: SearchRequest;
+  timeframe: TimeFrameState;
+  filters: SearchFilter[];
   isLiveSpansOn: boolean;
   onRefreshTimeframe: () => void;
 }
 
 export function RefreshButton({
-  searchRequest,
+    timeframe, filters,
   isLiveSpansOn,
   onRefreshTimeframe,
 }: RefreshButtonProps) {
@@ -51,7 +53,7 @@ export function RefreshButton({
     calcNextRenderTime
   );
 
-  const { isFetching } = useSpansQuery(searchRequest);
+  const { isFetching } = useSpansQuery({ timeframe: timeframe, filters: filters });
 
   useEffect(() => {
     if (isLiveSpansOn) {

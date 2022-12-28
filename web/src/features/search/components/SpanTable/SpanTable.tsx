@@ -37,12 +37,10 @@ const DEFAULT_SORT_ASC = false;
 interface SpanTableProps {
   filters?: SearchFilter[];
   timeframe: TimeFrameState;
-  searchRequest: SearchRequest;
   liveSpans: LiveSpansState;
 }
 
 export function SpanTable({
-  searchRequest,
   filters = [],
   timeframe,
   liveSpans,
@@ -60,7 +58,7 @@ export function SpanTable({
   const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
 
-  searchRequest = useMemo(() => {
+  const searchRequest = useMemo(() => {
     const sort = sorting?.map((columnSort) => ({
       field: columnSort.id,
       ascending: !columnSort.desc,

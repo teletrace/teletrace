@@ -15,7 +15,7 @@
  */
 
 import { Divider, Stack, Typography } from "@mui/material";
-import { useCallback, useState } from "react";
+import {useCallback, useState} from "react";
 
 import { Head } from "@/components/Head";
 import {
@@ -139,11 +139,6 @@ export const SpanSearch = () => {
     [setFiltersState]
   );
 
-  const searchRequest = {
-    timeframe: timeFrameState,
-    filters: filtersState.filters,
-  };
-
   return (
     <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>
       <Head
@@ -167,20 +162,19 @@ export const SpanSearch = () => {
           Spans
         </Typography>
         <RefreshButton
-          searchRequest={searchRequest}
+          timeframe={timeFrameState}
+          filters={filtersState.filters}
           isLiveSpansOn={liveSpansState.isOn}
           onRefreshTimeframe={() => {
-            setTimeFrameState({
-              startTimeUnixNanoSec: timeFrameState.isRelative
-                ? msToNanoSec(new Date().getTime()) -
-                  (timeFrameState.endTimeUnixNanoSec -
-                    timeFrameState.startTimeUnixNanoSec)
-                : timeFrameState.startTimeUnixNanoSec,
+            const tf = {
+              startTimeUnixNanoSec: timeFrameState.startTimeUnixNanoSec,
               endTimeUnixNanoSec: timeFrameState.isRelative
-                ? msToNanoSec(new Date().getTime())
-                : timeFrameState.endTimeUnixNanoSec,
+                  ? msToNanoSec(new Date().getTime())
+                  : timeFrameState.endTimeUnixNanoSec,
               isRelative: timeFrameState.isRelative,
-            });
+            }
+
+            setTimeFrameState(tf);
           }}
         />
 
@@ -233,7 +227,6 @@ export const SpanSearch = () => {
             }
           />
           <SpanTable
-            searchRequest={searchRequest}
             filters={filtersState.filters}
             timeframe={timeFrameState}
             liveSpans={liveSpansState}
