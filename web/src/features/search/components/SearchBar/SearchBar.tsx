@@ -15,7 +15,14 @@
  */
 
 import { Close, FilterList } from "@mui/icons-material";
-import { Button, Chip, Divider, IconButton, Paper } from "@mui/material";
+import {
+  Button,
+  Chip,
+  Divider,
+  IconButton,
+  Paper,
+  Tooltip,
+} from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
@@ -23,23 +30,8 @@ import { theme } from "@/styles";
 
 import { SearchFilter, Timeframe, FilterValueTypes } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
+import { FilterChip } from "../FilterChip/FilterChip";
 import { styles } from "./styles";
-import { stringify } from "querystring";
-
-const OPERATORS_FORMAT: { [operator_key: string]: string } = {
-  in: "IN",
-  not_in: "NOT IN",
-  contains: "CONTAINS",
-  not_contains: "NOT CONTAINS",
-  exists: "EXISTS",
-  not_exists: "NOT EXISTS",
-  gt: ">",
-  gte: "≥",
-  lt: "<",
-  lte: "≤",
-};
-
-const MAX_FILTER_LENGTH = 100;
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
@@ -69,54 +61,6 @@ export function SearchBar({
     setOpen(false);
   };
 
-  const formatStrValue = (value: string, filterLength: number) => {
-    if (filterLength > MAX_FILTER_LENGTH) {
-      value = value.substring(0, MAX_FILTER_LENGTH) + "...";
-    }
-    return '"' + value + '"';
-  };
-
-  const formatArrayValue = (value: (string | number)[], filterLen: number) => {
-    const arrLen = value.length;
-    let newValue;
-    if (typeof value[0] === "string") {
-      if (arrLen > 1) {
-        newValue = '["' + value[0] + '"...+' + (arrLen - 1) + "]";
-      }
-      newValue = formatStrValue(value[0], filterLen);
-    } else {
-      if (arrLen > 1) {
-        newValue = "[" + value[0] + "...+" + (arrLen - 1) + "]";
-      } else {
-        newValue = value[0];
-      }
-    }
-    return newValue;
-  };
-
-  const formatFilterValue = (value: FilterValueTypes, filterLen: number) => {
-    debugger;
-    if (typeof value === "string") {
-      return formatStrValue(value, filterLen);
-    } else if (Array.isArray(value)) {
-      return formatArrayValue(value, filterLen);
-    } else {
-      return value;
-    }
-  };
-
-  const buildFilterLabel = (
-    key: string,
-    operator: string,
-    value: FilterValueTypes
-  ) => {
-    const filterLen =
-      `${key}`.length + `${operator}`.length + `${value}`.length;
-    operator = OPERATORS_FORMAT[operator];
-    const newValue = formatFilterValue(value, filterLen);
-    return key + " " + operator + " " + newValue;
-  };
-
   return (
     <Paper sx={styles.searchBarPaper}>
       <Stack direction="row" spacing={0.5} sx={styles.searchBar}>
@@ -139,17 +83,7 @@ export function SearchBar({
             anchorEl={anchorEl}
           />
           {filters.map((filter) => (
-            <Chip
-              key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator}`}
-              size="small"
-              label={buildFilterLabel(
-                filter.keyValueFilter.key,
-                filter.keyValueFilter.operator,
-                filter.keyValueFilter.value
-              )}
-              //label={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator} ${filter.keyValueFilter.value}`}
-              onDelete={() => onFilterDeleted(filter)}
-            />
+            <FilterChip filter={filter} onFilterDeleted={onFilterDeleted} />
           ))}
         </Stack>
         <Stack direction="row" sx={styles.clear}>
