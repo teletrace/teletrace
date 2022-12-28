@@ -15,6 +15,7 @@
  */
 
 import { InternalSpan } from "@/types/span";
+
 import { TableSpan } from "./columns";
 
 export const calcNewSpans = (
