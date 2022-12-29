@@ -18,6 +18,8 @@ import { ContentCopy } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
+import { MiddleEllipsedTypography } from "@/components/Elements/MiddleEllipsedTypography";
+("@/components/Elements/MiddleEllipsedTypography");
 import { AttributeKey, AttributeValue } from "@/types/span";
 
 import { styles } from "./styles";
@@ -86,9 +88,7 @@ export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
       <Typography component="span" sx={styles.key}>
         {attKey}
       </Typography>
-      <Typography ref={typographyRef} component="span" sx={styles.value}>
-        {attValue.toString()}
-      </Typography>
+      <MiddleEllipsedTypography text={attValue.toString()} sx={styles.value} />
       <Tooltip
         title="Copied!"
         placement="top"
