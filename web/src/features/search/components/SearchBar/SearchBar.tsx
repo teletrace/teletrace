@@ -15,20 +15,13 @@
  */
 
 import { Close, FilterList } from "@mui/icons-material";
-import {
-  Button,
-  Chip,
-  Divider,
-  IconButton,
-  Paper,
-  Tooltip,
-} from "@mui/material";
+import { Button, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
 import { theme } from "@/styles";
 
-import { FilterValueTypes, SearchFilter, Timeframe } from "../../types/common";
+import { SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { FilterChip } from "../FilterChip/FilterChip";
 import { styles } from "./styles";
@@ -50,7 +43,6 @@ export function SearchBar({
 }: SearchBarProps) {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [ellipsMode, setEllipeMode] = useState<boolean>(false);
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true);
@@ -83,7 +75,11 @@ export function SearchBar({
             anchorEl={anchorEl}
           />
           {filters.map((filter) => (
-            <FilterChip filter={filter} onFilterDeleted={onFilterDeleted} />
+            <FilterChip
+              key={filter.keyValueFilter.key}
+              filter={filter}
+              onFilterDeleted={onFilterDeleted}
+            />
           ))}
         </Stack>
         <Stack direction="row" sx={styles.clear}>
