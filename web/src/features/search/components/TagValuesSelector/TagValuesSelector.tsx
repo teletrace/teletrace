@@ -115,7 +115,7 @@ export const TagValuesSelector = ({
           </AccordionActions>
         </Stack>
 
-        <AccordionDetails>
+        <AccordionDetails sx={styles.accordionDetails}>
           {isError ? (
             <Alert severity="error">Failed loading tag values</Alert>
           ) : (
@@ -129,6 +129,7 @@ export const TagValuesSelector = ({
                 loading={false}
                 options={tagOptions || []}
                 onChange={onChange}
+                sx={styles.checkboxList}
               />
             </Fragment>
           )}
