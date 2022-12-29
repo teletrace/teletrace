@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-const ellipsisOverflow = {
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-};
-
 export const styles = {
   container: {
     display: "flex",
@@ -34,12 +29,11 @@ export const styles = {
     flex: "0 0 45%",
     fontWeight: "400",
     marginRight: "10px",
-    ...ellipsisOverflow,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   value: {
     fontWeight: "700",
-    overflow: "hidden",
-    whiteSpace: "noWrap",
   },
   copy: {
     cursor: "pointer",

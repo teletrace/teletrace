@@ -47,13 +47,13 @@ export const MiddleEllipsedTypography = ({
     element.scrollWidth > element.offsetWidth;
 
   useEffect(() => {
+    const typographyElement = typographyRef.current;
+    if (!typographyElement) return;
+
+    typographyElement.style.whiteSpace = "noWrap";
+    typographyElement.style.overflow = "hidden";
+
     const handleResize = () => {
-      const typographyElement = typographyRef.current;
-      if (!typographyElement) return;
-
-      const parentElement = typographyElement.parentElement;
-      if (!parentElement) return;
-
       if (isOverflow(typographyElement)) {
         halveStringInMiddle(typographyElement);
       } else {
