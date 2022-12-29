@@ -21,14 +21,14 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { formatNanoAsMsDateTime } from "@/utils/format";
-
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter } from "../../types/common";
 import { LiveSpansState, TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
+
+import { formatNanoAsMsDateTime } from "@/utils/format";
 
 const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
@@ -93,6 +93,9 @@ export function SpanTable({
   useEffect(() => {
     setTableSpans((prevTableSpans) => {
       const newSpans = data?.pages?.flatMap((page) => page.spans) || [];
+      const newSpansObj = Object.fromEntries(
+        newSpans.map((span) => [span.span.spanId, span])
+      );
       const newSpansIds = calcNewSpans(
         prevTableSpans,
         newSpans,
@@ -100,7 +103,7 @@ export function SpanTable({
       );
 
       return (
-        newSpans?.flatMap(
+        Object.values(newSpansObj)?.flatMap(
           ({ resource, span, externalFields }): TableSpan => ({
             id: span.spanId,
             traceId: span.traceId,
