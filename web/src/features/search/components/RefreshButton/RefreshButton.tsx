@@ -50,7 +50,7 @@ export function RefreshButton({
     ? Math.round((currentTime.getTime() - lastRefreshed.getTime()) / 1000)
     : 0;
 
-  const forceRerender = usePeriodicRender(
+  const resetPeriodicRender = usePeriodicRender(
     timeSinceLastRefresh,
     calcNextRenderTime
   );
@@ -63,7 +63,7 @@ export function RefreshButton({
   useEffect(() => {
     if (isLiveSpansOn) {
       setLastRefreshed(new Date());
-      forceRerender();
+      resetPeriodicRender();
     }
   }, [isFetching]);
 
@@ -77,6 +77,7 @@ export function RefreshButton({
     const event = new Event("refresh");
     document.dispatchEvent(event);
     setIsRefreshing(true);
+    resetPeriodicRender();
   };
 
   return (
