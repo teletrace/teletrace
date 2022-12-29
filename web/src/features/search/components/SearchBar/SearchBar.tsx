@@ -28,7 +28,7 @@ import { useState } from "react";
 
 import { theme } from "@/styles";
 
-import { SearchFilter, Timeframe, FilterValueTypes } from "../../types/common";
+import { FilterValueTypes, SearchFilter, Timeframe } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { FilterChip } from "../FilterChip/FilterChip";
 import { styles } from "./styles";
