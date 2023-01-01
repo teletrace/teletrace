@@ -17,15 +17,15 @@
 import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 
+import { Head } from "@/components/Head";
+import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
+
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter } from "../types/common";
-
-import { Head } from "@/components/Head";
-import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;

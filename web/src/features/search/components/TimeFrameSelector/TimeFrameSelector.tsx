@@ -23,15 +23,15 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
-import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
-
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
   msToNanoSec,
   nanoSecToMs,
 } from "@/utils/format";
+
+import { TimeFrameState } from "../../routes/SpanSearch";
+import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
   onChange: (timeframe: TimeFrameState) => void;
