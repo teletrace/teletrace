@@ -28,18 +28,16 @@ export const MiddleEllipsedTypography = ({
 }: MiddleEllipsedTypographyProps) => {
   const typographyRef = useRef<HTMLInputElement>(null);
 
-  const halveStringInMiddle = (element: HTMLElement) => {
-    let halvingFactor = 1;
-    const maxHalvingFactor = 16;
-    while (
-      halvingFactor < maxHalvingFactor &&
-      element.scrollWidth > element.offsetWidth
+  const fitStringByTruncMiddle = (element: HTMLElement) => {
+    for (
+      let i = 1;
+      text.length - i > 2 && element.scrollWidth > element.offsetWidth;
+      i++
     ) {
-      const pivot = Math.floor(text.length / halvingFactor) / 2;
-      element.innerText = `${text.substring(0, pivot)} \
+      const pivot = Math.floor(text.length / 2);
+      element.innerText = `${text.substring(0, pivot - i)} \
                            ${ellipsisString} \
-                           ${text.substring(text.length - pivot)}`;
-      halvingFactor *= 2;
+                           ${text.substring(text.length - pivot + i)}`;
     }
   };
 
@@ -55,11 +53,11 @@ export const MiddleEllipsedTypography = ({
 
     const handleResize = () => {
       if (isOverflow(typographyElement)) {
-        halveStringInMiddle(typographyElement);
+        fitStringByTruncMiddle(typographyElement);
       } else {
         typographyElement.innerText = text;
         if (isOverflow(typographyElement)) {
-          halveStringInMiddle(typographyElement);
+          fitStringByTruncMiddle(typographyElement);
         }
       }
     };
