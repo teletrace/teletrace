@@ -19,6 +19,7 @@ package spanreaderes
 import (
 	"context"
 	"fmt"
+
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
