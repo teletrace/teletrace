@@ -1,0 +1,25 @@
+{
+  "index_patterns": ["lupa_traces"],
+  "template": {
+    "mappings": {
+      "_source": {
+        "enabled": true
+      },
+      "properties": {
+        "span.startTimeUnixNano": {
+          "type": "date",
+          "format": "YYYY-MM-DDTHH:mm:ss.SSSSSSSSSZ | strict_date_optional_time_nanos"
+        },
+        "span.endTimeUnixNano": {
+          "type": "date",
+          "format": "YYYY-MM-DDTHH:mm:ss.SSSSSSSSSZ | strict_date_optional_time_nanos"
+        }
+      }
+    }
+  },
+  "priority": 500,
+  "version": 3,
+  "_meta": {
+    "description": "Lupa traces index template"
+  }
+}
