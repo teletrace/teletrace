@@ -18,15 +18,19 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
+
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
-	"syscall"
+	"oss-tracing/pkg/spanreader"
 
 	spanreaderes "oss-tracing/plugin/spanreader/es"
+	sqlite "oss-tracing/plugin/spanreader/sqlite"
 
 	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
 
@@ -44,10 +48,21 @@ func main() {
 		log.Fatalf("Failed to initialize logger: %v", err)
 	}
 	defer logs.FlushBufferedLogs(logger)
-
-	sr, err := spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
+	var sr spanreader.SpanReader
+	switch cfg.SpansStoragePlugin {
+	case "sqlite":
+		sr, err = sqlite.NewSqliteSpanReader(context.Background(), logger, sqlite.NewSqliteConfig(cfg))
+	case "elasticsearch":
+		sr, err = spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
+	default:
+		err = fmt.Errorf("Invalid spans storage plugin %s", cfg.SpansStoragePlugin)
+	}
 	if err != nil {
-		log.Fatalf("Failed to initialize SpanReader of Elasticsearch plugin %v", err)
+		if cfg.SpansStoragePlugin != "" {
+			log.Fatalf("Failed to initialize SpanReader of %s plugin %v", cfg.SpansStoragePlugin, err)
+		} else {
+			log.Fatalf("Failed to initialize SpanReader plugin %v", err)
+		}
 	}
 
 	api := api.NewAPI(logger, cfg, &sr)
