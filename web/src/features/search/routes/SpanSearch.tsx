@@ -17,15 +17,15 @@
 import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useState } from "react";
 
-import { Head } from "@/components/Head";
-import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
-
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter } from "../types/common";
+
+import { Head } from "@/components/Head";
+import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;
@@ -83,16 +83,21 @@ export const SpanSearch = () => {
           toggleLiveSpans({
             isOn: true,
           });
+          return setTimeFrameState({
+            endTimeUnixNanoSec: 0,
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            isRelative: timeframe.isRelative,
+          });
         } else {
           toggleLiveSpans({
             isOn: false,
           });
+          return setTimeFrameState({
+            endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            isRelative: timeframe.isRelative,
+          });
         }
-        return setTimeFrameState({
-          endTimeUnixNanoSec: 0,
-          startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-          isRelative: timeframe.isRelative,
-        });
       }
       // disable liveSpans if user selected custom timeframe
       toggleLiveSpans({
@@ -153,6 +158,7 @@ export const SpanSearch = () => {
             <TimeFrameSelector
               onChange={onTimeframeChange}
               value={timeFrameState}
+              liveSpansOn={liveSpansState.isOn}
             />
           </Stack>
           <LiveSpanSwitch
