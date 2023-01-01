@@ -22,12 +22,11 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"syscall"
-
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/pkg/spanreader"
+	"syscall"
 
 	spanreaderes "oss-tracing/plugin/spanreader/es"
 	sqlite "oss-tracing/plugin/spanreader/sqlite"
