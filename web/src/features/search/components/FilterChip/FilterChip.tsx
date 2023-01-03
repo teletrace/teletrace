@@ -19,7 +19,7 @@ import { Chip, Tooltip, Typography } from "@mui/material";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { styles } from "./styles";
 
-const OPERATORS_FORMAT: { [operator_key: string]: string } = {
+const OPERATORS_FORMAT: Record<string, string> = {
   in: "IN",
   not_in: "NOT IN",
   contains: "CONTAINS",
@@ -42,7 +42,7 @@ export type FilterChipProps = {
 export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
   const getTooltipForArray = (arrValue: (number | string)[]) => {
     return arrValue.map((value: number | string) => (
-      <Typography key={value}> {"• " + value}</Typography>
+      <Typography key={value}> • {value}</Typography>
     ));
   };
 
@@ -64,22 +64,25 @@ export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
 
   const formatStrValue = (value: string, filterLength: number) => {
     if (filterLength > MAX_FILTER_LENGTH) {
-      value = value.substring(0, MAX_FILTER_LENGTH) + "...";
+      value = `${value.substring(0, MAX_FILTER_LENGTH)}...`;
     }
-    return '"' + value + '"';
+    return `"${value}"`;
   };
 
   const formatArrayValue = (value: (string | number)[], filterLen: number) => {
     const arrLen = value.length;
     let newValue;
+    if (value.length === 0) {
+      return "";
+    }
     if (typeof value[0] === "string") {
       if (arrLen > 1) {
-        newValue = '["' + value[0] + '"...+' + (arrLen - 1) + "]";
+        newValue = `["${value[0]}"...+${arrLen - 1}"]`;
       }
       newValue = formatStrValue(value[0], filterLen);
     } else {
       if (arrLen > 1) {
-        newValue = "[" + value[0] + "...+" + (arrLen - 1) + "]";
+        newValue = `[${value[0]}...+${arrLen - 1}]`;
       } else {
         newValue = value[0];
       }
@@ -113,6 +116,7 @@ export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
   ) => {
     operator = OPERATORS_FORMAT[operator];
     const newValue = formatFilterValue(value);
+    console.log(value);
     return `${key} ${operator} ${newValue}`;
   };
 
