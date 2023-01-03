@@ -17,6 +17,7 @@
 package sqlitespanreader
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -25,12 +26,35 @@ import (
 )
 
 type sqliteSpan struct {
-	spanId, traceId, traceState, parentSpanId, spanName,
-	spanKind, statusMessage, statusCode, spanAttributes, scopeName,
-	scopeVersion, scopeAttributes, eventsName, eventsAttributes, linksTraceState, linksAttributes, resourceAttributes, startTimeUnixNano, endTimeUnixNano,
-	droppedSpanAttributesCount, resourceDroppedAttributesCount,
-	droppedEventsCount, droppedLinksCount, durationNano, ingestionTimeUnixNano, scopeDroppedAttributesCount,
-	eventsTimeUnixNano, eventsDroppedAttributesCount, linksDroppedAttributesCount interface{}
+	spanId                         string
+	traceId                        string
+	traceState                     sql.NullString
+	parentSpanId                   sql.NullString
+	spanName                       sql.NullString
+	spanKind                       sql.NullString
+	statusMessage                  sql.NullString
+	statusCode                     sql.NullString
+	spanAttributes                 sql.NullString
+	scopeName                      sql.NullString
+	scopeVersion                   sql.NullString
+	scopeAttributes                sql.NullString
+	eventsName                     sql.NullString
+	eventsAttributes               sql.NullString
+	linksTraceState                sql.NullString
+	linksAttributes                sql.NullString
+	resourceAttributes             sql.NullString
+	startTimeUnixNano              sql.NullInt64
+	endTimeUnixNano                sql.NullInt64
+	droppedSpanAttributesCount     sql.NullInt64
+	resourceDroppedAttributesCount sql.NullInt64
+	droppedEventsCount             sql.NullInt64
+	droppedLinksCount              sql.NullInt64
+	durationNano                   sql.NullInt64
+	ingestionTimeUnixNano          sql.NullInt64
+	scopeDroppedAttributesCount    sql.NullInt64
+	eventsTimeUnixNano             sql.NullInt64
+	eventsDroppedAttributesCount   sql.NullInt64
+	linksDroppedAttributesCount    sql.NullInt64
 }
 
 func newSqliteInternalSpan() *sqliteSpan {
@@ -38,193 +62,162 @@ func newSqliteInternalSpan() *sqliteSpan {
 }
 
 func (sq *sqliteSpan) getInternalSpanId() string {
-	spanId, ok := sq.spanId.(string)
-	if ok {
-		return spanId
-	}
-	return ""
+	return sq.spanId
 }
 
 func (sq *sqliteSpan) getInternalTraceId() string {
-	traceId, ok := sq.traceId.(string)
-	if ok {
-		return traceId
-	}
-	return ""
+	return sq.traceId
 }
 
 func (sq *sqliteSpan) getInternalTraceState() string {
-	traceState, ok := sq.traceState.(string)
-	if ok {
-		return traceState
+	if sq.traceState.Valid {
+		return sq.traceState.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) getInternalParentSpanId() string {
-	parentSpanId, ok := sq.parentSpanId.(string)
-	if ok {
-		return parentSpanId
+	if sq.parentSpanId.Valid {
+		return sq.parentSpanId.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) getInternalSpanName() string {
-	spanName, ok := sq.spanName.(string)
-	if ok {
-		return spanName
+	if sq.spanName.Valid {
+		return sq.spanName.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) getInternalSpanKind() int32 {
-	spanKindStr, ok := sq.spanKind.(string)
-	if ok {
-		spanKind, err := strconv.ParseInt(spanKindStr, 10, 64)
-		if err != nil {
-			return 0
+	if sq.spanKind.Valid {
+		spanKind, err := strconv.ParseInt(sq.spanKind.String, 10, 64)
+		if err == nil {
+			return int32(spanKind)
 		}
-		return int32(spanKind)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalStartTimeUnixNano() uint64 {
-	startTime, ok := sq.startTimeUnixNano.(int64)
-	if ok {
-		return uint64(startTime)
+	if sq.startTimeUnixNano.Valid {
+		return uint64(sq.startTimeUnixNano.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalEndTimeUnixNano() uint64 {
-	endTime, ok := sq.endTimeUnixNano.(int64)
-	if ok {
-		return uint64(endTime)
+	if sq.endTimeUnixNano.Valid {
+		return uint64(sq.endTimeUnixNano.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalDroppedSpanAttributesCount() uint32 {
-	droppedSpanAttributesCount, ok := sq.droppedSpanAttributesCount.(int64)
-	if ok {
-		return uint32(droppedSpanAttributesCount)
+	if sq.droppedSpanAttributesCount.Valid {
+		return uint32(sq.droppedSpanAttributesCount.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalResourceDroppedAttributesCount() uint32 {
-	resourceDroppedAttributesCount, ok := sq.resourceDroppedAttributesCount.(int64)
-	if ok {
-		return uint32(resourceDroppedAttributesCount)
+	if sq.resourceDroppedAttributesCount.Valid {
+		return uint32(sq.resourceDroppedAttributesCount.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalDroppedEventsCount() uint32 {
-	droppedEventsCount, err := strconv.Atoi(fmt.Sprintf("%s", sq.droppedEventsCount))
-	if err != nil {
-		return 0
+	if sq.droppedEventsCount.Valid {
+		return uint32(sq.droppedEventsCount.Int64)
 	}
-	return uint32(droppedEventsCount)
+	return 0
 }
 
 func (sq *sqliteSpan) getInternalDroppedLinksCount() uint32 {
-	droppedLinksCount, err := strconv.Atoi(fmt.Sprintf("%s", sq.droppedLinksCount))
-	if err != nil {
-		return 0
+	if sq.droppedLinksCount.Valid {
+		return uint32(sq.droppedLinksCount.Int64)
 	}
-	return uint32(droppedLinksCount)
+	return 0
 }
 
 func (sq *sqliteSpan) getInternalDurationNano() uint64 {
-	durationNano, ok := sq.durationNano.(int64)
-	if ok {
-		return uint64(durationNano)
+	if sq.durationNano.Valid {
+		return uint64(sq.durationNano.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalIngestionTimeUnixNano() uint64 {
-	ingestionTime, ok := sq.ingestionTimeUnixNano.(int64)
-	if ok {
-		return uint64(ingestionTime)
+	if sq.ingestionTimeUnixNano.Valid {
+		return uint64(sq.ingestionTimeUnixNano.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalScopeDroppedAttributesCount() uint32 {
-	scopeDroppedAttributesCount, ok := sq.scopeDroppedAttributesCount.(int64)
-	if ok {
-		return uint32(scopeDroppedAttributesCount)
+	if sq.scopeDroppedAttributesCount.Valid {
+		return uint32(sq.scopeDroppedAttributesCount.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalEventsDroppedAttributesCount() uint32 {
-	eventsDroppedAttributesCount, ok := sq.eventsDroppedAttributesCount.(int64)
-	if ok {
-		return uint32(eventsDroppedAttributesCount)
+	if sq.eventsDroppedAttributesCount.Valid {
+		return uint32(sq.eventsDroppedAttributesCount.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalStatusCode() uint32 {
-	statusCode, ok := sq.statusCode.(string)
-	if ok {
-		code, err := strconv.ParseInt(statusCode, 10, 64)
-		if err != nil {
-			return 0
+	if sq.statusCode.Valid {
+		statusCode, err := strconv.ParseInt(sq.statusCode.String, 10, 64)
+		if err == nil {
+			return uint32(statusCode)
 		}
-		return uint32(code)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalLinksDroppedAttributesCount() uint32 {
-	linksDroppedAttributesCount, ok := sq.linksDroppedAttributesCount.(int64)
-	if ok {
-		return uint32(linksDroppedAttributesCount)
+	if sq.linksDroppedAttributesCount.Valid {
+		return uint32(sq.linksDroppedAttributesCount.Int64)
 	}
 	return 0
 }
 
 func (sq *sqliteSpan) getInternalStatusMessage() string {
-	statusMessage, ok := sq.statusMessage.(string)
-	if ok {
-		return statusMessage
+	if sq.statusMessage.Valid {
+		return sq.statusMessage.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) getInternalScopeName() string {
-	scopeName, ok := sq.scopeName.(string)
-	if ok {
-		return scopeName
+	if sq.scopeName.Valid {
+		return sq.scopeName.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) getInternalScopeVersion() string {
-	scopeVersion, ok := sq.scopeVersion.(string)
-	if ok {
-		return scopeVersion
+	if sq.scopeVersion.Valid {
+		return sq.scopeVersion.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) getInternalEventsName() string {
-	eventName, ok := sq.eventsName.(string)
-	if ok {
-		return eventName
+	if sq.eventsName.Valid {
+		return sq.eventsName.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) getInternalEventsTimeUnixNano() uint64 {
-	eventsTime, ok := sq.eventsTimeUnixNano.(int64)
-	if ok {
-		return uint64(eventsTime)
+	if sq.eventsTimeUnixNano.Valid {
+		return uint64(sq.eventsTimeUnixNano.Int64)
 	}
 	return 0
 }
@@ -238,51 +231,50 @@ func (sq *sqliteSpan) getInternalLinksSpanId() string {
 }
 
 func (sq *sqliteSpan) getInternalLinksTraceState() string {
-	linkTraceState, ok := sq.linksTraceState.(string)
-	if ok {
-		return linkTraceState
+	if sq.linksTraceState.Valid {
+		return sq.linksTraceState.String
 	}
 	return ""
 }
 
 func (sq *sqliteSpan) toInternalSpan() (*internalspan.InternalSpan, error) {
-	if sq.spanId == nil || sq.spanId == "" {
+	if sq.spanId == "" {
 		return nil, fmt.Errorf("spanId is empty")
 	}
-	err := error(nil)
+	var err error
 	resourceAttributes := make(map[string]interface{})
 	eventsAttributes := make(map[string]interface{})
 	spanAttributes := make(map[string]interface{})
 	scopeAttributes := make(map[string]interface{})
 	linkAttributes := make(map[string]interface{})
-	if sq.resourceAttributes != nil {
-		resourceAttributes, err = jsonToAttributesMap(sq.resourceAttributes.(string))
+	if sq.resourceAttributes.Valid {
+		resourceAttributes, err = jsonToAttributesMap(sq.resourceAttributes.String)
 		if err != nil {
 			return nil, err
 		}
 	}
-	if sq.eventsAttributes != nil {
-		eventsAttributes, err = jsonToAttributesMap(sq.eventsAttributes.(string))
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if sq.spanAttributes != nil {
-		spanAttributes, err = jsonToAttributesMap(sq.spanAttributes.(string))
+	if sq.eventsAttributes.Valid {
+		eventsAttributes, err = jsonToAttributesMap(sq.eventsAttributes.String)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if sq.scopeAttributes != nil {
-		scopeAttributes, err = jsonToAttributesMap(sq.scopeAttributes.(string))
+	if sq.spanAttributes.Valid {
+		spanAttributes, err = jsonToAttributesMap(sq.spanAttributes.String)
 		if err != nil {
 			return nil, err
 		}
 	}
-	if sq.linksAttributes != nil {
-		linkAttributes, err = jsonToAttributesMap(sq.linksAttributes.(string))
+
+	if sq.scopeAttributes.Valid {
+		scopeAttributes, err = jsonToAttributesMap(sq.scopeAttributes.String)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if sq.linksAttributes.Valid {
+		linkAttributes, err = jsonToAttributesMap(sq.linksAttributes.String)
 		if err != nil {
 			return nil, err
 		}
@@ -345,11 +337,16 @@ func jsonToAttributesMap(jsonString string) (map[string]interface{}, error) {
 	attributesJson := make([]interface{}, 0)
 	attributes := make(map[string]interface{})
 	err := json.Unmarshal([]byte(jsonString), &attributesJson)
-	if err == nil {
-		for _, attr := range attributesJson {
-			attrMap := attr.(map[string]interface{})
-			attributes[attrMap["key"].(string)] = attrMap["value"]
-		}
+	if err != nil {
+		return nil, err
 	}
-	return attributes, err
+	for _, attr := range attributesJson {
+		attrMap := attr.(map[string]interface{})
+		key, ok := attrMap["key"].(string)
+		if !ok {
+			return nil, fmt.Errorf("jsonToAttributesMap: %v is not string", attrMap["key"])
+		}
+		attributes[key] = attrMap["value"]
+	}
+	return attributes, nil
 }

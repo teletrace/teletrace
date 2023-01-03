@@ -217,17 +217,20 @@ func (qb *QueryBuilder) buildFields() string {
 }
 
 func (qb *QueryBuilder) buildFilters() string {
+	if len(qb.getFilters()) == 0 {
+		return ""
+	}
 	var filterStrings []string
 	for _, filter := range qb.getFilters() {
 		filterStrings = append(filterStrings, qb.covertFilterToSqliteQuery(filter))
-	}
-	if len(filterStrings) == 0 {
-		return "" // for cases without filters
 	}
 	return strings.Join(filterStrings, " AND ")
 }
 
 func (qb *QueryBuilder) buildOrders() string {
+	if len(qb.getOrders()) == 0 {
+		return ""
+	}
 	var orderStrings []string
 	for _, order := range qb.getOrders() {
 		prepareOrder, err := newSqliteOrder(order)
@@ -235,10 +238,7 @@ func (qb *QueryBuilder) buildOrders() string {
 		if err != nil {
 			return ""
 		}
-		orderStrings = append(orderStrings, prepareOrder.buildOrder())
-	}
-	if len(orderStrings) == 0 {
-		return "" // for cases without orders
+		orderStrings = append(orderStrings, prepareOrder.getSqlOrder())
 	}
 	return strings.Join(orderStrings, ",")
 }

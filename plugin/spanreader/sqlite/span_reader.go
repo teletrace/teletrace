@@ -102,17 +102,21 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 			continue
 		}
 		result.Spans = append(result.Spans, internalSpan)
-		switch searchQueryResponse.sort {
-		case "duration":
-			nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", sqliteSpan.durationNano))
-		default:
-			nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", sqliteSpan.startTimeUnixNano))
-		}
 
 	}
-	if nextToken != "" {
-		result.Metadata = &spansquery.Metadata{
-			NextToken: nextToken,
+	if len(result.Spans) > 0 {
+		lastInternalSpanIndex := len(result.Spans) - 1
+		lastInternalSpan := result.Spans[lastInternalSpanIndex]
+		if lastInternalSpan != nil {
+			switch searchQueryResponse.sort {
+			case "duration":
+				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.ExternalFields.DurationNano))
+			default:
+				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.Span.StartTimeUnixNano))
+			}
+			result.Metadata = &spansquery.Metadata{
+				NextToken: nextToken,
+			}
 		}
 	}
 	return &result, nil

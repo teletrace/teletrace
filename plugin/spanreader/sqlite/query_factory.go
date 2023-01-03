@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	LIMIT = 200
+	LimitOfSpanRecords = 200
 )
 
 type searchQueryResponse struct {
@@ -39,6 +39,11 @@ func newSearchQueryResponse() *searchQueryResponse {
 		query: "",
 		sort:  "",
 	}
+}
+
+type extractOrderResponse struct {
+	filter  model.SearchFilter
+	sortTag string
 }
 
 func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) { // create a query string from the request
@@ -56,24 +61,14 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 		return nil, fmt.Errorf("failed to add orders: %v", err)
 	}
 	if r.Metadata != nil && r.Metadata.NextToken != "" {
-		for _, order := range queryBuilder.getOrders() {
-			prepareOrder, err := newSqliteOrder(order)
-			if err != nil {
-				return nil, fmt.Errorf("failed to parse order: %v", err)
-			}
-			searchQueryResponse.sort = prepareOrder.getTag()
-			switch prepareOrder.orderBy {
-			case "DESC":
-				err := queryBuilder.addFilter(newSearchFilter(fmt.Sprintf("%s.%s", prepareOrder.getTableKey(), prepareOrder.getTag()), spansquery.OPERATOR_LT, r.Metadata.NextToken))
-				if err != nil {
-					return nil, fmt.Errorf("failed to add filter from order: %v", err)
-				}
-			case "ASC":
-				err := queryBuilder.addFilter(newSearchFilter(fmt.Sprintf("%s.%s", prepareOrder.getTableKey(), prepareOrder.getTag()), spansquery.OPERATOR_GT, r.Metadata.NextToken))
-				if err != nil {
-					return nil, fmt.Errorf("failed to add filter from order: %v", err)
-				}
-			}
+		extractOrderResponse, err := extractNextToken(r.Sort, r.Metadata.NextToken)
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract next token: %v", err)
+		}
+		searchQueryResponse.sort = extractOrderResponse.sortTag
+		err = queryBuilder.addFilter(extractOrderResponse.filter)
+		if err != nil {
+			return nil, fmt.Errorf("failed to add filter from order: %v", err)
 		}
 	}
 	queryParams, err := queryBuilder.buildQueryParams()
@@ -91,8 +86,33 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 	if queryParams.orders != "" { // add ORDER BY clause if there are order by fields
 		queryParams.orders = fmt.Sprintf("ORDER BY %s", queryParams.orders)
 	}
-	searchQueryResponse.query = fmt.Sprintf("SELECT spans.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, span_attributes ,scopes.name, scopes.version, scopes.dropped_attributes_count, scope_attributes, events.time_unix_nano, events.name, events.dropped_attributes_count, event_attributes, links.trace_state, links.dropped_attributes_count, link_attributes, resource_attributes from spans left join (select span_attributes.span_id, json_group_array(json_object('key', span_attributes.key, 'value', span_attributes.value, 'type', span_attributes.type)) as span_attributes from span_attributes group by span_attributes.span_id) as span_attributes on spans.span_id = span_attributes.span_id left join (select scopes.id ,scopes.name, scopes.version, scopes.dropped_attributes_count from scopes) as scopes on spans.instrumentation_scope_id = scopes.id left join (select scope_attributes.scope_id, json_group_array(json_object('key', scope_attributes.key, 'value', scope_attributes.value, 'type', scope_attributes.type)) as scope_attributes from scope_attributes group by scope_attributes.scope_id) as scope_attributes on scopes.id = scope_attributes.scope_id left join (select  events.id, events.span_id, events.time_unix_nano, events.name, events.dropped_attributes_count from events) as events on spans.span_id = events.span_id left join (select event_attributes.event_id, json_group_array(json_object('key', event_attributes.key, 'value', event_attributes.value)) as event_attributes from event_attributes group by event_attributes.event_id) as event_attributes on events.id = event_attributes.event_id left join (select links.id, links.span_id, links.trace_state, links.dropped_attributes_count from links) as links on spans.span_id = links.span_id left join (select link_attributes.link_id, json_group_array(json_object('key', link_attributes.key, 'value', link_attributes.value)) as link_attributes from link_attributes group by link_attributes.link_id) as link_attributes on links.id = link_attributes.link_id left join (select resource_attributes.resource_id, json_group_array(json_object('key', resource_attributes.key, 'value', resource_attributes.value, 'type', resource_attributes.type)) as resource_attributes from resource_attributes group by resource_attributes.resource_id) as resource_attributes on spans.resource_id = resource_attributes.resource_id %s %s limit %d;", queryParams.filters, queryParams.orders, LIMIT)
+	searchQueryResponse.query = fmt.Sprintf("SELECT spans.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, span_attributes ,scopes.name, scopes.version, scopes.dropped_attributes_count, scope_attributes, events.time_unix_nano, events.name, events.dropped_attributes_count, event_attributes, links.trace_state, links.dropped_attributes_count, link_attributes, resource_attributes from spans left join (select span_attributes.span_id, json_group_array(json_object('key', span_attributes.key, 'value', span_attributes.value, 'type', span_attributes.type)) as span_attributes from span_attributes group by span_attributes.span_id) as span_attributes on spans.span_id = span_attributes.span_id left join (select scopes.id ,scopes.name, scopes.version, scopes.dropped_attributes_count from scopes) as scopes on spans.instrumentation_scope_id = scopes.id left join (select scope_attributes.scope_id, json_group_array(json_object('key', scope_attributes.key, 'value', scope_attributes.value, 'type', scope_attributes.type)) as scope_attributes from scope_attributes group by scope_attributes.scope_id) as scope_attributes on scopes.id = scope_attributes.scope_id left join (select  events.id, events.span_id, events.time_unix_nano, events.name, events.dropped_attributes_count from events) as events on spans.span_id = events.span_id left join (select event_attributes.event_id, json_group_array(json_object('key', event_attributes.key, 'value', event_attributes.value)) as event_attributes from event_attributes group by event_attributes.event_id) as event_attributes on events.id = event_attributes.event_id left join (select links.id, links.span_id, links.trace_state, links.dropped_attributes_count from links) as links on spans.span_id = links.span_id left join (select link_attributes.link_id, json_group_array(json_object('key', link_attributes.key, 'value', link_attributes.value)) as link_attributes from link_attributes group by link_attributes.link_id) as link_attributes on links.id = link_attributes.link_id left join (select resource_attributes.resource_id, json_group_array(json_object('key', resource_attributes.key, 'value', resource_attributes.value, 'type', resource_attributes.type)) as resource_attributes from resource_attributes group by resource_attributes.resource_id) as resource_attributes on spans.resource_id = resource_attributes.resource_id %s %s limit %d;", queryParams.filters, queryParams.orders, LimitOfSpanRecords)
 	return searchQueryResponse, nil
+}
+
+func extractNextToken(orders []spansquery.Sort, nextToken spansquery.ContinuationToken) (*extractOrderResponse, error) {
+	if len(orders) > 1 {
+		return nil, fmt.Errorf("expected a single sort field, but found: %v", len(orders))
+	}
+	order := orders[0]
+	sqliteOrder, err := newSqliteOrder(order)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse order: %v", err)
+	}
+	var filter model.SearchFilter
+	switch sqliteOrder.orderBy {
+	case "DESC":
+		filter = newSearchFilter(fmt.Sprintf("%s.%s", sqliteOrder.getTableKey(), sqliteOrder.getTag()), spansquery.OPERATOR_LT, nextToken)
+	case "ASC":
+		filter = newSearchFilter(fmt.Sprintf("%s.%s", sqliteOrder.getTableKey(), sqliteOrder.getTag()), spansquery.OPERATOR_GT, nextToken)
+	}
+	if filter.KeyValueFilter == nil {
+		return nil, fmt.Errorf("failed to create filter from order: %v", order)
+	}
+	return &extractOrderResponse{
+		filter:  filter,
+		sortTag: sqliteOrder.getTag(),
+	}, nil
 }
 
 func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, error) {

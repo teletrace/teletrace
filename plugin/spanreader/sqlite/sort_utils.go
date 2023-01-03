@@ -53,7 +53,7 @@ func newSqliteOrder(order spansquery.Sort) (*sqliteOrder, error) {
 	return nil, fmt.Errorf("invalid order field: %s", order.Field)
 }
 
-func (so *sqliteOrder) buildOrder() string {
+func (so *sqliteOrder) getSqlOrder() string {
 	return fmt.Sprintf("%s %s", so.getFieldName(), so.getOrderBy())
 }
 
@@ -77,11 +77,9 @@ func (so *sqliteOrder) getOrderBy() string {
 	return so.orderBy
 }
 
-var orderTypeMap = map[bool]string{
-	true:  "ASC",
-	false: "DESC",
-}
-
 func orderType(order spansquery.Sort) string {
-	return orderTypeMap[order.Ascending]
+	if order.Ascending {
+		return "ASC"
+	}
+	return "DESC"
 }
