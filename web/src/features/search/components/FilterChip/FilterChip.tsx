@@ -113,19 +113,17 @@ export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
   ) => {
     operator = OPERATORS_FORMAT[operator];
     const newValue = formatFilterValue(value);
-    return key + " " + operator + " " + newValue;
+    return `${key} ${operator} ${newValue}`;
   };
 
   return (
     <Tooltip
-      key={filter.keyValueFilter.key}
       title={getTooltipTitle()}
       placement="top-end"
       arrow
       PopperProps={{ sx: styles.tooltipPopper }}
     >
       <Chip
-        key={`${filter.keyValueFilter.key} ${filter.keyValueFilter.operator}`}
         size="small"
         label={buildFilterLabel(
           filter.keyValueFilter.key,

@@ -74,9 +74,9 @@ export function SearchBar({
             onApply={onFilterAdded}
             anchorEl={anchorEl}
           />
-          {filters.map((filter) => (
+          {filters.map((filter, index) => (
             <FilterChip
-              key={filter.keyValueFilter.key}
+              key={index}
               filter={filter}
               onFilterDeleted={onFilterDeleted}
             />
