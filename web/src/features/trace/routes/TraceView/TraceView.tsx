@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+import ReactSplit, { SplitDirection } from "@devbookhq/splitter";
 import { Alert, Box, CircularProgress, Divider } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
+import { InternalSpan } from "@/types/span";
 
 import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
@@ -27,26 +29,56 @@ import { TraceGraph } from "../../components/TraceGraph";
 import { GraphNode } from "../../components/TraceGraph/types";
 import { TraceTimeline } from "../../components/TraceTimeline";
 import { styles } from "./styles";
+import "./styles.css";
 
 interface TraceViewUrlParams extends Params {
   traceId: string;
 }
 
+function getRootSpan(spans: InternalSpan[]) {
+  return spans.find((span) => !span.span.parentSpanId);
+}
+
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
-  const [searchParams] = useSearchParams();
-  const spanId = searchParams.get("spanId");
-
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
-  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
-  const [selectedSpanId, setSelectedSpanId] = useState<string | null>(spanId);
 
-  const handleSelectedNodeChange = (node: GraphNode | null) => {
-    setSelectedNode(node);
-    if (!node) {
-      setSelectedSpanId(null);
+  const [initiallyFocusedSpanId, setInitiallyFocusedSpanId] = useState<
+    string | null
+  >(null);
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+  const [selectedSpanId, setSelectedSpanId] = useState<string | null>(null);
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (initiallyFocusedSpanId) {
+      return;
     }
-  };
+    const urlSpanId = searchParams.get("spanId");
+    if (urlSpanId) {
+      setSelectedSpanId(urlSpanId);
+      setInitiallyFocusedSpanId(urlSpanId);
+    } else if (trace) {
+      const rootSpan = getRootSpan(trace);
+      setInitiallyFocusedSpanId(rootSpan?.span.spanId ?? null);
+    }
+  }, [searchParams, trace, initiallyFocusedSpanId]);
+
+  const [layoutSizes, setLayuotSizes] = useState([72, 28]);
+
+  function handleTimelineResizeChange(gutterIdx: number, allSizes: number[]) {
+    setLayuotSizes(allSizes);
+  }
+
+  const handleInitialNodeSelection = useCallback((node: GraphNode) => {
+    setSelectedNode(node);
+  }, []);
+
+  const handleSelectedNodeChange = useCallback((node: GraphNode) => {
+    setSelectedNode(node);
+    setSelectedSpanId(null);
+  }, []);
 
   if (isLoading) {
     return (
@@ -69,37 +101,51 @@ export const TraceView = () => {
         title="Trace View"
         description="Designated page to view trace's flow graph and timeline"
       />
-      <Stack
-        direction="column"
-        divider={<Divider orientation="horizontal" flexItem />}
-        spacing={2}
-        sx={{ height: "100%" }}
+      <ReactSplit
+        direction={SplitDirection.Vertical}
+        initialSizes={layoutSizes}
+        onResizeFinished={handleTimelineResizeChange}
+        draggerClassName={"custom-dragger-horizontal"}
+        gutterClassName={"custom-gutter-horizontal"}
       >
-        <Stack
-          flex={1}
-          spacing={2}
-          direction="row"
-          sx={styles.graphSpanDetailsContainer}
-          divider={<Divider orientation="vertical" flexItem />}
-        >
-          <TraceGraph
-            setSelectedNode={handleSelectedNodeChange}
-            spans={trace}
-            initiallyFocusedSpanId={spanId}
-          />
-          <SpanDetailsList
-            spans={selectedNode?.spans}
-            selectedSpanId={selectedSpanId}
-            setSelectedSpanId={setSelectedSpanId}
-          />
-        </Stack>
-        <Stack
-          sx={styles.timelineWrapper}
-          divider={<Divider orientation="vertical" flexItem />}
-        >
-          <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
-        </Stack>
-      </Stack>
+        <ReactSplit>
+          <Stack
+            direction="column"
+            divider={<Divider orientation="horizontal" flexItem />}
+            spacing={2}
+            sx={{ height: "100%", overflow: "auto" }}
+          >
+            <Stack
+              flex={1}
+              spacing={2}
+              direction="row"
+              sx={styles.graphSpanDetailsContainer}
+              divider={<Divider orientation="vertical" flexItem />}
+            >
+              <TraceGraph
+                spans={trace}
+                initiallyFocusedSpanId={initiallyFocusedSpanId}
+                onInitialNodeSelection={handleInitialNodeSelection}
+                onSelectedNodeChange={handleSelectedNodeChange}
+              />
+
+              <SpanDetailsList
+                spans={selectedNode?.spans}
+                selectedSpanId={selectedSpanId}
+                setSelectedSpanId={setSelectedSpanId}
+              />
+            </Stack>
+          </Stack>
+        </ReactSplit>
+        <ReactSplit classes={["timeline-scroller"]}>
+          <Stack
+            sx={styles.timelineWrapper}
+            divider={<Divider orientation="vertical" flexItem />}
+          >
+            <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
+          </Stack>
+        </ReactSplit>
+      </ReactSplit>
     </>
   );
 };

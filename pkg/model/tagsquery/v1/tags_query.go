@@ -22,12 +22,12 @@ import (
 )
 
 type TagValuesRequest struct {
-	Timeframe     model.Timeframe      `json:"timeframe"`
+	Timeframe     *model.Timeframe     `json:"timeframe"`
 	SearchFilters []model.SearchFilter `json:"filters"`
 }
 
 func (r *TagValuesRequest) Validate() error {
-	if r.Timeframe.EndTime < r.Timeframe.StartTime {
+	if r.Timeframe != nil && r.Timeframe.EndTime < r.Timeframe.StartTime && r.Timeframe.EndTime != 0 {
 		return fmt.Errorf("endTime cannot be smaller than startTime")
 	}
 

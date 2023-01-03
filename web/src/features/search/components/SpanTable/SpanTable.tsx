@@ -16,52 +16,66 @@
 
 import { LinearProgress } from "@mui/material";
 import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
-import MaterialReactTable, {
-  MRT_Row as Row,
-  Virtualizer,
-} from "material-react-table";
-import { useEffect, useRef, useState } from "react";
+import type { Virtualizer } from "@tanstack/react-virtual";
+import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import {
-  formatDateAsDateTime,
-  nanoSecToMs,
-  roundNanoToTwoDecimalMs,
-} from "@/utils/format";
+import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter, Timeframe } from "../../types/common";
+import { SearchFilter } from "../../types/common";
+import { LiveSpansState, TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
+import { calcNewSpans } from "./utils";
 
-const SPAN_ID_FIELD = "span.spanId";
+const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
+const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
   filters?: SearchFilter[];
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
+  liveSpans: LiveSpansState;
 }
 
-export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
+export function SpanTable({
+  filters = [],
+  timeframe,
+  liveSpans,
+}: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
-  const virtualizerInstanceRef = useRef<Virtualizer>(null);
+  const virtualizerInstanceRef =
+    useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
+
+  const sortDefault: SortingState = [
+    { id: DEFAULT_SORT_FIELD, desc: !DEFAULT_SORT_ASC },
+  ];
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(sortDefault);
+  const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
 
-  const sort = [{ field: SPAN_ID_FIELD, ascending: true }].concat(
-    sorting?.map((columnSort) => ({
-      field: `span.${columnSort.id}`,
+  const searchRequest = useMemo(() => {
+    const sort = sorting?.map((columnSort) => ({
+      field: columnSort.id,
       ascending: !columnSort.desc,
-    }))
-  );
+    }));
+    return {
+      filters: filters,
+      timeframe: {
+        startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+        endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+      },
+      sort: sort,
+      metadata: undefined,
+    };
+  }, [filters, timeframe, sorting]);
 
-  const searchRequest = {
-    filters: filters,
-    timeframe: timeframe,
-    sort: sort,
-    metadata: undefined,
-  };
+  useEffect(() => {
+    virtualizerInstanceRef.current?.scrollToIndex(0);
+  }, [filters, timeframe, sorting]);
 
   const {
     data,
@@ -71,28 +85,41 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     isFetching,
     isLoading,
     hasNextPage,
-  } = useSpansQuery(searchRequest);
+  } = useSpansQuery(
+    searchRequest,
+    liveSpans.isOn ? liveSpans.intervalInMilli : 0
+  );
 
-  const tableSpans =
-    data?.pages?.flatMap((page) =>
-      page.spans.flatMap(
-        ({ resource, span, externalFields }): TableSpan => ({
-          id: span.spanId,
-          traceId: span.traceId,
-          spanId: span.spanId,
-          startTime: formatDateAsDateTime(nanoSecToMs(span.startTimeUnixNano)),
-          duration: roundNanoToTwoDecimalMs(externalFields.durationNano),
-          name: span.name,
-          status: span.status.code,
-          serviceName:
-            resource.attributes?.["service.name"] !== undefined &&
-            typeof resource.attributes?.["service.name"] === "string"
-              ? resource.attributes["service.name"]
-              : "service unknown",
-        })
-      )
-    ) ?? [];
+  useEffect(() => {
+    setTableSpans((prevTableSpans) => {
+      const newSpans = data?.pages?.flatMap((page) => page.spans) || [];
+      const newSpansIds = calcNewSpans(
+        prevTableSpans,
+        newSpans,
+        liveSpans.isOn
+      );
 
+      return (
+        newSpans?.flatMap(
+          ({ resource, span, externalFields }): TableSpan => ({
+            id: span.spanId,
+            traceId: span.traceId,
+            spanId: span.spanId,
+            startTime: formatNanoAsMsDateTime(span.startTimeUnixNano),
+            duration: externalFields.durationNano,
+            name: span.name,
+            status: span.status.code,
+            serviceName:
+              resource.attributes?.["service.name"] !== undefined &&
+              typeof resource.attributes?.["service.name"] === "string"
+                ? resource.attributes["service.name"]
+                : "service unknown",
+            isNew: newSpansIds.has(span.spanId),
+          })
+        ) ?? []
+      );
+    });
+  }, [data, liveSpans]);
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
@@ -141,6 +168,8 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
         manualFiltering
         manualSorting
         enableStickyHeader={true}
+        enableRowVirtualization
+        rowVirtualizerProps={{ overscan: 8 }}
         muiToolbarAlertBannerProps={
           isError
             ? {
@@ -159,13 +188,20 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
           showAlertBanner: isError,
           sorting,
         }}
-        virtualizerInstanceRef={virtualizerInstanceRef}
+        rowVirtualizerInstanceRef={virtualizerInstanceRef}
         muiTableContainerProps={{
           ref: tableWrapperRef,
           sx: styles.tableContainer,
         }}
         muiTablePaperProps={{ sx: styles.tablePaper }}
-        muiTableBodyRowProps={({ row }) => ({ onClick: () => onClick(row) })}
+        muiTableBodyRowProps={({ row }) => ({
+          onClick: () => onClick(row),
+          className: row.original.isNew ? "MuiTableRow-grey" : "",
+          sx: row.original.isNew ? styles.newTableRow : null,
+          key: row.original.spanId, // required for new spans animation
+        })}
+        getRowId={(originalRow) => originalRow.spanId}
+        initialState={{ density: "compact" }}
       />
     </div>
   );

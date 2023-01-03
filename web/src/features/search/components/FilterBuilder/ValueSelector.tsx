@@ -14,63 +14,47 @@
  * limitations under the License.
  */
 
+import { Close } from "@mui/icons-material";
 import {
-  Autocomplete,
   FormLabel,
-  ListItem,
-  Stack,
+  IconButton,
+  InputAdornment,
   TextField,
-  Typography,
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import { formatNumber } from "@/utils/format";
-
-import { useTagValues } from "../../api/tagValues";
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import {
   FilterValueTypes,
-  Timeframe,
+  SearchFilter,
   ValueInputMode,
 } from "../../types/common";
-import { TagValue, TagValuesRequest } from "../../types/tagValues";
+import { TagValuesRequest } from "../../types/tagValues";
+import { AutoCompleteValueSelector } from "./AutoCompleteValueSelector";
 import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
+  filters: Array<SearchFilter>;
   query?: TagValuesRequest;
   value: FilterValueTypes;
   valueInputMode: ValueInputMode;
   onChange: (value: FilterValueTypes) => void;
+  liveSpans: LiveSpansState;
   error: boolean;
-};
-
-const getOptions = (tag: string, timeframe: Timeframe) => {
-  if (!tag) {
-    return { isLoading: false, tagOptions: [] };
-  }
-  const tagValuesRequest = {
-    filters: [],
-    timeframe: timeframe,
-  } as TagValuesRequest;
-  const { data: tagValues, isLoading } = useTagValues(tag, tagValuesRequest);
-  const tagOptions =
-    tagValues?.pages
-      .flatMap((page) => page.values)
-      ?.filter((tag) => tag?.value)
-      .sort((a, b) => b.count - a.count) || [];
-  return { isLoading, tagOptions };
 };
 
 export const ValueSelector = ({
   tag,
   timeframe,
+  filters,
   value,
   valueInputMode,
   onChange,
+  liveSpans,
   error,
 }: ValueSelectorProps) => {
-  const { isLoading, tagOptions } = getOptions(tag, timeframe);
   const errorHelperText = error ? "Value is required" : "";
 
   const handleInputChange = (
@@ -79,69 +63,39 @@ export const ValueSelector = ({
     onChange(event?.target?.value ?? "");
   };
 
-  const handleSelectChange = (
-    event: React.SyntheticEvent<Element, Event>,
-    value: TagValue[]
-  ) => {
-    onChange(value.map((v) => v.value.toString()));
-  };
-
-  const getSelectedValues = () => {
-    const valueArray = value instanceof Array ? value : [value.toString()];
-    return (
-      tagOptions?.filter(
-        (tagOption) =>
-          tagOption && valueArray.includes(tagOption?.value.toString())
-      ) || []
-    );
-  };
-
   return (
     <>
       <FormControl required sx={styles.valueSelector}>
         <FormLabel required={false}>Value</FormLabel>
         {valueInputMode === "select" ? (
-          <Autocomplete
-            multiple
-            openOnFocus
-            size="small"
-            loading={isLoading}
-            disableCloseOnSelect
-            value={getSelectedValues()}
-            id={"value-selector"}
-            options={tagOptions || []}
-            getOptionLabel={(option) => option.value.toString()}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                error={error}
-                helperText={errorHelperText}
-                sx={styles.valueInput}
-              />
-            )}
-            renderOption={(props, option) => (
-              <ListItem {...props}>
-                <Stack
-                  sx={{ width: "100%" }}
-                  direction="row"
-                  justifyContent="space-between"
-                >
-                  <Typography>{option.value}</Typography>
-                  <Typography>{formatNumber(option.count)}</Typography>
-                </Stack>
-              </ListItem>
-            )}
-            onChange={handleSelectChange}
-          ></Autocomplete>
+          <AutoCompleteValueSelector
+            error={error}
+            filters={filters}
+            timeframe={timeframe}
+            value={Array.isArray(value) ? value : [value]}
+            onChange={onChange}
+            liveSpans={liveSpans}
+            tag={tag}
+          />
         ) : null}
         {valueInputMode === "text" ? (
           <TextField
+            sx={styles.textValueInput}
             error={error}
             helperText={errorHelperText}
             size="small"
             variant="outlined"
             value={value}
             onChange={handleInputChange}
+            InputProps={{
+              endAdornment: value && (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => onChange("")}>
+                    <Close />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
         ) : null}
         {valueInputMode === "numeric" ? (

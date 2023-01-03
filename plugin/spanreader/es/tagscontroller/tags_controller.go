@@ -104,6 +104,7 @@ func (r *tagsController) GetTagsValues(
 // Get elasticsearch mappings for specific tags
 func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
 	var result []tagsquery.TagInfo
+	tagsMap := make(map[string]tagsquery.TagInfo)
 	res, err := r.rawClient.Indices.GetFieldMapping(
 		tags,
 		r.rawClient.Indices.GetFieldMapping.WithContext(ctx),
@@ -147,14 +148,20 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 			}
 
 			for _, valueData := range mappingData {
-				result = append(result, tagsquery.TagInfo{
-					Name: fieldMapping["full_name"].(string),
-					Type: valueData.(map[string]any)["type"].(string),
-				})
+				fieldName := fieldMapping["full_name"].(string)
+				if _, ok := tagsMap[fieldName]; !ok {
+					tagsMap[fieldName] = tagsquery.TagInfo{
+						Name: fieldName,
+						Type: valueData.(map[string]any)["type"].(string),
+					}
+				}
 			}
 		}
 	}
 
+	for _, val := range tagsMap {
+		result = append(result, val)
+	}
 	result = removeDuplicatedTextTags(result)
 
 	return result, nil
@@ -169,7 +176,7 @@ func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.
 			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
 		}
 		aggs[aggregationKey] = types.NewAggregationContainerBuilder()
-		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)))
+		aggs[aggregationKey].Terms(types.NewTermsAggregationBuilder().Field(types.Field(aggregationField)).Size(100))
 	}
 	builder.Aggregations(aggs)
 }

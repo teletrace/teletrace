@@ -36,6 +36,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const TieBreakerField = "span.spanId.keyword"
+
 type searchController struct {
 	client *elasticsearch.TypedClient
 	idx    string
@@ -86,7 +88,7 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 
 	builder := search.NewRequestBuilder()
 
-	timeframeFilters := spanreaderes.CreateTimeframeFilters(r.Timeframe)
+	timeframeFilters := spanreaderes.CreateTimeframeFilters(&r.Timeframe)
 
 	filters := append(r.SearchFilters, timeframeFilters...)
 
@@ -96,30 +98,44 @@ func buildSearchRequest(r spansquery.SearchRequest) (*search.Request, error) {
 
 	builder = buildSort(builder, r.Sort...)
 	if r.Metadata != nil && r.Metadata.NextToken != "" {
-		sortResults := types.SortResults{string(r.Metadata.NextToken)}
-		sortResultsBuilder := types.NewSortResultsBuilder().SortResults(sortResults)
+		var sortKeys []string
+		if err := json.Unmarshal([]byte(r.Metadata.NextToken), &sortKeys); err != nil {
+			return nil, err
+		}
+		sortResultsBuilder := types.NewSortResultsBuilder().SortResults(sortKeys)
 		builder = builder.SearchAfter(sortResultsBuilder)
 	}
 
-	builder = builder.Size(200) // Where to get this number from?
+	builder = builder.Size(50) // Where to get this number from?
 
 	return builder.Build(), nil
 }
 
-func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
+func addSortField(fieldName spansquery.SortField, ascending bool, sorts []types.SortCombinations) []types.SortCombinations {
 	DIRECTION := map[bool]sortorder.SortOrder{true: sortorder.Asc, false: sortorder.Desc}
 
+	return append(sorts, types.NewSortCombinationsBuilder().
+		Field(types.Field(fieldName)).
+		SortOptions(types.NewSortOptionsBuilder().
+			SortOptions(map[types.Field]*types.FieldSortBuilder{
+				types.Field(fieldName): types.NewFieldSortBuilder().Order(DIRECTION[ascending]),
+			}),
+		).
+		Build(),
+	)
+}
+
+func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBuilder {
 	sorts := []types.SortCombinations{}
+	tieBreakerFound := false
 	for _, _s := range s {
-		sorts = append(sorts, types.NewSortCombinationsBuilder().
-			Field(types.Field(_s.Field)).
-			SortOptions(types.NewSortOptionsBuilder().
-				SortOptions(map[types.Field]*types.FieldSortBuilder{
-					types.Field(_s.Field): types.NewFieldSortBuilder().Order(DIRECTION[_s.Ascending]),
-				}),
-			).
-			Build(),
-		)
+		if _s.Field == TieBreakerField {
+			tieBreakerFound = true
+		}
+		sorts = addSortField(_s.Field, _s.Ascending, sorts)
+	}
+	if !tieBreakerFound {
+		sorts = addSortField(TieBreakerField, true, sorts)
 	}
 	return b.Sort(types.NewSortBuilder().Sort(sorts))
 }
@@ -128,7 +144,9 @@ func decodeResponse(res *http.Response) (map[string]any, error) {
 	// check errors
 	var err error
 	var body map[string]any
-	if err = json.NewDecoder(res.Body).Decode(&body); err != nil {
+	decoder := json.NewDecoder(res.Body)
+	decoder.UseNumber()
+	if err = decoder.Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
@@ -173,23 +191,21 @@ func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error)
 }
 
 func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
-	if sort := hits[len(hits)-1].(map[string]any)["sort"]; sort != nil {
-		sort := sort.([]any)
-		if len(sort) > 0 {
-			if len(sort) > 1 {
-				return fmt.Errorf(
-					"expected a single sort field, but found: %v", len(sort))
-			}
-
-			switch sortField := sort[0].(type) {
-			case string:
-				metadata.NextToken = spansquery.ContinuationToken(sortField)
-			default:
-				return fmt.Errorf(
-					"expected a sort field of type string, but found: %v", sortField)
-			}
+	if lastHitSortData := hits[len(hits)-1].(map[string]any)["sort"]; lastHitSortData != nil {
+		lastHitSortData := lastHitSortData.([]any)
+		if len(lastHitSortData) == 0 {
+			return nil
 		}
-	}
+		tokenFields := make([]string, len(lastHitSortData))
+		for i, key := range lastHitSortData {
+			tokenFields[i] = fmt.Sprintf("%v", key)
+		}
+		jsonToken, err := json.Marshal(tokenFields)
+		if err != nil {
+			return err
+		}
+		metadata.NextToken = spansquery.ContinuationToken(jsonToken)
 
+	}
 	return nil
 }

@@ -17,10 +17,9 @@
 import { MRT_ColumnDef as ColumnDef } from "material-react-table";
 
 import { StatusCode } from "@/types/span";
+import { formatDurationAsMs } from "@/utils/format";
 
 import { StatusBadge } from "../StatusBadge";
-
-const LOW_PRECISION_DURATION_DISPLAY = "<0.01";
 
 export interface TableSpan {
   id: string;
@@ -31,6 +30,7 @@ export interface TableSpan {
   name: string;
   status: number;
   serviceName: string;
+  isNew: boolean;
 }
 
 export const columns: ColumnDef<TableSpan>[] = [
@@ -46,12 +46,8 @@ export const columns: ColumnDef<TableSpan>[] = [
     header: "Duration",
     enableSorting: true,
     Cell: (mrtCell) => {
-      const durationMillis = mrtCell.cell.getValue() as number;
-      const durationString =
-        durationMillis < 0.01
-          ? LOW_PRECISION_DURATION_DISPLAY
-          : durationMillis.toString();
-      return `${durationString}ms`;
+      const durationMs = mrtCell.cell.getValue() as number;
+      return formatDurationAsMs(durationMs);
     },
   },
   {

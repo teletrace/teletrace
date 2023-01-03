@@ -526,8 +526,17 @@ theme = createTheme(theme, {
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
-          "&.MuiTableRow-hover": {
-            cursor: "pointer",
+          height: "45px",
+          lineHeight: "unset",
+          "&.MuiTableRow-root:not(.MuiTableRow-head)": {
+            backgroundColor: theme.palette.grey[900],
+            "&:hover": {
+              cursor: "pointer",
+              backgroundColor: theme.palette.grey[700],
+            },
+          },
+          ":not(.MuiTableRow-head, :hover)": {
+            backgroundColor: theme.palette.grey[900],
           },
         },
       },
@@ -538,6 +547,8 @@ theme = createTheme(theme, {
           "&.MuiTableCell-head": {
             color: theme.palette.grey[300],
             fontWeight: 500,
+            verticalAlign: "middle",
+            padding: "12px 16px",
             "& .Mui-TableHeadCell-Content": {
               borderRight: `2px solid ${theme.palette.grey[500]}`,
             },
@@ -549,6 +560,36 @@ theme = createTheme(theme, {
           },
           "&.MuiTableCell-body": {
             fontWeight: "normal",
+            paddingLeft: "16px",
+            paddingRight: "16px",
+            borderBottomColor: theme.palette.grey[700],
+          },
+        },
+      },
+    },
+    MuiToggleButtonGroup: {
+      styleOverrides: {
+        root: {
+          backgroundColor: theme.palette.grey[900],
+          height: "32px",
+        },
+        grouped: {
+          borderTop: "none",
+          borderBottom: "none",
+          borderColor: "black",
+          color: theme.palette.grey[300],
+          "&.Mui-selected": {
+            color: "white",
+          },
+          "&:last-of-type": {
+            borderBottomRightRadius: "8px",
+            borderTopRightRadius: "8px",
+            borderRight: "none",
+          },
+          "&:first-of-type": {
+            borderBottomLeftRadius: "8px",
+            borderTopLeftRadius: "8px",
+            borderLeft: "none",
           },
         },
       },

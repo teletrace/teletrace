@@ -24,13 +24,13 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { AvailableTag } from "../../types/availableTags";
 import {
   FilterValueTypes,
   KeyValueFilter,
   Operator,
   SearchFilter,
-  Timeframe,
   ValueInputMode,
 } from "../../types/common";
 import { OperatorSelector } from "./OperatorSelector";
@@ -43,7 +43,9 @@ export type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
+  filters: Array<SearchFilter>;
+  liveSpans: LiveSpansState;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -73,10 +75,12 @@ type FilterBuilderDialogState = {
 
 export const FilterBuilderDialog = ({
   timeframe,
+  filters,
   onClose,
   open,
   anchorEl,
   onApply,
+  liveSpans,
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const initialState: FilterBuilderDialogState = {
@@ -128,6 +132,35 @@ export const FilterBuilderDialog = ({
     onClose();
   };
 
+  const convertSingleValue = (
+    tagType: string | undefined,
+    v: string | number
+  ): string | number => {
+    if (!tagType) {
+      return v;
+    }
+    if (tagType === "string") {
+      return v.toString();
+    }
+    if (tagType === "long" || tagType == "float") {
+      return Number(v);
+    }
+    // TODO: add it back
+    // if (tagType === "boolean") {
+    //   return v.toString().toLowerCase() === "true"
+    // }
+    return v;
+  };
+
+  const convertValue = (
+    tagType: string | undefined,
+    v: FilterValueTypes
+  ): FilterValueTypes => {
+    return Array.isArray(v)
+      ? v.map((currentVal) => convertSingleValue(tagType, currentVal))
+      : convertSingleValue(tagType, v);
+  };
+
   const validateForm = (state: FilterBuilderDialogState): FormErrors => {
     const errors: FormErrors = { ...initialFormErrors };
     const stateInputMode = valueSelectModeByOperators[state.operator];
@@ -142,6 +175,15 @@ export const FilterBuilderDialog = ({
       (state.value instanceof Array && state.value.length === 0)
     ) {
       errors.value = true;
+    } else {
+      let convertedValues = convertValue(state.tag?.type, state.value);
+      convertedValues = Array.isArray(convertedValues)
+        ? convertedValues
+        : [convertedValues];
+      errors.value =
+        convertedValues.filter(
+          (v) => v === undefined || (typeof v === "number" && isNaN(v))
+        ).length != 0;
     }
     return errors;
   };
@@ -160,7 +202,7 @@ export const FilterBuilderDialog = ({
     const newFilter: KeyValueFilter = {
       key: dialogState.tag?.name || "",
       operator: dialogState.operator,
-      value: dialogState.value,
+      value: convertValue(dialogState.tag?.type, dialogState.value),
     };
     onApply({ keyValueFilter: newFilter });
     handleClose();
@@ -197,10 +239,12 @@ export const FilterBuilderDialog = ({
               <Stack>
                 <ValueSelector
                   timeframe={timeframe}
+                  filters={filters}
                   tag={dialogState.tag?.name || ""}
                   value={dialogState.value}
                   onChange={onValueChange}
                   valueInputMode={valueInputMode}
+                  liveSpans={liveSpans}
                   error={dialogState.formError.value}
                 />
               </Stack>

@@ -18,6 +18,7 @@ import { Box, CircularProgress, Stack } from "@mui/material";
 import {
   MouseEvent as ReactMouseEvent,
   memo,
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -31,9 +32,11 @@ import {
   useNodesState,
 } from "reactflow";
 
+import { InternalSpan } from "@/types/span";
+
 import { BasicEdge } from "./BasicEdge";
 import { BasicNode } from "./BasicNode";
-import { EdgeData, NodeData, TraceData, TraceGraphProps } from "./types";
+import { EdgeData, GraphNode, NodeData, TraceData } from "./types";
 import { createGraphLayout, spansToGraphData } from "./utils/layout";
 import {
   applyHoverEdgeStyle,
@@ -46,13 +49,21 @@ import {
 
 import "reactflow/dist/style.css";
 
+export interface TraceGraphProps {
+  spans: InternalSpan[];
+  initiallyFocusedSpanId: string | null;
+  onInitialNodeSelection: (node: GraphNode) => void;
+  onSelectedNodeChange: (node: GraphNode) => void;
+}
+
 const nodeTypes = { basicNode: BasicNode };
 const edgeTypes = { basicEdge: BasicEdge };
 
 const TraceGraphImpl = ({
-  setSelectedNode,
   spans,
   initiallyFocusedSpanId,
+  onInitialNodeSelection,
+  onSelectedNodeChange,
 }: TraceGraphProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
@@ -77,50 +88,58 @@ const TraceGraphImpl = ({
   useEffect(() => {
     setNodes(traceData.nodes);
     setEdges(traceData.edges);
-  }, [traceData]);
+  }, [traceData, setNodes, setEdges]);
+
+  const markSelectedNode = useCallback(
+    (
+      nodes: Node<NodeData>[],
+      edges: Edge<EdgeData>[],
+      selectedNode: Node<NodeData>
+    ) => {
+      const connectedEdges = getConnectedEdges([selectedNode], edges);
+      setNodes(
+        nodes.map((n: Node<NodeData>) =>
+          n.id === selectedNode.id
+            ? applySelectedNodeStyle(n)
+            : applyNormalNodeStyle(n)
+        )
+      );
+      setEdges(
+        edges.map((e: Edge<EdgeData>) =>
+          connectedEdges.includes(e)
+            ? applySelectedEdgeStyle(e)
+            : applyNormalEdgeStyle(e)
+        )
+      );
+    },
+    [setEdges, setNodes]
+  );
 
   useEffect(() => {
     if (!initiallyFocusedSpanId) {
       return;
     }
-
     for (const node of traceData.nodes) {
       const isSpanWithinNode = node.data.graphNode.spans.some(
         (span) => span.span.spanId === initiallyFocusedSpanId
       );
       if (isSpanWithinNode) {
         markSelectedNode(traceData.nodes, traceData.edges, node);
+        onInitialNodeSelection(node.data.graphNode);
         break;
       }
     }
-  }, [traceData]);
-
-  const markSelectedNode = (
-    nodes: Node<NodeData>[],
-    edges: Edge<EdgeData>[],
-    selectedNode: Node<NodeData>
-  ) => {
-    setSelectedNode(selectedNode.data.graphNode);
-    const connectedEdges = getConnectedEdges([selectedNode], edges);
-    setNodes(
-      nodes.map((n: Node<NodeData>) =>
-        n.id === selectedNode.id
-          ? applySelectedNodeStyle(n)
-          : applyNormalNodeStyle(n)
-      )
-    );
-    setEdges(
-      edges.map((e: Edge<EdgeData>) =>
-        connectedEdges.includes(e)
-          ? applySelectedEdgeStyle(e)
-          : applyNormalEdgeStyle(e)
-      )
-    );
-  };
+  }, [
+    traceData,
+    markSelectedNode,
+    initiallyFocusedSpanId,
+    onInitialNodeSelection,
+  ]);
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     event.stopPropagation();
     markSelectedNode(nodes, edges, node);
+    onSelectedNodeChange(node.data.graphNode);
   };
 
   const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {
@@ -159,13 +178,6 @@ const TraceGraphImpl = ({
     }
   };
 
-  const onPaneClick = (event: ReactMouseEvent) => {
-    event.stopPropagation();
-    setSelectedNode(null);
-    setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
-    setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
-  };
-
   return (
     <Box sx={{ flex: 1 }}>
       {isLoading ? (
@@ -181,7 +193,6 @@ const TraceGraphImpl = ({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
-          onPaneClick={onPaneClick}
           onNodeMouseEnter={onNodeMouseEnter}
           onNodeMouseLeave={onNodeMouseLeave}
           selectNodesOnDrag={false}

@@ -45,11 +45,91 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 }
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
-	return nil, nil
+	var tags tagsquery.GetAvailableTagsResponse
+	tag := tagsquery.TagInfo{}
+	for tagName, fieldType := range staticTagTypeMap {
+		tag.Name = tagName
+		tag.Type = fieldType
+		tags.Tags = append(tags.Tags, tag)
+	}
+	query := buildDynamicTagsQuery()
+
+	stmt, err := sr.client.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare query: %v", err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query tags: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var tableKey, tagName, tagType string
+		err = rows.Scan(&tableKey, &tagName, &tagType)
+		if err != nil {
+			sr.logger.Error("failed to get tag value", zap.Error(err))
+			continue
+		}
+		tag.Name = fmt.Sprintf("%s.%s", tableKey, tagName)
+		tag.Type = tagType
+		tags.Tags = append(tags.Tags, tag)
+	}
+	return &tags, nil
 }
 
 func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
-	return nil, nil
+	result := make(map[string]*tagsquery.TagValuesResponse)
+	for _, tag := range tags {
+		tagValueResponse, err := sr.GetTagValues(ctx, r, tag)
+		if err != nil {
+			sr.logger.Error("failed to get tag value", zap.Error(err))
+			continue
+		}
+		result[tag] = tagValueResponse
+	}
+	return result, nil
+}
+
+func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesRequest, tag string) (*tagsquery.TagValuesResponse, error) {
+	var currentTagValues []tagsquery.TagValueInfo
+	query, err := buildTagValuesQuery(r, tag)
+	if err != nil {
+		sr.logger.Error("failed to build tag values query for: "+tag, zap.Error(err))
+		return nil, err
+	}
+	stmt, err := sr.client.db.PrepareContext(ctx, query)
+	if err != nil {
+		sr.logger.Error("failed to prepare query: "+query, zap.Error(err))
+		return nil, err
+	}
+	defer stmt.Close()
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		sr.logger.Error("failed to query tags values for: "+tag, zap.Error(err))
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var name any
+		var count int
+		err = rows.Scan(&name, &count)
+		if err != nil {
+			sr.logger.Error("failed to get tag value", zap.Error(err))
+			continue
+		}
+		if name == nil {
+			continue
+		}
+		currentTagValues = append(currentTagValues, tagsquery.TagValueInfo{
+			Value: name,
+			Count: count,
+		})
+	}
+
+	return &tagsquery.TagValuesResponse{
+		Values: currentTagValues,
+	}, nil
 }
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg config.Config) (spanreader.SpanReader, error) {
