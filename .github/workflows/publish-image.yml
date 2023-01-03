@@ -34,5 +34,5 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          context: "{{defaultContext}}:cmd/all-in-one"
+          file: ./cmd/all-in-one/Dockerfile
           tags: epsagon/lupa:demo
