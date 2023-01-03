@@ -20,10 +20,8 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/hex"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"sort"
+	"reflect"
 
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/ptrace"
@@ -40,12 +38,12 @@ func (exporter *sqliteTracesExporter) writeTraces(traces ptrace.Traces) error {
 	for i := 0; i < resourceSpansSlice.Len(); i++ {
 		resourceSpans := resourceSpansSlice.At(i)
 		resourceAttributes := resourceSpans.Resource().Attributes()
-		resourceId, err := hashAttributes(resourceAttributes) // Generating a resource identifier to store with each span
-		if err != nil || resourceId == "" {
+		resourceAttributesIds, err := hashAttributes(resourceAttributes) // Generating a resource identifier to store with each span
+		if err != nil || len(resourceAttributesIds) == 0 {
 			exporter.logger.Error("failed to hash resource attributes", zap.NamedError("reason", err))
 			return err
 		}
-		if err := exporter.writeResourceSpans(resourceSpans, tx, resourceId, err); err != nil {
+		if err := exporter.writeResourceSpans(resourceSpans, tx, resourceAttributesIds, err); err != nil {
 			if err := tx.Rollback(); err != nil {
 				exporter.logger.Fatal("failed to rollback transaction", zap.NamedError("reason", err))
 				panic(err)
@@ -63,15 +61,15 @@ func (exporter *sqliteTracesExporter) writeTraces(traces ptrace.Traces) error {
 }
 
 func (exporter *sqliteTracesExporter) writeResourceSpans(
-	resourceSpans ptrace.ResourceSpans, tx *sql.Tx, resourceId string, err error) error {
+	resourceSpans ptrace.ResourceSpans, tx *sql.Tx, resourceAttributesIds map[string]string, err error) error {
 	droppedResourceAttributesCount := resourceSpans.Resource().DroppedAttributesCount()
-	if err := exporter.writeAttributes(tx, resourceSpans.Resource().Attributes(), Resource, resourceId); err != nil {
+	if err := exporter.writeAttributes(tx, resourceSpans.Resource().Attributes(), Resource, resourceAttributesIds); err != nil {
 		return err
 	}
 	scopeSpansSlice := resourceSpans.ScopeSpans()
 	for j := 0; j < scopeSpansSlice.Len(); j++ {
 		scopeSpans := scopeSpansSlice.At(j)
-		if err = exporter.writeScope(scopeSpans, tx, droppedResourceAttributesCount, resourceId); err != nil {
+		if err = exporter.writeScope(scopeSpans, tx, droppedResourceAttributesCount, resourceAttributesIds); err != nil {
 			return err
 		}
 	}
@@ -80,7 +78,7 @@ func (exporter *sqliteTracesExporter) writeResourceSpans(
 }
 
 func (exporter *sqliteTracesExporter) writeScope(
-	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceId string) error {
+	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string) error {
 	scope := scopeSpans.Scope()
 	scopeId, err := insertScope(tx, scope)
 	if err != nil || scopeId == 0 {
@@ -95,7 +93,7 @@ func (exporter *sqliteTracesExporter) writeScope(
 	spanSlice := scopeSpans.Spans()
 	for k := 0; k < spanSlice.Len(); k++ {
 		span := spanSlice.At(k)
-		if err := exporter.writeSpan(tx, span, droppedResourceAttributesCount, resourceId, scopeId); err != nil {
+		if err := exporter.writeSpan(tx, span, droppedResourceAttributesCount, resourceAttributesIds, scopeId); err != nil {
 			return err
 		}
 	}
@@ -104,9 +102,9 @@ func (exporter *sqliteTracesExporter) writeScope(
 }
 
 func (exporter *sqliteTracesExporter) writeSpan(
-	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceId string, scopeId int64) error {
+	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string, scopeId int64) error {
 	spanId := span.SpanID().HexString()
-	if err := insertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceId, scopeId); err != nil {
+	if err := insertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceAttributesIds, scopeId); err != nil {
 		exporter.logger.Error("could not insert span", zap.NamedError("reason", err))
 		return err
 	}
@@ -156,6 +154,14 @@ func (exporter *sqliteTracesExporter) writeAttributes(
 			finalValue = value.AsString()
 		}
 
+		// In case attributeKind is a resource attribute, id is actually a map - so check and convert to get current resource id
+		if attributeKind == "resource" {
+			if reflect.TypeOf(id).Kind() == reflect.Map {
+				ids, _ := id.(map[string]string)
+				id = ids[key]
+			}
+		}
+
 		if err := insertAttribute(tx, attributeKind, id, key, finalValue, value.Type().String()); err != nil {
 			exporter.logger.Error(
 				"could not insert attribute",
@@ -170,36 +176,28 @@ func (exporter *sqliteTracesExporter) writeAttributes(
 	return nil
 }
 
-func hashAttributes(attributes pcommon.Map) (string, error) {
-	// Golang's map implementation deliberately randomizes the order of the keys, so in order to generate a consistent
-	// hash, the keys should be sorted before iterating over the map
-	sortedKeys := make([]string, 0, len(attributes.AsRaw()))
-	for key := range attributes.AsRaw() {
-		sortedKeys = append(sortedKeys, key)
-	}
-
-	sort.Strings(sortedKeys)
+func hashResourceAttribute(key string, value pcommon.Value, valueType string) string {
 
 	hash := md5.New()
-	sortedAttributes := make(map[string]string)
-	for _, key := range sortedKeys {
-		value, exists := attributes.Get(key)
-		if !exists {
-			return "", fmt.Errorf("failed to retrieve value for '%s'", key)
-		}
-
-		sortedAttributes[key] = value.AsString()
-
-	}
-
-	attributesAsJson, err := json.Marshal(sortedAttributes)
-	if err != nil {
-		return "", errors.New("failed to serialize attributes")
-	}
-	hash.Write(attributesAsJson)
-
+	hash.Write([]byte(value.AsString() + key + valueType))
 	src := hash.Sum(nil)
 	dst := make([]byte, hex.EncodedLen(len(src)))
 	hex.Encode(dst, src)
-	return string(dst), nil
+	return string(dst)
+}
+
+// Return map of keys and associated hash values
+func hashAttributes(attributes pcommon.Map) (map[string]string, error) {
+
+	resourceHashedIds := make(map[string]string)
+	for key := range attributes.AsRaw() {
+
+		value, exists := attributes.Get(key)
+		if !exists {
+			return nil, fmt.Errorf("failed to retrieve value for '%s'", key)
+		}
+		resourceHashedIds[key] = hashResourceAttribute(key, value, value.Type().String())
+	}
+
+	return resourceHashedIds, nil
 }
