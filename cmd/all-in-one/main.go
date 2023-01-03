@@ -47,15 +47,7 @@ func main() {
 		log.Fatalf("Failed to initialize logger: %v", err)
 	}
 	defer logs.FlushBufferedLogs(logger)
-	var sr spanreader.SpanReader
-	switch cfg.SpansStoragePlugin {
-	case "sqlite":
-		sr, err = sqlite.NewSqliteSpanReader(context.Background(), logger, sqlite.NewSqliteConfig(cfg))
-	case "elasticsearch":
-		sr, err = spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
-	default:
-		err = fmt.Errorf("Invalid spans storage plugin %s", cfg.SpansStoragePlugin)
-	}
+	sr, err := initializeSpanReader(cfg, logger)
 	if err != nil {
 		if cfg.SpansStoragePlugin != "" {
 			log.Fatalf("Failed to initialize SpanReader of %s plugin %v", cfg.SpansStoragePlugin, err)
@@ -63,7 +55,6 @@ func main() {
 			log.Fatalf("Failed to initialize SpanReader plugin %v", err)
 		}
 	}
-
 	api := api.NewAPI(logger, cfg, &sr)
 
 	collector, err := collector.NewCollector()
@@ -80,6 +71,17 @@ func main() {
 	for sig := range signalsChan {
 		logger.Warn("Received system signal", zap.String("signal", sig.String()))
 		break
+	}
+}
+
+func initializeSpanReader(cfg config.Config, logger *zap.Logger) (spanreader.SpanReader, error) {
+	switch cfg.SpansStoragePlugin {
+	case "sqlite":
+		return sqlite.NewSqliteSpanReader(context.Background(), logger, sqlite.NewSqliteConfig(cfg))
+	case "elasticsearch":
+		return spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
+	default:
+		return nil, fmt.Errorf("Invalid spans storage plugin %s", cfg.SpansStoragePlugin)
 	}
 }
 
