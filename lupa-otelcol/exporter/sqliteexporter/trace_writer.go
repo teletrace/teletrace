@@ -21,7 +21,6 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
-	"reflect"
 
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/ptrace"
@@ -156,10 +155,8 @@ func (exporter *sqliteTracesExporter) writeAttributes(
 
 		// In case attributeKind is a resource attribute, id is actually a map - so check and convert to get current resource id
 		if attributeKind == "resource" {
-			if reflect.TypeOf(id).Kind() == reflect.Map {
-				ids, _ := id.(map[string]string)
-				id = ids[key]
-			}
+			ids, _ := id.(map[string]string)
+			id = ids[key]
 		}
 
 		if err := insertAttribute(tx, attributeKind, id, key, finalValue, value.Type().String()); err != nil {
