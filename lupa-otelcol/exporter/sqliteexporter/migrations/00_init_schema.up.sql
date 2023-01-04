@@ -90,4 +90,10 @@ CREATE TABLE IF NOT EXISTS span_resource_attributes (
     resource_attribute_id TEXT,
     FOREIGN KEY(span_id) REFERENCES spans(span_id),
     FOREIGN KEY(resource_attribute_id) REFERENCES resource_attributes(resource_id)
-)
+);
+
+CREATE INDEX IF NOT EXISTS start_time_index
+ON spans (start_time_unix_nano);
+
+CREATE INDEX IF NOT EXISTS end_time_index
+ON spans (end_time_unix_nano);
