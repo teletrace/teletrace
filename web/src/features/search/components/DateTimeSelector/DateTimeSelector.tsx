@@ -38,6 +38,7 @@ import { styles } from "./styles";
 export type DateTimeSelectorProps = {
   onChange: (timeframe: TimeFrameState) => void;
   value: TimeFrameState;
+  onCustomApply: (rangeSelected: boolean) => void;
   onClose: () => void;
 };
 
@@ -45,6 +46,7 @@ export const DateTimeSelector = ({
   onChange,
   value,
   onClose,
+  onCustomApply,
 }: DateTimeSelectorProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(value.startTimeUnixNanoSec / 1000000)
@@ -84,6 +86,7 @@ export const DateTimeSelector = ({
         endTimeUnixNanoSec: timeRange.endRange,
         isRelative: false,
       });
+      onCustomApply(true);
       onClose();
     } else {
       setTimeValid(false);

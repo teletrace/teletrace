@@ -54,6 +54,7 @@ export const TimeFrameSelector = ({
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
+  const [rangeSelected, setRangeSelected] = useState(false);
 
   const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
     setOpen(true);
@@ -143,6 +144,7 @@ export const TimeFrameSelector = ({
             endTimeUnixNanoSec: getCurrentTimestamp(),
             isRelative: timeframe.isRelative,
           }}
+          onCustomApply={() => setRangeSelected(true)}
           onClose={() => setOpen(false)}
         />
       </Popover>
@@ -155,7 +157,7 @@ export const TimeFrameSelector = ({
           key={customOption.label}
         >
           <CalendarTodayOutlined sx={{ paddingRight: "7px" }} />
-          {isSelected?.label === customOption?.label && !open
+          {isSelected?.label === customOption?.label && rangeSelected
             ? getTooltipTitle()
             : customOption.label}
         </ToggleButton>
