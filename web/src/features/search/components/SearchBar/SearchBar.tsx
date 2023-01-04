@@ -85,15 +85,17 @@ export function SearchBar({
             />
           ))}
         </Stack>
-        <Stack direction="row" sx={styles.clear}>
-          <Divider
-            orientation="vertical"
-            sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
-          />
-          <IconButton onClick={onClearFilters} size="small">
-            <Close fontSize="inherit" />
-          </IconButton>
-        </Stack>
+        {filters.length > 0 && (
+          <Stack direction="row" sx={styles.clear}>
+            <Divider
+              orientation="vertical"
+              sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
+            />
+            <IconButton onClick={onClearFilters} size="small">
+              <Close fontSize="inherit" />
+            </IconButton>
+          </Stack>
+        )}
       </Stack>
     </Paper>
   );
