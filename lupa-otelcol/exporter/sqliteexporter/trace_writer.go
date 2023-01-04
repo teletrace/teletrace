@@ -38,7 +38,7 @@ func (exporter *sqliteTracesExporter) writeTraces(traces ptrace.Traces) error {
 		resourceSpans := resourceSpansSlice.At(i)
 		resourceAttributes := resourceSpans.Resource().Attributes()
 		resourceAttributesIds, err := hashAttributes(resourceAttributes) // Generating a resource identifier to store with each span
-		if err != nil || len(resourceAttributesIds) == 0 {
+		if err != nil {
 			exporter.logger.Error("failed to hash resource attributes", zap.NamedError("reason", err))
 			return err
 		}
