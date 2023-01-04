@@ -15,11 +15,16 @@
  */
 
 import { CalendarTodayOutlined } from "@mui/icons-material";
-import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import {
+  Popover,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
 import {
-  formatDateAsDateTime,
+  formatNanoToTimeString,
   getCurrentTimestamp,
   msToNanoSec,
   nanoSecToMs,
@@ -31,6 +36,7 @@ import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 export type TimeFrameSelectorProps = {
   onChange: (timeframe: TimeFrameState) => void;
   value: TimeFrameState;
+  liveSpansOn: boolean;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -43,6 +49,7 @@ const options: RelativeTimeFrame[] = [
 export const TimeFrameSelector = ({
   onChange,
   value: timeframe,
+  liveSpansOn,
 }: TimeFrameSelectorProps) => {
   const customOption: CustomTimeFrame = {
     label: "Custom",
@@ -72,17 +79,20 @@ export const TimeFrameSelector = ({
     return "startTime" in object;
   }
 
+  const setDiffOnNanoSecTf = (ts: number, diff: string) => {
+    const datetime = ts === 0 ? new Date() : new Date(nanoSecToMs(ts));
+    if (diff === "1h") datetime.setHours(datetime.getHours() - 1);
+    else if (diff === "1d") datetime.setDate(datetime.getDate() - 1);
+    else if (diff === "3d") datetime.setDate(datetime.getDate() - 3);
+    else if (diff === "1w") datetime.setDate(datetime.getDate() - 7);
+    return msToNanoSec(datetime.getTime());
+  };
+
   const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
-    const startTime = new Date();
-    const endTimeNumber = new Date().getTime();
+    const now = msToNanoSec(new Date().getTime());
+    timeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
     const offset = timeFrame.offsetRange;
-    if (offset === "1h") startTime.setHours(startTime.getHours() - 1);
-    else if (offset === "1d") startTime.setDate(startTime.getDate() - 1);
-    else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
-    else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
-    const startTimeNumber = startTime.getTime();
-    timeframe.startTimeUnixNanoSec = msToNanoSec(startTimeNumber);
-    timeframe.endTimeUnixNanoSec = msToNanoSec(endTimeNumber);
+    timeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
   };
 
   const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
@@ -110,16 +120,18 @@ export const TimeFrameSelector = ({
     setIsSelected(value);
   };
 
-  const formatNanoToTimeString = (time: number): string => {
-    const ms = nanoSecToMs(time);
-    return formatDateAsDateTime(ms, { showSec: false });
+  const getTooltipTitle = (offset?: string): string => {
+    const startTime = offset
+      ? setDiffOnNanoSecTf(timeframe.endTimeUnixNanoSec, offset)
+      : timeframe.startTimeUnixNanoSec;
+    return `${formatNanoToTimeString(startTime)} -> ${formatNanoToTimeString(
+      timeframe.endTimeUnixNanoSec
+    )}`;
   };
 
-  const getTooltipTitle = (): string => {
-    return `${formatNanoToTimeString(
-      timeframe?.startTimeUnixNanoSec || 0
-    )} -> ${formatNanoToTimeString(timeframe?.endTimeUnixNanoSec || 0)}`;
-  };
+  if (!liveSpansOn) {
+    calcTimeFrame(isSelected);
+  }
 
   return (
     <div>
@@ -161,15 +173,22 @@ export const TimeFrameSelector = ({
         </ToggleButton>
 
         {options.map((tf) => (
-          <ToggleButton
-            onClick={handleBtnClicked}
-            selected={isSelected?.label === tf?.label}
-            value={tf}
-            ref={buttonRef}
+          <Tooltip
             key={tf.label}
+            title={liveSpansOn ? "" : getTooltipTitle(tf.offsetRange)}
+            placement="top-end"
+            arrow
           >
-            {tf.label}
-          </ToggleButton>
+            <ToggleButton
+              onClick={handleBtnClicked}
+              selected={isSelected?.label === tf?.label}
+              value={tf}
+              ref={buttonRef}
+              key={tf.label}
+            >
+              {tf.label}
+            </ToggleButton>
+          </Tooltip>
         ))}
       </ToggleButtonGroup>
     </div>

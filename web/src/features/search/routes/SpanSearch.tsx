@@ -83,16 +83,21 @@ export const SpanSearch = () => {
           toggleLiveSpans({
             isOn: true,
           });
+          return setTimeFrameState({
+            endTimeUnixNanoSec: 0,
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            isRelative: timeframe.isRelative,
+          });
         } else {
           toggleLiveSpans({
             isOn: false,
           });
+          return setTimeFrameState({
+            endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            isRelative: timeframe.isRelative,
+          });
         }
-        return setTimeFrameState({
-          endTimeUnixNanoSec: 0,
-          startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-          isRelative: timeframe.isRelative,
-        });
       }
       // disable liveSpans if user selected custom timeframe
       toggleLiveSpans({
@@ -153,6 +158,7 @@ export const SpanSearch = () => {
             <TimeFrameSelector
               onChange={onTimeframeChange}
               value={timeFrameState}
+              liveSpansOn={liveSpansState.isOn}
             />
           </Stack>
           <LiveSpanSwitch
