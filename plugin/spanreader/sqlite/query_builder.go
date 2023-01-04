@@ -28,13 +28,15 @@ type SqliteQueryParamsResponse struct {
 	tables  string
 	fields  string
 	filters string
+	orders  string
 }
 
-func newSqliteQueryParamsResponse(fields string, tables string, filters string) *SqliteQueryParamsResponse {
+func newSqliteQueryParamsResponse(fields string, tables string, filters string, orders string) *SqliteQueryParamsResponse {
 	return &SqliteQueryParamsResponse{
 		fields:  fields,
 		tables:  tables,
 		filters: filters,
+		orders:  orders,
 	}
 }
 
@@ -42,6 +44,7 @@ type QueryBuilder struct {
 	filters     []model.SearchFilter // Filters to be applied to the query
 	dbTablesSet *Set                 // Which tables are used in the query
 	dbFieldsSet *Set                 // Which fields are used in the query
+	orders      []spansquery.Sort    // Which fields are used to order the query
 }
 
 func (qb *QueryBuilder) addFilter(filter model.SearchFilter) error {
@@ -70,6 +73,10 @@ func (qb *QueryBuilder) addFilters(filters []model.SearchFilter) error {
 	return nil
 }
 
+func (qb *QueryBuilder) addOrders(orders []spansquery.Sort) {
+	qb.orders = append(qb.orders, orders...)
+}
+
 func (qb *QueryBuilder) addTable(tableName string) {
 	qb.dbTablesSet.Add(tableName)
 }
@@ -88,6 +95,10 @@ func (qb *QueryBuilder) getFields() []string {
 
 func (qb *QueryBuilder) getFilters() []model.SearchFilter {
 	return qb.filters
+}
+
+func (qb *QueryBuilder) getOrders() []spansquery.Sort {
+	return qb.orders
 }
 
 func (qb *QueryBuilder) doesTableExist(tableName string) bool {
@@ -145,26 +156,35 @@ func (qb *QueryBuilder) addJoinConditions() error {
 		switch t {
 		case "span_attributes":
 			err = qb.addFilter(newSearchFilter("span.attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans") // added cause filter value is column name
 		case "resource_attributes":
 			err = qb.addFilter(newSearchFilter("resource.attributes.resource_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
+			qb.addTable("spans")
 		case "links":
-			err = qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "events":
-			err = qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "event_attributes":
-			err = qb.addFilter(newSearchFilter("event.attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
+			err = qb.addFilter(newSearchFilter("span.event.attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
 			if err != nil {
 				return err
 			}
-			err = qb.addFilter(newSearchFilter("events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("events")
+			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "link_attributes":
-			err = qb.addFilter(newSearchFilter("link.attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
+			err = qb.addFilter(newSearchFilter("span.link.attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
 			if err != nil {
 				return err
 			}
-			err = qb.addFilter(newSearchFilter("links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("links")
+			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			qb.addTable("spans")
 		case "scope_attributes":
 			err = qb.addFilter(newSearchFilter("scope.attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
+			qb.addTable("spans")
 		}
 		if err != nil {
 			return err
@@ -179,9 +199,10 @@ func (qb *QueryBuilder) buildQueryParams() (*SqliteQueryParamsResponse, error) {
 		return nil, fmt.Errorf("error adding join conditions: %v", err)
 	}
 	filters := qb.buildFilters()
+	orders := qb.buildOrders()
 	fields := qb.buildFields()
 	tables := qb.buildTables()
-	return newSqliteQueryParamsResponse(fields, tables, filters), nil
+	return newSqliteQueryParamsResponse(fields, tables, filters, orders), nil
 }
 
 func (qb *QueryBuilder) buildTables() string {
@@ -189,15 +210,37 @@ func (qb *QueryBuilder) buildTables() string {
 }
 
 func (qb *QueryBuilder) buildFields() string {
+	if len(qb.getFields()) == 0 {
+		return "*"
+	}
 	return strings.Join(qb.getFields(), ",")
 }
 
 func (qb *QueryBuilder) buildFilters() string {
+	if len(qb.getFilters()) == 0 {
+		return ""
+	}
 	var filterStrings []string
 	for _, filter := range qb.getFilters() {
 		filterStrings = append(filterStrings, qb.covertFilterToSqliteQuery(filter))
 	}
 	return strings.Join(filterStrings, " AND ")
+}
+
+func (qb *QueryBuilder) buildOrders() string {
+	if len(qb.getOrders()) == 0 {
+		return ""
+	}
+	var orderStrings []string
+	for _, order := range qb.getOrders() {
+		parsedOrder, err := newSqliteOrder(order)
+		qb.addTable(parsedOrder.getTableName())
+		if err != nil {
+			return ""
+		}
+		orderStrings = append(orderStrings, fmt.Sprintf("%s %s", parsedOrder.getFieldName(), parsedOrder.getOrderBy()))
+	}
+	return strings.Join(orderStrings, ",")
 }
 
 func newQueryBuilder() *QueryBuilder {
