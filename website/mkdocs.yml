@@ -3,7 +3,7 @@ site_name: Lupa
 theme:
   homepage: https://epsagon.github.io/oss-tracing/
   font:
-    text: Roboto Mono
+    text: Roboto
 
   theme:
   features:
@@ -13,17 +13,17 @@ theme:
   name: material
   palette:
     - scheme: slate
-      primary: deep purple
-      accent: teal
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-    - scheme: default
       primary: indigo
       accent: teal
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
 
 extra:
   generator: true
@@ -39,8 +39,8 @@ markdown_extensions:
   - pymdownx.superfences
 
 plugins:
-    - search
-    - awesome-pages
+  - search
+  - awesome-pages
 
 repo_name: epsagon/lupa
 repo_url: https://github.com/epsagon/lupa
