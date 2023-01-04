@@ -97,3 +97,6 @@ ON spans (start_time_unix_nano);
 
 CREATE INDEX IF NOT EXISTS end_time_index
 ON spans (end_time_unix_nano);
+
+CREATE INDEX IF NOT EXISTS duration_index
+ON spans (duration);
