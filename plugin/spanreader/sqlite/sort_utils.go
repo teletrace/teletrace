@@ -35,7 +35,7 @@ var orderSqliteFieldsMap = map[string]string{
 	"span.startTimeUnixNano":      "span.start_time_unix_nano",
 }
 
-func newSqliteOrder(order spansquery.Sort) (*sqliteOrder, error) {
+func newSqliteOrder(order spansquery.Sort) (sqliteOrder, error) {
 	var so sqliteOrder
 	orderField := fmt.Sprintf("%v", order.Field)
 	if sqlField, ok := orderSqliteFieldsMap[orderField]; ok {
@@ -46,15 +46,11 @@ func newSqliteOrder(order spansquery.Sort) (*sqliteOrder, error) {
 				so.tableKey = tableKey
 				so.tag = removeTablePrefixFromDynamicTag(sqlField)
 				so.orderBy = orderType(order)
-				return &so, nil
+				return so, nil
 			}
 		}
 	}
-	return nil, fmt.Errorf("invalid order field: %s", order.Field)
-}
-
-func (so *sqliteOrder) getSqlOrder() string {
-	return fmt.Sprintf("%s %s", so.getFieldName(), so.getOrderBy())
+	return so, fmt.Errorf("invalid order field: %s", order.Field)
 }
 
 func (so *sqliteOrder) getTableName() string {

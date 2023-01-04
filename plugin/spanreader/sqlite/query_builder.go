@@ -233,12 +233,12 @@ func (qb *QueryBuilder) buildOrders() string {
 	}
 	var orderStrings []string
 	for _, order := range qb.getOrders() {
-		prepareOrder, err := newSqliteOrder(order)
-		qb.addTable(prepareOrder.getTableName())
+		parsedOrder, err := newSqliteOrder(order)
+		qb.addTable(parsedOrder.getTableName())
 		if err != nil {
 			return ""
 		}
-		orderStrings = append(orderStrings, prepareOrder.getSqlOrder())
+		orderStrings = append(orderStrings, fmt.Sprintf("%s %s", parsedOrder.getFieldName(), parsedOrder.getOrderBy()))
 	}
 	return strings.Join(orderStrings, ",")
 }
