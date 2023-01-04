@@ -1,5 +1,4 @@
-/**
- * Copyright 2022 Cisco Systems, Inc.
+/** Copyright 2022 Cisco Systems, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,7 +115,12 @@ export const FilterBuilderDialog = ({
 
   const onTagChange = (tag: AvailableTag | null) => {
     setDialogState((prevState) => {
-      const newState = { ...prevState, tag, value: [] };
+      const newState: FilterBuilderDialogState = {
+        ...prevState,
+        tag,
+        value: [],
+        operator: "in",
+      };
       // we want only to clear errors on tag changes and have new errors only on apply
       if (prevState.formError.tag) {
         newState.formError = { ...validateForm(newState), value: false };
