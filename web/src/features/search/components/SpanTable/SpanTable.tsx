@@ -21,11 +21,12 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
+import {useSpanSearchStore} from "@/stores/spanSearchStore";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter } from "../../types/common";
-import { LiveSpansState, TimeFrameState } from "./../../routes/SpanSearch";
+import { TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -36,13 +37,11 @@ const DEFAULT_SORT_ASC = false;
 interface SpanTableProps {
   filters?: SearchFilter[];
   timeframe: TimeFrameState;
-  liveSpans: LiveSpansState;
 }
 
 export function SpanTable({
   filters = [],
   timeframe,
-  liveSpans,
 }: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef =
@@ -77,6 +76,7 @@ export function SpanTable({
     virtualizerInstanceRef.current?.scrollToIndex(0);
   }, [filters, timeframe, sorting]);
 
+  const [ isLiveSpansOn, liveSpansInterval ] = useSpanSearchStore((state) => [ state.isOn, state.interval ]);
   const {
     data,
     fetchNextPage,
@@ -87,7 +87,7 @@ export function SpanTable({
     hasNextPage,
   } = useSpansQuery(
     searchRequest,
-    liveSpans.isOn ? liveSpans.intervalInMilli : 0
+      isLiveSpansOn ? liveSpansInterval : 0
   );
 
   useEffect(() => {
@@ -96,7 +96,7 @@ export function SpanTable({
       const newSpansIds = calcNewSpans(
         prevTableSpans,
         newSpans,
-        liveSpans.isOn
+        isLiveSpansOn
       );
 
       return (
@@ -119,7 +119,7 @@ export function SpanTable({
         ) ?? []
       );
     });
-  }, [data, liveSpans]);
+  }, [data, isLiveSpansOn, liveSpansInterval]);
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
