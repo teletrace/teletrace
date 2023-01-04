@@ -21,6 +21,7 @@ export const styles: Record<string, SxProps<Theme>> = {
   accordionSummary: (theme) => ({
     flex: 1,
     flexDirection: "row-reverse",
+    fontWeight: 700,
     "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
       transform: "rotate(90deg)",
     },
@@ -29,12 +30,19 @@ export const styles: Record<string, SxProps<Theme>> = {
       marginLeft: theme.spacing(1),
     },
   }),
-
+  accordionDetails: {
+    padding: "0px 16px 8px 16px ",
+  },
   accordion: {
     "&:not(:last-child)": { borderBottom: 0 },
     "&:before": { display: "none" },
   },
-
+  checkboxList: {
+    marginRight: "-16px",
+    marginLeft: "-16px",
+    paddingBottom: "0",
+    "&:empty, &:first-child": { paddingTop: "0px" },
+  },
   valueLabel: {
     direction: "rtl",
     textOverflow: "ellipsis",
