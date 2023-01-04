@@ -16,24 +16,22 @@
 
 import { FormControlLabel, FormGroup, Switch, Tooltip } from "@mui/material";
 
+import { useLiveSpansStore } from "@/stores/liveSpansStore";
+
 export type LiveSpansProps = {
-  isOn: boolean;
-  onLiveSpansChange: ({ isOn }: { isOn: boolean }) => void;
   disabled: boolean;
 };
 
-export function LiveSpanSwitch({
-  isOn,
-  onLiveSpansChange,
-  disabled,
-}: LiveSpansProps) {
+export function LiveSpanSwitch({ disabled }: LiveSpansProps) {
   const tooltipTitleDisabled =
     "Live mode is off when a custom time range is applied";
   const tooltipTitleEnabled =
     "Live mode streams new ingested spans to the span table";
 
+  const liveSpansState = useLiveSpansStore((state) => state);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onLiveSpansChange({ isOn: event.target.checked });
+    liveSpansState.setIsOn(event.target.checked);
   };
   return (
     <Tooltip title={disabled ? tooltipTitleDisabled : tooltipTitleEnabled}>
@@ -42,7 +40,7 @@ export function LiveSpanSwitch({
           control={
             <Switch
               onChange={handleChange}
-              checked={isOn}
+              checked={liveSpansState.isOn}
               disabled={disabled}
             />
           }

@@ -32,10 +32,11 @@ import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
+import { useLiveSpansStore } from "@/stores/liveSpansStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
+import { TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
@@ -49,7 +50,6 @@ export type TagValuesSelectorProps = {
   timeframe: TimeFrameState;
   onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
-  liveSpans: LiveSpansState;
 };
 
 export const TagValuesSelector = ({
@@ -61,7 +61,6 @@ export const TagValuesSelector = ({
   searchable,
   onChange,
   render,
-  liveSpans,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
@@ -76,6 +75,8 @@ export const TagValuesSelector = ({
         : filters,
     [filters, tagSearchFilter]
   );
+
+  const liveSpansState = useLiveSpansStore((state) => state);
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     {
@@ -83,7 +84,7 @@ export const TagValuesSelector = ({
       endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
     },
     tagFilters,
-    liveSpans.isOn ? liveSpans.intervalInMilli : 0
+    liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
   );
   const tagOptions = data
 
