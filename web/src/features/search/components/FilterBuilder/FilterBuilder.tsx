@@ -30,6 +30,7 @@ import {
   FilterValueTypes,
   KeyValueFilter,
   Operator,
+  OperatorCategory,
   SearchFilter,
   ValueInputMode,
 } from "../../types/common";
@@ -73,6 +74,17 @@ type FilterBuilderDialogState = {
   operator: Operator;
 };
 
+const operatorCategoryFromValueType = (
+  valueType?: string
+): OperatorCategory => {
+  if (!valueType) return "text";
+  else if (["keyword", "text"].includes(valueType)) return "text";
+  else if (["long", "float"].includes(valueType)) return "number";
+  else if (valueType === "boolean") return "boolean";
+
+  return "text";
+};
+
 export const FilterBuilderDialog = ({
   timeframe,
   filters,
@@ -104,7 +116,12 @@ export const FilterBuilderDialog = ({
 
   const onTagChange = (tag: AvailableTag | null) => {
     setDialogState((prevState) => {
-      const newState = { ...prevState, tag, value: [] };
+      const newState: FilterBuilderDialogState = {
+        ...prevState,
+        tag,
+        value: [],
+        operator: "in",
+      };
       // we want only to clear errors on tag changes and have new errors only on apply
       if (prevState.formError.tag) {
         newState.formError = { ...validateForm(newState), value: false };
@@ -232,6 +249,9 @@ export const FilterBuilderDialog = ({
               />
               <OperatorSelector
                 value={dialogState.operator}
+                operatorCategory={operatorCategoryFromValueType(
+                  dialogState.tag?.type
+                )}
                 onChange={onOperatorChange}
               />
             </Stack>
