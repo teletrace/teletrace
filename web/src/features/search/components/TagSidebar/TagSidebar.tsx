@@ -18,7 +18,7 @@ import { Paper, Stack } from "@mui/material";
 
 import { StatusCode } from "@/types/span";
 
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
+import { TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
@@ -27,7 +27,6 @@ export type TagSidebarProps = {
   filters: Array<SearchFilter>;
   timeframe: TimeFrameState;
   onChange: (entry: SearchFilter) => void;
-  liveSpans: LiveSpansState;
 };
 
 type TagOptions = {
@@ -41,7 +40,6 @@ export const TagSidebar = ({
   filters,
   timeframe,
   onChange,
-  liveSpans,
 }: TagSidebarProps) => {
   const onFilterChange = (
     key: string,
@@ -107,7 +105,6 @@ export const TagSidebar = ({
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
               render={t.render}
-              liveSpans={liveSpans}
             />
           );
         })}

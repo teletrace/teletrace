@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
+import { useLiveSpansStore } from "@/stores/liveSpansStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -36,7 +37,6 @@ import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 export type TimeFrameSelectorProps = {
   onChange: (timeframe: TimeFrameState) => void;
   value: TimeFrameState;
-  liveSpansOn: boolean;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -49,7 +49,6 @@ const options: RelativeTimeFrame[] = [
 export const TimeFrameSelector = ({
   onChange,
   value: timeframe,
-  liveSpansOn,
 }: TimeFrameSelectorProps) => {
   const customOption: CustomTimeFrame = {
     label: "Custom",
@@ -128,6 +127,8 @@ export const TimeFrameSelector = ({
       timeframe.endTimeUnixNanoSec
     )}`;
   };
+
+  const liveSpansOn = useLiveSpansStore((state) => state.isOn);
 
   if (!liveSpansOn) {
     calcTimeFrame(isSelected);

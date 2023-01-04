@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
+import { TimeFrameState } from "../../routes/SpanSearch";
 import {
   FilterValueTypes,
   SearchFilter,
@@ -41,7 +41,6 @@ export type ValueSelectorProps = {
   value: FilterValueTypes;
   valueInputMode: ValueInputMode;
   onChange: (value: FilterValueTypes) => void;
-  liveSpans: LiveSpansState;
   error: boolean;
 };
 
@@ -52,7 +51,6 @@ export const ValueSelector = ({
   value,
   valueInputMode,
   onChange,
-  liveSpans,
   error,
 }: ValueSelectorProps) => {
   const errorHelperText = error ? "Value is required" : "";
@@ -74,7 +72,6 @@ export const ValueSelector = ({
             timeframe={timeframe}
             value={Array.isArray(value) ? value : [value]}
             onChange={onChange}
-            liveSpans={liveSpans}
             tag={tag}
           />
         ) : null}
