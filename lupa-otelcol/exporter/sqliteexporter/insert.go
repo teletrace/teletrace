@@ -91,7 +91,7 @@ func insertAttribute(tx *sql.Tx, attributeKind AttributeKind, id any, key string
 }
 
 func insertSpan(
-	tx *sql.Tx, span ptrace.Span, spanId string, droppedResourceAttributesCount uint32, resourceId string,
+	tx *sql.Tx, span ptrace.Span, spanId string, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string,
 	scopeId int64,
 ) error {
 	duration := span.EndTimestamp() - span.StartTimestamp()
@@ -103,15 +103,23 @@ func insertSpan(
 		    parent_span_id, name, kind, start_time_unix_nano,
 		    end_time_unix_nano, dropped_span_attributes_count, dropped_events_count, dropped_links_count,
 		    span_status_message, span_status_code, dropped_resource_attributes_count, duration,
-		    ingestion_time_unix_nano, instrumentation_scope_id, resource_id
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,	?, ?, ?, ?)
+		    ingestion_time_unix_nano, instrumentation_scope_id
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,	?, ?, ?)
 	`,
 		spanId, span.TraceID().HexString(), span.TraceState().AsRaw(),
 		span.ParentSpanID().HexString(), span.Name(), int32(span.Kind()), uint64(span.StartTimestamp()),
 		uint64(span.EndTimestamp()), span.DroppedAttributesCount(), span.DroppedEventsCount(), span.DroppedLinksCount(),
 		span.Status().Message(), span.Status().Code(), droppedResourceAttributesCount, duration,
-		ingestionTimeUnixNano, scopeId, resourceId,
+		ingestionTimeUnixNano, scopeId,
 	)
+
+	// Insert resource id
+	for _, resourceAttributeId := range resourceAttributesIds {
+		_, err = performInsert(tx,
+			"INSERT INTO span_resource_attributes (span_id, resource_attribute_id) VALUES (?, ?)",
+			spanId, resourceAttributeId,
+		)
+	}
 
 	return err
 }
