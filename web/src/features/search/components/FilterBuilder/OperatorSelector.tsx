@@ -19,12 +19,17 @@ import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
-import { Operator, operatorsList } from "../../types/common";
+import {
+  Operator,
+  OperatorCategory,
+  operatorsByCatergory,
+} from "../../types/common";
 import { styles } from "./styles";
 
 export type OperatorSelectorProps = {
   value: string;
   onChange: (value: Operator) => void;
+  operatorCategory: OperatorCategory;
 };
 
 const operatorToDisplayName: Record<Operator, string> = {
@@ -43,17 +48,24 @@ const operatorToDisplayName: Record<Operator, string> = {
 export const OperatorSelector = ({
   value,
   onChange,
+  operatorCategory,
 }: OperatorSelectorProps) => {
   const handleChange = (event: SelectChangeEvent) => {
     onChange(event.target.value as Operator);
   };
 
+  const operators = operatorsByCatergory[operatorCategory];
+
   return (
     <FormControl required sx={styles.operatorSelector}>
       <FormLabel required={false}>Operator</FormLabel>
       <Select id="operator" size="small" value={value} onChange={handleChange}>
-        {operatorsList?.map((operator) => (
-          <MenuItem key={operator} value={operator}>
+        {operators?.map((operator) => (
+          <MenuItem
+            sx={styles.operatorsDropdown}
+            key={operator}
+            value={operator}
+          >
             {operatorToDisplayName[operator]}
           </MenuItem>
         ))}

@@ -19,6 +19,7 @@ import { ElkExtendedEdge } from "elkjs/lib/elk-api";
 import { Edge, MarkerType, Node, Position } from "reactflow";
 
 import { InternalSpan, StatusCode } from "@/types/span";
+import { formatDurationAsMs } from "@/utils/format";
 
 import {
   EdgeColor,
@@ -189,7 +190,7 @@ const createEdge = (
     source: parent_name,
     target: node_id,
     data: {
-      time: `${Math.round(duration / 1000000)}ms`,
+      time: formatDurationAsMs(duration),
       count: 1,
       hasError,
     },

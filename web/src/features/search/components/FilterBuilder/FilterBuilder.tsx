@@ -24,13 +24,14 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { AvailableTag } from "../../types/availableTags";
 import {
   FilterValueTypes,
   KeyValueFilter,
   Operator,
+  OperatorCategory,
   SearchFilter,
-  Timeframe,
   ValueInputMode,
 } from "../../types/common";
 import { OperatorSelector } from "./OperatorSelector";
@@ -43,8 +44,9 @@ export type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
+  liveSpans: LiveSpansState;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -72,6 +74,17 @@ type FilterBuilderDialogState = {
   operator: Operator;
 };
 
+const operatorCategoryFromValueType = (
+  valueType?: string
+): OperatorCategory => {
+  if (!valueType) return "text";
+  else if (["keyword", "text"].includes(valueType)) return "text";
+  else if (["long", "float"].includes(valueType)) return "number";
+  else if (valueType === "boolean") return "boolean";
+
+  return "text";
+};
+
 export const FilterBuilderDialog = ({
   timeframe,
   filters,
@@ -79,6 +92,7 @@ export const FilterBuilderDialog = ({
   open,
   anchorEl,
   onApply,
+  liveSpans,
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const initialState: FilterBuilderDialogState = {
@@ -102,7 +116,12 @@ export const FilterBuilderDialog = ({
 
   const onTagChange = (tag: AvailableTag | null) => {
     setDialogState((prevState) => {
-      const newState = { ...prevState, tag, value: [] };
+      const newState: FilterBuilderDialogState = {
+        ...prevState,
+        tag,
+        value: [],
+        operator: "in",
+      };
       // we want only to clear errors on tag changes and have new errors only on apply
       if (prevState.formError.tag) {
         newState.formError = { ...validateForm(newState), value: false };
@@ -230,6 +249,9 @@ export const FilterBuilderDialog = ({
               />
               <OperatorSelector
                 value={dialogState.operator}
+                operatorCategory={operatorCategoryFromValueType(
+                  dialogState.tag?.type
+                )}
                 onChange={onOperatorChange}
               />
             </Stack>
@@ -242,6 +264,7 @@ export const FilterBuilderDialog = ({
                   value={dialogState.value}
                   onChange={onValueChange}
                   valueInputMode={valueInputMode}
+                  liveSpans={liveSpans}
                   error={dialogState.formError.value}
                 />
               </Stack>

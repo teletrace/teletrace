@@ -21,6 +21,8 @@ import {
   ListItemButton,
   ListItemText,
   Skeleton,
+  SxProps,
+  Theme,
 } from "@mui/material";
 import { Fragment, ReactNode } from "react";
 
@@ -36,12 +38,14 @@ export type CheckboxListProps = {
   options: Array<CheckboxListOption>;
   loading?: boolean;
   onChange?: (value: Array<string | number>) => void;
+  sx?: SxProps<Theme>;
 };
 
 export const CheckboxList = ({
   value,
   options,
   onChange,
+  sx,
   loading = false,
 }: CheckboxListProps) => {
   const handleToggle = (opt: string | number) => {
@@ -67,10 +71,10 @@ export const CheckboxList = ({
     );
 
   return (
-    <List>
+    <List sx={sx}>
       {options.map((opt, index) => (
         <Fragment key={index}>
-          <ListItem disablePadding>
+          <ListItem sx={styles.listItem} disablePadding>
             <ListItemButton
               dense
               sx={styles.listItemButton}

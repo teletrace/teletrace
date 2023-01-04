@@ -22,7 +22,7 @@ const textContainer = {
 
 export const styles = {
   mainContainer: {
-    background: "#0B0B0D",
+    background: "#141414",
     borderLeft: "1px solid #EF5854",
   },
   textContainer,

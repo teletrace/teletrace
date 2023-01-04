@@ -23,14 +23,20 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { formatDateAsDateTime, nanoSecToMs } from "@/utils/format";
+import {
+  formatNanoToTimeString,
+  getCurrentTimestamp,
+  msToNanoSec,
+  nanoSecToMs,
+} from "@/utils/format";
 
-import { Timeframe } from "../../types/common";
+import { TimeFrameState } from "../../routes/SpanSearch";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 export type TimeFrameSelectorProps = {
-  onChange: (timeframe: Timeframe) => void;
-  value: Timeframe;
+  onChange: (timeframe: TimeFrameState) => void;
+  value: TimeFrameState;
+  liveSpansOn: boolean;
 };
 
 const options: RelativeTimeFrame[] = [
@@ -43,11 +49,12 @@ const options: RelativeTimeFrame[] = [
 export const TimeFrameSelector = ({
   onChange,
   value: timeframe,
+  liveSpansOn,
 }: TimeFrameSelectorProps) => {
   const customOption: CustomTimeFrame = {
     label: "Custom",
     startTime: timeframe.startTimeUnixNanoSec,
-    endTime: timeframe.endTimeUnixNanoSec,
+    endTime: getCurrentTimestamp(),
   };
 
   const buttonRef = useRef(null);
@@ -72,17 +79,20 @@ export const TimeFrameSelector = ({
     return "startTime" in object;
   }
 
+  const setDiffOnNanoSecTf = (ts: number, diff: string) => {
+    const datetime = ts === 0 ? new Date() : new Date(nanoSecToMs(ts));
+    if (diff === "1h") datetime.setHours(datetime.getHours() - 1);
+    else if (diff === "1d") datetime.setDate(datetime.getDate() - 1);
+    else if (diff === "3d") datetime.setDate(datetime.getDate() - 3);
+    else if (diff === "1w") datetime.setDate(datetime.getDate() - 7);
+    return msToNanoSec(datetime.getTime());
+  };
+
   const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
-    const startTime = new Date();
-    const endTimeNumber = new Date().getTime();
+    const now = msToNanoSec(new Date().getTime());
+    timeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
     const offset = timeFrame.offsetRange;
-    if (offset === "1h") startTime.setHours(startTime.getHours() - 1);
-    else if (offset === "1d") startTime.setDate(startTime.getDate() - 1);
-    else if (offset === "3d") startTime.setDate(startTime.getDate() - 3);
-    else if (offset === "1w") startTime.setDate(startTime.getDate() - 7);
-    const startTimeNumber = startTime.getTime();
-    timeframe.startTimeUnixNanoSec = startTimeNumber * 1000 * 1000;
-    timeframe.endTimeUnixNanoSec = endTimeNumber * 1000 * 1000;
+    timeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
   };
 
   const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
@@ -106,20 +116,22 @@ export const TimeFrameSelector = ({
       handleCustomClick(event);
     }
     calcTimeFrame(value);
-    onChange(timeframe);
+    onChange({ ...timeframe, isRelative: value.label !== "Custom" });
     setIsSelected(value);
   };
 
-  const formatNanoToTimeString = (time: number): string => {
-    const ms = nanoSecToMs(time);
-    return formatDateAsDateTime(ms, { showSec: false });
+  const getTooltipTitle = (offset?: string): string => {
+    const startTime = offset
+      ? setDiffOnNanoSecTf(timeframe.endTimeUnixNanoSec, offset)
+      : timeframe.startTimeUnixNanoSec;
+    return `${formatNanoToTimeString(startTime)} -> ${formatNanoToTimeString(
+      timeframe.endTimeUnixNanoSec
+    )}`;
   };
 
-  const getTooltipTitle = (): string => {
-    return `${formatNanoToTimeString(
-      timeframe?.startTimeUnixNanoSec || 0
-    )} -> ${formatNanoToTimeString(timeframe?.endTimeUnixNanoSec || 0)}`;
-  };
+  if (!liveSpansOn) {
+    calcTimeFrame(isSelected);
+  }
 
   return (
     <div>
@@ -138,7 +150,11 @@ export const TimeFrameSelector = ({
       >
         <DateTimeSelector
           onChange={onChange}
-          value={timeframe}
+          value={{
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            endTimeUnixNanoSec: getCurrentTimestamp(),
+            isRelative: timeframe.isRelative,
+          }}
           onClose={() => setOpen(false)}
         />
       </Popover>
@@ -159,7 +175,7 @@ export const TimeFrameSelector = ({
         {options.map((tf) => (
           <Tooltip
             key={tf.label}
-            title={isSelected?.label === tf?.label ? getTooltipTitle() : ""}
+            title={liveSpansOn ? "" : getTooltipTitle(tf.offsetRange)}
             placement="top-end"
             arrow
           >

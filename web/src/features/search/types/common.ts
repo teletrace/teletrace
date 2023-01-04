@@ -33,6 +33,13 @@ export const operatorsList = [
 ] as const;
 
 export type Operator = typeof operatorsList[number];
+export type OperatorCategory = "text" | "number" | "boolean";
+
+export const operatorsByCatergory: Record<OperatorCategory, Operator[]> = {
+  text: ["in", "not_in", "contains", "not_contains", "exists", "not_exists"],
+  number: ["in", "not_in", "exists", "not_exists", "gt", "gte", "lt", "lte"],
+  boolean: ["in", "not_in", "exists", "not_exists"],
+};
 
 export type FilterValueTypes = string | number | Array<string | number>;
 

@@ -35,7 +35,8 @@ import { SearchField } from "@/components/SearchField";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { SearchFilter, Timeframe } from "../../types/common";
+import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
+import { SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
@@ -45,9 +46,10 @@ export type TagValuesSelectorProps = {
   value: Array<string | number>;
   searchable?: boolean;
   filters: Array<SearchFilter>;
-  timeframe: Timeframe;
+  timeframe: TimeFrameState;
   onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
+  liveSpans: LiveSpansState;
 };
 
 export const TagValuesSelector = ({
@@ -59,6 +61,7 @@ export const TagValuesSelector = ({
   searchable,
   onChange,
   render,
+  liveSpans,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
@@ -75,8 +78,12 @@ export const TagValuesSelector = ({
   );
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
-    timeframe,
-    tagFilters
+    {
+      startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+      endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+    },
+    tagFilters,
+    liveSpans.isOn ? liveSpans.intervalInMilli : 0
   );
   const tagOptions = data
 
@@ -108,7 +115,7 @@ export const TagValuesSelector = ({
           </AccordionActions>
         </Stack>
 
-        <AccordionDetails>
+        <AccordionDetails sx={styles.accordionDetails}>
           {isError ? (
             <Alert severity="error">Failed loading tag values</Alert>
           ) : (
@@ -122,6 +129,7 @@ export const TagValuesSelector = ({
                 loading={false}
                 options={tagOptions || []}
                 onChange={onChange}
+                sx={styles.checkboxList}
               />
             </Fragment>
           )}

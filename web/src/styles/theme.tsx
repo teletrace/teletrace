@@ -523,10 +523,6 @@ theme = createTheme(theme, {
     MuiTableRow: {
       styleOverrides: {
         root: {
-          "&.MuiTableRow-grey": {
-            backgroundColor: theme.palette.grey[700],
-            transition: "background-color 200ms linear",
-          },
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
@@ -539,6 +535,9 @@ theme = createTheme(theme, {
               backgroundColor: theme.palette.grey[700],
             },
           },
+          ":not(.MuiTableRow-head, :hover)": {
+            backgroundColor: theme.palette.grey[900],
+          },
         },
       },
     },
@@ -549,8 +548,7 @@ theme = createTheme(theme, {
             color: theme.palette.grey[300],
             fontWeight: 500,
             verticalAlign: "middle",
-            paddingLeft: "16px",
-            paddingRight: "16px",
+            padding: "12px 16px",
             "& .Mui-TableHeadCell-Content": {
               borderRight: `2px solid ${theme.palette.grey[500]}`,
             },

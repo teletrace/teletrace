@@ -16,13 +16,16 @@
 
 import format from "date-fns/format";
 
-import { Timeframe } from "../features/search/types/common";
+export const formatNanoToTimeString = (time: number): string => {
+  const ms = nanoSecToMs(time);
+  return formatDateAsDateTime(ms, { showSec: false });
+};
 
 export const formatDateAsDateTime = (
   date: Date | number,
   { showMs = false, showSec = true } = {}
 ) => {
-  const pattern = `PP, HH:mm${showSec ? ":ss" : ""}${
+  const pattern = `PP HH:mm${showSec ? ":ss" : ""}${
     showSec && showMs ? ".SSS" : ""
   }`;
   return format(date, pattern);
@@ -47,15 +50,18 @@ export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
   return Math.round(ms * 100) / 100;
 };
 
+export const formatDurationAsMs = (nanoSec: number) => {
+  const roundedMs = roundNanoToTwoDecimalMs(nanoSec);
+  return roundedMs < 0.01 ? "<0.01ms" : `${roundedMs}ms`;
+};
+
 export const formatNanoAsMsDateTime = (nanoSec: number) => {
   const ms = nanoSecToMs(nanoSec);
   return formatDateAsDateTime(ms, { showMs: true });
 };
 
-export const getCurrentTimestamp = (): Timeframe => {
-  const now = new Date().valueOf();
-  return {
-    startTimeUnixNanoSec: msToNanoSec(now - 3600000),
-    endTimeUnixNanoSec: msToNanoSec(now),
-  };
+export const getCurrentTimestamp = (): number => {
+  return msToNanoSec(new Date().getTime());
 };
+
+export const ONE_HOUR_IN_NS = msToNanoSec(60 * 60 * 1000);

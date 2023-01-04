@@ -28,10 +28,7 @@ import { useMemo } from "react";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
-import {
-  formatNanoAsMsDateTime,
-  roundNanoToTwoDecimalMs,
-} from "@/utils/format";
+import { formatDurationAsMs, formatNanoAsMsDateTime } from "@/utils/format";
 
 import { getSpanResourceType } from "../../../utils/span-resource-type";
 import { SpanAttributesGroup } from "../SpanAttributesGroup";
@@ -50,7 +47,7 @@ function getBasicAttributes(span: InternalSpan): Attributes {
     name: span.span.name,
     status: StatusCode[span.span.status.code],
     kind: SpanKind[span.span.kind],
-    duration: `${roundNanoToTwoDecimalMs(span.externalFields.durationNano)}ms`,
+    duration: formatDurationAsMs(span.externalFields.durationNano),
     start_time: formatNanoAsMsDateTime(span.span.startTimeUnixNano),
     span_id: span.span.spanId,
     trace_id: span.span.traceId,

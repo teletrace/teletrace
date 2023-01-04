@@ -19,7 +19,6 @@
 
 Lupa is built from the ground up for modern applications. It is open-source and relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
 
-Lupa is developed and maintained by the [Epsagon](https://epsagon.com/) group (acquired by Cisco Systems, Inc).
 We believe distributed tracing has an enormous amount of value for modern stacks, and yet presents many challenges like scale and usability.
 
 We are a highly dedicated group of developers, with years of experience in distributed tracing. Open-sourcing knowledge and engaging the community around tracing is our mission.
@@ -68,6 +67,12 @@ Using docker-compose:
 
 ```sh
 docker-compose -f deploy/docker-compose/docker-compose.yml up
+```
+
+Using docker-compose with example data:
+
+```sh
+docker-compose -f deploy/docker-compose/docker-compose.yml -f deploy/docker-compose/docker-compose.example.yml up
 ```
 
 Alternatively, using docker CLI:

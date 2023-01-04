@@ -14,13 +14,28 @@
  * limitations under the License.
  */
 
+import { keyframes } from "@emotion/react";
 import { CSSProperties } from "react";
 
+import { theme } from "@/styles";
+
+const primaryRowColor = theme.palette.grey[900];
+const newRowColor = theme.palette.grey[700];
+
+const newRowAnimation = keyframes`
+    0%   {background-color: ${primaryRowColor};}
+    50%  {background-color: ${newRowColor};}
+    100%  {background-color: ${primaryRowColor};
+ `;
+
 const styles: { [name: string]: CSSProperties } = {
-  progress: { margin: 0, position: "absolute", top: 47, right: 0, left: 0 },
+  progress: { margin: 0, position: "absolute", top: 45, right: 0, left: 0 },
   container: { minHeight: 0, position: "relative", borderRadius: "8px" },
   tablePaper: { display: "flex", maxHeight: "100%" },
   tableContainer: { borderRadius: "8px" },
+  newTableRow: {
+    animation: `${newRowAnimation} 1s ease`,
+  },
 };
 
 export default styles;

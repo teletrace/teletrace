@@ -22,6 +22,9 @@ export const styles: Record<string, CSSProperties> = {
   },
 
   listItemButton: {
-    padding: 0,
+    padding: "0 16px 0 16px",
+  },
+  listItem: {
+    lineHeight: "32px",
   },
 };
