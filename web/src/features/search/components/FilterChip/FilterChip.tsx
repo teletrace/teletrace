@@ -116,7 +116,6 @@ export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
   ) => {
     operator = OPERATORS_FORMAT[operator];
     const newValue = formatFilterValue(value);
-    console.log(value);
     return `${key} ${operator} ${newValue}`;
   };
 
