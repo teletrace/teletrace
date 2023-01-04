@@ -30,6 +30,7 @@ import {
   FilterValueTypes,
   KeyValueFilter,
   Operator,
+  OperatorCategory,
   SearchFilter,
   ValueInputMode,
 } from "../../types/common";
@@ -71,6 +72,17 @@ type FilterBuilderDialogState = {
   formError: FormErrors;
   value: FilterValueTypes;
   operator: Operator;
+};
+
+const operatorCategoryFromValueType = (
+  valueType?: string
+): OperatorCategory => {
+  if (!valueType) return "text";
+  else if (["keyword", "text"].includes(valueType)) return "text";
+  else if (["long", "float"].includes(valueType)) return "number";
+  else if (valueType === "boolean") return "boolean";
+
+  return "text";
 };
 
 export const FilterBuilderDialog = ({
@@ -232,6 +244,9 @@ export const FilterBuilderDialog = ({
               />
               <OperatorSelector
                 value={dialogState.operator}
+                operatorCategory={operatorCategoryFromValueType(
+                  dialogState.tag?.type
+                )}
                 onChange={onOperatorChange}
               />
             </Stack>
