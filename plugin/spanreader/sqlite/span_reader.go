@@ -19,7 +19,6 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
 
@@ -210,16 +209,14 @@ func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesReq
 	}, nil
 }
 
-func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg config.Config) (spanreader.SpanReader, error) {
-	errMsg := "cannot create a new span reader for sqlite: %w"
-	sqliteConfig := NewSqliteConfig(cfg)
-	client, err := newSqliteClient(logger, sqliteConfig)
+func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
+	client, err := newSqliteClient(logger, cfg)
 	if err != nil {
-		return nil, fmt.Errorf(errMsg, err)
+		return nil, fmt.Errorf("cannot create a new span reader for sqlite: %w", err)
 	}
 
 	return &spanReader{
-		cfg:    sqliteConfig,
+		cfg:    cfg,
 		logger: logger,
 		ctx:    ctx,
 		client: client,

@@ -29,40 +29,46 @@ import (
 func TestDefaultValuesSource(t *testing.T) {
 	actualConfig, err := NewConfig()
 	assert.NoError(t, err)
-	expectedConfig := Config{Debug: debugDefault, APIPort: apiPortDefault}
+	expectedConfig := Config{Debug: debugDefault, APIPort: apiPortDefault, SpansStoragePlugin: spansStoragePluginDefault}
 
 	assert.Equal(t, expectedConfig.Debug, actualConfig.Debug)
 	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
+	assert.Equal(t, expectedConfig.SpansStoragePlugin, actualConfig.SpansStoragePlugin)
 }
 
 func TestConfigFileSource(t *testing.T) {
 	expectedDebug := false
 	expectedAPIPort := 1234
+	expectedSpansStoragePlugin := "sqlite"
 
-	content := []byte(fmt.Sprintf("DEBUG: %t\nAPI_PORT: %d", expectedDebug, expectedAPIPort))
+	content := []byte(fmt.Sprintf("DEBUG: %t\nAPI_PORT: %d\nSPANS_STORAGE_PLUGIN: %s", expectedDebug, expectedAPIPort, expectedSpansStoragePlugin))
 	writeEnvFile(t, content)
 
 	actualConfig, err := NewConfig()
 	assert.NoError(t, err)
-	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
+	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort, SpansStoragePlugin: expectedSpansStoragePlugin}
 
 	assert.Equal(t, expectedConfig.Debug, actualConfig.Debug)
 	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
+	assert.Equal(t, expectedConfig.SpansStoragePlugin, actualConfig.SpansStoragePlugin)
 }
 
 func TestEnvVarSource(t *testing.T) {
 	expectedDebug := false
 	expectedAPIPort := 1234
+	expectedSpansStoragePlugin := "sqlite"
 
 	t.Setenv("DEBUG", strconv.FormatBool(expectedDebug))
 	t.Setenv("API_PORT", strconv.Itoa(expectedAPIPort))
+	t.Setenv("SPANS_STORAGE_PLUGIN", expectedSpansStoragePlugin)
 
 	actualConfig, err := NewConfig()
 	assert.NoError(t, err)
-	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort}
+	expectedConfig := Config{Debug: expectedDebug, APIPort: expectedAPIPort, SpansStoragePlugin: expectedSpansStoragePlugin}
 
 	assert.Equal(t, expectedConfig.Debug, actualConfig.Debug)
 	assert.Equal(t, expectedConfig.APIPort, actualConfig.APIPort)
+	assert.Equal(t, expectedConfig.SpansStoragePlugin, actualConfig.SpansStoragePlugin)
 }
 
 func TestSourceOverrides(t *testing.T) {
