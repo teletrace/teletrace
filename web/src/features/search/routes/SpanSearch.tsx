@@ -18,7 +18,6 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 
 import { Head } from "@/components/Head";
-import { useLiveSpansStore } from "@/stores/liveSpansStore";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
@@ -27,6 +26,7 @@ import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter } from "../types/common";
+import {useSpanSearchStore} from "@/stores/spanSearchStore";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;
@@ -50,7 +50,7 @@ export const SpanSearch = () => {
     isRelative: true,
   });
 
-  const liveSpansState = useLiveSpansStore((state) => state);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
 
   useEffect(() => {
     if (liveSpansState.isOn) {

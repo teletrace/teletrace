@@ -32,7 +32,7 @@ import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
-import { useLiveSpansStore } from "@/stores/liveSpansStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
@@ -76,7 +76,7 @@ export const TagValuesSelector = ({
     [filters, tagSearchFilter]
   );
 
-  const liveSpansState = useLiveSpansStore((state) => state);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     {

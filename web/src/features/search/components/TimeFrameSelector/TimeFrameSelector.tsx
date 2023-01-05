@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { useLiveSpansStore } from "@/stores/liveSpansStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -128,7 +128,7 @@ export const TimeFrameSelector = ({
     )}`;
   };
 
-  const liveSpansOn = useLiveSpansStore((state) => state.isOn);
+  const liveSpansOn = useSpanSearchStore((state) => state.liveSpans.isOn);
 
   if (!liveSpansOn) {
     calcTimeFrame(isSelected);

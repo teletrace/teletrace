@@ -21,7 +21,7 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { useLiveSpansStore } from "@/stores/liveSpansStore";
+import {useSpanSearchStore} from "@/stores/spanSearchStore";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
@@ -73,7 +73,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     virtualizerInstanceRef.current?.scrollToIndex(0);
   }, [filters, timeframe, sorting]);
 
-  const liveSpansState = useLiveSpansStore((state) => state);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
 
   const {
     data,

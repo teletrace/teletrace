@@ -24,7 +24,7 @@ import {
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import { useLiveSpansStore } from "@/stores/liveSpansStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
@@ -47,7 +47,7 @@ const useGetTagOptions = (
       ]
     : filters;
 
-  const liveSpansState = useLiveSpansStore((state) => state);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
       tag,

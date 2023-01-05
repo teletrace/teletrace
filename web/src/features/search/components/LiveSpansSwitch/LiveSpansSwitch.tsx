@@ -16,7 +16,7 @@
 
 import { FormControlLabel, FormGroup, Switch, Tooltip } from "@mui/material";
 
-import { useLiveSpansStore } from "@/stores/liveSpansStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 export type LiveSpansProps = {
   disabled: boolean;
@@ -28,7 +28,7 @@ export function LiveSpanSwitch({ disabled }: LiveSpansProps) {
   const tooltipTitleEnabled =
     "Live mode streams new ingested spans to the span table";
 
-  const liveSpansState = useLiveSpansStore((state) => state);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     liveSpansState.setIsOn(event.target.checked);
