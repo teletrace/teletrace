@@ -29,6 +29,7 @@ import (
 type FilterParseOption func(*model.KeyValueFilter)
 
 func BuildFilters(b *types.QueryContainerBuilder, fs []model.KeyValueFilter, opts ...FilterParseOption) (*types.QueryContainerBuilder, error) {
+
 	type filterCreator func(model.KeyValueFilter) (*types.QueryContainerBuilder, error)
 
 	type Filter struct {
