@@ -86,7 +86,54 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 	if queryParams.orders != "" { // add ORDER BY clause if there are order by fields
 		queryParams.orders = fmt.Sprintf("ORDER BY %s", queryParams.orders)
 	}
-	searchQueryResponse.query = fmt.Sprintf("SELECT spans.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, span_attributes ,scopes.name, scopes.version, scopes.dropped_attributes_count, scope_attributes, events.time_unix_nano, events.name, events.dropped_attributes_count, event_attributes, links.trace_state, links.dropped_attributes_count, link_attributes, resource_attributes from spans left join (select span_attributes.span_id, json_group_array(json_object('key', span_attributes.key, 'value', span_attributes.value, 'type', span_attributes.type)) as span_attributes from span_attributes group by span_attributes.span_id) as span_attributes on spans.span_id = span_attributes.span_id left join (select scopes.id ,scopes.name, scopes.version, scopes.dropped_attributes_count from scopes) as scopes on spans.instrumentation_scope_id = scopes.id left join (select scope_attributes.scope_id, json_group_array(json_object('key', scope_attributes.key, 'value', scope_attributes.value, 'type', scope_attributes.type)) as scope_attributes from scope_attributes group by scope_attributes.scope_id) as scope_attributes on scopes.id = scope_attributes.scope_id left join (select  events.id, events.span_id, events.time_unix_nano, events.name, events.dropped_attributes_count from events) as events on spans.span_id = events.span_id left join (select event_attributes.event_id, json_group_array(json_object('key', event_attributes.key, 'value', event_attributes.value)) as event_attributes from event_attributes group by event_attributes.event_id) as event_attributes on events.id = event_attributes.event_id left join (select links.id, links.span_id, links.trace_state, links.dropped_attributes_count from links) as links on spans.span_id = links.span_id left join (select link_attributes.link_id, json_group_array(json_object('key', link_attributes.key, 'value', link_attributes.value)) as link_attributes from link_attributes group by link_attributes.link_id) as link_attributes on links.id = link_attributes.link_id left join (select resource_attributes.resource_id, json_group_array(json_object('key', resource_attributes.key, 'value', resource_attributes.value, 'type', resource_attributes.type)) as resource_attributes from resource_attributes group by resource_attributes.resource_id) as resource_attributes on spans.resource_id = resource_attributes.resource_id %s %s limit %d;", queryParams.filters, queryParams.orders, LimitOfSpanRecords)
+	withQuery := fmt.Sprintf("WITH initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s %s LIMIT %d)", queryBuilder.buildTables(), queryParams.filters, queryParams.orders, LimitOfSpanRecords)
+	searchQueryResponse.query = fmt.Sprintf(withQuery+
+		"SELECT iq.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, "+
+		"spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, "+
+		"spans.dropped_resource_attributes_count, spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, span_attributes, "+
+		"scopes.name, scopes.version, scopes.dropped_attributes_count, scope_attributes, "+
+		"events, links, resources "+
+		"FROM initial_query AS iq "+
+		"JOIN spans ON spans.span_id = iq.span_id "+
+		"LEFT JOIN "+
+		"(SELECT span_resource_attributes.span_id, json_group_array(json_object('key', span_resource_attributes.key, 'value', span_resource_attributes.value, 'type', span_resource_attributes.type)) "+
+		"AS resources "+
+		"FROM (SELECT * FROM resource_attributes JOIN span_resource_attributes "+
+		"AS sr ON resource_attributes.resource_id = sr.resource_attribute_id) "+
+		"AS span_resource_attributes "+
+		"GROUP BY span_resource_attributes.span_id) "+
+		"AS resource_attributes "+
+		"ON resource_attributes.span_id = iq.span_id "+
+		"LEFT JOIN "+
+		"(SELECT span_attributes.span_id, json_group_array(json_object('key', span_attributes.key, 'value', span_attributes.value, 'type', span_attributes.type)) "+
+		"AS span_attributes FROM span_attributes GROUP BY span_attributes.span_id) "+
+		"AS span_attributes ON iq.span_id = span_attributes.span_id "+
+		"LEFT JOIN "+
+		"(SELECT scope_attributes.id, scope_attributes.name, scope_attributes.version, scope_attributes.dropped_attributes_count, scope_attributes.scope_attributes  "+
+		"FROM (SELECT scopes.id, scopes.name, scopes.version, scopes.dropped_attributes_count, json_group_array(json_object('key', sa.key, 'value', sa.value, 'type', sa.type)) "+
+		"AS scope_attributes FROM scopes "+
+		"JOIN scope_attributes AS sa ON scopes.id = sa.scope_id) "+
+		"AS scope_attributes GROUP BY scope_attributes.id) "+
+		"AS scopes ON scopes.id = iq.instrumentation_scope_id "+
+		"LEFT JOIN "+
+		"(SELECT events.span_id, json_group_array(json_object('time_unix_nano', events.time_unix_nano, 'name', events.name, 'dropped_attributes_count', events.dropped_attributes_count, 'event_attributes', events.event_attributes)) "+
+		"AS events "+
+		"FROM "+
+		"(SELECT events.span_id, events.time_unix_nano, events.name, events.dropped_attributes_count, json_group_array(json_object('key', ea.key, 'value', ea.value)) "+
+		"AS event_attributes FROM events JOIN event_attributes ea ON events.id = ea.event_id GROUP BY events.id) "+
+		"AS events GROUP BY events.span_id) "+
+		"AS events ON events.span_id = iq.span_id "+
+		"LEFT JOIN "+
+		"(SELECT links.span_id, json_group_array(json_object('trace_state', links.trace_state, 'name', links.dropped_attributes_count, 'link_attributes', links.link_attributes)) "+
+		"AS links "+
+		"FROM "+
+		"(SELECT links.span_id, links.trace_state, links.dropped_attributes_count,  json_group_array(json_object('key', la.key, 'value', la.value)) "+
+		"AS link_attributes FROM links "+
+		"JOIN link_attributes la ON links.id = la.link_id GROUP BY links.id) "+
+		"AS links GROUP BY links.span_id) "+
+		"AS links ON links.span_id = iq.span_id "+
+		"GROUP BY iq.span_id;",
+		queryParams.filters, queryParams.orders, LimitOfSpanRecords)
 	return searchQueryResponse, nil
 }
 

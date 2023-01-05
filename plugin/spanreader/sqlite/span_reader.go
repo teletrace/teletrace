@@ -82,12 +82,7 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 			&sqliteSpan.scopeVersion,
 			&sqliteSpan.scopeDroppedAttributesCount,
 			&sqliteSpan.scopeAttributes,
-			&sqliteSpan.eventsTimeUnixNano,
-			&sqliteSpan.eventsName,
-			&sqliteSpan.eventsDroppedAttributesCount,
 			&sqliteSpan.eventsAttributes,
-			&sqliteSpan.linksTraceState,
-			&sqliteSpan.linksDroppedAttributesCount,
 			&sqliteSpan.linksAttributes,
 			&sqliteSpan.resourceAttributes,
 		)

@@ -158,7 +158,12 @@ func (qb *QueryBuilder) addJoinConditions() error {
 			err = qb.addFilter(newSearchFilter("span.attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans") // added cause filter value is column name
 		case "resource_attributes":
-			err = qb.addFilter(newSearchFilter("resource.attributes.resource_id", spansquery.OPERATOR_EQUALS, "spans.resource_id"))
+			err = qb.addFilter(newSearchFilter("resource.attributes.resource_id", spansquery.OPERATOR_EQUALS, "span_resource_attributes.resource_attribute_id"))
+			if err != nil {
+				return err
+			}
+			qb.addTable("span_resource_attributes")
+			err = qb.addFilter(newSearchFilter("span.resource.attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans")
 		case "links":
 			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
@@ -182,8 +187,16 @@ func (qb *QueryBuilder) addJoinConditions() error {
 			qb.addTable("links")
 			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans")
+		case "scopes":
+			err = qb.addFilter(newSearchFilter("scope.id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
+			qb.addTable("spans")
 		case "scope_attributes":
-			err = qb.addFilter(newSearchFilter("scope.attributes.scope_id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
+			err = qb.addFilter(newSearchFilter("scope.attributes.scope_id", spansquery.OPERATOR_EQUALS, "scopes.id"))
+			if err != nil {
+				return err
+			}
+			qb.addTable("scope")
+			err = qb.addFilter(newSearchFilter("scope.id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
 			qb.addTable("spans")
 		}
 		if err != nil {
@@ -206,14 +219,14 @@ func (qb *QueryBuilder) buildQueryParams() (*SqliteQueryParamsResponse, error) {
 }
 
 func (qb *QueryBuilder) buildTables() string {
-	return strings.Join(qb.getTables(), ",")
+	return strings.Join(qb.getTables(), ", ")
 }
 
 func (qb *QueryBuilder) buildFields() string {
 	if len(qb.getFields()) == 0 {
 		return "*"
 	}
-	return strings.Join(qb.getFields(), ",")
+	return strings.Join(qb.getFields(), ", ")
 }
 
 func (qb *QueryBuilder) buildFilters() string {
