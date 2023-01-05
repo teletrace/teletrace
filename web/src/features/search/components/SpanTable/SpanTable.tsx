@@ -21,7 +21,7 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import {useSpanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
@@ -50,7 +50,9 @@ export function SpanTable({ filters = [] }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
-  const { liveSpansState, timeframeState} = useSpanSearchStore((state) => state);
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
 
   const searchRequest = useMemo(() => {
     const sort = sorting?.map((columnSort) => ({
@@ -60,7 +62,8 @@ export function SpanTable({ filters = [] }: SpanTableProps) {
     return {
       filters: filters,
       timeframe: {
-        startTimeUnixNanoSec: timeframeState.currentTimeframe.startTimeUnixNanoSec,
+        startTimeUnixNanoSec:
+          timeframeState.currentTimeframe.startTimeUnixNanoSec,
         endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
       sort: sort,
@@ -71,7 +74,6 @@ export function SpanTable({ filters = [] }: SpanTableProps) {
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
   }, [filters, timeframeState, sorting]);
-
 
   const {
     data,

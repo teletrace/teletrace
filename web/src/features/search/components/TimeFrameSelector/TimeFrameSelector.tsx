@@ -41,8 +41,13 @@ const options: RelativeTimeFrame[] = [
 ];
 
 export const TimeFrameSelector = () => {
-  const [ liveSpansOn, { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe } ] =
-      useSpanSearchStore(state => [state.liveSpansState.isOn, state.timeframeState]);
+  const [
+    liveSpansOn,
+    { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe },
+  ] = useSpanSearchStore((state) => [
+    state.liveSpansState.isOn,
+    state.timeframeState,
+  ]);
 
   const customOption: CustomTimeFrame = {
     label: "Custom",
@@ -101,7 +106,6 @@ export const TimeFrameSelector = () => {
     }
   };
 
-
   const handleBtnClicked = (
     event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
@@ -111,20 +115,24 @@ export const TimeFrameSelector = () => {
     }
     calcTimeFrame(value);
 
-    value.label !== "Custom" ?
-        setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
-        :
-        setAbsoluteTimeframe(currentTimeframe.startTimeUnixNanoSec, currentTimeframe.endTimeUnixNanoSec)
+    value.label !== "Custom"
+      ? setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
+      : setAbsoluteTimeframe(
+          currentTimeframe.startTimeUnixNanoSec,
+          currentTimeframe.endTimeUnixNanoSec
+        );
 
     setIsSelected(value);
   };
 
   const getTooltipTitle = (offset?: string): string => {
     const startTime = offset
-      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset) : currentTimeframe.startTimeUnixNanoSec;
-    return `${formatNanoToTimeString(startTime)} -> ${formatNanoToTimeString(currentTimeframe.endTimeUnixNanoSec)}`;
+      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset)
+      : currentTimeframe.startTimeUnixNanoSec;
+    return `${formatNanoToTimeString(startTime)} -> ${formatNanoToTimeString(
+      currentTimeframe.endTimeUnixNanoSec
+    )}`;
   };
-
 
   if (!liveSpansOn) {
     calcTimeFrame(isSelected);
@@ -145,9 +153,7 @@ export const TimeFrameSelector = () => {
         }}
         onClose={() => setOpen(false)}
       >
-        <DateTimeSelector
-          onClose={() => setOpen(false)}
-        />
+        <DateTimeSelector onClose={() => setOpen(false)} />
       </Popover>
       <ToggleButtonGroup exclusive>
         <ToggleButton

@@ -45,13 +45,16 @@ const useGetTagOptions = (
       ]
     : filters;
 
-  const { liveSpansState, timeframeState } = useSpanSearchStore(state => state);
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
 
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
       tag,
       {
-        startTimeUnixNanoSec: timeframeState.currentTimeframe.startTimeUnixNanoSec,
+        startTimeUnixNanoSec:
+          timeframeState.currentTimeframe.startTimeUnixNanoSec,
         endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
       searchQueryFilters,

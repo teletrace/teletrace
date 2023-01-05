@@ -34,10 +34,7 @@ type TagOptions = {
   render?: (value: string | number) => React.ReactNode;
 };
 
-export const TagSidebar = ({
-  filters,
-  onChange,
-}: TagSidebarProps) => {
+export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
   const onFilterChange = (
     key: string,
     label: string,

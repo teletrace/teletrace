@@ -18,7 +18,7 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 
 import { Head } from "@/components/Head";
-import {useSpanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
@@ -35,11 +35,15 @@ export const SpanSearch = () => {
     filters: [],
   });
 
-  const { liveSpansState, timeframeState } = useSpanSearchStore((state) => state);
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
 
   useEffect(() => {
     if (liveSpansState.isOn) {
-      timeframeState.setRelativeTimeframe(timeframeState.currentTimeframe.startTimeUnixNanoSec)
+      timeframeState.setRelativeTimeframe(
+        timeframeState.currentTimeframe.startTimeUnixNanoSec
+      );
     }
   }, [liveSpansState.isOn]);
 
@@ -125,9 +129,7 @@ export const SpanSearch = () => {
               })
             }
           />
-          <SpanTable
-            filters={filtersState.filters}
-          />
+          <SpanTable filters={filtersState.filters} />
         </Stack>
       </Stack>
     </Stack>

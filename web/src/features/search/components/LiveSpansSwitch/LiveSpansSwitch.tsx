@@ -24,14 +24,22 @@ export function LiveSpanSwitch() {
   const tooltipTitleEnabled =
     "Live mode streams new ingested spans to the span table";
 
-  const { liveSpansState, timeframeState } = useSpanSearchStore((state) => state);
-  const disabled = !timeframeState.currentTimeframe.isRelative
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
+  const disabled = !timeframeState.currentTimeframe.isRelative;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     liveSpansState.setIsOn(event.target.checked);
   };
   return (
-    <Tooltip title={timeframeState.currentTimeframe.isRelative ? tooltipTitleDisabled : tooltipTitleEnabled}>
+    <Tooltip
+      title={
+        timeframeState.currentTimeframe.isRelative
+          ? tooltipTitleDisabled
+          : tooltipTitleEnabled
+      }
+    >
       <FormGroup>
         <FormControlLabel
           control={

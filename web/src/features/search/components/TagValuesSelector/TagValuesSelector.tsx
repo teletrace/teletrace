@@ -73,11 +73,14 @@ export const TagValuesSelector = ({
     [filters, tagSearchFilter]
   );
 
-  const { liveSpansState, timeframeState } = useSpanSearchStore((state) => state);
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     {
-      startTimeUnixNanoSec: timeframeState.currentTimeframe.startTimeUnixNanoSec,
+      startTimeUnixNanoSec:
+        timeframeState.currentTimeframe.startTimeUnixNanoSec,
       endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
     },
     tagFilters,

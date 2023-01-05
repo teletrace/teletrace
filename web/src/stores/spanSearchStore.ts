@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import create, {StateCreator} from "zustand";
+import create, { StateCreator } from "zustand";
 
-import {ONE_HOUR_IN_NS, getCurrentTimestamp} from "@/utils/format";
+import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
 export type TimeFrameState = {
   startTimeUnixNanoSec: number;
@@ -26,10 +26,13 @@ export type TimeFrameState = {
 
 interface TimeframeSlice {
   timeframeState: {
-    currentTimeframe: TimeFrameState
-    setRelativeTimeframe: (newStartTimeUnixNanoSec: number) => void,
-    setAbsoluteTimeframe: (newStartTimeUnixNanoSec: number, newEndTimeUnixNanoSec: number) => void,
-  }
+    currentTimeframe: TimeFrameState;
+    setRelativeTimeframe: (newStartTimeUnixNanoSec: number) => void;
+    setAbsoluteTimeframe: (
+      newStartTimeUnixNanoSec: number,
+      newEndTimeUnixNanoSec: number
+    ) => void;
+  };
 }
 
 interface LiveSpansSlice {
@@ -37,29 +40,39 @@ interface LiveSpansSlice {
     isOn: boolean;
     intervalInMillis: number;
     setIsOn: (isOn: boolean) => void;
-  }
+  };
 }
 
-const createLiveSpansSlice: StateCreator<LiveSpansSlice & TimeframeSlice, [], [], LiveSpansSlice> = (set) => ({
+const createLiveSpansSlice: StateCreator<
+  LiveSpansSlice & TimeframeSlice,
+  [],
+  [],
+  LiveSpansSlice
+> = (set) => ({
   liveSpansState: {
     isOn: false,
     intervalInMillis: 2000,
-    setIsOn: (isOn: boolean) => set((state) => ({
-      liveSpansState: {
-        ...state.liveSpansState,
-        isOn: isOn,
-      },
-    })),
-  }
+    setIsOn: (isOn: boolean) =>
+      set((state) => ({
+        liveSpansState: {
+          ...state.liveSpansState,
+          isOn: isOn,
+        },
+      })),
+  },
 });
 
-
-const createTimeframeSlice: StateCreator<LiveSpansSlice & TimeframeSlice, [], [], TimeframeSlice> = (set) => ({
+const createTimeframeSlice: StateCreator<
+  LiveSpansSlice & TimeframeSlice,
+  [],
+  [],
+  TimeframeSlice
+> = (set) => ({
   timeframeState: {
     currentTimeframe: {
       startTimeUnixNanoSec: getCurrentTimestamp() - ONE_HOUR_IN_NS,
       endTimeUnixNanoSec: getCurrentTimestamp(),
-      isRelative: true
+      isRelative: true,
     },
     setRelativeTimeframe: (newStartTimeUnixNanoSec: number) => {
       set((state) => ({
@@ -67,13 +80,18 @@ const createTimeframeSlice: StateCreator<LiveSpansSlice & TimeframeSlice, [], []
           ...state.timeframeState,
           currentTimeframe: {
             startTimeUnixNanoSec: newStartTimeUnixNanoSec,
-            endTimeUnixNanoSec: state.liveSpansState.isOn ? 0 : getCurrentTimestamp(),
-            isRelative: true
+            endTimeUnixNanoSec: state.liveSpansState.isOn
+              ? 0
+              : getCurrentTimestamp(),
+            isRelative: true,
           },
         },
       }));
     },
-    setAbsoluteTimeframe: (newStartTimeUnixNanoSec: number, newEndTimeUnixNanoSec: number) => {
+    setAbsoluteTimeframe: (
+      newStartTimeUnixNanoSec: number,
+      newEndTimeUnixNanoSec: number
+    ) => {
       set((state) => {
         state.liveSpansState.setIsOn(false);
 
@@ -83,17 +101,18 @@ const createTimeframeSlice: StateCreator<LiveSpansSlice & TimeframeSlice, [], []
             currentTimeframe: {
               startTimeUnixNanoSec: newStartTimeUnixNanoSec,
               endTimeUnixNanoSec: newEndTimeUnixNanoSec,
-              isRelative: false
+              isRelative: false,
             },
           },
-        }
+        };
       });
     },
-
   },
 });
 
-export const useSpanSearchStore = create<TimeframeSlice & LiveSpansSlice>()((...set) => ({
-  ...createTimeframeSlice(...set),
-  ...createLiveSpansSlice(...set),
-}));
+export const useSpanSearchStore = create<TimeframeSlice & LiveSpansSlice>()(
+  (...set) => ({
+    ...createTimeframeSlice(...set),
+    ...createLiveSpansSlice(...set),
+  })
+);
