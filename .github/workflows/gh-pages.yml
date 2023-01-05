@@ -33,6 +33,7 @@ jobs:
         uses: Tiryoh/actions-mkdocs@v0.16.0
         with:
           configfile: ./website/mkdocs.yml
+          requirements: "./website/requirements.txt"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
