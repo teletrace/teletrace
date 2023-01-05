@@ -26,7 +26,6 @@ import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter } from "../../types/common";
-import { TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -36,10 +35,9 @@ const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
   filters?: SearchFilter[];
-  timeframe: TimeFrameState;
 }
 
-export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
+export function SpanTable({ filters = [] }: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef =
     useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
@@ -52,6 +50,7 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
+  const { liveSpansState, timeframeState} = useSpanSearchStore((state) => state);
 
   const searchRequest = useMemo(() => {
     const sort = sorting?.map((columnSort) => ({
@@ -61,19 +60,18 @@ export function SpanTable({ filters = [], timeframe }: SpanTableProps) {
     return {
       filters: filters,
       timeframe: {
-        startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-        endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+        startTimeUnixNanoSec: timeframeState.currentTimeframe.startTimeUnixNanoSec,
+        endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
       sort: sort,
       metadata: undefined,
     };
-  }, [filters, timeframe, sorting]);
+  }, [filters, timeframeState, sorting]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
-  }, [filters, timeframe, sorting]);
+  }, [filters, timeframeState, sorting]);
 
-  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
 
   const {
     data,

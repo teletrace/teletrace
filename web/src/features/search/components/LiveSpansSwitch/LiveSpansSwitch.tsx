@@ -18,23 +18,20 @@ import { FormControlLabel, FormGroup, Switch, Tooltip } from "@mui/material";
 
 import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
-export type LiveSpansProps = {
-  disabled: boolean;
-};
-
-export function LiveSpanSwitch({ disabled }: LiveSpansProps) {
+export function LiveSpanSwitch() {
   const tooltipTitleDisabled =
     "Live mode is off when a custom time range is applied";
   const tooltipTitleEnabled =
     "Live mode streams new ingested spans to the span table";
 
-  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
+  const { liveSpansState, timeframeState } = useSpanSearchStore((state) => state);
+  const disabled = !timeframeState.currentTimeframe.isRelative
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     liveSpansState.setIsOn(event.target.checked);
   };
   return (
-    <Tooltip title={disabled ? tooltipTitleDisabled : tooltipTitleEnabled}>
+    <Tooltip title={timeframeState.currentTimeframe.isRelative ? tooltipTitleDisabled : tooltipTitleEnabled}>
       <FormGroup>
         <FormControlLabel
           control={

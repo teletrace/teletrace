@@ -18,7 +18,7 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 
 import { Head } from "@/components/Head";
-import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
+import {useSpanSearchStore} from "@/stores/spanSearchStore";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
@@ -26,67 +26,22 @@ import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { SearchFilter } from "../types/common";
-import {useSpanSearchStore} from "@/stores/spanSearchStore";
 
 export type FiltersState = {
   filters: Array<SearchFilter>;
 };
-export type TimeFrameState = {
-  startTimeUnixNanoSec: number;
-  endTimeUnixNanoSec: number;
-  isRelative: boolean;
-};
-
 export const SpanSearch = () => {
   const [filtersState, setFiltersState] = useState<FiltersState>({
     filters: [],
   });
 
-  const now = getCurrentTimestamp();
-
-  const [timeFrameState, setTimeFrameState] = useState<TimeFrameState>({
-    startTimeUnixNanoSec: now - ONE_HOUR_IN_NS,
-    endTimeUnixNanoSec: now,
-    isRelative: true,
-  });
-
-  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
+  const { liveSpansState, timeframeState } = useSpanSearchStore((state) => state);
 
   useEffect(() => {
     if (liveSpansState.isOn) {
-      setTimeFrameState((prevState) => {
-        return {
-          startTimeUnixNanoSec: prevState.startTimeUnixNanoSec,
-          endTimeUnixNanoSec: 0, // means up to Now
-          isRelative: prevState.isRelative,
-        };
-      });
+      timeframeState.setRelativeTimeframe(timeframeState.currentTimeframe.startTimeUnixNanoSec)
     }
   }, [liveSpansState.isOn]);
-
-  const onTimeframeChange = useCallback(
-    (timeframe: TimeFrameState) => {
-      if (timeframe.isRelative) {
-        if (liveSpansState.isOn) {
-          return setTimeFrameState({
-            endTimeUnixNanoSec: 0,
-            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-            isRelative: timeframe.isRelative,
-          });
-        } else {
-          return setTimeFrameState({
-            endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
-            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-            isRelative: timeframe.isRelative,
-          });
-        }
-      }
-      // disable liveSpans if user selected custom timeframe
-      liveSpansState.setIsOn(false);
-      return setTimeFrameState(timeframe);
-    },
-    [liveSpansState, setTimeFrameState]
-  );
 
   const onFilterChange = useCallback(
     (entry: SearchFilter, isDelete = false) => {
@@ -135,12 +90,9 @@ export const SpanSearch = () => {
         </Typography>
         <Stack marginLeft="auto" direction="row">
           <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
-            <TimeFrameSelector
-              onChange={onTimeframeChange}
-              value={timeFrameState}
-            />
+            <TimeFrameSelector />
           </Stack>
-          <LiveSpanSwitch disabled={!timeFrameState.isRelative} />
+          <LiveSpanSwitch />
         </Stack>
       </Stack>
 
@@ -154,7 +106,6 @@ export const SpanSearch = () => {
           <TagSidebar
             onChange={onFilterChange}
             filters={filtersState.filters}
-            timeframe={timeFrameState}
           />
         </aside>
 
@@ -165,7 +116,6 @@ export const SpanSearch = () => {
           sx={{ height: "100%", width: "100%", minWidth: 0 }}
         >
           <SearchBar
-            timeframe={timeFrameState}
             filters={filtersState.filters}
             onFilterAdded={onFilterChange}
             onFilterDeleted={(filter) => onFilterChange(filter, true)}
@@ -177,7 +127,6 @@ export const SpanSearch = () => {
           />
           <SpanTable
             filters={filtersState.filters}
-            timeframe={timeFrameState}
           />
         </Stack>
       </Stack>

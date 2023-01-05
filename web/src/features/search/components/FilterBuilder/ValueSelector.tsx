@@ -23,7 +23,6 @@ import {
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
 import {
   FilterValueTypes,
   SearchFilter,
@@ -35,7 +34,6 @@ import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
-  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
   query?: TagValuesRequest;
   value: FilterValueTypes;
@@ -46,7 +44,6 @@ export type ValueSelectorProps = {
 
 export const ValueSelector = ({
   tag,
-  timeframe,
   filters,
   value,
   valueInputMode,
@@ -69,7 +66,6 @@ export const ValueSelector = ({
           <AutoCompleteValueSelector
             error={error}
             filters={filters}
-            timeframe={timeframe}
             value={Array.isArray(value) ? value : [value]}
             onChange={onChange}
             tag={tag}

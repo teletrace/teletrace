@@ -18,14 +18,12 @@ import { Paper, Stack } from "@mui/material";
 
 import { StatusCode } from "@/types/span";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
-  timeframe: TimeFrameState;
   onChange: (entry: SearchFilter) => void;
 };
 
@@ -38,7 +36,6 @@ type TagOptions = {
 
 export const TagSidebar = ({
   filters,
-  timeframe,
   onChange,
 }: TagSidebarProps) => {
   const onFilterChange = (
@@ -101,7 +98,6 @@ export const TagSidebar = ({
                     f.keyValueFilter.operator === "in"
                   )
               )} // remove the current tag
-              timeframe={timeframe}
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
               render={t.render}

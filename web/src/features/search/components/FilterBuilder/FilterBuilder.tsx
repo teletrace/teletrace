@@ -24,7 +24,6 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
 import { AvailableTag } from "../../types/availableTags";
 import {
   FilterValueTypes,
@@ -44,7 +43,6 @@ export type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
-  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
 };
 
@@ -85,7 +83,6 @@ const operatorCategoryFromValueType = (
 };
 
 export const FilterBuilderDialog = ({
-  timeframe,
   filters,
   onClose,
   open,
@@ -256,7 +253,6 @@ export const FilterBuilderDialog = ({
             {valueInputMode !== "none" ? (
               <Stack>
                 <ValueSelector
-                  timeframe={timeframe}
                   filters={filters}
                   tag={dialogState.tag?.name || ""}
                   value={dialogState.value}

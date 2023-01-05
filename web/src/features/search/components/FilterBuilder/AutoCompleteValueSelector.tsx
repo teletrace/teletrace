@@ -28,14 +28,12 @@ import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { TimeFrameState } from "../../routes/SpanSearch";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 const useGetTagOptions = (
   tag: string,
-  timeframe: TimeFrameState,
   filters: Array<SearchFilter>,
   selectedOptions: (string | number)[],
   search: string
@@ -47,13 +45,14 @@ const useGetTagOptions = (
       ]
     : filters;
 
-  const liveSpansState = useSpanSearchStore((state) => state.liveSpans);
+  const { liveSpansState, timeframeState } = useSpanSearchStore(state => state);
+
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
       tag,
       {
-        startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-        endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+        startTimeUnixNanoSec: timeframeState.currentTimeframe.startTimeUnixNanoSec,
+        endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
       searchQueryFilters,
       liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
@@ -72,7 +71,6 @@ const useGetTagOptions = (
 
 export type AutoCompleteValueSelectorProps = {
   tag: string;
-  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
   value: (string | number)[];
   onChange: (value: FilterValueTypes) => void;
@@ -81,7 +79,6 @@ export type AutoCompleteValueSelectorProps = {
 
 export const AutoCompleteValueSelector = ({
   tag,
-  timeframe,
   filters,
   value,
   onChange,
@@ -91,7 +88,6 @@ export const AutoCompleteValueSelector = ({
   const [searchDebounced] = useDebounce(search, 500);
   const { isLoading, tagOptions } = useGetTagOptions(
     tag,
-    timeframe,
     filters,
     value,
     searchDebounced

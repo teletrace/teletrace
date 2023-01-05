@@ -21,7 +21,6 @@ import { useState } from "react";
 
 import { theme } from "@/styles";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { FilterChip } from "../FilterChip/FilterChip";
@@ -29,7 +28,6 @@ import { styles } from "./styles";
 
 export type SearchBarProps = {
   filters: Array<SearchFilter>;
-  timeframe: TimeFrameState;
   onFilterAdded: (entry: SearchFilter) => void;
   onFilterDeleted: (entry: SearchFilter) => void;
   onClearFilters: () => void;
@@ -37,7 +35,6 @@ export type SearchBarProps = {
 
 export function SearchBar({
   filters,
-  timeframe,
   onFilterAdded,
   onFilterDeleted,
   onClearFilters,
@@ -67,7 +64,6 @@ export function SearchBar({
             Add Filter
           </Button>
           <FilterBuilderDialog
-            timeframe={timeframe}
             filters={filters}
             open={open}
             onClose={handleClose}
