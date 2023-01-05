@@ -17,6 +17,7 @@
 import { CalendarTodayOutlined } from "@mui/icons-material";
 import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
+import ClickAwayListener from "@mui/base/ClickAwayListener";
 
 import {
   formatDateAsDateTime,
@@ -53,8 +54,10 @@ export const TimeFrameSelector = ({
   const buttonRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
+  const [previousSelected, setPreviousSelected] = useState<TimeFrameTypes>(
+    options[0]
+  );
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
-  const [rangeSelected, setRangeSelected] = useState(false);
 
   const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
     setOpen(true);
@@ -99,6 +102,12 @@ export const TimeFrameSelector = ({
     }
   };
 
+  const handleCancel = () => {
+    setIsSelected(previousSelected);
+    onChange({ ...timeframe, isRelative: true });
+    setOpen(false);
+  };
+
   const handleBtnClicked = (
     event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
@@ -109,6 +118,7 @@ export const TimeFrameSelector = ({
     calcTimeFrame(value);
     onChange({ ...timeframe, isRelative: value.label !== "Custom" });
     setIsSelected(value);
+    setPreviousSelected(isSelected);
   };
 
   const formatNanoToTimeString = (time: number): string => {
@@ -124,30 +134,35 @@ export const TimeFrameSelector = ({
 
   return (
     <div>
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        onClose={() => setOpen(false)}
-      >
-        <DateTimeSelector
-          onChange={onChange}
-          value={{
-            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-            endTimeUnixNanoSec: getCurrentTimestamp(),
-            isRelative: timeframe.isRelative,
-          }}
-          onCustomApply={() => setRangeSelected(true)}
-          onClose={() => setOpen(false)}
-        />
-      </Popover>
+      {({ TransitionProps }) => (
+        <ClickAwayListener onClickAway={handleCancel}>
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            onClose={() => setOpen(false)}
+          >
+            <DateTimeSelector
+              onChange={onChange}
+              value={{
+                startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+                endTimeUnixNanoSec: getCurrentTimestamp(),
+                isRelative: timeframe.isRelative,
+              }}
+              onClose={() => setOpen(false)}
+              onCancel={() => handleCancel()}
+            />
+          </Popover>
+        </ClickAwayListener>
+      )}
+
       <ToggleButtonGroup exclusive>
         <ToggleButton
           onClick={handleBtnClicked}
@@ -157,7 +172,7 @@ export const TimeFrameSelector = ({
           key={customOption.label}
         >
           <CalendarTodayOutlined sx={{ paddingRight: "7px" }} />
-          {isSelected?.label === customOption?.label && rangeSelected
+          {isSelected?.label === customOption?.label && !open
             ? getTooltipTitle()
             : customOption.label}
         </ToggleButton>
