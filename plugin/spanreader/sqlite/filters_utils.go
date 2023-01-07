@@ -115,7 +115,7 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 		if ok {
 			newFilterValue = convertSliceOfValuesToString(values)
 		} else if str, ok := filter.KeyValueFilter.Value.(string); ok {
-			newFilterValue = str
+			newFilterValue = fmt.Sprintf("'%s'", str)
 		} else {
 			continue
 		}

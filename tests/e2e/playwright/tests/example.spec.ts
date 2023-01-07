@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-import { CSSProperties } from "react";
+import { test, expect } from "@playwright/test";
 
-export const styles: Record<string, CSSProperties> = {
-  skeleton: {
-    fontSize: "1.5rem",
-  },
+test("homepage has title", async ({ page }) => {
+  await page.goto("http://localhost:8080/");
 
-  listItemButton: {
-    padding: "0 16px 0 16px",
-  },
-  listItem: {
-    lineHeight: "32px",
-  },
-};
+  // Expect a title "to contain" a substring.
+  await expect(page).toHaveTitle(/Lupa/);
+});

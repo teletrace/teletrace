@@ -25,36 +25,24 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter/internal/modeltranslator"
 )
 
 type elasticsearchTracesExporter struct {
-	logger *zap.Logger
-
-	idx         string
-	client      *elasticsearch.Client
-	bulkIndexer esutil.BulkIndexer
-	maxRetries  int
+	logger     *zap.Logger
+	cfg        *Config
+	client     *elasticsearch.Client
+	maxRetries int
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExporter, error) {
-	errMsg := "could not create a new traces exporter: %+v"
-
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
 
 	esClient, err := newClient(logger, cfg)
-
 	if err != nil {
-		return nil, fmt.Errorf(errMsg, err)
-	}
-
-	bi, err := newBulkIndexer(logger, esClient, cfg)
-
-	if err != nil {
-		return nil, fmt.Errorf(errMsg, err)
+		return nil, fmt.Errorf("failed to create client: %+v", err)
 	}
 
 	maxRetries := 1
@@ -63,29 +51,30 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExp
 	}
 
 	return &elasticsearchTracesExporter{
-		logger:      logger,
-		idx:         cfg.Index,
-		client:      esClient,
-		bulkIndexer: bi,
-		maxRetries:  maxRetries,
+		logger:     logger,
+		cfg:        cfg,
+		client:     esClient,
+		maxRetries: maxRetries,
 	}, nil
-
 }
 
 func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
-	return e.bulkIndexer.Close(ctx)
+	return nil
 }
 
 func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	var errs []error
 	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
 
+	indexer, err := newBulkIndexer(e.logger, e.client, e.cfg)
+	if err != nil {
+		return fmt.Errorf("failed to create a new bulk indexer: %v", err)
+	}
+
+	defer indexer.Close(ctx)
+
+	errs := make([]error, 0, td.SpanCount())
 	for span := range internalSpans {
-		err := writeSpan(ctx, e.logger, e.idx, e.bulkIndexer, span, e.maxRetries)
-		if err != nil {
-			if cerr := ctx.Err(); cerr != nil {
-				return cerr
-			}
+		if err := writeSpan(ctx, e.logger, e.cfg.Index, indexer, span, e.maxRetries); err != nil {
 			errs = append(errs, err)
 		}
 	}

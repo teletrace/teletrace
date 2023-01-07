@@ -19,9 +19,10 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
+
+	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 
 	"go.uber.org/zap"
 
@@ -40,8 +41,84 @@ func (sr *spanReader) Initialize() error {
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	_ = buildSearchQuery(r)
-	return nil, nil
+	var result spansquery.SearchResponse
+	result.Spans = make([]*internalspan.InternalSpan, 0) // can't be nil
+	searchQueryResponse, err := buildSearchQuery(r)
+	if err != nil {
+		return nil, err
+	}
+	stmt, err := sr.client.db.PrepareContext(ctx, searchQueryResponse.query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to prepare query: %v", err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query spans: %v", err)
+	}
+	defer rows.Close()
+	var nextToken spansquery.ContinuationToken
+	for rows.Next() {
+		sqliteSpan := newSqliteInternalSpan()
+		err = rows.Scan(
+			&sqliteSpan.spanId,
+			&sqliteSpan.traceId,
+			&sqliteSpan.traceState,
+			&sqliteSpan.parentSpanId,
+			&sqliteSpan.spanName,
+			&sqliteSpan.spanKind,
+			&sqliteSpan.startTimeUnixNano,
+			&sqliteSpan.endTimeUnixNano,
+			&sqliteSpan.droppedSpanAttributesCount,
+			&sqliteSpan.statusMessage,
+			&sqliteSpan.statusCode,
+			&sqliteSpan.resourceDroppedAttributesCount,
+			&sqliteSpan.droppedEventsCount,
+			&sqliteSpan.droppedLinksCount,
+			&sqliteSpan.durationNano,
+			&sqliteSpan.ingestionTimeUnixNano,
+			&sqliteSpan.spanAttributes,
+			&sqliteSpan.scopeName,
+			&sqliteSpan.scopeVersion,
+			&sqliteSpan.scopeDroppedAttributesCount,
+			&sqliteSpan.scopeAttributes,
+			&sqliteSpan.eventsTimeUnixNano,
+			&sqliteSpan.eventsName,
+			&sqliteSpan.eventsDroppedAttributesCount,
+			&sqliteSpan.eventsAttributes,
+			&sqliteSpan.linksTraceState,
+			&sqliteSpan.linksDroppedAttributesCount,
+			&sqliteSpan.linksAttributes,
+			&sqliteSpan.resourceAttributes,
+		)
+		if err != nil {
+			sr.logger.Error("failed to get span value", zap.Error(err))
+			continue
+		}
+		internalSpan, err := sqliteSpan.toInternalSpan()
+		if err != nil {
+			sr.logger.Error("failed to convert span", zap.Error(err))
+			continue
+		}
+		result.Spans = append(result.Spans, internalSpan)
+
+	}
+	if len(result.Spans) > 0 {
+		lastInternalSpanIndex := len(result.Spans) - 1
+		lastInternalSpan := result.Spans[lastInternalSpanIndex]
+		if lastInternalSpan != nil {
+			switch searchQueryResponse.sort {
+			case "duration":
+				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.ExternalFields.DurationNano))
+			default:
+				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.Span.StartTimeUnixNano))
+			}
+			result.Metadata = &spansquery.Metadata{
+				NextToken: nextToken,
+			}
+		}
+	}
+	return &result, nil
 }
 
 func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
@@ -132,16 +209,14 @@ func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesReq
 	}, nil
 }
 
-func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg config.Config) (spanreader.SpanReader, error) {
-	errMsg := "cannot create a new span reader for sqlite: %w"
-	sqliteConfig := NewSqliteConfig(cfg)
-	client, err := newSqliteClient(logger, sqliteConfig)
+func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
+	client, err := newSqliteClient(logger, cfg)
 	if err != nil {
-		return nil, fmt.Errorf(errMsg, err)
+		return nil, fmt.Errorf("cannot create a new span reader for sqlite: %w", err)
 	}
 
 	return &spanReader{
-		cfg:    sqliteConfig,
+		cfg:    cfg,
 		logger: logger,
 		ctx:    ctx,
 		client: client,

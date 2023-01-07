@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-import { CSSProperties } from "react";
-
-export const styles: Record<string, CSSProperties> = {
-  skeleton: {
-    fontSize: "1.5rem",
-  },
-
-  listItemButton: {
-    padding: "0 16px 0 16px",
-  },
-  listItem: {
-    lineHeight: "32px",
+export const styles = {
+  tooltipPopper: {
+    "& .MuiTooltip-tooltip": { maxWidth: "none" },
+    whiteSpace: "nowrap",
   },
 };

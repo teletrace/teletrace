@@ -1,35 +1,46 @@
-site_name: OSS tracing
+site_name: Lupa
 
 theme:
   homepage: https://epsagon.github.io/oss-tracing/
   font:
-    text: Roboto Mono
+    text: Roboto
 
   theme:
   features:
-    - navigation.tabs
+    - navigation.sections
+    - content.code.annotate
 
   name: material
   palette:
     - scheme: slate
-      primary: deep purple
-      accent: teal
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-    - scheme: default
       primary: indigo
       accent: teal
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
 
 extra:
   generator: true
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/epsagon/oss-tracing
-      name: OSS tracing on github
+      link: https://github.com/epsagon/lupa
+      name: Lupa on GithHub
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
 
-repo_name: epsagon/oss-tracing
-repo_url: https://github.com/epsagon/oss-tracing
+plugins:
+  - search
+  - awesome-pages
+
+repo_name: epsagon/lupa
+repo_url: https://github.com/epsagon/lupa
