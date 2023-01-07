@@ -89,17 +89,6 @@ function createOpenTelemetryTrace(
 
   createChildSpans(childSpans, parentSpan, tracer);
 
-  //   for (let i = 0; i < childSpans.length; i += 1) {
-  //     const ctx = opentelemetry.trace.setSpan(
-  //       opentelemetry.context.active(),
-  //       parentSpan
-  //     );
-  //     const span = tracer.startSpan(childSpans[i].name, undefined, ctx);
-
-  //     addSpansAttributes(span, childSpans[i].attributes);
-  //     span.end();
-  //   }
-
   parentSpan.end();
   exporter.shutdown();
 
@@ -109,15 +98,29 @@ function createOpenTelemetryTrace(
 let l: TraceProps[] = [];
 
 for (let i = 0; i < 4; i += 1) {
+  const a: Attributes = {
+    key: "key",
+    value: "value",
+  };
+  const aa: Attributes = {
+    key: "keya",
+    value: "valuea",
+  };
+  const aaa: Attributes = {
+    key: "keyaa",
+    value: "valueaa",
+  };
   const s: SpanProps = {
-    name: "main-span-props-" + i,
+    name: "main-span-props-att" + i,
+    attributes: [a, aa, aaa],
   };
   const c: SpanProps = {
-    name: "child-span-props-" + i,
+    name: "child-span-props-att-" + i,
+    attributes: [a, aa, aaa],
   };
   const t: TraceProps = {
-    serviceName: "basic-service-y-" + i,
-    traceName: "trace-y-" + i,
+    serviceName: "basic-service-a-" + i,
+    traceName: "trace-a-" + i,
     mainSpan: s,
     childSpans: [c],
   };
