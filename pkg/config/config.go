@@ -33,6 +33,9 @@ const (
 	apiPortEnvName = "API_PORT"
 	apiPortDefault = 8080
 
+	spansStoragePluginEnvName = "SPANS_STORAGE_PLUGIN"
+	spansStoragePluginDefault = "elasticsearch"
+
 	esEndpointEnvName = "ES_ENDPOINT"
 	esEndpointDefault = "http://0.0.0.0:9200"
 
@@ -66,8 +69,9 @@ const (
 
 // Config defines global configurations used throughout the application.
 type Config struct {
-	Debug   bool `mapstructure:"debug"`
-	APIPort int  `mapstructure:"api_port"`
+	Debug              bool   `mapstructure:"debug"`
+	APIPort            int    `mapstructure:"api_port"`
+	SpansStoragePlugin string `mapstructure:"spans_storage_plugin"`
 
 	// Elasticsearch configs
 	ESEndpoints                    string `mapstructure:"es_endpoint"`
@@ -115,6 +119,7 @@ func NewConfig() (Config, error) {
 func setDefaults(v *viper.Viper) {
 	v.SetDefault(debugEnvName, debugDefault)
 	v.SetDefault(apiPortEnvName, apiPortDefault)
+	v.SetDefault(spansStoragePluginEnvName, spansStoragePluginDefault)
 
 	// Elasticsearch defaults
 	v.SetDefault(esEndpointEnvName, esEndpointDefault)

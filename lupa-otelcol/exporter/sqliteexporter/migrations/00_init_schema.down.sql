@@ -7,3 +7,4 @@ DROP TABLE IF EXISTS resource_attributes;
 DROP TABLE IF EXISTS span_attributes;
 DROP TABLE IF EXISTS event_attributes;
 DROP TABLE IF EXISTS link_attributes;
+DROP TABLE IF EXISTS span_resource_attributes;

@@ -10,6 +10,7 @@ Its main purpose is loading config options from multiple sources (default values
 | ------------------------------------ | ------------- | ------------------------------------------------------------------------------- |
 | DEBUG                                | true          | Whether to run in debug mode for extra debug info                               |
 | API_PORT                             | 8080          | API server port                                                                 |
+| SPANS_STORAGE_PLUGIN                 | elasticsearch | Specify which spans storage plugin to use                                       |
 ```
 
 ## Config Sources

@@ -69,6 +69,12 @@ Using docker-compose:
 docker-compose -f deploy/docker-compose/docker-compose.yml up
 ```
 
+Using docker-compose with example data:
+
+```sh
+docker-compose -f deploy/docker-compose/docker-compose.yml -f deploy/docker-compose/docker-compose.example.yml up
+```
+
 Alternatively, using docker CLI:
 
 ```sh
