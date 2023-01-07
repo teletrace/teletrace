@@ -18,7 +18,6 @@ type traceProps = {
 };
 
 export function createMultipleTraces(traceProps: traceProps[]) {
-  console.log(traceProps.length);
   if (traceProps.length === 0) {
     return;
   }
@@ -89,11 +88,11 @@ let l: traceProps[] = [];
 
 for (let i = 0; i < 4; i += 1) {
   const t: traceProps = {
-    serviceName: "server-" + i,
-    traceName: "trace-" + i,
-    mainSpanName: "span" + i,
+    serviceName: "basic-service-f-" + i,
+    traceName: "trace-f-" + i,
+    mainSpanName: "spanparent-f-" + i,
     numOfChildSpans: 2,
-    childSpansName: "child" + i,
+    childSpansName: "child-" + i,
   };
 
   l.push(t);
