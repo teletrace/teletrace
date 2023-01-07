@@ -54,7 +54,18 @@ function createOpenTelemetryTrace(
   //   parentSpan.setAttribute("key", "value");
 
   for (let i = 0; i < traceProps.numOfChildSpans; i += 1) {
-    doWork(traceProps.childSpansName, parentSpan, tracer);
+    const ctx = opentelemetry.trace.setSpan(
+      opentelemetry.context.active(),
+      parentSpan
+    );
+    const span = tracer.startSpan("test", undefined, ctx);
+    // span.setAttribute("key", "value");
+
+    //   span.addEvent("invoking doWork");
+
+    span.end();
+
+    // doWork(traceProps.childSpansName, parentSpan, tracer);
   }
 
   parentSpan.end();
@@ -88,9 +99,9 @@ let l: traceProps[] = [];
 
 for (let i = 0; i < 4; i += 1) {
   const t: traceProps = {
-    serviceName: "basic-service-f-" + i,
-    traceName: "trace-f-" + i,
-    mainSpanName: "spanparent-f-" + i,
+    serviceName: "basic-service-d-" + i,
+    traceName: "trace-d-" + i,
+    mainSpanName: "spanparent-d-" + i,
     numOfChildSpans: 2,
     childSpansName: "child-" + i,
   };
