@@ -44,11 +44,7 @@ export const MiddleTruncatedTypography = ({
 
   const fitStringByTruncMiddle = useCallback(
     (element: HTMLSpanElement) => {
-      for (
-        let i = 1;
-        text.length - i > 2 && element.scrollWidth > element.offsetWidth;
-        i++
-      ) {
+      for (let i = 1; text.length - i > 2 && isOverflow(element); i++) {
         const pivot = Math.floor(text.length / 2);
         element.innerText = `${text.substring(0, pivot - i)} \
                            ${separator} \
