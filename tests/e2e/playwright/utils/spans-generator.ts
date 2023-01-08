@@ -110,38 +110,3 @@ function createOpenTelemetryTrace(
 
   return parentSpan;
 }
-
-let l: TraceProps[] = [];
-
-for (let i = 0; i < 4; i += 1) {
-  const a: Attributes = {
-    key: "key",
-    value: "value",
-  };
-  const aa: Attributes = {
-    key: "keya",
-    value: "valuea",
-  };
-  const aaa: Attributes = {
-    key: "keyaa",
-    value: "valueaa",
-  };
-  const s: SpanProps = {
-    name: "main-span-props-att" + i,
-    attributes: [a, aa, aaa],
-  };
-  const c: SpanProps = {
-    name: "child-span-props-att-" + i,
-    attributes: [a, aa, aaa],
-  };
-  const t: TraceProps = {
-    serviceName: "basic-service-a-" + i,
-    traceName: "trace-a-" + i,
-    mainSpan: s,
-    childSpans: [c],
-  };
-
-  l.push(t);
-}
-
-createMultipleTraces(l);
