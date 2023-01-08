@@ -19,28 +19,17 @@ import { Button, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
+import {useSpanSearchStore} from "@/stores/spanSearchStore";
 import { theme } from "@/styles";
 
-import { SearchFilter } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { FilterChip } from "../FilterChip/FilterChip";
 import { styles } from "./styles";
 
-export type SearchBarProps = {
-  filters: Array<SearchFilter>;
-  onFilterAdded: (entry: SearchFilter) => void;
-  onFilterDeleted: (entry: SearchFilter) => void;
-  onClearFilters: () => void;
-};
-
-export function SearchBar({
-  filters,
-  onFilterAdded,
-  onFilterDeleted,
-  onClearFilters,
-}: SearchBarProps) {
+export function SearchBar() {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const { filters, clearFilters } = useSpanSearchStore(state => state.filtersState)
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true);
@@ -50,6 +39,7 @@ export function SearchBar({
   const handleClose = () => {
     setOpen(false);
   };
+
 
   return (
     <Paper sx={styles.searchBarPaper}>
@@ -67,14 +57,12 @@ export function SearchBar({
             filters={filters}
             open={open}
             onClose={handleClose}
-            onApply={onFilterAdded}
             anchorEl={anchorEl}
           />
           {filters.map((filter, index) => (
             <FilterChip
               key={index}
               filter={filter}
-              onFilterDeleted={onFilterDeleted}
             />
           ))}
         </Stack>
@@ -84,7 +72,7 @@ export function SearchBar({
               orientation="vertical"
               sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
             />
-            <IconButton onClick={onClearFilters} size="small">
+            <IconButton onClick={clearFilters} size="small">
               <Close fontSize="inherit" />
             </IconButton>
           </Stack>

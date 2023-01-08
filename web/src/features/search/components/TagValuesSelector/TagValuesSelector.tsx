@@ -45,7 +45,6 @@ export type TagValuesSelectorProps = {
   title: string;
   value: Array<string | number>;
   searchable?: boolean;
-  filters: Array<SearchFilter>;
   onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
 };
@@ -54,7 +53,6 @@ export const TagValuesSelector = ({
   title,
   tag,
   value,
-  filters,
   searchable,
   onChange,
   render,
@@ -62,25 +60,23 @@ export const TagValuesSelector = ({
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
   const clearTags = () => onChange?.([]);
+  const { liveSpansState, timeframeState, filtersState: { filters } } = useSpanSearchStore(
+      (state) => state
+  );
   const tagSearchFilter: SearchFilter = {
+    id: 0,
     keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
   };
   const tagFilters: Array<SearchFilter> = useMemo(
-    () =>
-      tagSearchFilter.keyValueFilter.value
-        ? [...filters, tagSearchFilter]
-        : filters,
+    () => tagSearchFilter.keyValueFilter.value ? [...filters, tagSearchFilter] : filters,
     [filters, tagSearchFilter]
   );
 
-  const { liveSpansState, timeframeState } = useSpanSearchStore(
-    (state) => state
-  );
+
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     {
-      startTimeUnixNanoSec:
-        timeframeState.currentTimeframe.startTimeUnixNanoSec,
+      startTimeUnixNanoSec: timeframeState.currentTimeframe.startTimeUnixNanoSec,
       endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
     },
     tagFilters,

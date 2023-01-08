@@ -25,7 +25,6 @@ import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
-import { SearchFilter } from "../../types/common";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -33,11 +32,7 @@ import { calcNewSpans } from "./utils";
 const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
 
-interface SpanTableProps {
-  filters?: SearchFilter[];
-}
-
-export function SpanTable({ filters = [] }: SpanTableProps) {
+export function SpanTable() {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef =
     useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
@@ -50,7 +45,7 @@ export function SpanTable({ filters = [] }: SpanTableProps) {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
-  const { liveSpansState, timeframeState } = useSpanSearchStore(
+  const { liveSpansState, timeframeState, filtersState } = useSpanSearchStore(
     (state) => state
   );
 
@@ -60,7 +55,7 @@ export function SpanTable({ filters = [] }: SpanTableProps) {
       ascending: !columnSort.desc,
     }));
     return {
-      filters: filters,
+      filters: filtersState.filters,
       timeframe: {
         startTimeUnixNanoSec:
           timeframeState.currentTimeframe.startTimeUnixNanoSec,
@@ -69,11 +64,11 @@ export function SpanTable({ filters = [] }: SpanTableProps) {
       sort: sort,
       metadata: undefined,
     };
-  }, [filters, timeframeState, sorting]);
+  }, [filtersState.filters, timeframeState, sorting]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
-  }, [filters, timeframeState, sorting]);
+  }, [filtersState.filters, timeframeState, sorting]);
 
   const {
     data,

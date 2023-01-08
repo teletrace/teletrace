@@ -16,16 +16,11 @@
 
 import { Paper, Stack } from "@mui/material";
 
+import {useSpanSearchStore} from "@/stores/spanSearchStore";
 import { StatusCode } from "@/types/span";
 
-import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
-
-export type TagSidebarProps = {
-  filters: Array<SearchFilter>;
-  onChange: (entry: SearchFilter) => void;
-};
 
 type TagOptions = {
   title: string;
@@ -34,14 +29,9 @@ type TagOptions = {
   render?: (value: string | number) => React.ReactNode;
 };
 
-export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
-  const onFilterChange = (
-    key: string,
-    label: string,
-    values: Array<string | number>
-  ) => {
-    onChange({ keyValueFilter: { key: key, operator: "in", value: values } });
-  };
+export const TagSidebar = () => {
+  const filters = useSpanSearchStore(state => state.filtersState.filters)
+
   const tags: Array<TagOptions> = [
     {
       title: "Status",
@@ -70,6 +60,7 @@ export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
       isSearchable: true,
     },
   ];
+
 
   return (
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>

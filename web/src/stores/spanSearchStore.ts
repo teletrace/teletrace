@@ -18,22 +18,8 @@ import create, { StateCreator } from "zustand";
 
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-export type TimeFrameState = {
-  startTimeUnixNanoSec: number;
-  endTimeUnixNanoSec: number;
-  isRelative: boolean;
-};
+import {KeyValueFilter, SearchFilter} from "../features/search/types/common";
 
-interface TimeframeSlice {
-  timeframeState: {
-    currentTimeframe: TimeFrameState;
-    setRelativeTimeframe: (newStartTimeUnixNanoSec: number) => void;
-    setAbsoluteTimeframe: (
-      newStartTimeUnixNanoSec: number,
-      newEndTimeUnixNanoSec: number
-    ) => void;
-  };
-}
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -42,9 +28,8 @@ interface LiveSpansSlice {
     setIsOn: (isOn: boolean) => void;
   };
 }
-
 const createLiveSpansSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice,
   [],
   [],
   LiveSpansSlice
@@ -62,8 +47,24 @@ const createLiveSpansSlice: StateCreator<
   },
 });
 
+export type TimeFrameState = {
+  startTimeUnixNanoSec: number;
+  endTimeUnixNanoSec: number;
+  isRelative: boolean;
+};
+
+interface TimeframeSlice {
+  timeframeState: {
+    currentTimeframe: TimeFrameState;
+    setRelativeTimeframe: (newStartTimeUnixNanoSec: number) => void;
+    setAbsoluteTimeframe: (
+        newStartTimeUnixNanoSec: number,
+        newEndTimeUnixNanoSec: number
+    ) => void;
+  };
+}
 const createTimeframeSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice,
   [],
   [],
   TimeframeSlice
@@ -110,9 +111,57 @@ const createTimeframeSlice: StateCreator<
   },
 });
 
-export const useSpanSearchStore = create<TimeframeSlice & LiveSpansSlice>()(
+interface FiltersSlice {
+  filtersState: {
+    filters: Array<SearchFilter>;
+    addFilter: (filter: SearchFilter) => void;
+    updateFilter: (id: number, kvf: KeyValueFilter) => void;
+    deleteFilter: (id: number) => void;
+    clearFilters: () => void;
+  }
+}
+const createFiltersSlice: StateCreator<
+    LiveSpansSlice & TimeframeSlice & FiltersSlice,
+    [],
+    [],
+    FiltersSlice
+> = (set) => ({
+  filtersState: {
+    filters: [],
+    addFilter: (filter: SearchFilter) => set((state) => {
+      state.filtersState.filters.push(filter);
+      return { filtersState: state.filtersState };
+    }),
+    updateFilter: (id: number, kvf: KeyValueFilter) => set((state) => {
+      const filterToUpdate = state.filtersState.filters.find(f => f.id === id);
+      if (filterToUpdate != null) {
+        filterToUpdate.keyValueFilter = kvf;
+      }
+      return { filtersState: state.filtersState };
+    }),
+    deleteFilter: (id: number) => set((state) => {
+      return {
+        filtersState: {
+          ...state.filtersState,
+          filters: state.filtersState.filters.filter(f => f.id !== id)
+        }
+      }
+    }),
+    clearFilters: () => set((state) => {
+      return {
+        filtersState: {
+          ...state.filtersState,
+          filters: []
+        }
+      }
+    }),
+  }
+});
+
+export const useSpanSearchStore = create<TimeframeSlice & LiveSpansSlice & FiltersSlice>()(
   (...set) => ({
     ...createTimeframeSlice(...set),
     ...createLiveSpansSlice(...set),
+    ...createFiltersSlice(...set),
   })
 );

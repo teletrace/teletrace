@@ -52,5 +52,6 @@ export type KeyValueFilter = {
 };
 
 export type SearchFilter = {
+  id: number;
   keyValueFilter: KeyValueFilter;
 };
