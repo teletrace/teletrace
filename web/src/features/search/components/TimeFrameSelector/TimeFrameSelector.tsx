@@ -60,6 +60,9 @@ export const TimeFrameSelector = ({
   const buttonRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
+  const [previousSelected, setPreviousSelected] = useState<TimeFrameTypes>(
+    options[0]
+  );
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
 
   const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
@@ -108,6 +111,12 @@ export const TimeFrameSelector = ({
     }
   };
 
+  const handleCancel = () => {
+    setIsSelected(previousSelected);
+    onChange({ ...timeframe, isRelative: true });
+    setOpen(false);
+  };
+
   const handleBtnClicked = (
     event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
@@ -118,6 +127,7 @@ export const TimeFrameSelector = ({
     calcTimeFrame(value);
     onChange({ ...timeframe, isRelative: value.label !== "Custom" });
     setIsSelected(value);
+    setPreviousSelected(isSelected);
   };
 
   const getTooltipTitle = (offset?: string): string => {
@@ -146,7 +156,7 @@ export const TimeFrameSelector = ({
           vertical: "top",
           horizontal: "left",
         }}
-        onClose={() => setOpen(false)}
+        onClose={handleCancel}
       >
         <DateTimeSelector
           onChange={onChange}
@@ -156,8 +166,10 @@ export const TimeFrameSelector = ({
             isRelative: timeframe.isRelative,
           }}
           onClose={() => setOpen(false)}
+          onCancel={handleCancel}
         />
       </Popover>
+
       <ToggleButtonGroup exclusive>
         <ToggleButton
           onClick={handleBtnClicked}
