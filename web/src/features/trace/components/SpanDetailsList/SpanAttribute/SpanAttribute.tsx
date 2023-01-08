@@ -18,10 +18,10 @@ import { ContentCopy } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 
-import { styles } from "./styles";
-
 import { MiddleTruncatedTypography } from "@/components/Elements/MiddleEllipsedTypography";
 import { AttributeKey, AttributeValue } from "@/types/span";
+
+import { styles } from "./styles";
 
 interface SpanAttributeProps {
   attKey: AttributeKey;
