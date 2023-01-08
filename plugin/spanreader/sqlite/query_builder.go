@@ -256,6 +256,21 @@ func (qb *QueryBuilder) buildOrders() string {
 	return strings.Join(orderStrings, ",")
 }
 
+func (qb *QueryBuilder) getOrderFromRequest(r spansquery.SearchRequest) (string, error) {
+	if r.Metadata != nil && r.Metadata.NextToken != "" {
+		extractOrderResponse, err := extractNextToken(r.Sort, r.Metadata.NextToken)
+		if err != nil {
+			return "", fmt.Errorf("failed to extract next token: %v", err)
+		}
+		err = qb.addFilter(extractOrderResponse.filter)
+		if err != nil {
+			return "", fmt.Errorf("failed to add filter from order: %v", err)
+		}
+		return extractOrderResponse.sortTag, nil
+	}
+	return "", nil
+}
+
 func newQueryBuilder() *QueryBuilder {
 	return &QueryBuilder{
 		dbTablesSet: NewSet(),

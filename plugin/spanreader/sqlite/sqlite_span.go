@@ -310,7 +310,10 @@ func parseLinks(jsonString string, spanId string, traceId string) ([]*internalsp
 		return nil, err
 	}
 	for _, link := range linksJson {
-		linkMap := link.(map[string]interface{})
+		linkMap, ok := link.(map[string]interface{})
+		if !ok {
+			continue
+		}
 		traceState, ok := linkMap["trace_state"].(string)
 		if !ok {
 			continue
@@ -347,7 +350,10 @@ func parseEvents(jsonString string) ([]*internalspan.SpanEvent, error) {
 		return nil, err
 	}
 	for _, event := range eventsJson {
-		eventMap := event.(map[string]interface{})
+		eventMap, ok := event.(map[string]interface{})
+		if !ok {
+			continue
+		}
 		timeUnixNano, ok := eventMap["time_unix_nano"].(float64)
 		if !ok {
 			continue
