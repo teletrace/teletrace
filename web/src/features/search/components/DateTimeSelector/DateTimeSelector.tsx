@@ -40,15 +40,18 @@ export type DateTimeSelectorProps = {
   onCancel: () => void;
 };
 
-export const DateTimeSelector = ({ onClose, onCancel }: DateTimeSelectorProps) => {
-  const {currentTimeframe, setAbsoluteTimeframe, setRelativeTimeframe} =
-      useSpanSearchStore((state) => state.timeframeState);
+export const DateTimeSelector = ({
+  onClose,
+  onCancel,
+}: DateTimeSelectorProps) => {
+  const { currentTimeframe, setAbsoluteTimeframe, setRelativeTimeframe } =
+    useSpanSearchStore((state) => state.timeframeState);
 
   const [startDate, setStartDate] = useState<Date | null>(
-      new Date(currentTimeframe.startTimeUnixNanoSec / 1000000)
+    new Date(currentTimeframe.startTimeUnixNanoSec / 1000000)
   );
   const [endDate, setEndDate] = useState<Date | null>(
-      new Date(currentTimeframe.endTimeUnixNanoSec / 1000000)
+    new Date(currentTimeframe.endTimeUnixNanoSec / 1000000)
   );
   const [startTime, setStartTime] = useState<Date | null>(startDate);
   const [endTime, setEndTime] = useState<Date | null>(endDate);
@@ -56,21 +59,21 @@ export const DateTimeSelector = ({ onClose, onCancel }: DateTimeSelectorProps) =
 
   const calcRange = () => {
     const startRange = msToNanoSec(
-        startDate && startTime
-            ? new Date(
-                startDate.setHours(startTime.getHours(), startTime.getMinutes())
-            ).getTime()
-            : new Date().getTime()
+      startDate && startTime
+        ? new Date(
+            startDate.setHours(startTime.getHours(), startTime.getMinutes())
+          ).getTime()
+        : new Date().getTime()
     );
 
     const endRange = msToNanoSec(
-        endTime && endDate
-            ? new Date(
-                endDate.setHours(endTime.getHours(), endTime.getMinutes())
-            ).getTime()
-            : new Date().getTime()
+      endTime && endDate
+        ? new Date(
+            endDate.setHours(endTime.getHours(), endTime.getMinutes())
+          ).getTime()
+        : new Date().getTime()
     );
-    return {startRange, endRange};
+    return { startRange, endRange };
   };
 
   const handleApply = () => {
@@ -86,69 +89,69 @@ export const DateTimeSelector = ({ onClose, onCancel }: DateTimeSelectorProps) =
   };
 
   return (
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DialogContent sx={{width: "320px"}}>
-          <Stack spacing={2}>
-            <FormControl>
-              <FormLabel>From</FormLabel>
-              <Stack direction="row" spacing={2}>
-                <DatePicker
-                    inputFormat="dd-MM-yyyy"
-                    onChange={(startDate) => setStartDate(startDate)}
-                    renderInput={(props) => (
-                        <TextField {...props} sx={styles.dateInput}/>
-                    )}
-                    value={startDate}
-                />
-                <TimePicker
-                    ampm={false}
-                    onChange={(startTime) => setStartTime(startTime)}
-                    value={startTime}
-                    renderInput={(params) => (
-                        <TextField {...params} sx={styles.timeInput}/>
-                    )}
-                />
-              </Stack>
-            </FormControl>
-            <FormControl>
-              <FormLabel>To</FormLabel>
-              <Stack direction="row" spacing={2}>
-                <DatePicker
-                    inputFormat="dd-MM-yyyy"
-                    renderInput={(props) => (
-                        <TextField {...props} sx={styles.dateInput}/>
-                    )}
-                    onChange={(endDate) => {
-                      setEndDate(endDate);
-                    }}
-                    value={endDate}
-                />
-                <TimePicker
-                    ampm={false}
-                    onChange={(endTime) => {
-                      setEndTime(endTime);
-                    }}
-                    value={endTime}
-                    renderInput={(params) => (
-                        <TextField {...params} sx={styles.timeInput}/>
-                    )}
-                />
-              </Stack>
-            </FormControl>
-            {!timeValid ? (
-                <Alert sx={styles.alert} variant="outlined" severity="error">
-                  Please enter a valid date range
-                </Alert>
-            ) : null}
-          </Stack>
-        </DialogContent>
-        <Divider sx={{borderBottomWidth: 2, backgroundColor: "black"}}/>
-        <DialogActions>
-          <Button onClick={onCancel}>Cancel</Button>
-          <Button onClick={handleApply} variant="contained">
-            Apply
-          </Button>
-        </DialogActions>
-      </LocalizationProvider>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <DialogContent sx={{ width: "320px" }}>
+        <Stack spacing={2}>
+          <FormControl>
+            <FormLabel>From</FormLabel>
+            <Stack direction="row" spacing={2}>
+              <DatePicker
+                inputFormat="dd-MM-yyyy"
+                onChange={(startDate) => setStartDate(startDate)}
+                renderInput={(props) => (
+                  <TextField {...props} sx={styles.dateInput} />
+                )}
+                value={startDate}
+              />
+              <TimePicker
+                ampm={false}
+                onChange={(startTime) => setStartTime(startTime)}
+                value={startTime}
+                renderInput={(params) => (
+                  <TextField {...params} sx={styles.timeInput} />
+                )}
+              />
+            </Stack>
+          </FormControl>
+          <FormControl>
+            <FormLabel>To</FormLabel>
+            <Stack direction="row" spacing={2}>
+              <DatePicker
+                inputFormat="dd-MM-yyyy"
+                renderInput={(props) => (
+                  <TextField {...props} sx={styles.dateInput} />
+                )}
+                onChange={(endDate) => {
+                  setEndDate(endDate);
+                }}
+                value={endDate}
+              />
+              <TimePicker
+                ampm={false}
+                onChange={(endTime) => {
+                  setEndTime(endTime);
+                }}
+                value={endTime}
+                renderInput={(params) => (
+                  <TextField {...params} sx={styles.timeInput} />
+                )}
+              />
+            </Stack>
+          </FormControl>
+          {!timeValid ? (
+            <Alert sx={styles.alert} variant="outlined" severity="error">
+              Please enter a valid date range
+            </Alert>
+          ) : null}
+        </Stack>
+      </DialogContent>
+      <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
+      <DialogActions>
+        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={handleApply} variant="contained">
+          Apply
+        </Button>
+      </DialogActions>
+    </LocalizationProvider>
   );
 };

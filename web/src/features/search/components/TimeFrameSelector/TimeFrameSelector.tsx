@@ -111,7 +111,7 @@ export const TimeFrameSelector = () => {
 
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
+    setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec);
     setOpen(false);
   };
 
@@ -165,7 +165,10 @@ export const TimeFrameSelector = () => {
         }}
         onClose={handleCancel}
       >
-        <DateTimeSelector onClose={() => setOpen(false)} onCancel={handleCancel} />
+        <DateTimeSelector
+          onClose={() => setOpen(false)}
+          onCancel={handleCancel}
+        />
       </Popover>
 
       <ToggleButtonGroup exclusive>
