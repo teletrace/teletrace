@@ -160,13 +160,6 @@ func (sq *sqliteSpan) getInternalScopeDroppedAttributesCount() uint32 {
 	return 0
 }
 
-func (sq *sqliteSpan) getInternalEventsDroppedAttributesCount() uint32 {
-	if sq.eventsDroppedAttributesCount.Valid {
-		return uint32(sq.eventsDroppedAttributesCount.Int64)
-	}
-	return 0
-}
-
 func (sq *sqliteSpan) getInternalStatusCode() string {
 	if sq.statusCode.Valid {
 		return sq.statusCode.String
