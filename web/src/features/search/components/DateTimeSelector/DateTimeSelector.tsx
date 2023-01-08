@@ -39,12 +39,14 @@ export type DateTimeSelectorProps = {
   onChange: (timeframe: TimeFrameState) => void;
   value: TimeFrameState;
   onClose: () => void;
+  onCancel: () => void;
 };
 
 export const DateTimeSelector = ({
   onChange,
   value,
   onClose,
+  onCancel,
 }: DateTimeSelectorProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(value.startTimeUnixNanoSec / 1000000)
@@ -150,7 +152,7 @@ export const DateTimeSelector = ({
       </DialogContent>
       <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onCancel}>Cancel</Button>
         <Button onClick={handleApply} variant="contained">
           Apply
         </Button>
