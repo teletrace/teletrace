@@ -37,7 +37,7 @@ export const styles = {
   },
   copy: {
     cursor: "pointer",
-    marginLeft: "auto",
+    marginLeft: "5px",
     fontSize: 15,
     alignSelf: "center",
     display: "none",
