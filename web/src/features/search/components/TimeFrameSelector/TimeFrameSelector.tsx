@@ -120,13 +120,15 @@ export const TimeFrameSelector = ({
     setIsSelected(value);
   };
 
-  const getTooltipTitle = (offset?: string): string => {
+  const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
     const startTime = offset
       ? setDiffOnNanoSecTf(timeframe.endTimeUnixNanoSec, offset)
       : timeframe.startTimeUnixNanoSec;
-    return `${formatNanoToTimeString(startTime)} -> ${formatNanoToTimeString(
-      timeframe.endTimeUnixNanoSec
-    )}`;
+    const formattedEndTime =
+      offset && liveSpansOn
+        ? "Now"
+        : formatNanoToTimeString(timeframe.endTimeUnixNanoSec);
+    return `${formatNanoToTimeString(startTime)} -> ${formattedEndTime}`;
   };
 
   if (!liveSpansOn) {
@@ -175,7 +177,7 @@ export const TimeFrameSelector = ({
         {options.map((tf) => (
           <Tooltip
             key={tf.label}
-            title={liveSpansOn ? "" : getTooltipTitle(tf.offsetRange)}
+            title={getTooltipTitle(tf.offsetRange, liveSpansOn)}
             placement="top-end"
             arrow
           >
