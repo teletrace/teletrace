@@ -55,7 +55,7 @@ export const TagSidebar = ({
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
-      render: (value) => StatusCode[parseInt(value.toString())],
+      render: (value) => value,
     },
     {
       title: "Service Name",
