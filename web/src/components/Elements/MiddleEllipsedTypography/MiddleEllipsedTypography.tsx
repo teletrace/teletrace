@@ -13,22 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Typography, TypographyProps } from "@mui/material";
-import { useEffect, useRef } from "react";
+import {
+  SxProps,
+  Theme,
+  Tooltip,
+  Typography,
+  TypographyProps,
+} from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 
-interface MiddleEllipsedTypographyProps extends TypographyProps {
+interface MiddleTruncatedTypographyProps extends TypographyProps {
   text: string;
-  ellipsisString?: string;
+  separator?: string;
 }
 
-export const MiddleEllipsedTypography = ({
+export const MiddleTruncatedTypography = ({
   text,
-  ellipsisString = "...",
+  separator = "...",
   ...other
-}: MiddleEllipsedTypographyProps) => {
-  const typographyRef = useRef<HTMLInputElement>(null);
+}: MiddleTruncatedTypographyProps) => {
+  const typographyRef = useRef<HTMLSpanElement>(null);
 
-  const fitStringByTruncMiddle = (element: HTMLElement) => {
+  const [toolTipTitle, setToolTipTitle] = useState("");
+
+  const styles: SxProps<Theme> | undefined = {
+    ...other.sx,
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+  };
+
+  const fitStringByTruncMiddle = (element: HTMLSpanElement) => {
     for (
       let i = 1;
       text.length - i > 2 && element.scrollWidth > element.offsetWidth;
@@ -36,27 +50,27 @@ export const MiddleEllipsedTypography = ({
     ) {
       const pivot = Math.floor(text.length / 2);
       element.innerText = `${text.substring(0, pivot - i)} \
-                           ${ellipsisString} \
+                           ${separator} \
                            ${text.substring(text.length - pivot + i)}`;
     }
   };
 
-  const isOverflow = (element: HTMLElement): boolean =>
+  const isOverflow = (element: HTMLSpanElement): boolean =>
     element.scrollWidth > element.offsetWidth;
 
   useEffect(() => {
     const typographyElement = typographyRef.current;
     if (!typographyElement) return;
 
-    typographyElement.style.whiteSpace = "noWrap";
-    typographyElement.style.overflow = "hidden";
-
     const handleResize = () => {
       if (isOverflow(typographyElement)) {
+        setToolTipTitle(text);
         fitStringByTruncMiddle(typographyElement);
       } else {
         typographyElement.innerText = text;
+        setToolTipTitle("");
         if (isOverflow(typographyElement)) {
+          setToolTipTitle(text);
           fitStringByTruncMiddle(typographyElement);
         }
       }
@@ -67,11 +81,13 @@ export const MiddleEllipsedTypography = ({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [toolTipTitle]);
 
   return (
-    <Typography ref={typographyRef} {...other} component="span">
-      {text}
-    </Typography>
+    <Tooltip title={toolTipTitle} followCursor={true}>
+      <Typography {...other} ref={typographyRef} sx={styles} component="span">
+        {text}
+      </Typography>
+    </Tooltip>
   );
 };
