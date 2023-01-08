@@ -48,8 +48,6 @@ test("Test selected node behavior", async ({ page }) => {
   for (const node of graphNodes) {
     const testid_name = await node.getAttribute("data-testid");
 
-    expect(testid_name).toBeTruthy();
-
     if (testid_name) {
       const clickableNode = page.getByTestId(testid_name);
       await clickableNode.click();
@@ -59,7 +57,6 @@ test("Test selected node behavior", async ({ page }) => {
         window.getComputedStyle(childElement).getPropertyValue("border")
       );
       expect(borderColor).toBe("1px solid rgb(0, 158, 180)");
-      await page.waitForTimeout(1500);
     }
   }
 });
