@@ -37,6 +37,7 @@ import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
   onClose: () => void;
+  onCancel: () => void;
 };
 
 export const DateTimeSelector = ({ onClose }: DateTimeSelectorProps) => {
@@ -143,7 +144,7 @@ export const DateTimeSelector = ({ onClose }: DateTimeSelectorProps) => {
       </DialogContent>
       <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onCancel}>Cancel</Button>
         <Button onClick={handleApply} variant="contained">
           Apply
         </Button>

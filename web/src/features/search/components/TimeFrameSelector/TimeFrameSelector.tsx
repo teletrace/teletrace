@@ -58,6 +58,9 @@ export const TimeFrameSelector = () => {
   const buttonRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
+  const [previousSelected, setPreviousSelected] = useState<TimeFrameTypes>(
+    options[0]
+  );
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
 
   const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
@@ -106,6 +109,12 @@ export const TimeFrameSelector = () => {
     }
   };
 
+  const handleCancel = () => {
+    setIsSelected(previousSelected);
+    onChange({ ...timeframe, isRelative: true });
+    setOpen(false);
+  };
+
   const handleBtnClicked = (
     event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
@@ -123,15 +132,18 @@ export const TimeFrameSelector = () => {
         );
 
     setIsSelected(value);
+    setPreviousSelected(isSelected);
   };
 
-  const getTooltipTitle = (offset?: string): string => {
+  const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
     const startTime = offset
-      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset)
+      ? setDiffOnNanoSecTf(timeframe.endTimeUnixNanoSec, offset)
       : currentTimeframe.startTimeUnixNanoSec;
-    return `${formatNanoToTimeString(startTime)} -> ${formatNanoToTimeString(
-      currentTimeframe.endTimeUnixNanoSec
-    )}`;
+    const formattedEndTime =
+      offset && liveSpansOn
+        ? "Now"
+        : formatNanoToTimeString(currentTimeframe.endTimeUnixNanoSec);
+    return `${formatNanoToTimeString(startTime)} -> ${formattedEndTime}`;
   };
 
   if (!liveSpansOn) {
@@ -151,10 +163,11 @@ export const TimeFrameSelector = () => {
           vertical: "top",
           horizontal: "left",
         }}
-        onClose={() => setOpen(false)}
+        onClose={handleCancel}
       >
         <DateTimeSelector onClose={() => setOpen(false)} />
       </Popover>
+
       <ToggleButtonGroup exclusive>
         <ToggleButton
           onClick={handleBtnClicked}
@@ -172,7 +185,7 @@ export const TimeFrameSelector = () => {
         {options.map((tf) => (
           <Tooltip
             key={tf.label}
-            title={liveSpansOn ? "" : getTooltipTitle(tf.offsetRange)}
+            title={getTooltipTitle(tf.offsetRange, liveSpansOn)}
             placement="top-end"
             arrow
           >
