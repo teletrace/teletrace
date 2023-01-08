@@ -17,7 +17,6 @@
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  // page.setViewportSize({width: 1512, height: 739})
   await page.goto(
     "http://localhost:8080/trace/b9e89f4a6cf509036090086bdb5763e2?spanId=6ca52f2162cf019b"
   );
