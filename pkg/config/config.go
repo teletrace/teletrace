@@ -65,6 +65,12 @@ const (
 
 	sqlitePathEnvName        = "SQLITE_PATH"
 	sqlitePathEnvNameDefault = "embedded_spans.db"
+
+	allowUsageReportingEnvName = "ALLOW_USAGE_REPORTING"
+	allowUsageReportingDefault = true
+
+	UsageReportURLEnvName = "USAGE_REPORT_URL"
+	UsageReportURLDefault = "https://lupaprojecct.io"
 )
 
 // Config defines global configurations used throughout the application.
@@ -84,6 +90,8 @@ type Config struct {
 	ESIndexerWorkersCount          int    `mapstructure:"es_indexer_workers_count"`
 	ESIndexerFlushThresholdSeconds int    `mapstructure:"es_indexer_flush_threshold_seconds"`
 	SQLitePath                     string `mapstructure:"sqlite_path"`
+	AllowUsageReporting            bool   `mapstructure:"allow_usage_reporting"`
+	UsageReportURL                 string `mapstructure:"usage_report_url"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -132,4 +140,6 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esIndexerFlushThresholdSecondsEnvName, esIndexerFlushThresholdSecondsDefault)
 	v.SetDefault(esIndexerWorkersCountEnvName, esIndexerWorkersCountDefault)
 	v.SetDefault(sqlitePathEnvName, sqlitePathEnvNameDefault)
+	v.SetDefault(allowUsageReportingEnvName, allowUsageReportingDefault)
+	v.SetDefault(UsageReportURLEnvName, UsageReportURLDefault)
 }

@@ -22,9 +22,11 @@ import (
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
-
+	"oss-tracing/pkg/usageReport"
 	spanreaderes "oss-tracing/plugin/spanreader/es"
+	"time"
 
+	"github.com/go-co-op/gocron"
 	"go.uber.org/zap"
 )
 
@@ -40,11 +42,27 @@ func main() {
 	}
 	defer logs.FlushBufferedLogs(logger)
 
-	sr, err := spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
+	sr, err := spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg), spanreaderes.NewElasticMetaConfig(cfg))
 	if err != nil {
 		logger.Fatal("Failed to create Span Reader for Elasticsearch", zap.Error(err))
 	}
-
+	systemId, err := usageReport.GetSystemId(sr, context.Background())
+	if err != nil {
+		logger.Fatal("Failed to get SystemId", zap.Error(err))
+	}
+	logger.Info("System ID retrieved", zap.String("systemId", systemId))
+	if cfg.AllowUsageReporting {
+		usageReporter, err := usageReport.NewUsageReporter(context.Background(), logger, systemId, cfg.UsageReportURL)
+		if err != nil {
+			logger.Fatal("Failed to create usage reporter", zap.Error(err))
+		}
+		periodicRunner := gocron.NewScheduler(time.UTC)
+		_, err = periodicRunner.Every("15m").Do(usageReporter.ReportSystemUp)
+		if err != nil {
+			logger.Fatal("Error defining periodical reporting", zap.Error(err))
+		}
+		periodicRunner.StartAsync()
+	}
 	api := api.NewAPI(logger, cfg, &sr)
 	if err := api.Start(); err != nil {
 		logger.Fatal("API server crashed", zap.Error(err))

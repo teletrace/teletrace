@@ -19,6 +19,7 @@ package api
 import (
 	"net/http"
 	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/model/metadata/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"time"
@@ -111,4 +112,13 @@ func (api *API) tagsValues(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, tagValues)
+}
+
+func (api *API) getSystemId(c *gin.Context) {
+	res, err := (*api.spanReader).GetSystemId(c, metadata.GetSystemIdRequest{})
+	if err != nil {
+		respondWithError(http.StatusInternalServerError, err, c)
+		return
+	}
+	c.JSON(http.StatusOK, res)
 }
