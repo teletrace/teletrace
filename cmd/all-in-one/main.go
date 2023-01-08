@@ -79,7 +79,7 @@ func initializeSpanReader(cfg config.Config, logger *zap.Logger) (spanreader.Spa
 	case "sqlite":
 		return sqlite.NewSqliteSpanReader(context.Background(), logger, sqlite.NewSqliteConfig(cfg))
 	case "elasticsearch":
-		return spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
+		return spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg), spanreaderes.NewElasticMetaConfig(cfg))
 	default:
 		return nil, fmt.Errorf("Invalid spans storage plugin %s", cfg.SpansStoragePlugin)
 	}

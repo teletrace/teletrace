@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package metadatacontroller
+package metadatacontroller
 
 import (
 	"context"
 	"fmt"
+	"oss-tracing/pkg/model/metadata/v1"
+	"oss-tracing/plugin/spanreader/es/utils"
+
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/optype"
 	"go.uber.org/zap"
-	"oss-tracing/pkg/model/metadata/v1"
-	"oss-tracing/plugin/spanreader/es/utils"
 )
 
 const SystemIdentifierEntryId = "system-id"
@@ -44,12 +45,13 @@ func parseSystemIdResponse(body map[string]any) string {
 }
 
 func (mc *metadataController) GetSystemId(
-	ctx context.Context) (*metadata.GetSystemIdResponse, error) {
+	ctx context.Context,
+) (*metadata.GetSystemIdResponse, error) {
 	res, err := mc.client.API.Get(mc.idx, SystemIdentifierEntryId).Do(ctx)
-	defer res.Body.Close()
 	if err != nil {
 		return nil, fmt.Errorf("Could not get system id %+v", err)
 	}
+	defer res.Body.Close()
 	if res.StatusCode == 404 {
 		return nil, nil
 	}

@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- package usageReport
+package usageReport
 
 import (
 	"context"
-	"github.com/google/uuid"
 	"oss-tracing/pkg/model/metadata/v1"
 	"oss-tracing/pkg/spanreader"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func GetSystemId(sr spanreader.SpanReader, ctx context.Context) (string, error) {
@@ -40,5 +41,4 @@ func GetSystemId(sr spanreader.SpanReader, ctx context.Context) (string, error) 
 		return systemId, nil
 	}
 	return systemIdRes.Value, nil
-
 }
