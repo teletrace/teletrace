@@ -27,6 +27,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import {nanoid} from "nanoid";
 import { Fragment, useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
@@ -64,7 +65,7 @@ export const TagValuesSelector = ({
       (state) => state
   );
   const tagSearchFilter: SearchFilter = {
-    id: 0,
+    id: nanoid(),
     keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
   };
   const tagFilters: Array<SearchFilter> = useMemo(
