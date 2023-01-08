@@ -111,7 +111,7 @@ export const TimeFrameSelector = () => {
 
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    onChange({ ...timeframe, isRelative: true });
+    setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
     setOpen(false);
   };
 
@@ -137,7 +137,7 @@ export const TimeFrameSelector = () => {
 
   const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
     const startTime = offset
-      ? setDiffOnNanoSecTf(timeframe.endTimeUnixNanoSec, offset)
+      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset)
       : currentTimeframe.startTimeUnixNanoSec;
     const formattedEndTime =
       offset && liveSpansOn
@@ -165,7 +165,7 @@ export const TimeFrameSelector = () => {
         }}
         onClose={handleCancel}
       >
-        <DateTimeSelector onClose={() => setOpen(false)} />
+        <DateTimeSelector onClose={() => setOpen(false)} onCancel={handleCancel} />
       </Popover>
 
       <ToggleButtonGroup exclusive>
