@@ -17,7 +17,6 @@
 import { CalendarTodayOutlined } from "@mui/icons-material";
 import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
-import ClickAwayListener from "@mui/base/ClickAwayListener";
 
 import {
   formatDateAsDateTime,
@@ -134,34 +133,30 @@ export const TimeFrameSelector = ({
 
   return (
     <div>
-      {({ TransitionProps }) => (
-        <ClickAwayListener onClickAway={handleCancel}>
-          <Popover
-            open={open}
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
-            onClose={() => setOpen(false)}
-          >
-            <DateTimeSelector
-              onChange={onChange}
-              value={{
-                startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-                endTimeUnixNanoSec: getCurrentTimestamp(),
-                isRelative: timeframe.isRelative,
-              }}
-              onClose={() => setOpen(false)}
-              onCancel={() => handleCancel()}
-            />
-          </Popover>
-        </ClickAwayListener>
-      )}
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        onClose={handleCancel}
+      >
+        <DateTimeSelector
+          onChange={onChange}
+          value={{
+            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
+            endTimeUnixNanoSec: getCurrentTimestamp(),
+            isRelative: timeframe.isRelative,
+          }}
+          onClose={() => setOpen(false)}
+          onCancel={handleCancel}
+        />
+      </Popover>
 
       <ToggleButtonGroup exclusive>
         <ToggleButton
