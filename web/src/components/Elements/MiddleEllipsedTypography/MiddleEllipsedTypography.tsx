@@ -20,8 +20,8 @@ import {
   Typography,
   TypographyProps,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
-
+import { debounce } from "lodash";
+import { useCallback, useEffect, useRef, useState } from "react";
 interface MiddleTruncatedTypographyProps extends TypographyProps {
   text: string;
   separator?: string;
@@ -42,18 +42,21 @@ export const MiddleTruncatedTypography = ({
     overflow: "hidden",
   };
 
-  const fitStringByTruncMiddle = (element: HTMLSpanElement) => {
-    for (
-      let i = 1;
-      text.length - i > 2 && element.scrollWidth > element.offsetWidth;
-      i++
-    ) {
-      const pivot = Math.floor(text.length / 2);
-      element.innerText = `${text.substring(0, pivot - i)} \
+  const fitStringByTruncMiddle = useCallback(
+    (element: HTMLSpanElement) => {
+      for (
+        let i = 1;
+        text.length - i > 2 && element.scrollWidth > element.offsetWidth;
+        i++
+      ) {
+        const pivot = Math.floor(text.length / 2);
+        element.innerText = `${text.substring(0, pivot - i)} \
                            ${separator} \
                            ${text.substring(text.length - pivot + i)}`;
-    }
-  };
+      }
+    },
+    [text]
+  );
 
   const isOverflow = (element: HTMLSpanElement): boolean =>
     element.scrollWidth > element.offsetWidth;
@@ -77,11 +80,13 @@ export const MiddleTruncatedTypography = ({
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
+
+    const debouncedResize = debounce(handleResize, 100);
+    window.addEventListener("resize", debouncedResize);
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", debouncedResize);
     };
-  }, [toolTipTitle]);
+  }, [text, fitStringByTruncMiddle]);
 
   return (
     <Tooltip title={toolTipTitle} followCursor={true}>
