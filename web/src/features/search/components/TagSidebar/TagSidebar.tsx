@@ -16,8 +16,6 @@
 
 import { Paper, Stack } from "@mui/material";
 
-import { StatusCode } from "@/types/span";
-
 import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";

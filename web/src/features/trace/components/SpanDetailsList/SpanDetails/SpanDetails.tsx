@@ -27,7 +27,7 @@ import {
 import { useMemo } from "react";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
-import { Attributes, InternalSpan, SpanKind, StatusCode } from "@/types/span";
+import { Attributes, InternalSpan, StatusCode } from "@/types/span";
 import { formatDurationAsMs, formatNanoAsMsDateTime } from "@/utils/format";
 
 import { getSpanResourceType } from "../../../utils/span-resource-type";
