@@ -64,7 +64,7 @@ const (
 	esIndexerFlushThresholdSecondsDefault = 30
 
 	sqlitePathEnvName        = "SQLITE_PATH"
-	sqlitePathEnvNameDefault = "lupa_embedded.db"
+	sqlitePathEnvNameDefault = "embedded_spans.db"
 )
 
 // Config defines global configurations used throughout the application.
