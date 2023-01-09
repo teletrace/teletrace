@@ -58,4 +58,4 @@ export type SearchFilter = {
 export type DisplaySearchFilter = {
   id: string;
   keyValueFilter: KeyValueFilter;
-}
+};

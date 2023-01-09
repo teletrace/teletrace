@@ -18,8 +18,7 @@ import create, { StateCreator } from "zustand";
 
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-import {DisplaySearchFilter} from "../features/search/types/common";
-
+import { DisplaySearchFilter } from "../features/search/types/common";
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -58,8 +57,8 @@ interface TimeframeSlice {
     currentTimeframe: TimeFrameState;
     setRelativeTimeframe: (newStartTimeUnixNanoSec: number) => void;
     setAbsoluteTimeframe: (
-        newStartTimeUnixNanoSec: number,
-        newEndTimeUnixNanoSec: number
+      newStartTimeUnixNanoSec: number,
+      newEndTimeUnixNanoSec: number
     ) => void;
   };
 }
@@ -118,54 +117,60 @@ interface FiltersSlice {
     saveFilter: (filter: DisplaySearchFilter) => void;
     deleteFilter: (id: string) => void;
     clearFilters: () => void;
-  }
+  };
 }
 const createFiltersSlice: StateCreator<
-    LiveSpansSlice & TimeframeSlice & FiltersSlice,
-    [],
-    [],
-    FiltersSlice
+  LiveSpansSlice & TimeframeSlice & FiltersSlice,
+  [],
+  [],
+  FiltersSlice
 > = (set) => ({
   filtersState: {
     filters: [],
-    addFilter: (filter: DisplaySearchFilter) => set((state) => {
-      state.filtersState.filters.push(filter);
-      return { filtersState: state.filtersState };
-    }),
-    saveFilter: (filter: DisplaySearchFilter) => set((state) => {
-      const filterToUpdate = state.filtersState.filters.find(f => f.id === filter.id);
+    addFilter: (filter: DisplaySearchFilter) =>
+      set((state) => {
+        state.filtersState.filters.push(filter);
+        return { filtersState: state.filtersState };
+      }),
+    saveFilter: (filter: DisplaySearchFilter) =>
+      set((state) => {
+        const filterToUpdate = state.filtersState.filters.find(
+          (f) => f.id === filter.id
+        );
 
-      if (filterToUpdate !== undefined) {
-        filterToUpdate.keyValueFilter = filter.keyValueFilter;
-      } else {
-        state.filtersState.addFilter(filter);
-      }
+        if (filterToUpdate !== undefined) {
+          filterToUpdate.keyValueFilter = filter.keyValueFilter;
+        } else {
+          state.filtersState.addFilter(filter);
+        }
 
-      return { filtersState: state.filtersState };
-    }),
-    deleteFilter: (id: string) => set((state) => {
-      return {
-        filtersState: {
-          ...state.filtersState,
-          filters: state.filtersState.filters.filter(f => f.id != id)
-        }
-      }
-    }),
-    clearFilters: () => set((state) => {
-      return {
-        filtersState: {
-          ...state.filtersState,
-          filters: []
-        }
-      }
-    }),
-  }
+        return { filtersState: state.filtersState };
+      }),
+    deleteFilter: (id: string) =>
+      set((state) => {
+        return {
+          filtersState: {
+            ...state.filtersState,
+            filters: state.filtersState.filters.filter((f) => f.id != id),
+          },
+        };
+      }),
+    clearFilters: () =>
+      set((state) => {
+        return {
+          filtersState: {
+            ...state.filtersState,
+            filters: [],
+          },
+        };
+      }),
+  },
 });
 
-export const useSpanSearchStore = create<TimeframeSlice & LiveSpansSlice & FiltersSlice>()(
-  (...set) => ({
-    ...createTimeframeSlice(...set),
-    ...createLiveSpansSlice(...set),
-    ...createFiltersSlice(...set),
-  })
-);
+export const useSpanSearchStore = create<
+  TimeframeSlice & LiveSpansSlice & FiltersSlice
+>()((...set) => ({
+  ...createTimeframeSlice(...set),
+  ...createLiveSpansSlice(...set),
+  ...createFiltersSlice(...set),
+}));

@@ -19,7 +19,7 @@ import { Button, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
-import {useSpanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { theme } from "@/styles";
 
 import { FilterBuilderDialog } from "../FilterBuilder";
@@ -29,7 +29,9 @@ import { styles } from "./styles";
 export function SearchBar() {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const { filters, clearFilters } = useSpanSearchStore(state => state.filtersState)
+  const { filters, clearFilters } = useSpanSearchStore(
+    (state) => state.filtersState
+  );
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setOpen(true);
@@ -39,7 +41,6 @@ export function SearchBar() {
   const handleClose = () => {
     setOpen(false);
   };
-
 
   return (
     <Paper sx={styles.searchBarPaper}>
@@ -60,10 +61,7 @@ export function SearchBar() {
             anchorEl={anchorEl}
           />
           {filters.map((filter, index) => (
-            <FilterChip
-              key={index}
-              filter={filter}
-            />
+            <FilterChip key={index} filter={filter} />
           ))}
         </Stack>
         {filters.length > 0 && (

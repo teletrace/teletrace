@@ -35,9 +35,9 @@ import { SearchField } from "@/components/SearchField";
 import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
-import {getPredefinedFilterId} from "../../../search/utils/filters_utils";
+import { getPredefinedFilterId } from "../../../search/utils/filters_utils";
 import { useTagValuesWithAll } from "../../api/tagValues";
-import {DisplaySearchFilter, SearchFilter} from "../../types/common";
+import { DisplaySearchFilter, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
@@ -49,8 +49,9 @@ export type TagValuesSelectorProps = {
 };
 
 function getValue(filterIndex: number, filters: SearchFilter[]) {
-  const intermediateValue = filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
-  return Array.isArray(intermediateValue) ? intermediateValue : []
+  const intermediateValue =
+    filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
+  return Array.isArray(intermediateValue) ? intermediateValue : [];
 }
 
 export const TagValuesSelector = ({
@@ -59,31 +60,39 @@ export const TagValuesSelector = ({
   searchable,
   render,
 }: TagValuesSelectorProps) => {
-
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
   const { liveSpansState, timeframeState, filtersState } = useSpanSearchStore(
-      (state) => state
+    (state) => state
   );
 
-  const value = getValue(filtersState.filters.findIndex(
+  const value = getValue(
+    filtersState.filters.findIndex(
       (f) => f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"
-  ), filtersState.filters);
-  const filters = filtersState.filters.filter(f => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"));
+    ),
+    filtersState.filters
+  );
+  const filters = filtersState.filters.filter(
+    (f) => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in")
+  );
 
   const tagSearchFilter: SearchFilter = {
     keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
   };
 
   const tagFilters: Array<SearchFilter> = useMemo(
-    () => tagSearchFilter.keyValueFilter.value ? [...filters, tagSearchFilter] : filters,
+    () =>
+      tagSearchFilter.keyValueFilter.value
+        ? [...filters, tagSearchFilter]
+        : filters,
     [filters, tagSearchFilter.keyValueFilter]
   );
 
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     {
-      startTimeUnixNanoSec: timeframeState.currentTimeframe.startTimeUnixNanoSec,
+      startTimeUnixNanoSec:
+        timeframeState.currentTimeframe.startTimeUnixNanoSec,
       endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
     },
     tagFilters,
@@ -112,7 +121,12 @@ export const TagValuesSelector = ({
           </AccordionSummary>
           <AccordionActions>
             {value.length > 0 && (
-              <Button size="small" onClick={() => filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))} >
+              <Button
+                size="small"
+                onClick={() =>
+                  filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))
+                }
+              >
                 Clear
               </Button>
             )}
@@ -135,14 +149,13 @@ export const TagValuesSelector = ({
                 onChange={(values) => {
                   const filter: DisplaySearchFilter = {
                     id: getPredefinedFilterId(tag, "in"),
-                        keyValueFilter: {key: tag, operator: "in", value: values},
+                    keyValueFilter: { key: tag, operator: "in", value: values },
                   };
 
-                  const isEmptyCollectionFilter = (
-                      ["in", "not_in"].includes(filter.keyValueFilter.operator)
-                      && Array.isArray(filter.keyValueFilter.value)
-                      && filter.keyValueFilter.value.length == 0
-                  );
+                  const isEmptyCollectionFilter =
+                    ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
+                    Array.isArray(filter.keyValueFilter.value) &&
+                    filter.keyValueFilter.value.length == 0;
 
                   if (isEmptyCollectionFilter) {
                     filtersState.deleteFilter(filter.id);

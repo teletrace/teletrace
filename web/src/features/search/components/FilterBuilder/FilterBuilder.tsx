@@ -24,8 +24,7 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
-
-import {useSpanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { AvailableTag } from "../../types/availableTags";
 import {
@@ -36,13 +35,11 @@ import {
   OperatorCategory,
   ValueInputMode,
 } from "../../types/common";
-import {getFilterId} from "../../utils/filters_utils";
+import { getFilterId } from "../../utils/filters_utils";
 import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
-
-
 
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | null;
@@ -103,7 +100,7 @@ export const FilterBuilderDialog = ({
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
   const valueInputMode = valueSelectModeByOperators[dialogState.operator];
-  const addFilter = useSpanSearchStore(state => state.filtersState.addFilter);
+  const addFilter = useSpanSearchStore((state) => state.filtersState.addFilter);
 
   const onOperatorChange = (operator: Operator) => {
     setDialogState((prevState) => ({
@@ -221,7 +218,10 @@ export const FilterBuilderDialog = ({
       operator: dialogState.operator,
       value: convertValue(dialogState.tag?.type, dialogState.value),
     };
-    addFilter({ id: getFilterId(newFilter.key, newFilter.operator), keyValueFilter: newFilter })
+    addFilter({
+      id: getFilterId(newFilter.key, newFilter.operator),
+      keyValueFilter: newFilter,
+    });
     handleClose();
   };
 

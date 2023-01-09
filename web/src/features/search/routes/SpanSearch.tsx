@@ -27,7 +27,9 @@ import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 
 export const SpanSearch = () => {
-  const { liveSpansState, timeframeState } = useSpanSearchStore((state) => state);
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
 
   useEffect(() => {
     if (liveSpansState.isOn) {

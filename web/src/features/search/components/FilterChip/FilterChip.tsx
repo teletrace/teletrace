@@ -16,11 +16,10 @@
 
 import { Chip, Tooltip, Typography } from "@mui/material";
 
-import {useSpanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { DisplaySearchFilter, FilterValueTypes } from "../../types/common";
 import { styles } from "./styles";
-
 
 const OPERATORS_FORMAT: Record<string, string> = {
   in: "IN",
@@ -42,7 +41,9 @@ export type FilterChipProps = {
 };
 
 export const FilterChip = ({ filter }: FilterChipProps) => {
-  const deleteFilter = useSpanSearchStore(state => state.filtersState.deleteFilter);
+  const deleteFilter = useSpanSearchStore(
+    (state) => state.filtersState.deleteFilter
+  );
 
   const getTooltipForArray = (arrValue: (number | string)[]) => {
     return arrValue.map((value: number | string) => (
