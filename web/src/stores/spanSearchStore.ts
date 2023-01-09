@@ -18,9 +18,11 @@ import create, { StateCreator } from "zustand";
 
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-import {DisplaySearchFilter, KeyValueFilter} from "../features/search/types/common";
-import {getFilterId} from "../features/search/utils/filters_utils";
-
+import {
+  DisplaySearchFilter,
+  KeyValueFilter,
+} from "../features/search/types/common";
+import { getFilterId } from "../features/search/utils/filters_utils";
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -133,7 +135,7 @@ const createFiltersSlice: StateCreator<
       set((state) => {
         state.filtersState.filters.push({
           id: getFilterId(keyValueFilter.key, keyValueFilter.operator),
-          keyValueFilter: keyValueFilter
+          keyValueFilter: keyValueFilter,
         });
         return { filtersState: state.filtersState };
       }),
