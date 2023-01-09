@@ -78,8 +78,9 @@ export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
     if (typeof value[0] === "string") {
       if (arrLen > 1) {
         newValue = `["${value[0]}"...+${arrLen - 1}"]`;
+      } else {
+        newValue = formatStrValue(value[0], filterLen);
       }
-      newValue = formatStrValue(value[0], filterLen);
     } else {
       if (arrLen > 1) {
         newValue = `[${value[0]}...+${arrLen - 1}]`;
