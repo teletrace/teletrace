@@ -20,7 +20,6 @@ import { Resource } from "@opentelemetry/resources";
 import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
 import {
   BasicTracerProvider,
-  ConsoleSpanExporter,
   SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-base";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
@@ -42,16 +41,31 @@ export type TraceProps = {
   childSpans: SpanProps[];
 };
 
-export function createMultipleTraces(traceProps: TraceProps[]) {
+export type ReturnTrace = {
+  serviceName: string;
+  mainSpan: Span;
+  childSpans: Span[];
+};
+
+export function createAndSendMultipleTraces(traceProps: TraceProps[]) {
   if (traceProps.length === 0) {
     return;
   }
+  let returnTrace: ReturnTrace[] = [];
 
-  const parent = createOpenTelemetryTrace(traceProps[0], null);
+  const returnFirstTrace = createAndSendTrace(traceProps[0], null);
+
+  returnTrace.push(returnFirstTrace);
 
   for (let i = 1; i < traceProps.length; i += 1) {
-    createOpenTelemetryTrace(traceProps[i], parent);
+    returnTrace.push(
+      createAndSendTrace(traceProps[i], returnFirstTrace.mainSpan)
+    );
   }
+
+  returnFirstTrace.mainSpan.end();
+
+  return returnTrace;
 }
 
 function addSpansAttributes(span: Span, att: Attributes[] | undefined) {
@@ -67,19 +81,22 @@ function createChildSpans(
   parentSpan: Span,
   tracer: Tracer
 ) {
+  let returnSpans: Span[] = [];
   for (let i = 0; i < childSpans.length; i += 1) {
     const ctx = opentelemetry.trace.setSpan(
       opentelemetry.context.active(),
       parentSpan
     );
     const span = tracer.startSpan(childSpans[i].name, undefined, ctx);
+    returnSpans.push(span);
 
     addSpansAttributes(span, childSpans[i].attributes);
     span.end();
   }
+  return returnSpans;
 }
 
-function createOpenTelemetryTrace(
+function createAndSendTrace(
   { serviceName, traceName, mainSpan, childSpans }: TraceProps,
   parentSpan: Span | null
 ) {
@@ -91,7 +108,6 @@ function createOpenTelemetryTrace(
 
   const exporter = new OTLPTraceExporter();
   provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
-  provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 
   provider.register();
 
@@ -103,10 +119,54 @@ function createOpenTelemetryTrace(
 
   addSpansAttributes(parentSpan, mainSpan.attributes);
 
-  createChildSpans(childSpans, parentSpan, tracer);
+  const returnChildSpans = createChildSpans(childSpans, parentSpan, tracer);
 
-  parentSpan.end();
   exporter.shutdown();
 
-  return parentSpan;
+  const returnTrace: ReturnTrace = {
+    serviceName: serviceName,
+    mainSpan: parentSpan,
+    childSpans: returnChildSpans,
+  };
+
+  return returnTrace;
+}
+
+let l: TraceProps[] = [];
+
+for (let i = 0; i < 4; i += 1) {
+  const a: Attributes = {
+    key: "key",
+    value: "value",
+  };
+  const aa: Attributes = {
+    key: "keya",
+    value: "valuea",
+  };
+  const aaa: Attributes = {
+    key: "keyaa",
+    value: "valueaa",
+  };
+  const s: SpanProps = {
+    name: "main-span-props-re" + i,
+    attributes: [a, aa, aaa],
+  };
+  const c: SpanProps = {
+    name: "child-span-props-re-" + i,
+    attributes: [a, aa, aaa],
+  };
+  const t: TraceProps = {
+    serviceName: "basic-service-re-" + i,
+    traceName: "trace-re-" + i,
+    mainSpan: s,
+    childSpans: [c],
+  };
+
+  l.push(t);
+}
+
+const rr = createAndSendMultipleTraces(l);
+if (rr) {
+  //   console.log(rr);
+  console.log(rr[0].childSpans);
 }
