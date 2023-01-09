@@ -19,7 +19,6 @@ export const styles = {
     display: "flex",
     justifyContent: "center",
     flexDirection: "column",
-    background: "#1e1e1e",
     textAlign: "center",
     width: "fit-content",
     height: "fit-content",
@@ -31,12 +30,16 @@ export const styles = {
   },
   timeContainer: {
     color: "#ffffff",
+    background: "#0B0B0D",
   },
   counterContainer: {
+    paddingLeft: "25%",
+    paddingRight: "25%",
+  },
+  counterBoxContainer: {
     background: "#3b3c42",
     border: 1,
     borderColor: "#96979e",
     borderRadius: 0.5,
-    padding: 1,
   },
 };
