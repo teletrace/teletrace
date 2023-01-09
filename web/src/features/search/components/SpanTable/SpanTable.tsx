@@ -21,11 +21,11 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { SearchFilter } from "../../types/common";
-import { LiveSpansState, TimeFrameState } from "./../../routes/SpanSearch";
 import { TableSpan, columns } from "./columns";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -35,15 +35,9 @@ const DEFAULT_SORT_ASC = false;
 
 interface SpanTableProps {
   filters?: SearchFilter[];
-  timeframe: TimeFrameState;
-  liveSpans: LiveSpansState;
 }
 
-export function SpanTable({
-  filters = [],
-  timeframe,
-  liveSpans,
-}: SpanTableProps) {
+export function SpanTable({ filters = [] }: SpanTableProps) {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef =
     useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
@@ -56,6 +50,9 @@ export function SpanTable({
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
 
   const searchRequest = useMemo(() => {
     const sort = sorting?.map((columnSort) => ({
@@ -65,17 +62,18 @@ export function SpanTable({
     return {
       filters: filters,
       timeframe: {
-        startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-        endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+        startTimeUnixNanoSec:
+          timeframeState.currentTimeframe.startTimeUnixNanoSec,
+        endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
       sort: sort,
       metadata: undefined,
     };
-  }, [filters, timeframe, sorting]);
+  }, [filters, timeframeState, sorting]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
-  }, [filters, timeframe, sorting]);
+  }, [filters, timeframeState, sorting]);
 
   const {
     data,
@@ -87,7 +85,7 @@ export function SpanTable({
     hasNextPage,
   } = useSpansQuery(
     searchRequest,
-    liveSpans.isOn ? liveSpans.intervalInMilli : 0
+    liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
   );
 
   useEffect(() => {
@@ -96,7 +94,7 @@ export function SpanTable({
       const newSpansIds = calcNewSpans(
         prevTableSpans,
         newSpans,
-        liveSpans.isOn
+        liveSpansState.isOn
       );
 
       return (
@@ -119,7 +117,7 @@ export function SpanTable({
         ) ?? []
       );
     });
-  }, [data, liveSpans]);
+  }, [data, liveSpansState.isOn]);
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;

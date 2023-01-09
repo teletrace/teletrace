@@ -16,16 +16,13 @@
 
 import { Paper, Stack } from "@mui/material";
 
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
-  timeframe: TimeFrameState;
   onChange: (entry: SearchFilter) => void;
-  liveSpans: LiveSpansState;
 };
 
 type TagOptions = {
@@ -35,12 +32,7 @@ type TagOptions = {
   render?: (value: string | number) => React.ReactNode;
 };
 
-export const TagSidebar = ({
-  filters,
-  timeframe,
-  onChange,
-  liveSpans,
-}: TagSidebarProps) => {
+export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
   const onFilterChange = (
     key: string,
     label: string,
@@ -101,11 +93,9 @@ export const TagSidebar = ({
                     f.keyValueFilter.operator === "in"
                   )
               )} // remove the current tag
-              timeframe={timeframe}
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
               render={t.render}
-              liveSpans={liveSpans}
             />
           );
         })}
