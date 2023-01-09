@@ -18,6 +18,7 @@ import { ContentCopy } from "@mui/icons-material";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 
+import { MiddleTruncatedTypography } from "@/components/Elements/MiddleTruncatedTypography";
 import { AttributeKey, AttributeValue } from "@/types/span";
 
 import { styles } from "./styles";
@@ -40,9 +41,7 @@ export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
       <Typography component="span" sx={styles.key}>
         {attKey}
       </Typography>
-      <Typography component="span" sx={styles.value}>
-        {attValue.toString()}
-      </Typography>
+      <MiddleTruncatedTypography text={attValue.toString()} sx={styles.value} />
       <Tooltip
         title="Copied!"
         placement="top"
