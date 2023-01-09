@@ -80,11 +80,6 @@ var sqliteTableNameMap = map[string]string{
 	"span":                     "spans",
 }
 
-var sqliteTagsMap = map[string]string{
-	"spanId":  "span_id",
-	"traceId": "trace_id",
-}
-
 var existenceCheckFiltersMap = map[model.FilterOperator]model.FilterOperator{
 	spansquery.OPERATOR_EXISTS:     spansquery.OPERATOR_EQUALS,
 	spansquery.OPERATOR_NOT_EXISTS: spansquery.OPERATOR_NOT_EQUALS,
@@ -143,9 +138,6 @@ func removeTablePrefixFromDynamicTag(tag string) string {
 	for _, tableKey := range filterTablesNames {
 		if strings.HasPrefix(tag, tableKey) {
 			newTag := strings.ReplaceAll(tag, tableKey+".", "")
-			if value, ok := sqliteTagsMap[newTag]; ok {
-				return value
-			}
 			return newTag
 		}
 	}
