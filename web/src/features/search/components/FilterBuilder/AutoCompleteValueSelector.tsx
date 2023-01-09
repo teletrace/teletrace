@@ -24,20 +24,18 @@ import {
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 const useGetTagOptions = (
   tag: string,
-  timeframe: TimeFrameState,
   filters: Array<SearchFilter>,
   selectedOptions: (string | number)[],
-  liveSpans: LiveSpansState,
   search: string
 ) => {
   const searchQueryFilters: Array<SearchFilter> = search
@@ -46,15 +44,21 @@ const useGetTagOptions = (
         { keyValueFilter: { key: tag, operator: "contains", value: search } },
       ]
     : filters;
+
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
+
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
       tag,
       {
-        startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-        endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+        startTimeUnixNanoSec:
+          timeframeState.currentTimeframe.startTimeUnixNanoSec,
+        endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
       searchQueryFilters,
-      liveSpans.isOn ? liveSpans.intervalInMilli : 0
+      liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
     );
   // add selected options to options (if missing). Since we don't show them (due to filterSelectedOptions prop) the selected the count doesn't matter
   if (searchTagValues) {
@@ -70,31 +74,25 @@ const useGetTagOptions = (
 
 export type AutoCompleteValueSelectorProps = {
   tag: string;
-  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
   value: (string | number)[];
   onChange: (value: FilterValueTypes) => void;
-  liveSpans: LiveSpansState;
   error: boolean;
 };
 
 export const AutoCompleteValueSelector = ({
   tag,
-  timeframe,
   filters,
   value,
   onChange,
-  liveSpans,
   error,
 }: AutoCompleteValueSelectorProps) => {
   const [search, setSearch] = useState("");
   const [searchDebounced] = useDebounce(search, 500);
   const { isLoading, tagOptions } = useGetTagOptions(
     tag,
-    timeframe,
     filters,
     value,
-    liveSpans,
     searchDebounced
   );
   const errorHelperText = error ? "Value is required" : "";

@@ -24,7 +24,6 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { AvailableTag } from "../../types/availableTags";
 import {
   FilterValueTypes,
@@ -44,9 +43,7 @@ export type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
   onApply: (filter: SearchFilter) => void;
-  timeframe: TimeFrameState;
   filters: Array<SearchFilter>;
-  liveSpans: LiveSpansState;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -86,13 +83,11 @@ const operatorCategoryFromValueType = (
 };
 
 export const FilterBuilderDialog = ({
-  timeframe,
   filters,
   onClose,
   open,
   anchorEl,
   onApply,
-  liveSpans,
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const initialState: FilterBuilderDialogState = {
@@ -258,13 +253,11 @@ export const FilterBuilderDialog = ({
             {valueInputMode !== "none" ? (
               <Stack>
                 <ValueSelector
-                  timeframe={timeframe}
                   filters={filters}
                   tag={dialogState.tag?.name || ""}
                   value={dialogState.value}
                   onChange={onValueChange}
                   valueInputMode={valueInputMode}
-                  liveSpans={liveSpans}
                   error={dialogState.formError.value}
                 />
               </Stack>

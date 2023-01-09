@@ -26,7 +26,9 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
-func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
+type FilterParseOption func(*model.KeyValueFilter)
+
+func BuildFilters(b *types.QueryContainerBuilder, fs []model.KeyValueFilter, opts ...FilterParseOption) (*types.QueryContainerBuilder, error) {
 	type filterCreator func(model.KeyValueFilter) (*types.QueryContainerBuilder, error)
 
 	type Filter struct {
@@ -89,8 +91,11 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*
 	}
 
 	for _, f := range fs {
-
 		var err error
+
+		for _, opt := range opts {
+			opt(&f)
+		}
 
 		filter := m[string(f.Operator)]
 		qc, err := filter.Builder(f)
@@ -108,6 +113,16 @@ func BuildFilters(b *types.QueryContainerBuilder, fs ...model.KeyValueFilter) (*
 	return b.Bool(types.NewBoolQueryBuilder().
 		MustNot(mustNot).Must(must),
 	), nil
+}
+
+func WithMiliSecTimestampAsNanoSec() FilterParseOption {
+	return func(f *model.KeyValueFilter) {
+		if f.Key == "span.startTimeUnixNano" || f.Key == "span.endTimeUnixNano" || f.Key == "externalFields.durationNano" {
+			if v, ok := (f.Value).(uint64); ok {
+				f.Value = v / (1000 * 1000)
+			}
+		}
+	}
 }
 
 func createEqualsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {

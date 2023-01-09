@@ -140,7 +140,7 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			TraceState:        fmt.Sprintf("[Span-%d]TraceState", i),
 			ParentSpanId:      pcommon.SpanID([8]byte{3}).HexString(),
 			Name:              fmt.Sprintf("[Span-%d]Name", i),
-			Kind:              2, // SERVER
+			Kind:              "Server",
 			StartTimeUnixNano: 0,
 			EndTimeUnixNano:   10,
 			Attributes: internalspanv1.Attributes{
@@ -152,7 +152,7 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			Links:                  spanLinks,
 			DroppedLinksCount:      5,
 			Status: &internalspanv1.SpanStatus{
-				Code:    1, // OK
+				Code:    "Ok",
 				Message: fmt.Sprintf("[SpanStatus-%d]Message", i),
 			},
 		})

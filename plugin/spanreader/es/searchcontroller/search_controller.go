@@ -23,15 +23,12 @@ import (
 	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
-
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/sortorder"
-	"github.com/mitchellh/mapstructure"
 	"go.uber.org/zap"
 )
 
@@ -55,6 +52,7 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 	}
 
 	searchAPI := sc.client.API.Search()
+
 	res, err := searchAPI.Request(req).Index(sc.idx).Do(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
@@ -74,7 +72,7 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 		}
 	}
 
-	searchResp, err := parseSpansResponse(body)
+	searchResp, err := parseSpansResponse(body, withMiliSecTimestampAsNanoSec())
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
 	}
@@ -137,54 +135,4 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBu
 		sorts = addSortField(TieBreakerField, true, sorts)
 	}
 	return b.Sort(types.NewSortBuilder().Sort(sorts))
-}
-
-func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error) {
-	var err error
-
-	hits := body["hits"].(map[string]any)["hits"].([]any)
-
-	spans := []*internalspan.InternalSpan{}
-	for _, h := range hits {
-		hit := h.(map[string]any)["_source"].(map[string]any)
-		var s internalspan.InternalSpan
-		err = mapstructure.Decode(hit, &s)
-		if err != nil {
-			return nil, fmt.Errorf("Could not decode response hit from elasticsearch: %+v", err)
-		}
-		spans = append(spans, &s)
-	}
-
-	var metadata *spansquery.Metadata
-	if len(hits) > 0 {
-		metadata = &spansquery.Metadata{}
-		if err := extractNextToken(hits, metadata); err != nil {
-			return nil, err
-		}
-	}
-
-	return &spansquery.SearchResponse{
-		Spans:    spans,
-		Metadata: metadata,
-	}, nil
-}
-
-func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
-	if lastHitSortData := hits[len(hits)-1].(map[string]any)["sort"]; lastHitSortData != nil {
-		lastHitSortData := lastHitSortData.([]any)
-		if len(lastHitSortData) == 0 {
-			return nil
-		}
-		tokenFields := make([]string, len(lastHitSortData))
-		for i, key := range lastHitSortData {
-			tokenFields[i] = fmt.Sprintf("%v", key)
-		}
-		jsonToken, err := json.Marshal(tokenFields)
-		if err != nil {
-			return err
-		}
-		metadata.NextToken = spansquery.ContinuationToken(jsonToken)
-
-	}
-	return nil
 }

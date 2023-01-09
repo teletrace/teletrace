@@ -30,29 +30,28 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { msToNanoSec } from "@/utils/format";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
-  onChange: (timeframe: TimeFrameState) => void;
-  value: TimeFrameState;
   onClose: () => void;
   onCancel: () => void;
 };
 
 export const DateTimeSelector = ({
-  onChange,
-  value,
   onClose,
   onCancel,
 }: DateTimeSelectorProps) => {
+  const { currentTimeframe, setAbsoluteTimeframe, setRelativeTimeframe } =
+    useSpanSearchStore((state) => state.timeframeState);
+
   const [startDate, setStartDate] = useState<Date | null>(
-    new Date(value.startTimeUnixNanoSec / 1000000)
+    new Date(currentTimeframe.startTimeUnixNanoSec / 1000000)
   );
   const [endDate, setEndDate] = useState<Date | null>(
-    new Date(value.endTimeUnixNanoSec / 1000000)
+    new Date(currentTimeframe.endTimeUnixNanoSec / 1000000)
   );
   const [startTime, setStartTime] = useState<Date | null>(startDate);
   const [endTime, setEndTime] = useState<Date | null>(endDate);
@@ -81,15 +80,11 @@ export const DateTimeSelector = ({
     const timeRange = calcRange();
     if (timeRange.startRange < timeRange.endRange) {
       setTimeValid(true);
-      onChange({
-        startTimeUnixNanoSec: timeRange.startRange,
-        endTimeUnixNanoSec: timeRange.endRange,
-        isRelative: false,
-      });
+      setAbsoluteTimeframe(timeRange.startRange, timeRange.endRange);
       onClose();
     } else {
       setTimeValid(false);
-      onChange(value);
+      setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec);
     }
   };
 

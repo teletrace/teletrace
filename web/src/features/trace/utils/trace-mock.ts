@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { InternalSpan } from "@/types/span";
+import { InternalSpan, SpanKind, StatusCode } from "@/types/span";
 
 export const TRACE_MOCK: InternalSpan[] = [
   {
@@ -48,7 +48,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       traceState: "",
       parentSpanId: "",
       name: "ExecuteRequest",
-      kind: 1,
+      kind: SpanKind.INTERNAL,
       startTimeUnixNano: 1669028108943646000,
       endTimeUnixNano: 1669028109013150700,
       attributes: {},
@@ -57,7 +57,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       droppedLinksCount: 0,
       status: {
         message: "",
-        code: 0,
+        code: StatusCode.Unset,
       },
     },
     externalFields: {
@@ -95,7 +95,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       traceState: "",
       parentSpanId: "624a9feada90f6dd",
       name: "HTTP GET",
-      kind: 3,
+      kind: SpanKind.CLIENT,
       startTimeUnixNano: 1669028108944017400,
       endTimeUnixNano: 1669028109013030700,
       attributes: {
@@ -111,7 +111,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       droppedLinksCount: 0,
       status: {
         message: "",
-        code: 0,
+        code: StatusCode.Unset,
       },
     },
     externalFields: {
@@ -149,7 +149,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       traceState: "",
       parentSpanId: "d3adcea44092b358",
       name: "/hello",
-      kind: 2,
+      kind: SpanKind.SERVER,
       startTimeUnixNano: 1669028108950463500,
       endTimeUnixNano: 1669028109012403500,
       attributes: {
@@ -176,7 +176,7 @@ export const TRACE_MOCK: InternalSpan[] = [
       droppedLinksCount: 0,
       status: {
         message: "",
-        code: 0,
+        code: StatusCode.Unset,
       },
     },
     externalFields: {

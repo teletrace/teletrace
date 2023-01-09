@@ -31,9 +31,9 @@ export type Scope = {
 };
 
 export enum StatusCode {
-  Unset = 0,
-  OK = 1,
-  Error = 2,
+  Unset = "Unset",
+  OK = "Ok",
+  Error = "Error",
 }
 
 export type SpanStatus = {
@@ -57,12 +57,12 @@ export type Link = {
 };
 
 export enum SpanKind {
-  UNSPECIFIED = 0,
-  INTERNAL = 1,
-  SERVER = 2,
-  CLIENT = 3,
-  PRODUCER = 4,
-  CONSUMER = 5,
+  UNSPECIFIED = "Unspecified",
+  INTERNAL = "Internal",
+  SERVER = "Server",
+  CLIENT = "Client",
+  PRODUCER = "Producer",
+  CONSUMER = "Consumer",
 }
 
 export type RawSpan = {
