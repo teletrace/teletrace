@@ -58,7 +58,7 @@ func BuildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.Req
 			kvFilters = append(kvFilters, *f.KeyValueFilter)
 		}
 	}
-	query, err = BuildFilters(query, kvFilters...)
+	query, err = BuildFilters(query, kvFilters, WithMiliSecTimestampAsNanoSec())
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not build filters: %+v", err)
