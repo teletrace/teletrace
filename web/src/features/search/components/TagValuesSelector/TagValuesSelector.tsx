@@ -123,9 +123,7 @@ export const TagValuesSelector = ({
             {value.length > 0 && (
               <Button
                 size="small"
-                onClick={() =>
-                  filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))
-                }
+                onClick={() => filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))}
               >
                 Clear
               </Button>

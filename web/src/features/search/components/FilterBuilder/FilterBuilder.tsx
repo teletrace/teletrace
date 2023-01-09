@@ -35,7 +35,6 @@ import {
   OperatorCategory,
   ValueInputMode,
 } from "../../types/common";
-import { getFilterId } from "../../utils/filters_utils";
 import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
@@ -100,7 +99,7 @@ export const FilterBuilderDialog = ({
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
   const valueInputMode = valueSelectModeByOperators[dialogState.operator];
-  const addFilter = useSpanSearchStore((state) => state.filtersState.addFilter);
+  const { addFilter } = useSpanSearchStore((state) => state.filtersState);
 
   const onOperatorChange = (operator: Operator) => {
     setDialogState((prevState) => ({
@@ -218,10 +217,7 @@ export const FilterBuilderDialog = ({
       operator: dialogState.operator,
       value: convertValue(dialogState.tag?.type, dialogState.value),
     };
-    addFilter({
-      id: getFilterId(newFilter.key, newFilter.operator),
-      keyValueFilter: newFilter,
-    });
+    addFilter(newFilter);
     handleClose();
   };
 

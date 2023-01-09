@@ -18,7 +18,9 @@ import create, { StateCreator } from "zustand";
 
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-import { DisplaySearchFilter } from "../features/search/types/common";
+import {DisplaySearchFilter, KeyValueFilter} from "../features/search/types/common";
+import {getFilterId} from "../features/search/utils/filters_utils";
+
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -113,7 +115,7 @@ const createTimeframeSlice: StateCreator<
 interface FiltersSlice {
   filtersState: {
     filters: Array<DisplaySearchFilter>;
-    addFilter: (filter: DisplaySearchFilter) => void;
+    addFilter: (filter: KeyValueFilter) => void;
     saveFilter: (filter: DisplaySearchFilter) => void;
     deleteFilter: (id: string) => void;
     clearFilters: () => void;
@@ -127,9 +129,12 @@ const createFiltersSlice: StateCreator<
 > = (set) => ({
   filtersState: {
     filters: [],
-    addFilter: (filter: DisplaySearchFilter) =>
+    addFilter: (keyValueFilter: KeyValueFilter) =>
       set((state) => {
-        state.filtersState.filters.push(filter);
+        state.filtersState.filters.push({
+          id: getFilterId(keyValueFilter.key, keyValueFilter.operator),
+          keyValueFilter: keyValueFilter
+        });
         return { filtersState: state.filtersState };
       }),
     saveFilter: (filter: DisplaySearchFilter) =>
@@ -141,7 +146,7 @@ const createFiltersSlice: StateCreator<
         if (filterToUpdate !== undefined) {
           filterToUpdate.keyValueFilter = filter.keyValueFilter;
         } else {
-          state.filtersState.addFilter(filter);
+          state.filtersState.addFilter(filter.keyValueFilter);
         }
 
         return { filtersState: state.filtersState };
