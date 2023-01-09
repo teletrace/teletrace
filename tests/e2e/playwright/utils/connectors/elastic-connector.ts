@@ -19,7 +19,8 @@ import {
   CatIndicesResponse,
   ClusterPutSettingsResponse,
   IndicesResponseBase,
-} from "@elastic/elasticsearch/lib/api/typesWithBodyKey";
+} from "@elastic/elasticsearch/lib/api/types";
+
 import { Connector } from ".";
 
 export class ElasticConnector extends Connector {
