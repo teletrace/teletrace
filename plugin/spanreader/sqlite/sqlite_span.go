@@ -20,7 +20,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"strconv"
 
 	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
 )
@@ -91,14 +90,11 @@ func (sq *sqliteSpan) getInternalSpanName() string {
 	return ""
 }
 
-func (sq *sqliteSpan) getInternalSpanKind() int32 {
+func (sq *sqliteSpan) getInternalSpanKind() string {
 	if sq.spanKind.Valid {
-		spanKind, err := strconv.ParseInt(sq.spanKind.String, 10, 64)
-		if err == nil {
-			return int32(spanKind)
-		}
+		return sq.spanKind.String
 	}
-	return 0
+	return ""
 }
 
 func (sq *sqliteSpan) getInternalStartTimeUnixNano() uint64 {
@@ -164,14 +160,11 @@ func (sq *sqliteSpan) getInternalScopeDroppedAttributesCount() uint32 {
 	return 0
 }
 
-func (sq *sqliteSpan) getInternalStatusCode() uint32 {
+func (sq *sqliteSpan) getInternalStatusCode() string {
 	if sq.statusCode.Valid {
-		statusCode, err := strconv.ParseInt(sq.statusCode.String, 10, 64)
-		if err == nil {
-			return uint32(statusCode)
-		}
+		return sq.statusCode.String
 	}
-	return 0
+	return ""
 }
 
 func (sq *sqliteSpan) getInternalStatusMessage() string {
