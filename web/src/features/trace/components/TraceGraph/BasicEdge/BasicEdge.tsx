@@ -61,15 +61,13 @@ const BasicEdgeImpl = ({
         <Box sx={styles.edgeLabelContainer}>
           <Box sx={styles.timeContainer}>{data.time}</Box>
           {data?.count && (
-            <Box sx={styles.counterContainer}>
-              <Box
-                sx={{
-                  ...styles.counterBoxContainer,
-                  borderColor: style?.stroke,
-                }}
-              >
-                {data.count}
-              </Box>
+            <Box
+              sx={{
+                ...styles.counterContainer,
+                borderColor: style?.stroke,
+              }}
+            >
+              {data.count}
             </Box>
           )}
         </Box>
