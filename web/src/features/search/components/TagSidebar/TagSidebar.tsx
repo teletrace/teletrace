@@ -16,8 +16,6 @@
 
 import { Paper, Stack } from "@mui/material";
 
-import { StatusCode } from "@/types/span";
-
 import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
@@ -47,7 +45,7 @@ export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
-      render: (value) => StatusCode[parseInt(value.toString())],
+      render: (value) => value,
     },
     {
       title: "Service Name",
