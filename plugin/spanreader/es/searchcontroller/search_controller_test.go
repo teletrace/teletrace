@@ -72,14 +72,14 @@ func getSearchResponseMock() (map[string]any, error) {
                       "DroppedLinksCount":0,
                       "EndTimeUnixNano":167945000,
                       "Events":null,
-                      "Kind":1,
+                      "Kind":"Internal",
                       "Links":null,
                       "Name":"span_name",
                       "ParentSpanId":"00000000",
                       "SpanId":"12345678",
                       "StartTimeUnixNano":0,
                       "Status":{
-                         "Code":0,
+                         "Code":"Unset",
                          "Message":"STATUS_MESSAGE"
                       },
                       "TraceId":"1234567887654321",
