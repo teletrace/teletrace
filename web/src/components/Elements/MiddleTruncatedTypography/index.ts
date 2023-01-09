@@ -14,32 +14,4 @@
  * limitations under the License.
  */
 
-export const styles = {
-  container: {
-    display: "flex",
-    padding: "11px 36px 11px 87px",
-    "&:hover": {
-      backgroundColor: "#2B2D32",
-      ".copy-button": {
-        display: "block",
-      },
-    },
-  },
-  key: {
-    flex: "0 0 45%",
-    fontWeight: "400",
-    marginRight: "10px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-  },
-  value: {
-    fontWeight: "700",
-  },
-  copy: {
-    cursor: "pointer",
-    marginLeft: "5px",
-    fontSize: 15,
-    alignSelf: "center",
-    display: "none",
-  },
-};
+export * from "./MiddleTruncatedTypography";
