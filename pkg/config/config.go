@@ -70,7 +70,7 @@ const (
 	allowUsageReportingDefault = true
 
 	UsageReportURLEnvName = "USAGE_REPORT_URL"
-	UsageReportURLDefault = "https://lupaprojecct.io"
+	UsageReportURLDefault = "https://x7e6byq3xd.execute-api.us-east-1.amazonaws.com/prod/"
 )
 
 // Config defines global configurations used throughout the application.

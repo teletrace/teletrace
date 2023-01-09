@@ -17,8 +17,6 @@
 package usageevents
 
 import (
-	"fmt"
-
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 )
 
@@ -29,6 +27,6 @@ const (
 func CreateUpEvent(systemId string) cloudevents.Event {
 	event := cloudevents.NewEvent()
 	event.SetType(SystemUp)
-	event.SetSource(fmt.Sprintf("/%s", systemId))
+	event.SetSource(systemId)
 	return event
 }

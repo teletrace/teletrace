@@ -17,10 +17,11 @@ package usageReport
 
 import (
 	"context"
-	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"go.uber.org/zap"
 	"log"
 	"oss-tracing/pkg/model/usageevents"
+
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+	"go.uber.org/zap"
 )
 
 type UsageReporter struct {
@@ -42,7 +43,7 @@ func (r *UsageReporter) ReportSystemUp() {
 	ctx := cloudevents.ContextWithTarget(r.ctx, r.cloudEventEndpoint)
 	// Send that Event.
 	result := c.Send(ctx, event)
-	if cloudevents.IsUndelivered(result) || len(result.Error()) != 0 {
+	if cloudevents.IsUndelivered(result) || result.Error() != "200: " {
 		r.logger.Error("failed to send cloudEvent", zap.Error(result))
 	}
 }
