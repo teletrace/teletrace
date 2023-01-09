@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -30,14 +31,7 @@ import {
   nanoSecToMs,
 } from "@/utils/format";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
-
-export type TimeFrameSelectorProps = {
-  onChange: (timeframe: TimeFrameState) => void;
-  value: TimeFrameState;
-  liveSpansOn: boolean;
-};
 
 const options: RelativeTimeFrame[] = [
   { label: "1H", offsetRange: "1h", relativeTo: "now" },
@@ -46,14 +40,18 @@ const options: RelativeTimeFrame[] = [
   { label: "1W", offsetRange: "1w", relativeTo: "now" },
 ];
 
-export const TimeFrameSelector = ({
-  onChange,
-  value: timeframe,
-  liveSpansOn,
-}: TimeFrameSelectorProps) => {
+export const TimeFrameSelector = () => {
+  const [
+    liveSpansOn,
+    { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe },
+  ] = useSpanSearchStore((state) => [
+    state.liveSpansState.isOn,
+    state.timeframeState,
+  ]);
+
   const customOption: CustomTimeFrame = {
     label: "Custom",
-    startTime: timeframe.startTimeUnixNanoSec,
+    startTime: currentTimeframe.startTimeUnixNanoSec,
     endTime: getCurrentTimestamp(),
   };
 
@@ -93,14 +91,14 @@ export const TimeFrameSelector = ({
 
   const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
     const now = msToNanoSec(new Date().getTime());
-    timeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
+    currentTimeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
     const offset = timeFrame.offsetRange;
-    timeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
+    currentTimeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
   };
 
   const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
-    timeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
-    timeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
+    currentTimeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
+    currentTimeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
   };
 
   const calcTimeFrame = (timeframeType: TimeFrameTypes) => {
@@ -113,7 +111,7 @@ export const TimeFrameSelector = ({
 
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    onChange({ ...timeframe, isRelative: true });
+    setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec);
     setOpen(false);
   };
 
@@ -125,19 +123,26 @@ export const TimeFrameSelector = ({
       handleCustomClick(event);
     }
     calcTimeFrame(value);
-    onChange({ ...timeframe, isRelative: value.label !== "Custom" });
+
+    value.label !== "Custom"
+      ? setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
+      : setAbsoluteTimeframe(
+          currentTimeframe.startTimeUnixNanoSec,
+          currentTimeframe.endTimeUnixNanoSec
+        );
+
     setIsSelected(value);
     setPreviousSelected(isSelected);
   };
 
   const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
     const startTime = offset
-      ? setDiffOnNanoSecTf(timeframe.endTimeUnixNanoSec, offset)
-      : timeframe.startTimeUnixNanoSec;
+      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset)
+      : currentTimeframe.startTimeUnixNanoSec;
     const formattedEndTime =
       offset && liveSpansOn
         ? "Now"
-        : formatNanoToTimeString(timeframe.endTimeUnixNanoSec);
+        : formatNanoToTimeString(currentTimeframe.endTimeUnixNanoSec);
     return `${formatNanoToTimeString(startTime)} -> ${formattedEndTime}`;
   };
 
@@ -161,12 +166,6 @@ export const TimeFrameSelector = ({
         onClose={handleCancel}
       >
         <DateTimeSelector
-          onChange={onChange}
-          value={{
-            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-            endTimeUnixNanoSec: getCurrentTimestamp(),
-            isRelative: timeframe.isRelative,
-          }}
           onClose={() => setOpen(false)}
           onCancel={handleCancel}
         />
