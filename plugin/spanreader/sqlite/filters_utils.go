@@ -57,6 +57,7 @@ var sqliteFieldsMap = map[string]string{
 	"span.kind":                           "spans.kind",
 	"span.startTimeUnixNano":              "spans.start_time_unix_nano",
 	"span.endTimeUnixNano":                "spans.end_time_unix_nano",
+	"span.duration":                       "spans.duration",
 	"span.droppedAttributesCount":         "spans.dropped_attributes_count",
 	"span.status.message":                 "spans.status_message",
 	"span.status.code":                    "spans.span_status_code",
@@ -72,11 +73,11 @@ var sqliteTableNameMap = map[string]string{
 	"span.event.attributes":    "event_attributes",
 	"span.links":               "links",
 	"span.link.attributes":     "link_attributes",
+	"span.resource.attributes": "span_resource_attributes",
 	"resource.attributes":      "resource_attributes",
 	"scope.attributes":         "scope_attributes",
 	"scope":                    "scopes",
 	"span":                     "spans",
-	"span.resource.attributes": "span_resource_attributes",
 }
 
 var sqliteTagsMap = map[string]string{
@@ -128,11 +129,12 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 func convertSliceOfValuesToString(values []interface{}) string {
 	var valuesStrSlice []string
 	for _, value := range values {
-		str, ok := value.(string)
-		if !ok {
-			continue
+		switch value.(type) {
+		case string:
+			valuesStrSlice = append(valuesStrSlice, fmt.Sprintf("'%s'", value))
+		default:
+			valuesStrSlice = append(valuesStrSlice, fmt.Sprintf("%v", value))
 		}
-		valuesStrSlice = append(valuesStrSlice, fmt.Sprintf("'%v'", str))
 	}
 	return strings.Join(valuesStrSlice, ",")
 }
@@ -148,6 +150,10 @@ func removeTablePrefixFromDynamicTag(tag string) string {
 		}
 	}
 	return ""
+}
+
+func removeTablePrefixFromStaticTag(tag string) string {
+	return strings.Split(tag, ".")[1]
 }
 
 func isValidFilter(filter model.SearchFilter) bool {
@@ -181,14 +187,14 @@ func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
 	return []model.SearchFilter{
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.start_time_unix_nano",
+				Key:      "span.startTimeUnixNano",
 				Operator: spansquery.OPERATOR_GTE,
 				Value:    tf.StartTime,
 			},
 		},
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.end_time_unix_nano",
+				Key:      "span.endTimeUnixNano",
 				Operator: spansquery.OPERATOR_LTE,
 				Value:    tf.EndTime,
 			},

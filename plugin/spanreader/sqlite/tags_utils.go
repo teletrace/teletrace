@@ -51,15 +51,16 @@ var staticTagTypeMap = map[string]string{
 }
 
 var tablesTypeMap = map[string]bool{
-	"span_attributes":     true,
-	"events":              false,
-	"event_attributes":    true,
-	"links":               false,
-	"link_attributes":     true,
-	"resource_attributes": true,
-	"scope_attributes":    true,
-	"scopes":              false,
-	"spans":               false,
+	"span_attributes":          true,
+	"events":                   false,
+	"event_attributes":         true,
+	"links":                    false,
+	"link_attributes":          true,
+	"resource_attributes":      true,
+	"span_resource_attributes": true,
+	"scope_attributes":         true,
+	"scopes":                   false,
+	"spans":                    false,
 }
 
 func isDynamicTagsTable(tableName string) bool {

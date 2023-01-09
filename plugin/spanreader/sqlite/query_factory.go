@@ -65,17 +65,6 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 		return nil, fmt.Errorf("failed to get order from request: %v", err)
 	}
 	searchQueryResponse.sort = sort
-	if r.Metadata != nil && r.Metadata.NextToken != "" {
-		extractOrderResponse, err := extractNextToken(r.Sort, r.Metadata.NextToken)
-		if err != nil {
-			return nil, fmt.Errorf("failed to extract next token: %v", err)
-		}
-		searchQueryResponse.sort = extractOrderResponse.sortTag
-		err = queryBuilder.addFilter(extractOrderResponse.filter)
-		if err != nil {
-			return nil, fmt.Errorf("failed to add filter from order: %v", err)
-		}
-	}
 	queryParams, err := queryBuilder.buildQueryParams()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query params: %v", err)

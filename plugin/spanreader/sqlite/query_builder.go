@@ -55,7 +55,16 @@ func (qb *QueryBuilder) addFilter(filter model.SearchFilter) error {
 	if !isValidFilter(filter) {
 		return fmt.Errorf("invalid filter: %v", filter)
 	}
-	filter.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.%s", prepareSqliteFilter.getTableName(), prepareSqliteFilter.getTag()))
+	if prepareSqliteFilter.isDynamicTable() {
+		filter.KeyValueFilter.Key = model.FilterKey(fmt.Sprintf("%s.%s", prepareSqliteFilter.getTableName(), prepareSqliteFilter.getTag()))
+	} else {
+		key := fmt.Sprintf("%s.%s", prepareSqliteFilter.getTableKey(), prepareSqliteFilter.getTag())
+		value, ok := sqliteFieldsMap[key]
+		if !ok {
+			return fmt.Errorf("invalid filter key: %s", key)
+		}
+		filter.KeyValueFilter.Key = model.FilterKey(removeTablePrefixFromStaticTag(value))
+	}
 	if !qb.doesTableExist(prepareSqliteFilter.getTableName()) {
 		qb.addTable(prepareSqliteFilter.getTableName())
 	}
@@ -166,10 +175,10 @@ func (qb *QueryBuilder) addJoinConditions() error {
 			err = qb.addFilter(newSearchFilter("span.resource.attributes.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans")
 		case "links":
-			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.links.spanId", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans")
 		case "events":
-			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.events.spanId", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans")
 		case "event_attributes":
 			err = qb.addFilter(newSearchFilter("span.event.attributes.event_id", spansquery.OPERATOR_EQUALS, "events.id"))
@@ -177,7 +186,7 @@ func (qb *QueryBuilder) addJoinConditions() error {
 				return err
 			}
 			qb.addTable("events")
-			err = qb.addFilter(newSearchFilter("span.events.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.events.spanId", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans")
 		case "link_attributes":
 			err = qb.addFilter(newSearchFilter("span.link.attributes.link_id", spansquery.OPERATOR_EQUALS, "links.id"))
@@ -185,7 +194,7 @@ func (qb *QueryBuilder) addJoinConditions() error {
 				return err
 			}
 			qb.addTable("links")
-			err = qb.addFilter(newSearchFilter("span.links.span_id", spansquery.OPERATOR_EQUALS, "spans.span_id"))
+			err = qb.addFilter(newSearchFilter("span.links.spanId", spansquery.OPERATOR_EQUALS, "spans.span_id"))
 			qb.addTable("spans")
 		case "scopes":
 			err = qb.addFilter(newSearchFilter("scope.id", spansquery.OPERATOR_EQUALS, "spans.instrumentation_scope_id"))
@@ -251,7 +260,11 @@ func (qb *QueryBuilder) buildOrders() string {
 		if err != nil {
 			return ""
 		}
-		orderStrings = append(orderStrings, fmt.Sprintf("%s %s", parsedOrder.getFieldName(), parsedOrder.getOrderBy()))
+		field, ok := sqliteFieldsMap[fmt.Sprintf("%s.%s", parsedOrder.getTableKey(), parsedOrder.getTag())]
+		if !ok {
+			return ""
+		}
+		orderStrings = append(orderStrings, fmt.Sprintf("%s %s", field, parsedOrder.getOrderBy()))
 	}
 	return strings.Join(orderStrings, ",")
 }
@@ -262,7 +275,8 @@ func (qb *QueryBuilder) getOrderFromRequest(r spansquery.SearchRequest) (string,
 		if err != nil {
 			return "", fmt.Errorf("failed to extract next token: %v", err)
 		}
-		err = qb.addFilter(extractOrderResponse.filter)
+		filter := extractOrderResponse.filter
+		err = qb.addFilter(filter)
 		if err != nil {
 			return "", fmt.Errorf("failed to add filter from order: %v", err)
 		}
