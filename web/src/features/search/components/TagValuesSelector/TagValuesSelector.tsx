@@ -27,7 +27,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {nanoid} from "nanoid";
 import { Fragment, useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
@@ -36,43 +35,50 @@ import { SearchField } from "@/components/SearchField";
 import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
+import {getPredefinedFilterId} from "../../../search/utils/filters_utils";
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { SearchFilter } from "../../types/common";
+import {DisplaySearchFilter, SearchFilter} from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
   tag: string;
   title: string;
-  value: Array<string | number>;
   searchable?: boolean;
-  onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
 };
+
+function getValue(filterIndex: number, filters: SearchFilter[]) {
+  const intermediateValue = filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
+  return Array.isArray(intermediateValue) ? intermediateValue : []
+}
 
 export const TagValuesSelector = ({
   title,
   tag,
-  value,
   searchable,
-  onChange,
   render,
 }: TagValuesSelectorProps) => {
+
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
-  const clearTags = () => onChange?.([]);
-  const { liveSpansState, timeframeState, filtersState: { filters } } = useSpanSearchStore(
+  const { liveSpansState, timeframeState, filtersState } = useSpanSearchStore(
       (state) => state
   );
+
+  const value = getValue(filtersState.filters.findIndex(
+      (f) => f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"
+  ), filtersState.filters);
+  const filters = filtersState.filters.filter(f => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"));
+
   const tagSearchFilter: SearchFilter = {
-    id: nanoid(),
     keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
   };
+
   const tagFilters: Array<SearchFilter> = useMemo(
     () => tagSearchFilter.keyValueFilter.value ? [...filters, tagSearchFilter] : filters,
-    [filters, tagSearchFilter]
+    [filters, tagSearchFilter.keyValueFilter]
   );
-
 
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
@@ -106,7 +112,7 @@ export const TagValuesSelector = ({
           </AccordionSummary>
           <AccordionActions>
             {value.length > 0 && (
-              <Button size="small" onClick={clearTags}>
+              <Button size="small" onClick={() => filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))} >
                 Clear
               </Button>
             )}
@@ -126,7 +132,24 @@ export const TagValuesSelector = ({
                 value={value}
                 loading={false}
                 options={tagOptions || []}
-                onChange={onChange}
+                onChange={(values) => {
+                  const filter: DisplaySearchFilter = {
+                    id: getPredefinedFilterId(tag, "in"),
+                        keyValueFilter: {key: tag, operator: "in", value: values},
+                  };
+
+                  const isEmptyCollectionFilter = (
+                      ["in", "not_in"].includes(filter.keyValueFilter.operator)
+                      && Array.isArray(filter.keyValueFilter.value)
+                      && filter.keyValueFilter.value.length == 0
+                  );
+
+                  if (isEmptyCollectionFilter) {
+                    filtersState.deleteFilter(filter.id);
+                  } else {
+                    filtersState.saveFilter(filter);
+                  }
+                }}
                 sx={styles.checkboxList}
               />
             </Fragment>

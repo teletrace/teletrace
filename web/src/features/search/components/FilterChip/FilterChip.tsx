@@ -16,9 +16,11 @@
 
 import { Chip, Tooltip, Typography } from "@mui/material";
 
-import { FilterValueTypes, SearchFilter } from "../../types/common";
-import { styles } from "./styles";
 import {useSpanSearchStore} from "@/stores/spanSearchStore";
+
+import { DisplaySearchFilter, FilterValueTypes } from "../../types/common";
+import { styles } from "./styles";
+
 
 const OPERATORS_FORMAT: Record<string, string> = {
   in: "IN",
@@ -36,7 +38,7 @@ const OPERATORS_FORMAT: Record<string, string> = {
 const MAX_FILTER_LENGTH = 100;
 
 export type FilterChipProps = {
-  filter: SearchFilter;
+  filter: DisplaySearchFilter;
 };
 
 export const FilterChip = ({ filter }: FilterChipProps) => {

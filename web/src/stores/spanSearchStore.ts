@@ -18,7 +18,7 @@ import create, { StateCreator } from "zustand";
 
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-import {KeyValueFilter, SearchFilter} from "../features/search/types/common";
+import {DisplaySearchFilter} from "../features/search/types/common";
 
 
 interface LiveSpansSlice {
@@ -113,10 +113,10 @@ const createTimeframeSlice: StateCreator<
 
 interface FiltersSlice {
   filtersState: {
-    filters: Array<SearchFilter>;
-    addFilter: (filter: SearchFilter) => void;
-    updateFilter: (id: number, kvf: KeyValueFilter) => void;
-    deleteFilter: (id: number) => void;
+    filters: Array<DisplaySearchFilter>;
+    addFilter: (filter: DisplaySearchFilter) => void;
+    saveFilter: (filter: DisplaySearchFilter) => void;
+    deleteFilter: (id: string) => void;
     clearFilters: () => void;
   }
 }
@@ -128,22 +128,26 @@ const createFiltersSlice: StateCreator<
 > = (set) => ({
   filtersState: {
     filters: [],
-    addFilter: (filter: SearchFilter) => set((state) => {
+    addFilter: (filter: DisplaySearchFilter) => set((state) => {
       state.filtersState.filters.push(filter);
       return { filtersState: state.filtersState };
     }),
-    updateFilter: (id: number, kvf: KeyValueFilter) => set((state) => {
-      const filterToUpdate = state.filtersState.filters.find(f => f.id === id);
-      if (filterToUpdate != null) {
-        filterToUpdate.keyValueFilter = kvf;
+    saveFilter: (filter: DisplaySearchFilter) => set((state) => {
+      const filterToUpdate = state.filtersState.filters.find(f => f.id === filter.id);
+
+      if (filterToUpdate !== undefined) {
+        filterToUpdate.keyValueFilter = filter.keyValueFilter;
+      } else {
+        state.filtersState.addFilter(filter);
       }
+
       return { filtersState: state.filtersState };
     }),
-    deleteFilter: (id: number) => set((state) => {
+    deleteFilter: (id: string) => set((state) => {
       return {
         filtersState: {
           ...state.filtersState,
-          filters: state.filtersState.filters.filter(f => f.id !== id)
+          filters: state.filtersState.filters.filter(f => f.id != id)
         }
       }
     }),

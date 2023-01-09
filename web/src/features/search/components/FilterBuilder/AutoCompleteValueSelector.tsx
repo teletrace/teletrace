@@ -32,6 +32,7 @@ import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
+
 const useGetTagOptions = (
   tag: string,
   filters: Array<SearchFilter>,

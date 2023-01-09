@@ -15,7 +15,7 @@
  */
 
 import { Divider, Stack, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Head } from "@/components/Head";
 import { useSpanSearchStore } from "@/stores/spanSearchStore";

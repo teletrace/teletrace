@@ -24,28 +24,31 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
+
 import {useSpanSearchStore} from "@/stores/spanSearchStore";
 
 import { AvailableTag } from "../../types/availableTags";
 import {
+  DisplaySearchFilter,
   FilterValueTypes,
   KeyValueFilter,
   Operator,
   OperatorCategory,
-  SearchFilter,
   ValueInputMode,
 } from "../../types/common";
+import {getFilterId} from "../../utils/filters_utils";
 import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
 
 
+
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | null;
   open: boolean;
   onClose: () => void;
-  filters: Array<SearchFilter>;
+  filters: Array<DisplaySearchFilter>;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -218,7 +221,7 @@ export const FilterBuilderDialog = ({
       operator: dialogState.operator,
       value: convertValue(dialogState.tag?.type, dialogState.value),
     };
-    addFilter({ keyValueFilter: newFilter })
+    addFilter({ id: getFilterId(newFilter.key, newFilter.operator), keyValueFilter: newFilter })
     handleClose();
   };
 
