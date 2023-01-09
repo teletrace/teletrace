@@ -34,7 +34,7 @@ export const MiddleTruncatedTypography = ({
 }: MiddleTruncatedTypographyProps) => {
   const typographyRef = useRef<HTMLSpanElement>(null);
 
-  const [toolTipTitle, setToolTipTitle] = useState("");
+  const [tooltipTitle, setTooltipTitle] = useState("");
 
   const styles: SxProps<Theme> | undefined = {
     ...other.sx,
@@ -44,14 +44,14 @@ export const MiddleTruncatedTypography = ({
 
   const fitStringByTruncMiddle = useCallback(
     (element: HTMLSpanElement) => {
+      const pivot = Math.floor(text.length / 2);
       for (let i = 1; text.length - i > 2 && isOverflow(element); i++) {
-        const pivot = Math.floor(text.length / 2);
         element.innerText = `${text.substring(0, pivot - i)} \
                            ${separator} \
                            ${text.substring(text.length - pivot + i)}`;
       }
     },
-    [text]
+    [text, separator]
   );
 
   const isOverflow = (element: HTMLSpanElement): boolean =>
@@ -63,13 +63,13 @@ export const MiddleTruncatedTypography = ({
 
     const handleResize = () => {
       if (isOverflow(typographyElement)) {
-        setToolTipTitle(text);
+        setTooltipTitle(text);
         fitStringByTruncMiddle(typographyElement);
       } else {
         typographyElement.innerText = text;
-        setToolTipTitle("");
+        setTooltipTitle("");
         if (isOverflow(typographyElement)) {
-          setToolTipTitle(text);
+          setTooltipTitle(text);
           fitStringByTruncMiddle(typographyElement);
         }
       }
@@ -85,7 +85,7 @@ export const MiddleTruncatedTypography = ({
   }, [text, fitStringByTruncMiddle]);
 
   return (
-    <Tooltip title={toolTipTitle} followCursor={true} placement={"top"}>
+    <Tooltip title={tooltipTitle} followCursor={true} placement={"top"}>
       <Typography {...other} ref={typographyRef} sx={styles} component="span">
         {text}
       </Typography>
