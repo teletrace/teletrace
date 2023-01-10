@@ -4,7 +4,11 @@
   "main": "index.js",
   "private": true,
   "devDependencies": {
-    "@playwright/test": "^1.29.1"
+    "@playwright/test": "^1.29.1",
+    "@types/elasticsearch": "^5.0.40"
   },
-  "scripts": {}
+  "scripts": {},
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.5.0"
+  }
 }
