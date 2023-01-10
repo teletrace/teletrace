@@ -24,48 +24,63 @@ import {
 } from "@opentelemetry/sdk-trace-base";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 
+export type Node = {
+  parent: Node | null;
+  serviceName: string;
+  spans: SpanProps[];
+  // childNodes: Node[] | null;
+};
+
+const root: Node = { parent: null, serviceName: "root-service", spans: [] };
+const childHier1: Node = { parent: root, serviceName: "childier1", spans: [] };
+
 export type Attributes = {
   key: string;
   value: string;
 };
 
 export type SpanProps = {
-  name: string;
+  spanId: string;
+  parentSpanID: string | null;
   attributes?: Attributes[];
 };
 
 export type TraceProps = {
   serviceName: string;
   traceName: string;
-  mainSpan: SpanProps;
-  childSpans: SpanProps[];
+  //   parentServiceName: SpanProps;
+  spans: SpanProps[];
 };
 
-export type ReturnTrace = {
-  serviceName: string;
-  mainSpan: Span;
-  childSpans: Span[];
+// export type ReturnTrace = {
+//   serviceName: string;
+//   //   mainSpan: Span;
+//   spans: Span[];
+// };
+
+export type SpanIdToSpan = {
+  spanId: string;
+  span: Span;
 };
 
 export function createAndSendMultipleTraces(traceProps: TraceProps[]) {
   if (traceProps.length === 0) {
     return;
   }
-  let returnTrace: ReturnTrace[] = [];
+  //   let returnTrace: ReturnTrace[] = [];
 
-  const returnFirstTrace = createAndSendTrace(traceProps[0], null);
+  let spanIdToSpan: SpanIdToSpan[] = [];
 
-  returnTrace.push(returnFirstTrace);
+  //   spanIdToSpan = createAndSendTrace(traceProps[0], spanIdToSpan);
+  //   spanIdToSpan.push({ServiceName: traceProps[0].serviceName, span: returnFirstTrace.mainSpan})
+
+  //   returnTrace.push(returnFirstTrace);
 
   for (let i = 1; i < traceProps.length; i += 1) {
-    returnTrace.push(
-      createAndSendTrace(traceProps[i], returnFirstTrace.mainSpan)
-    );
+    spanIdToSpan = createAndSendTrace(traceProps[i], spanIdToSpan);
   }
 
-  returnFirstTrace.mainSpan.end();
-
-  return returnTrace;
+  return spanIdToSpan;
 }
 
 function addSpansAttributes(span: Span, att: Attributes[] | undefined) {
@@ -76,30 +91,31 @@ function addSpansAttributes(span: Span, att: Attributes[] | undefined) {
   }
 }
 
-function createChildSpans(
-  childSpans: SpanProps[],
-  parentSpan: Span,
-  tracer: Tracer
-) {
-  let returnSpans: Span[] = [];
-  for (let i = 0; i < childSpans.length; i += 1) {
-    const ctx = opentelemetry.trace.setSpan(
-      opentelemetry.context.active(),
-      parentSpan
-    );
-    const span = tracer.startSpan(childSpans[i].name, undefined, ctx);
-    returnSpans.push(span);
+// function createChildSpans(
+//   childSpans: SpanProps[],
+//   parentSpan: Span,
+//   tracer: Tracer
+// ) {
+//   let returnSpans: Span[] = [];
+//   for (let i = 0; i < childSpans.length; i += 1) {
+//     const ctx = opentelemetry.trace.setSpan(
+//       opentelemetry.context.active(),
+//       parentSpan
+//     );
+//     const span = tracer.startSpan(childSpans[i].name, undefined, ctx);
+//     returnSpans.push(span);
 
-    addSpansAttributes(span, childSpans[i].attributes);
-    span.end();
-  }
-  return returnSpans;
-}
+//     addSpansAttributes(span, childSpans[i].attributes);
+//     span.end();
+//   }
+//   return returnSpans;
+// }
 
 function createAndSendTrace(
-  { serviceName, traceName, mainSpan, childSpans }: TraceProps,
-  parentSpan: Span | null
+  { serviceName, traceName, spans }: TraceProps,
+  spanIdToSpan: SpanIdToSpan[]
 ) {
+  //   const localSpanIdToSpan: SpanIdToSpan[] = [];
   const provider = new BasicTracerProvider({
     resource: new Resource({
       [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
@@ -113,60 +129,101 @@ function createAndSendTrace(
 
   const tracer = provider.getTracer(traceName);
 
-  if (!parentSpan) {
-    parentSpan = tracer.startSpan(mainSpan.name);
+  //   if (!parentSpan) {
+  //     parentSpan = tracer.startSpan(mainSpan.name);
+
+  //     addSpansAttributes(parentSpan, mainSpan.attributes);
+
+  //     parentSpan.end();
+  //   }
+
+  for (let i = 0; i < spans.length; i += 1) {
+    const parentSpan = spanIdToSpan.find(
+      (span) => span.spanId === spans[i].parentSpanID
+    );
+    let span: Span | null = null;
+
+    if (parentSpan) {
+      const ctx = opentelemetry.trace.setSpan(
+        opentelemetry.context.active(),
+        parentSpan.span
+      );
+      span = tracer.startSpan(spans[i].spanId, undefined, ctx);
+    } else {
+      span = tracer.startSpan(spans[i].spanId);
+    }
+
+    addSpansAttributes(span, spans[i].attributes);
+
+    span.end();
+
+    spanIdToSpan.push({ spanId: spans[i].spanId, span: span });
+    // returnSpans.push(span);
   }
 
-  addSpansAttributes(parentSpan, mainSpan.attributes);
-
-  const returnChildSpans = createChildSpans(childSpans, parentSpan, tracer);
+  // const returnedSpans = createChildSpans(childSpans, parentSpan, tracer);
 
   exporter.shutdown();
 
-  const returnTrace: ReturnTrace = {
-    serviceName: serviceName,
-    mainSpan: parentSpan,
-    childSpans: returnChildSpans,
-  };
+  //   const returnTrace: ReturnTrace = {
+  //     serviceName: serviceName,
+  //     mainSpan: parentSpan,
+  //     childSpans: returnChildSpans,
+  //   };
 
-  return returnTrace;
+  return spanIdToSpan;
 }
 
-let l: TraceProps[] = [];
+const span1: SpanProps = {
+  spanId: "span-1",
+  parentSpanID: null,
+};
 
-for (let i = 0; i < 4; i += 1) {
-  const a: Attributes = {
-    key: "key",
-    value: "value",
-  };
-  const aa: Attributes = {
-    key: "keya",
-    value: "valuea",
-  };
-  const aaa: Attributes = {
-    key: "keyaa",
-    value: "valueaa",
-  };
-  const s: SpanProps = {
-    name: "main-span-props-re" + i,
-    attributes: [a, aa, aaa],
-  };
-  const c: SpanProps = {
-    name: "child-span-props-re-" + i,
-    attributes: [a, aa, aaa],
-  };
-  const t: TraceProps = {
-    serviceName: "basic-service-re-" + i,
-    traceName: "trace-re-" + i,
-    mainSpan: s,
-    childSpans: [c],
-  };
+const span2: SpanProps = {
+  spanId: "span-2",
+  parentSpanID: "span-1",
+};
 
-  l.push(t);
-}
+const span3: SpanProps = {
+  spanId: "span-3",
+  parentSpanID: "span-2",
+};
 
-const rr = createAndSendMultipleTraces(l);
-if (rr) {
-  //   console.log(rr);
-  console.log(rr[0].childSpans);
-}
+const span4: SpanProps = {
+  spanId: "span-4",
+  parentSpanID: "span-2",
+};
+
+const Service1: TraceProps = {
+  serviceName: "test-service-1",
+  traceName: "test-service-1",
+  spans: [span1],
+};
+
+const Service2: TraceProps = {
+  serviceName: "test-service-2",
+  traceName: "test-service-2",
+  spans: [span2],
+};
+
+const Service3: TraceProps = {
+  serviceName: "test-service-3",
+  traceName: "test-service-3",
+  spans: [span3],
+};
+
+const Service4: TraceProps = {
+  serviceName: "test-service-4",
+  traceName: "test-service-4",
+  spans: [span4],
+};
+
+let traces: TraceProps[] = [];
+
+traces.push(Service1);
+traces.push(Service2);
+traces.push(Service3);
+traces.push(Service4);
+
+const result = createAndSendMultipleTraces(traces);
+console.log(result);
