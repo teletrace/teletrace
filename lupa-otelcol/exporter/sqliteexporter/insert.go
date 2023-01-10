@@ -107,9 +107,9 @@ func insertSpan(
 		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,	?, ?, ?)
 	`,
 		spanId, span.TraceID().HexString(), span.TraceState().AsRaw(),
-		span.ParentSpanID().HexString(), span.Name(), int32(span.Kind()), uint64(span.StartTimestamp()),
+		span.ParentSpanID().HexString(), span.Name(), span.Kind().String(), uint64(span.StartTimestamp()),
 		uint64(span.EndTimestamp()), span.DroppedAttributesCount(), span.DroppedEventsCount(), span.DroppedLinksCount(),
-		span.Status().Message(), span.Status().Code(), droppedResourceAttributesCount, duration,
+		span.Status().Message(), span.Status().Code().String(), droppedResourceAttributesCount, duration,
 		ingestionTimeUnixNano, scopeId,
 	)
 

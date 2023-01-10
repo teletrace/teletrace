@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -30,14 +31,7 @@ import {
   nanoSecToMs,
 } from "@/utils/format";
 
-import { TimeFrameState } from "../../routes/SpanSearch";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
-
-export type TimeFrameSelectorProps = {
-  onChange: (timeframe: TimeFrameState) => void;
-  value: TimeFrameState;
-  liveSpansOn: boolean;
-};
 
 const options: RelativeTimeFrame[] = [
   { label: "1H", offsetRange: "1h", relativeTo: "now" },
@@ -46,20 +40,27 @@ const options: RelativeTimeFrame[] = [
   { label: "1W", offsetRange: "1w", relativeTo: "now" },
 ];
 
-export const TimeFrameSelector = ({
-  onChange,
-  value: timeframe,
-  liveSpansOn,
-}: TimeFrameSelectorProps) => {
+export const TimeFrameSelector = () => {
+  const [
+    liveSpansOn,
+    { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe },
+  ] = useSpanSearchStore((state) => [
+    state.liveSpansState.isOn,
+    state.timeframeState,
+  ]);
+
   const customOption: CustomTimeFrame = {
     label: "Custom",
-    startTime: timeframe.startTimeUnixNanoSec,
+    startTime: currentTimeframe.startTimeUnixNanoSec,
     endTime: getCurrentTimestamp(),
   };
 
   const buttonRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
+  const [previousSelected, setPreviousSelected] = useState<TimeFrameTypes>(
+    options[0]
+  );
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
 
   const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
@@ -90,14 +91,14 @@ export const TimeFrameSelector = ({
 
   const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
     const now = msToNanoSec(new Date().getTime());
-    timeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
+    currentTimeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
     const offset = timeFrame.offsetRange;
-    timeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
+    currentTimeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
   };
 
   const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
-    timeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
-    timeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
+    currentTimeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
+    currentTimeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
   };
 
   const calcTimeFrame = (timeframeType: TimeFrameTypes) => {
@@ -108,6 +109,12 @@ export const TimeFrameSelector = ({
     }
   };
 
+  const handleCancel = () => {
+    setIsSelected(previousSelected);
+    setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec);
+    setOpen(false);
+  };
+
   const handleBtnClicked = (
     event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
@@ -116,17 +123,27 @@ export const TimeFrameSelector = ({
       handleCustomClick(event);
     }
     calcTimeFrame(value);
-    onChange({ ...timeframe, isRelative: value.label !== "Custom" });
+
+    value.label !== "Custom"
+      ? setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
+      : setAbsoluteTimeframe(
+          currentTimeframe.startTimeUnixNanoSec,
+          currentTimeframe.endTimeUnixNanoSec
+        );
+
     setIsSelected(value);
+    setPreviousSelected(isSelected);
   };
 
-  const getTooltipTitle = (offset?: string): string => {
+  const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
     const startTime = offset
-      ? setDiffOnNanoSecTf(timeframe.endTimeUnixNanoSec, offset)
-      : timeframe.startTimeUnixNanoSec;
-    return `${formatNanoToTimeString(startTime)} -> ${formatNanoToTimeString(
-      timeframe.endTimeUnixNanoSec
-    )}`;
+      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset)
+      : currentTimeframe.startTimeUnixNanoSec;
+    const formattedEndTime =
+      offset && liveSpansOn
+        ? "Now"
+        : formatNanoToTimeString(currentTimeframe.endTimeUnixNanoSec);
+    return `${formatNanoToTimeString(startTime)} -> ${formattedEndTime}`;
   };
 
   if (!liveSpansOn) {
@@ -146,18 +163,14 @@ export const TimeFrameSelector = ({
           vertical: "top",
           horizontal: "left",
         }}
-        onClose={() => setOpen(false)}
+        onClose={handleCancel}
       >
         <DateTimeSelector
-          onChange={onChange}
-          value={{
-            startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-            endTimeUnixNanoSec: getCurrentTimestamp(),
-            isRelative: timeframe.isRelative,
-          }}
           onClose={() => setOpen(false)}
+          onCancel={handleCancel}
         />
       </Popover>
+
       <ToggleButtonGroup exclusive>
         <ToggleButton
           onClick={handleBtnClicked}
@@ -175,7 +188,7 @@ export const TimeFrameSelector = ({
         {options.map((tf) => (
           <Tooltip
             key={tf.label}
-            title={liveSpansOn ? "" : getTooltipTitle(tf.offsetRange)}
+            title={getTooltipTitle(tf.offsetRange, liveSpansOn)}
             placement="top-end"
             arrow
           >

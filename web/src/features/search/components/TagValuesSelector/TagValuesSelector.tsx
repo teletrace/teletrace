@@ -32,10 +32,10 @@ import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
@@ -46,10 +46,8 @@ export type TagValuesSelectorProps = {
   value: Array<string | number>;
   searchable?: boolean;
   filters: Array<SearchFilter>;
-  timeframe: TimeFrameState;
   onChange?: (value: Array<string | number>) => void;
   render?: (value: string | number) => React.ReactNode;
-  liveSpans: LiveSpansState;
 };
 
 export const TagValuesSelector = ({
@@ -57,11 +55,9 @@ export const TagValuesSelector = ({
   tag,
   value,
   filters,
-  timeframe,
   searchable,
   onChange,
   render,
-  liveSpans,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
@@ -76,14 +72,19 @@ export const TagValuesSelector = ({
         : filters,
     [filters, tagSearchFilter]
   );
+
+  const { liveSpansState, timeframeState } = useSpanSearchStore(
+    (state) => state
+  );
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     {
-      startTimeUnixNanoSec: timeframe.startTimeUnixNanoSec,
-      endTimeUnixNanoSec: timeframe.endTimeUnixNanoSec,
+      startTimeUnixNanoSec:
+        timeframeState.currentTimeframe.startTimeUnixNanoSec,
+      endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
     },
     tagFilters,
-    liveSpans.isOn ? liveSpans.intervalInMilli : 0
+    liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
   );
   const tagOptions = data
 

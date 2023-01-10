@@ -35,7 +35,7 @@ type SpanLink struct {
 
 type SpanStatus struct {
 	Message string `json:"message"`
-	Code    uint32 `json:"code"`
+	Code    string `json:"code"`
 }
 
 type Resource struct {
@@ -56,7 +56,7 @@ type Span struct {
 	TraceState             string       `json:"traceState"`
 	ParentSpanId           string       `json:"parentSpanId"`
 	Name                   string       `json:"name"`
-	Kind                   int32        `json:"kind"`
+	Kind                   string       `json:"kind"`
 	StartTimeUnixNano      uint64       `json:"startTimeUnixNano"`
 	EndTimeUnixNano        uint64       `json:"endTimeUnixNano"`
 	Attributes             Attributes   `json:"attributes"`

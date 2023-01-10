@@ -67,15 +67,16 @@ var sqliteFieldsMap = map[string]string{
 }
 
 var sqliteTableNameMap = map[string]string{
-	"span.attributes":       "span_attributes",
-	"span.events":           "events",
-	"span.event.attributes": "event_attributes",
-	"span.links":            "links",
-	"span.link.attributes":  "link_attributes",
-	"resource.attributes":   "resource_attributes",
-	"scope.attributes":      "scope_attributes",
-	"scope":                 "scopes",
-	"span":                  "spans",
+	"span.attributes":          "span_attributes",
+	"span.events":              "events",
+	"span.event.attributes":    "event_attributes",
+	"span.links":               "links",
+	"span.link.attributes":     "link_attributes",
+	"resource.attributes":      "resource_attributes",
+	"scope.attributes":         "scope_attributes",
+	"scope":                    "scopes",
+	"span":                     "spans",
+	"span.resource.attributes": "span_resource_attributes",
 }
 
 var sqliteTagsMap = map[string]string{
@@ -89,7 +90,7 @@ var existenceCheckFiltersMap = map[model.FilterOperator]model.FilterOperator{
 }
 
 // should be ordered, regular map is not option
-var filterTablesNames = []string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
+var filterTablesNames = []string{"span.attributes", "span.events", "span.event.attributes", "span.links", "span.link.attributes", "span.resource.attributes", "resource.attributes", "scope.attributes", "scope", "span"}
 
 func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 	var convertedFilters []model.SearchFilter
