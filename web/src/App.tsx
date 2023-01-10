@@ -18,6 +18,8 @@ import { Layout } from "@/components/Layout";
 import { AppProviders } from "@/providers/app";
 import { AppRoutes } from "@/routes";
 
+export const a = 1;
+
 export function App() {
   return (
     <AppProviders>
