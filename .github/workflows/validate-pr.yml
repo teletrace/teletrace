@@ -1,9 +1,11 @@
 name: Lint PR
 
 on:
+  merge_group:
   pull_request:
     branches:
       - main
+      - merge-queue-test
 
 jobs:
   pr-title:

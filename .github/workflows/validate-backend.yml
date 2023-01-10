@@ -1,9 +1,11 @@
 name: Backend CI
 
 on:
+  merge_group:
   pull_request:
     branches:
       - main
+      - merge-queue-test
 
 permissions:
   contents: read
