@@ -23,6 +23,7 @@ import (
 )
 
 const (
+	configTest     = "test"
 	configFilename = "config"
 	configFileExt  = "yaml"
 	configPath     = "."
