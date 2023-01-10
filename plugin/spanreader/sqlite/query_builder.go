@@ -275,12 +275,11 @@ func (qb *QueryBuilder) getOrderFromRequest(r spansquery.SearchRequest) (string,
 		if err != nil {
 			return "", fmt.Errorf("failed to extract next token: %v", err)
 		}
-		filter := extractOrderResponse.filter
-		err = qb.addFilter(filter)
+		err = qb.addFilter(extractOrderResponse.getFilter())
 		if err != nil {
 			return "", fmt.Errorf("failed to add filter from order: %v", err)
 		}
-		return extractOrderResponse.sortTag, nil
+		return extractOrderResponse.getSortTag(), nil
 	}
 	return "", nil
 }

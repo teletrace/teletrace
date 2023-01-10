@@ -18,6 +18,7 @@ package sqlitespanreader
 
 import (
 	"fmt"
+	"strings"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -37,13 +38,17 @@ var orderSqliteFieldsMap = map[string]string{
 func newSqliteOrder(order spansquery.Sort) (sqliteOrder, error) {
 	var so sqliteOrder
 	orderField := fmt.Sprintf("%v", order.Field)
-	if sqlField, ok := orderSqliteFieldsMap[orderField]; ok {
-		so.tableName = "spans"
-		so.tableKey = "span"
-		so.tag = removeTablePrefixFromStaticTag(sqlField)
-		so.orderBy = orderType(order)
-		return so, nil
-
+	for _, tableKey := range filterTablesNames {
+		if strings.HasPrefix(orderField, tableKey) {
+			if sqlField, ok := orderSqliteFieldsMap[orderField]; ok {
+				tableName := sqliteTableNameMap[tableKey]
+				so.tableName = tableName
+				so.tableKey = tableKey
+				so.tag = removeTablePrefixFromStaticTag(sqlField)
+				so.orderBy = orderType(order)
+				return so, nil
+			}
+		}
 	}
 	return so, fmt.Errorf("invalid order field: %s", order.Field)
 }

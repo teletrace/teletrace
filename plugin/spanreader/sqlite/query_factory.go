@@ -46,6 +46,14 @@ type extractOrderResponse struct {
 	sortTag string
 }
 
+func (er *extractOrderResponse) getFilter() model.SearchFilter {
+	return er.filter
+}
+
+func (er *extractOrderResponse) getSortTag() string {
+	return er.sortTag
+}
+
 func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) { // create a query string from the request
 	searchQueryResponse := newSearchQueryResponse()
 	filters := createTimeframeFilters(r.Timeframe)
