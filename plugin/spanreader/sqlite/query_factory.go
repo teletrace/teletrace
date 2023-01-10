@@ -46,6 +46,14 @@ type extractOrderResponse struct {
 	sortTag string
 }
 
+func (er *extractOrderResponse) getFilter() model.SearchFilter {
+	return er.filter
+}
+
+func (er *extractOrderResponse) getSortTag() string {
+	return er.sortTag
+}
+
 func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) { // create a query string from the request
 	searchQueryResponse := newSearchQueryResponse()
 	filters := createTimeframeFilters(r.Timeframe)
@@ -65,17 +73,6 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 		return nil, fmt.Errorf("failed to get order from request: %v", err)
 	}
 	searchQueryResponse.sort = sort
-	if r.Metadata != nil && r.Metadata.NextToken != "" {
-		extractOrderResponse, err := extractNextToken(r.Sort, r.Metadata.NextToken)
-		if err != nil {
-			return nil, fmt.Errorf("failed to extract next token: %v", err)
-		}
-		searchQueryResponse.sort = extractOrderResponse.sortTag
-		err = queryBuilder.addFilter(extractOrderResponse.filter)
-		if err != nil {
-			return nil, fmt.Errorf("failed to add filter from order: %v", err)
-		}
-	}
 	queryParams, err := queryBuilder.buildQueryParams()
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query params: %v", err)
