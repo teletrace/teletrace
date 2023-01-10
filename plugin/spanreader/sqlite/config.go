@@ -19,7 +19,8 @@ package sqlitespanreader
 import "oss-tracing/pkg/config"
 
 type SqliteConfig struct {
-	Path string
+	Path        string
+	AnotherPath string
 }
 
 func NewSqliteConfig(cfg config.Config) SqliteConfig {
