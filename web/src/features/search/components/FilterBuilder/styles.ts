@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { primaryActionColors } from "@/styles/colors";
+
 export const styles = {
   filterBuilder: {
     width: "546px",
@@ -24,6 +26,11 @@ export const styles = {
   },
   tagsDropdown: {
     minWidth: "498px",
+    ".valueLabelHighlight": {
+      backgroundColor: primaryActionColors.primaryClicked,
+      fontWeight: 900,
+      color: "white",
+    },
   },
   operatorSelector: {
     width: "166px",
