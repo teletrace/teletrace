@@ -61,18 +61,16 @@ export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
             helperText={error ? "Filter is required" : ""}
           />
         )}
-        renderOption={(props, option, state) => {
-          return (
-            <li {...props}>
-              <Highlighter
-                highlightClassName="valueLabelHighlight"
-                searchWords={state.inputValue.toLowerCase().split(" ")}
-                autoEscape={true}
-                textToHighlight={option.name.toString()}
-              />
-            </li>
-          );
-        }}
+        renderOption={(props, option, state) => (
+          <li {...props}>
+            <Highlighter
+              highlightClassName="valueLabelHighlight"
+              searchWords={state.inputValue.toLowerCase().split(" ")}
+              autoEscape={true}
+              textToHighlight={option.name.toString()}
+            />
+          </li>
+        )}
         onChange={handleChange}
         isOptionEqualToValue={(option, value) => option.name === value.name}
       ></Autocomplete>
