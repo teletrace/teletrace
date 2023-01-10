@@ -85,7 +85,7 @@ export const TagValuesSelector = ({
       tagSearchFilter.keyValueFilter.value
         ? [...filters, tagSearchFilter]
         : filters,
-    [filters, tagSearchFilter]
+    [filters, tagSearchFilter.keyValueFilter]
   );
 
   const { data, isError, isFetching } = useTagValuesWithAll(
