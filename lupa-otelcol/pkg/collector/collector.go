@@ -51,6 +51,9 @@ func NewCollector() (*Collector, error) {
 	}, nil
 }
 
+func someFunction() {
+}
+
 // Start runs the collector and blocks the goroutine indefinitely unless an error happens.
 func (c *Collector) Start() error {
 	cmd := service.NewCommand(c.settings)
