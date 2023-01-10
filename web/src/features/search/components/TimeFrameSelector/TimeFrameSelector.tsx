@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
+import {spanSearchStore} from "@/stores/spanSearchStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -41,13 +41,8 @@ const options: RelativeTimeFrame[] = [
 ];
 
 export const TimeFrameSelector = () => {
-  const [
-    liveSpansOn,
-    { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe },
-  ] = useSpanSearchStore((state) => [
-    state.liveSpansState.isOn,
-    state.timeframeState,
-  ]);
+  const liveSpansOn = spanSearchStore.use.liveSpansState().isOn;
+  const { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe } = spanSearchStore.use.timeframeState();
 
   const customOption: CustomTimeFrame = {
     label: "Custom",

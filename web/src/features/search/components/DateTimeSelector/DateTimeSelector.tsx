@@ -30,7 +30,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
+import {spanSearchStore, useSpanSearchStore} from "@/stores/spanSearchStore";
 import { msToNanoSec } from "@/utils/format";
 
 import { styles } from "./styles";
@@ -44,8 +44,7 @@ export const DateTimeSelector = ({
   onClose,
   onCancel,
 }: DateTimeSelectorProps) => {
-  const { currentTimeframe, setAbsoluteTimeframe, setRelativeTimeframe } =
-    useSpanSearchStore((state) => state.timeframeState);
+  const { currentTimeframe, setAbsoluteTimeframe, setRelativeTimeframe } = spanSearchStore.use.timeframeState();
 
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(currentTimeframe.startTimeUnixNanoSec / 1000000)

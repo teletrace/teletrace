@@ -16,14 +16,8 @@
 
 import { Paper, Stack } from "@mui/material";
 
-import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
-
-export type TagSidebarProps = {
-  filters: Array<SearchFilter>;
-  onChange: (entry: SearchFilter) => void;
-};
 
 type TagOptions = {
   title: string;
@@ -32,14 +26,7 @@ type TagOptions = {
   render?: (value: string | number) => React.ReactNode;
 };
 
-export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
-  const onFilterChange = (
-    key: string,
-    label: string,
-    values: Array<string | number>
-  ) => {
-    onChange({ keyValueFilter: { key: key, operator: "in", value: values } });
-  };
+export const TagSidebar = () => {
   const tags: Array<TagOptions> = [
     {
       title: "Status",
@@ -73,27 +60,11 @@ export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
       <Stack spacing="2px" sx={styles.sideTagBar}>
         {tags.map((t) => {
-          const filterIndex = filters.findIndex(
-            (f) =>
-              f.keyValueFilter.key === t.tag &&
-              f.keyValueFilter.operator === "in"
-          );
-          const value =
-            filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
           return (
             <TagValuesSelector
               key={t.tag}
               title={t.title}
               tag={t.tag}
-              value={Array.isArray(value) ? value : []}
-              filters={filters.filter(
-                (f) =>
-                  !(
-                    f.keyValueFilter.key === t.tag &&
-                    f.keyValueFilter.operator === "in"
-                  )
-              )} // remove the current tag
-              onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
               render={t.render}
             />

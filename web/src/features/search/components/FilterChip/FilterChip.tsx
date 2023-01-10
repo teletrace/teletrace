@@ -16,7 +16,9 @@
 
 import { Chip, Tooltip, Typography } from "@mui/material";
 
-import { FilterValueTypes, SearchFilter } from "../../types/common";
+import {useSpanSearchStore} from "@/stores/spanSearchStore";
+
+import {DisplaySearchFilter, FilterValueTypes} from "../../types/common";
 import { styles } from "./styles";
 
 const OPERATORS_FORMAT: Record<string, string> = {
@@ -35,11 +37,14 @@ const OPERATORS_FORMAT: Record<string, string> = {
 const MAX_FILTER_LENGTH = 100;
 
 export type FilterChipProps = {
-  filter: SearchFilter;
-  onFilterDeleted: (entry: SearchFilter) => void;
+  filter: DisplaySearchFilter;
 };
 
-export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
+export const FilterChip = ({ filter }: FilterChipProps) => {
+  const deleteFilter = useSpanSearchStore(
+      (state) => state.filtersState.deleteFilter
+  );
+
   const getTooltipForArray = (arrValue: (number | string)[]) => {
     return arrValue.map((value: number | string) => (
       <Typography key={value}> • {value}</Typography>
@@ -134,7 +139,7 @@ export const FilterChip = ({ filter, onFilterDeleted }: FilterChipProps) => {
           filter.keyValueFilter.operator,
           filter.keyValueFilter.value
         )}
-        onDelete={() => onFilterDeleted(filter)}
+        onDelete={() => deleteFilter(filter.id)}
       />
     </Tooltip>
   );

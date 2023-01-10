@@ -24,13 +24,15 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
+import {spanSearchStore, useSpanSearchStore} from "@/stores/spanSearchStore";
+
 import { AvailableTag } from "../../types/availableTags";
 import {
+  DisplaySearchFilter,
   FilterValueTypes,
   KeyValueFilter,
   Operator,
   OperatorCategory,
-  SearchFilter,
   ValueInputMode,
 } from "../../types/common";
 import { OperatorSelector } from "./OperatorSelector";
@@ -38,12 +40,11 @@ import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
 
+
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | null;
   open: boolean;
   onClose: () => void;
-  onApply: (filter: SearchFilter) => void;
-  filters: Array<SearchFilter>;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -83,11 +84,9 @@ const operatorCategoryFromValueType = (
 };
 
 export const FilterBuilderDialog = ({
-  filters,
   onClose,
   open,
   anchorEl,
-  onApply,
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const initialState: FilterBuilderDialogState = {
@@ -99,6 +98,7 @@ export const FilterBuilderDialog = ({
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
   const valueInputMode = valueSelectModeByOperators[dialogState.operator];
+  const addFilter = spanSearchStore.use.filtersState().addFilter;
 
   const onOperatorChange = (operator: Operator) => {
     setDialogState((prevState) => ({
@@ -216,7 +216,7 @@ export const FilterBuilderDialog = ({
       operator: dialogState.operator,
       value: convertValue(dialogState.tag?.type, dialogState.value),
     };
-    onApply({ keyValueFilter: newFilter });
+    addFilter(newFilter);
     handleClose();
   };
 
@@ -253,7 +253,6 @@ export const FilterBuilderDialog = ({
             {valueInputMode !== "none" ? (
               <Stack>
                 <ValueSelector
-                  filters={filters}
                   tag={dialogState.tag?.name || ""}
                   value={dialogState.value}
                   onChange={onValueChange}

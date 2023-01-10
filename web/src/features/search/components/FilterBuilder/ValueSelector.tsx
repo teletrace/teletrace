@@ -25,7 +25,6 @@ import FormControl from "@mui/material/FormControl";
 
 import {
   FilterValueTypes,
-  SearchFilter,
   ValueInputMode,
 } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
@@ -34,7 +33,6 @@ import { styles } from "./styles";
 
 export type ValueSelectorProps = {
   tag: string;
-  filters: Array<SearchFilter>;
   query?: TagValuesRequest;
   value: FilterValueTypes;
   valueInputMode: ValueInputMode;
@@ -44,7 +42,6 @@ export type ValueSelectorProps = {
 
 export const ValueSelector = ({
   tag,
-  filters,
   value,
   valueInputMode,
   onChange,
@@ -65,7 +62,6 @@ export const ValueSelector = ({
         {valueInputMode === "select" ? (
           <AutoCompleteValueSelector
             error={error}
-            filters={filters}
             value={Array.isArray(value) ? value : [value]}
             onChange={onChange}
             tag={tag}
