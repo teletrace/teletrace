@@ -66,7 +66,7 @@ export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
             <li {...props}>
               <Highlighter
                 highlightClassName="valueLabelHighlight"
-                searchWords={state.inputValue.toLowerCase().split(' ')}
+                searchWords={state.inputValue.toLowerCase().split(" ")}
                 autoEscape={true}
                 textToHighlight={option.name.toString()}
               />

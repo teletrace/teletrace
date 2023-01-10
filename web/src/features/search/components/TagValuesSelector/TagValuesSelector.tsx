@@ -92,7 +92,14 @@ export const TagValuesSelector = ({
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
-      label: <CheckboxListLabel key={tag.value} tag={tag} render={render} search={search} />,
+      label: (
+        <CheckboxListLabel
+          key={tag.value}
+          tag={tag}
+          render={render}
+          search={search}
+        />
+      ),
     }));
 
   return (
@@ -161,9 +168,11 @@ const CheckboxListLabel = ({
         <span>
           <Highlighter
             highlightClassName="valueLabelHighlight"
-            searchWords={search.toLowerCase().split(' ')}
+            searchWords={search.toLowerCase().split(" ")}
             autoEscape={true}
-            textToHighlight={render ? String(render(tag.value)) : tag.value?.toString()}
+            textToHighlight={
+              render ? String(render(tag.value)) : tag.value?.toString()
+            }
           />
         </span>
       </Typography>
