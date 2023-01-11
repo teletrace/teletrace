@@ -563,6 +563,8 @@ theme = createTheme(theme, {
             paddingLeft: "16px",
             paddingRight: "16px",
             borderBottomColor: theme.palette.grey[700],
+            textOverflow: "ellipsis",
+            display: "block",
           },
         },
       },
