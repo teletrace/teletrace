@@ -21,7 +21,7 @@ import {
   ToggleButtonGroup,
   Tooltip,
 } from "@mui/material";
-import {MouseEvent, useEffect, useRef, useState} from "react";
+import { MouseEvent, useRef, useState } from "react";
 
 import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import {
@@ -86,7 +86,9 @@ export const TimeFrameSelector = () => {
 
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    timeframeState.setRelativeTimeframe(timeframeState.currentTimeframe.startTimeUnixNanoSec);
+    timeframeState.setRelativeTimeframe(
+      timeframeState.currentTimeframe.startTimeUnixNanoSec
+    );
     setOpen(false);
   };
 
@@ -102,7 +104,7 @@ export const TimeFrameSelector = () => {
       if (isRelativeTimeFrame(value)) {
         const now = msToNanoSec(new Date().getTime());
         const offset = value.offsetRange;
-        timeframeState.setRelativeTimeframe(setDiffOnNanoSecTf(now, offset))
+        timeframeState.setRelativeTimeframe(setDiffOnNanoSecTf(now, offset));
       }
     } else {
       if (isCustomTimeFrame(value)) {

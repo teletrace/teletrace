@@ -134,12 +134,11 @@ const createFiltersSlice: StateCreator<
     filters: [],
     addFilter: (keyValueFilter: KeyValueFilter) =>
       set((state) => {
-            state.filtersState.filters.push({
-              id: getFilterId(keyValueFilter.key, keyValueFilter.operator),
-              keyValueFilter: keyValueFilter,
-            })
-          }
-      ),
+        state.filtersState.filters.push({
+          id: getFilterId(keyValueFilter.key, keyValueFilter.operator),
+          keyValueFilter: keyValueFilter,
+        });
+      }),
     updateOrCreateFilter: (filter: DisplaySearchFilter) =>
       set((state) => {
         const filterToUpdate = state.filtersState.filters.find(

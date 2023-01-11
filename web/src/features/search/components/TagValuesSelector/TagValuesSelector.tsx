@@ -48,11 +48,15 @@ export type TagValuesSelectorProps = {
   render?: (value: string | number) => React.ReactNode;
 };
 
-function extractFilterArrayValue(tag: string, filters: SearchFilter[]): Array<string | number> {
+function extractFilterArrayValue(
+  tag: string,
+  filters: SearchFilter[]
+): Array<string | number> {
   const filterIndex = filters.findIndex(
-      (f) => f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"
-  )
-  const filterValue = filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
+    (f) => f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"
+  );
+  const filterValue =
+    filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
   return Array.isArray(filterValue) ? filterValue : [];
 }
 
