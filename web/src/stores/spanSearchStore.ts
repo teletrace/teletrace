@@ -86,7 +86,7 @@ const createTimeframeSlice: StateCreator<
           currentTimeframe: {
             startTimeUnixNanoSec: newStartTimeUnixNanoSec,
             endTimeUnixNanoSec: state.liveSpansState.isOn
-              ? 0
+              ? 0 // When endTimeUnixNanoSec is 0, the backend handles the end of the timeframe (optimization for Live Spans feature)
               : getCurrentTimestamp(),
             isRelative: true,
           },
@@ -115,6 +115,11 @@ const createTimeframeSlice: StateCreator<
   },
 });
 
+const createNewFilter: (kvf: KeyValueFilter) => DisplaySearchFilter = (kvf: KeyValueFilter) => ({
+    id: getFilterId(kvf.key, kvf.operator),
+    keyValueFilter: kvf,
+});
+
 interface FiltersSlice {
   filtersState: {
     filters: Array<DisplaySearchFilter>;
@@ -134,11 +139,9 @@ const createFiltersSlice: StateCreator<
     filters: [],
     addFilter: (keyValueFilter: KeyValueFilter) =>
       set((state) => {
-        state.filtersState.filters.push({
-          id: getFilterId(keyValueFilter.key, keyValueFilter.operator),
-          keyValueFilter: keyValueFilter,
-        });
+        state.filtersState.filters.push(createNewFilter(keyValueFilter));
       }),
+    // If this function is called with a filter that doesn't exist in the state, it will create and add it to 'filters'
     updateOrCreateFilter: (filter: DisplaySearchFilter) =>
       set((state) => {
         const filterToUpdate = state.filtersState.filters.find(
@@ -148,7 +151,7 @@ const createFiltersSlice: StateCreator<
         if (filterToUpdate !== undefined) {
           filterToUpdate.keyValueFilter = filter.keyValueFilter;
         } else {
-          state.filtersState.filters.push(filter);
+          state.filtersState.filters.push(createNewFilter(filter.keyValueFilter));
         }
       }),
     deleteFilter: (id: string) =>
