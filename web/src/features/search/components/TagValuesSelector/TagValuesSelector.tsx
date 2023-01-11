@@ -48,7 +48,6 @@ export type TagValuesSelectorProps = {
   searchable?: boolean;
   filters: Array<SearchFilter>;
   onChange?: (value: Array<string | number>) => void;
-  render?: (value: string | number) => React.ReactNode;
 };
 
 export const TagValuesSelector = ({
@@ -58,7 +57,6 @@ export const TagValuesSelector = ({
   filters,
   searchable,
   onChange,
-  render,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
@@ -96,7 +94,6 @@ export const TagValuesSelector = ({
         <CheckboxListLabel
           key={tag.value}
           tag={tag}
-          render={render}
           search={search}
         />
       ),
@@ -150,11 +147,9 @@ export const TagValuesSelector = ({
 
 const CheckboxListLabel = ({
   tag,
-  render,
   search,
 }: {
   tag: TagValue;
-  render?: (value: string | number) => React.ReactNode;
   search: string;
 }) => (
   <Tooltip arrow title={tag.value} placement="right">
@@ -165,16 +160,12 @@ const CheckboxListLabel = ({
       spacing={1}
     >
       <Typography noWrap sx={styles.valueLabel}>
-        <span>
-          <Highlighter
-            highlightClassName="valueLabelHighlight"
-            searchWords={search.toLowerCase().split(" ")}
-            autoEscape={true}
-            textToHighlight={
-              render ? String(render(tag.value)) : tag.value?.toString()
-            }
-          />
-        </span>
+        <Highlighter
+          highlightClassName="valueLabelHighlight"
+          searchWords={search.toLowerCase().split(" ")}
+          autoEscape={true}
+          textToHighlight={tag.value?.toString()}
+        />
       </Typography>
       <Typography variant="button" color="GrayText">
         {formatNumber(tag.count)}
