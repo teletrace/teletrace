@@ -115,9 +115,11 @@ const createTimeframeSlice: StateCreator<
   },
 });
 
-const createNewFilter: (kvf: KeyValueFilter) => DisplaySearchFilter = (kvf) => ({
-    id: getFilterId(kvf.key, kvf.operator),
-    keyValueFilter: kvf,
+const createNewFilter: (kvf: KeyValueFilter) => DisplaySearchFilter = (
+  kvf
+) => ({
+  id: getFilterId(kvf.key, kvf.operator),
+  keyValueFilter: kvf,
 });
 
 interface FiltersSlice {
@@ -152,7 +154,9 @@ const createFiltersSlice: StateCreator<
         if (filterToUpdate !== undefined) {
           filterToUpdate.keyValueFilter = filter.keyValueFilter;
         } else {
-          state.filtersState.filters.push(createNewFilter(filter.keyValueFilter));
+          state.filtersState.filters.push(
+            createNewFilter(filter.keyValueFilter)
+          );
         }
       }),
     deleteFilter: (id: string) =>
