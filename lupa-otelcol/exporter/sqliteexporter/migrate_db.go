@@ -35,7 +35,7 @@ func migrateSchema(dbName string) error {
 	}
 
 	m, err := migrate.NewWithSourceInstance(
-		"iofs", driver, fmt.Sprintf("sqlite3://%s", dbName))
+		"iofs", driver, fmt.Sprintf("sqlite3://%s?_journal_mode=WAL", dbName))
 	if err != nil {
 		return fmt.Errorf("could not create migrate instance: %+v", err)
 	}
