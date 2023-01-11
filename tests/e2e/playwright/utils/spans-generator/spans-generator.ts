@@ -46,32 +46,32 @@ export type SpanIdToSpan = {
   span: Span;
 };
 
-export function createAndSendMultipleTraces(traceProps: TraceProps[]) {
-  if (traceProps.length === 0) {
-    return;
+export function createAndSendMultipleTraces(
+  traces: TraceProps[]
+): SpanIdToSpan[] | null {
+  if (traces.length === 0) {
+    return null;
   }
 
   let spanIdToSpan: SpanIdToSpan[] = [];
 
-  for (let i = 0; i < traceProps.length; i += 1) {
-    spanIdToSpan = createAndSendTrace(traceProps[i], spanIdToSpan);
+  for (const trace of traces) {
+    spanIdToSpan = createAndSendTrace(trace, spanIdToSpan);
   }
 
   return spanIdToSpan;
 }
 
-function addSpansAttributes(span: Span, att: Attributes[] | undefined) {
-  if (att) {
-    for (let i = 0; i < att.length; i += 1) {
-      span.setAttribute(att[i].key, att[i].value);
-    }
+function addSpansAttributes(span: Span, attributes: Attributes[]) {
+  for (let attribute of attributes) {
+    span.setAttribute(attribute.key, attribute.value);
   }
 }
 
 function createAndSendTrace(
   { serviceName, traceName, spans }: TraceProps,
   spanIdToSpan: SpanIdToSpan[]
-) {
+): SpanIdToSpan[] {
   const provider = new BasicTracerProvider({
     resource: new Resource({
       [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
@@ -85,28 +85,30 @@ function createAndSendTrace(
 
   const tracer = provider.getTracer(traceName);
 
-  for (let i = 0; i < spans.length; i += 1) {
+  for (const spanProps of spans) {
     const parentSpan = spanIdToSpan.find(
-      (span) => span.spanId === spans[i].parentSpanID
+      (span) => span.spanId === spanProps.parentSpanID
     );
 
-    let span: Span | null = null;
+    let span: Span;
 
     if (parentSpan) {
       const ctx = opentelemetry.trace.setSpan(
         opentelemetry.context.active(),
         parentSpan.span
       );
-      span = tracer.startSpan(spans[i].spanId, undefined, ctx);
+      span = tracer.startSpan(spanProps.spanId, undefined, ctx);
     } else {
-      span = tracer.startSpan(spans[i].spanId);
+      span = tracer.startSpan(spanProps.spanId);
     }
 
-    addSpansAttributes(span, spans[i].attributes);
+    if (spanProps.attributes) {
+      addSpansAttributes(span, spanProps.attributes);
+    }
 
     span.end();
 
-    spanIdToSpan.push({ spanId: spans[i].spanId, span: span });
+    spanIdToSpan.push({ spanId: spanProps.spanId, span: span });
   }
 
   exporter.shutdown();
