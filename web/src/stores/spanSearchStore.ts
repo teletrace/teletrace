@@ -115,7 +115,7 @@ const createTimeframeSlice: StateCreator<
   },
 });
 
-const createNewFilter: (kvf: KeyValueFilter) => DisplaySearchFilter = (kvf: KeyValueFilter) => ({
+const createNewFilter: (kvf: KeyValueFilter) => DisplaySearchFilter = (kvf) => ({
     id: getFilterId(kvf.key, kvf.operator),
     keyValueFilter: kvf,
 });
