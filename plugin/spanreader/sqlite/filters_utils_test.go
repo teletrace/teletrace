@@ -44,6 +44,7 @@ func TestRemoveTablePrefixFromDynamicTagWithPrefixNotFromTable(t *testing.T) {
 	assert.Equal(t, "", removeTablePrefixFromDynamicTag(notFromFilterTableNames))
 	assert.Nil(t, err)
 }
+
 func TestRemoveTablePrefixFromDynamicTagFromTagEmptyInput(t *testing.T) {
 	var err error
 	assert.Equal(t, "", removeTablePrefixFromDynamicTag(""))
