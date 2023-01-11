@@ -84,6 +84,7 @@ export const CheckboxList = ({
                 disableRipple
                 edge="start"
                 checked={value.indexOf(opt.value) !== -1}
+                inputProps={{ "aria-label": opt?.value.toString() }}
               />
               <ListItemText primary={opt.label} />
             </ListItemButton>

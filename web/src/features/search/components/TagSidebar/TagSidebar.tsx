@@ -23,7 +23,6 @@ type TagOptions = {
   title: string;
   tag: string;
   isSearchable: boolean;
-  render?: (value: string | number) => React.ReactNode;
 };
 
 export const TagSidebar = () => {
@@ -32,7 +31,6 @@ export const TagSidebar = () => {
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
-      render: (value) => value,
     },
     {
       title: "Service Name",
@@ -66,7 +64,6 @@ export const TagSidebar = () => {
               title={t.title}
               tag={t.tag}
               searchable={t.isSearchable}
-              render={t.render}
             />
           );
         })}
