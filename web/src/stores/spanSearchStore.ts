@@ -142,6 +142,7 @@ const createFiltersSlice: StateCreator<
         state.filtersState.filters.push(createNewFilter(keyValueFilter));
       }),
     // If this function is called with a filter that doesn't exist in the state, it will create and add it to 'filters'
+    // If the filter exists, it will simply update it with the desired values
     updateOrCreateFilter: (filter: DisplaySearchFilter) =>
       set((state) => {
         const filterToUpdate = state.filtersState.filters.find(
