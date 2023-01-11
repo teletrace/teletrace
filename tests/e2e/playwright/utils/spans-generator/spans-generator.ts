@@ -48,11 +48,7 @@ export type SpanIdToSpan = {
 
 export function createAndSendMultipleTraces(
   traces: TraceProps[]
-): SpanIdToSpan[] | null {
-  if (traces.length === 0) {
-    return null;
-  }
-
+): SpanIdToSpan[] {
   let spanIdToSpan: SpanIdToSpan[] = [];
 
   for (const trace of traces) {
