@@ -65,7 +65,6 @@ export const TagValuesSelector = ({
   title,
   tag,
   searchable,
-  render,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
