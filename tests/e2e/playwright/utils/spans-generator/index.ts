@@ -15,3 +15,4 @@
  */
 
 export * from "./spans-generator";
+export { SendDefaultTrace } from "./spans-generator-example";

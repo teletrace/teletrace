@@ -24,6 +24,7 @@ This example creates 4 services:
 
 import {
   createAndSendMultipleTraces,
+  SpanIdToSpan,
   SpanProps,
   TraceProps,
 } from "./spans-generator";
@@ -55,34 +56,39 @@ const span5: SpanProps = {
 
 const Service1: TraceProps = {
   serviceName: "test-service-1",
-  traceName: "test-service-1",
+  traceName: "test-trace-1",
   spans: [span1],
 };
 
 const Service2: TraceProps = {
   serviceName: "test-service-2",
-  traceName: "test-service-2",
+  traceName: "test-trace-2",
   spans: [span2],
 };
 
 const Service3: TraceProps = {
   serviceName: "test-service-3",
-  traceName: "test-service-3",
+  traceName: "test-trace-3",
   spans: [span3],
 };
 
 const Service4: TraceProps = {
   serviceName: "test-service-4",
-  traceName: "test-service-4",
+  traceName: "test-trace-4",
   spans: [span4, span5],
 };
 
-let traces: TraceProps[] = [];
+export function SendDefaultTrace(): SpanIdToSpan[] {
+  let traces: TraceProps[] = [];
 
-traces.push(Service1);
-traces.push(Service2);
-traces.push(Service3);
-traces.push(Service4);
+  traces.push(Service1);
+  traces.push(Service2);
+  traces.push(Service3);
+  traces.push(Service4);
 
-const result = createAndSendMultipleTraces(traces);
-console.log(result);
+  const result = createAndSendMultipleTraces(traces);
+  console.log(result);
+  return result;
+}
+
+SendDefaultTrace();
