@@ -29,7 +29,6 @@ type TagOptions = {
   title: string;
   tag: string;
   isSearchable: boolean;
-  render?: (value: string | number) => React.ReactNode;
 };
 
 export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
@@ -45,7 +44,6 @@ export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
-      render: (value) => value,
     },
     {
       title: "Service Name",
@@ -95,7 +93,6 @@ export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
               )} // remove the current tag
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
-              render={t.render}
             />
           );
         })}

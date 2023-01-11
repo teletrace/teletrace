@@ -17,6 +17,8 @@
 import { SxProps } from "@mui/material";
 import { Theme } from "@mui/system";
 
+import { primaryActionColors } from "@/styles/colors";
+
 export const styles: Record<string, SxProps<Theme>> = {
   accordionSummary: (theme) => ({
     flex: 1,
@@ -46,6 +48,12 @@ export const styles: Record<string, SxProps<Theme>> = {
   valueLabel: {
     direction: "rtl",
     textOverflow: "ellipsis",
+
+    ".valueLabelHighlight": {
+      backgroundColor: primaryActionColors.primaryClicked,
+      fontWeight: 900,
+      color: "white",
+    },
 
     "& span": {
       direction: "ltr",

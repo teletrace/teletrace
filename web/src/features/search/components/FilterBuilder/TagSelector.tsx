@@ -16,6 +16,7 @@
 
 import { Autocomplete, FormLabel, TextField } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
+import Highlighter from "react-highlight-words";
 
 import { useAvailableTags } from "../../api/availableTags";
 import { AvailableTag } from "../../types/availableTags";
@@ -59,6 +60,16 @@ export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
             error={error}
             helperText={error ? "Filter is required" : ""}
           />
+        )}
+        renderOption={(props, option, state) => (
+          <li {...props}>
+            <Highlighter
+              highlightClassName="valueLabelHighlight"
+              searchWords={state.inputValue.toLowerCase().split(" ")}
+              autoEscape={true}
+              textToHighlight={option.name.toString()}
+            />
+          </li>
         )}
         onChange={handleChange}
         isOptionEqualToValue={(option, value) => option.name === value.name}
