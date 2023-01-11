@@ -23,10 +23,7 @@ import {
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import {
-  FilterValueTypes,
-  ValueInputMode,
-} from "../../types/common";
+import { FilterValueTypes, ValueInputMode } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
 import { AutoCompleteValueSelector } from "./AutoCompleteValueSelector";
 import { styles } from "./styles";

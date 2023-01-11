@@ -18,7 +18,7 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 
 import { Head } from "@/components/Head";
-import {spanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
@@ -27,16 +27,16 @@ import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 
 export const SpanSearch = () => {
-  const timeframeState = spanSearchStore.use.timeframeState();
-  const isLiveSpansOn = spanSearchStore.use.liveSpansState().isOn;
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
 
   useEffect(() => {
-    if (isLiveSpansOn) {
+    if (liveSpansState.isOn) {
       timeframeState.setRelativeTimeframe(
         timeframeState.currentTimeframe.startTimeUnixNanoSec
       );
     }
-  }, [isLiveSpansOn]);
+  }, [liveSpansState.isOn]);
 
   return (
     <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>

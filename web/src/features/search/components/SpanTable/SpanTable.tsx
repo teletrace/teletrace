@@ -45,9 +45,9 @@ export function SpanTable() {
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
-  const { liveSpansState, timeframeState, filtersState: { filters } } = useSpanSearchStore(
-    (state) => state
-  );
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+  const filtersState = useSpanSearchStore((state) => state.filtersState);
 
   const searchRequest = useMemo(() => {
     const sort = sorting?.map((columnSort) => ({
@@ -55,7 +55,7 @@ export function SpanTable() {
       ascending: !columnSort.desc,
     }));
     return {
-      filters: filters,
+      filters: filtersState.filters,
       timeframe: {
         startTimeUnixNanoSec:
           timeframeState.currentTimeframe.startTimeUnixNanoSec,
@@ -64,11 +64,11 @@ export function SpanTable() {
       sort: sort,
       metadata: undefined,
     };
-  }, [filters, timeframeState, sorting]);
+  }, [filtersState.filters, timeframeState, sorting]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
-  }, [filters, timeframeState, sorting]);
+  }, [filtersState.filters, timeframeState, sorting]);
 
   const {
     data,

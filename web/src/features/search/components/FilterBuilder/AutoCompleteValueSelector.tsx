@@ -24,7 +24,7 @@ import {
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import {spanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
@@ -37,9 +37,9 @@ const useGetTagOptions = (
   selectedOptions: (string | number)[],
   search: string
 ) => {
-  const liveSpansState = spanSearchStore.use.liveSpansState();
-  const timeframeState = spanSearchStore.use.timeframeState();
-  const filters = spanSearchStore.use.filtersState().filters;
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+  const filters = useSpanSearchStore((state) => state.filtersState.filters);
 
   const searchQueryFilters: Array<SearchFilter> = search
     ? [
@@ -47,8 +47,6 @@ const useGetTagOptions = (
         { keyValueFilter: { key: tag, operator: "contains", value: search } },
       ]
     : filters;
-
-
 
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(

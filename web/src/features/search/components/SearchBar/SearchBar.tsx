@@ -19,7 +19,7 @@ import { Button, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
-import {useSpanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { theme } from "@/styles";
 
 import { FilterBuilderDialog } from "../FilterBuilder";
@@ -35,8 +35,7 @@ export function SearchBar() {
     setAnchorEl(event.currentTarget);
   };
 
-  const [filters, clearFilters] =
-      useSpanSearchStore((state) => [state.filtersState.filters, state.filtersState.clearFilters]);
+  const filtersState = useSpanSearchStore((state) => state.filtersState);
 
   const handleClose = () => {
     setOpen(false);
@@ -59,17 +58,17 @@ export function SearchBar() {
             onClose={handleClose}
             anchorEl={anchorEl}
           />
-          {filters.map((filter, index) => (
-              <FilterChip key={index} filter={filter} />
+          {filtersState.filters.map((filter, index) => (
+            <FilterChip key={index} filter={filter} />
           ))}
         </Stack>
-        {filters.length > 0 && (
+        {filtersState.filters.length > 0 && (
           <Stack direction="row" sx={styles.clear}>
             <Divider
               orientation="vertical"
               sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
             />
-            <IconButton onClick={clearFilters} size="small">
+            <IconButton onClick={filtersState.clearFilters} size="small">
               <Close fontSize="inherit" />
             </IconButton>
           </Stack>

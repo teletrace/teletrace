@@ -55,4 +55,4 @@ export type SearchFilter = {
   keyValueFilter: KeyValueFilter;
 };
 
-export type DisplaySearchFilter = SearchFilter & { id: string; };
+export type DisplaySearchFilter = SearchFilter & { id: string };

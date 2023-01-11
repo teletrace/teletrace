@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import {spanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -41,12 +41,12 @@ const options: RelativeTimeFrame[] = [
 ];
 
 export const TimeFrameSelector = () => {
-  const liveSpansOn = spanSearchStore.use.liveSpansState().isOn;
-  const { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe } = spanSearchStore.use.timeframeState();
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
 
   const customOption: CustomTimeFrame = {
     label: "Custom",
-    startTime: currentTimeframe.startTimeUnixNanoSec,
+    startTime: timeframeState.currentTimeframe.startTimeUnixNanoSec,
     endTime: getCurrentTimestamp(),
   };
 
@@ -86,14 +86,21 @@ export const TimeFrameSelector = () => {
 
   const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
     const now = msToNanoSec(new Date().getTime());
-    currentTimeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
+    timeframeState.currentTimeframe.endTimeUnixNanoSec = msToNanoSec(
+      new Date().getTime()
+    );
     const offset = timeFrame.offsetRange;
-    currentTimeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
+    timeframeState.currentTimeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(
+      now,
+      offset
+    );
   };
 
   const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
-    currentTimeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
-    currentTimeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
+    timeframeState.currentTimeframe.startTimeUnixNanoSec =
+      customTimeFrame.startTime;
+    timeframeState.currentTimeframe.endTimeUnixNanoSec =
+      customTimeFrame.endTime;
   };
 
   const calcTimeFrame = (timeframeType: TimeFrameTypes) => {
@@ -106,7 +113,9 @@ export const TimeFrameSelector = () => {
 
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec);
+    timeframeState.setRelativeTimeframe(
+      timeframeState.currentTimeframe.startTimeUnixNanoSec
+    );
     setOpen(false);
   };
 
@@ -120,10 +129,12 @@ export const TimeFrameSelector = () => {
     calcTimeFrame(value);
 
     value.label !== "Custom"
-      ? setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
-      : setAbsoluteTimeframe(
-          currentTimeframe.startTimeUnixNanoSec,
-          currentTimeframe.endTimeUnixNanoSec
+      ? timeframeState.setRelativeTimeframe(
+          timeframeState.currentTimeframe.startTimeUnixNanoSec
+        )
+      : timeframeState.setAbsoluteTimeframe(
+          timeframeState.currentTimeframe.startTimeUnixNanoSec,
+          timeframeState.currentTimeframe.endTimeUnixNanoSec
         );
 
     setIsSelected(value);
@@ -132,16 +143,21 @@ export const TimeFrameSelector = () => {
 
   const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
     const startTime = offset
-      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset)
-      : currentTimeframe.startTimeUnixNanoSec;
+      ? setDiffOnNanoSecTf(
+          timeframeState.currentTimeframe.endTimeUnixNanoSec,
+          offset
+        )
+      : timeframeState.currentTimeframe.startTimeUnixNanoSec;
     const formattedEndTime =
       offset && liveSpansOn
         ? "Now"
-        : formatNanoToTimeString(currentTimeframe.endTimeUnixNanoSec);
+        : formatNanoToTimeString(
+            timeframeState.currentTimeframe.endTimeUnixNanoSec
+          );
     return `${formatNanoToTimeString(startTime)} -> ${formattedEndTime}`;
   };
 
-  if (!liveSpansOn) {
+  if (!liveSpansState.isOn) {
     calcTimeFrame(isSelected);
   }
 
@@ -183,7 +199,7 @@ export const TimeFrameSelector = () => {
         {options.map((tf) => (
           <Tooltip
             key={tf.label}
-            title={getTooltipTitle(tf.offsetRange, liveSpansOn)}
+            title={getTooltipTitle(tf.offsetRange, liveSpansState.isOn)}
             placement="top-end"
             arrow
           >

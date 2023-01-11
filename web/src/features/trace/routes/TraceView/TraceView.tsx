@@ -43,9 +43,8 @@ export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
 
-  const [initiallyFocusedSpanId, setInitiallyFocusedSpanId] = useState<
-    string | null
-  >(null);
+  const [initiallyFocusedSpanId, setInitiallyFocusedSpanId] =
+    useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [selectedSpanId, setSelectedSpanId] = useState<string | null>(null);
 

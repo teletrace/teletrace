@@ -24,11 +24,10 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
-import {spanSearchStore, useSpanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { AvailableTag } from "../../types/availableTags";
 import {
-  DisplaySearchFilter,
   FilterValueTypes,
   KeyValueFilter,
   Operator,
@@ -39,7 +38,6 @@ import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
-
 
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | null;
@@ -98,7 +96,7 @@ export const FilterBuilderDialog = ({
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
   const valueInputMode = valueSelectModeByOperators[dialogState.operator];
-  const addFilter = spanSearchStore.use.filtersState().addFilter;
+  const addFilter = useSpanSearchStore((state) => state.filtersState.addFilter);
 
   const onOperatorChange = (operator: Operator) => {
     setDialogState((prevState) => ({

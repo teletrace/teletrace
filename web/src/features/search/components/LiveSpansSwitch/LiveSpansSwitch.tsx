@@ -24,9 +24,9 @@ export function LiveSpanSwitch() {
   const tooltipTitleEnabled =
     "Live mode streams new ingested spans to the span table";
 
-  const { liveSpansState, timeframeState } = useSpanSearchStore(
-    (state) => state
-  );
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+
   const disabled = !timeframeState.currentTimeframe.isRelative;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

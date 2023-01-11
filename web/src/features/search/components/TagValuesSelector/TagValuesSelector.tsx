@@ -32,15 +32,14 @@ import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
-import {spanSearchStore} from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import {DisplaySearchFilter, SearchFilter} from "../../types/common";
+import { DisplaySearchFilter, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
-import {getPredefinedFilterId} from "../../utils/filters_utils";
+import { getPredefinedFilterId } from "../../utils/filters_utils";
 import { styles } from "./styles";
-
 
 export type TagValuesSelectorProps = {
   tag: string;
@@ -49,10 +48,12 @@ export type TagValuesSelectorProps = {
   render?: (value: string | number) => React.ReactNode;
 };
 
-function getValue(filterIndex: number, filters: SearchFilter[]) {
-  const intermediateValue =
-      filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
-  return Array.isArray(intermediateValue) ? intermediateValue : [];
+function extractFilterArrayValue(tag: string, filters: SearchFilter[]): Array<string | number> {
+  const filterIndex = filters.findIndex(
+      (f) => f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"
+  )
+  const filterValue = filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
+  return Array.isArray(filterValue) ? filterValue : [];
 }
 
 export const TagValuesSelector = ({
@@ -63,18 +64,14 @@ export const TagValuesSelector = ({
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
-  const liveSpansState = spanSearchStore.use.liveSpansState();
-  const timeframeState = spanSearchStore.use.timeframeState();
-  const filtersState = spanSearchStore.use.filtersState();
 
-  const value = getValue(
-      filtersState.filters.findIndex(
-          (f) => f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"
-      ),
-      filtersState.filters
-  );
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+  const filtersState = useSpanSearchStore((state) => state.filtersState);
+
+  const value = extractFilterArrayValue(tag, filtersState.filters);
   const filters = filtersState.filters.filter(
-      (f) => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in")
+    (f) => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in")
   );
 
   const tagSearchFilter: SearchFilter = {
@@ -121,7 +118,11 @@ export const TagValuesSelector = ({
           </AccordionSummary>
           <AccordionActions>
             {value.length > 0 && (
-              <Button onClick={() => filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))}>
+              <Button
+                onClick={() =>
+                  filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))
+                }
+              >
                 Clear
               </Button>
             )}
@@ -148,14 +149,14 @@ export const TagValuesSelector = ({
                   };
 
                   const isEmptyCollectionFilter =
-                      ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
-                      Array.isArray(filter.keyValueFilter.value) &&
-                      filter.keyValueFilter.value.length == 0;
+                    ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
+                    Array.isArray(filter.keyValueFilter.value) &&
+                    filter.keyValueFilter.value.length == 0;
 
                   if (isEmptyCollectionFilter) {
                     filtersState.deleteFilter(filter.id);
                   } else {
-                    filtersState.saveFilter(filter);
+                    filtersState.updateOrCreateFilter(filter);
                   }
                 }}
                 sx={styles.checkboxList}
