@@ -28,6 +28,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Fragment, useMemo, useState } from "react";
+import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
@@ -47,7 +48,6 @@ export type TagValuesSelectorProps = {
   searchable?: boolean;
   filters: Array<SearchFilter>;
   onChange?: (value: Array<string | number>) => void;
-  render?: (value: string | number) => React.ReactNode;
 };
 
 export const TagValuesSelector = ({
@@ -57,7 +57,6 @@ export const TagValuesSelector = ({
   filters,
   searchable,
   onChange,
-  render,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
@@ -91,7 +90,7 @@ export const TagValuesSelector = ({
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
-      label: <CheckboxListLabel key={tag.value} tag={tag} render={render} />,
+      label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
     }));
 
   return (
@@ -142,10 +141,10 @@ export const TagValuesSelector = ({
 
 const CheckboxListLabel = ({
   tag,
-  render,
+  search,
 }: {
   tag: TagValue;
-  render?: (value: string | number) => React.ReactNode;
+  search: string;
 }) => (
   <Tooltip arrow title={tag.value} placement="right">
     <Stack
@@ -155,7 +154,12 @@ const CheckboxListLabel = ({
       spacing={1}
     >
       <Typography noWrap sx={styles.valueLabel}>
-        <span>{render ? render(tag.value) : tag.value}</span>
+        <Highlighter
+          highlightClassName="valueLabelHighlight"
+          searchWords={search.toLowerCase().split(" ")}
+          autoEscape={true}
+          textToHighlight={tag.value?.toString()}
+        />
       </Typography>
       <Typography variant="button" color="GrayText">
         {formatNumber(tag.count)}
