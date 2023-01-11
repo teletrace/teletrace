@@ -90,13 +90,7 @@ export const TagValuesSelector = ({
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
-      label: (
-        <CheckboxListLabel
-          key={tag.value}
-          tag={tag}
-          search={search}
-        />
-      ),
+      label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
     }));
 
   return (
