@@ -31,7 +31,7 @@ func TestRemoveTablePrefixFromDynamicTag(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestRemoveTablePrefixFromDynamicTagFromTagWithSpecialCharacters(t *testing.T) {
+func TestRemoveTablePrefixFromDynamicTagWithDelimiterInput(t *testing.T) {
 	var err error
 	anotherTag := "span.attributes.leftover.extra"
 	assert.Equal(t, "leftover.extra", removeTablePrefixFromDynamicTag(anotherTag))
@@ -45,7 +45,7 @@ func TestRemoveTablePrefixFromDynamicTagWithPrefixNotFromTable(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestRemoveTablePrefixFromDynamicTagFromTagEmptyInput(t *testing.T) {
+func TestRemoveTablePrefixFromDynamicTagEmptyInput(t *testing.T) {
 	var err error
 	assert.Equal(t, "", removeTablePrefixFromDynamicTag(""))
 	assert.Nil(t, err)
