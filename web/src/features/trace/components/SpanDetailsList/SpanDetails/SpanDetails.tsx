@@ -24,7 +24,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, StatusCode } from "@/types/span";
@@ -55,17 +55,14 @@ function getBasicAttributes(span: InternalSpan): Attributes {
 }
 
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
+  const accordionRef = useRef<HTMLDivElement>(null);
   const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
   const X_DIVIDER = "|";
-  const spanID = span.span.spanId;
   const hasError: boolean = span.span.status.code === StatusCode.Error;
+
   useEffect(() => {
-    const element = expanded ? document.getElementById(spanID) : undefined;
-    if (element) {
-      element.scrollIntoView({
-        behavior: "auto",
-        block: "start",
-      });
+    if (expanded && accordionRef.current) {
+      accordionRef.current.scrollIntoView();
     }
   }, []);
 
@@ -83,7 +80,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
         </Box>
       )}
       <Accordion
-        id={spanID}
+        ref={accordionRef}
         expanded={expanded}
         onChange={(_, expanded) => onChange(expanded)}
         disableGutters={true}
