@@ -51,7 +51,7 @@ func TestConvertSliceOfValuesToString(t *testing.T) {
 
 func TestConvertSliceOfValuesToStringNotOnlyStrings(t *testing.T) {
 	sliceToTest := []interface{}{"twenty", 2, 4.3, "one", 1}
-	expectedString := "'twenty','one'"
+	expectedString := "'twenty',2,4.3,'one',1"
 	assert.Equal(t, expectedString, convertSliceOfValuesToString(sliceToTest))
 }
 
