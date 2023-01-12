@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import { Box, IconButton, Typography } from "@mui/material";
-
-import { styles } from "./styles";
-export const LupaLogo = () => {
-  return (
-    <Box sx={styles.logoContainer}>
-      <IconButton href="/" sx={styles.logoIconButton}>
-        <Typography variant="h6" color="inherit" noWrap>
-          Lupa
-        </Typography>
-      </IconButton>
-    </Box>
-  );
+export const styles = {
+  logoContainer: {
+    flex: 1,
+  },
+  logoIconButton: {
+    borderRadius: 1,
+    marginLeft: -1,
+  },
 };
