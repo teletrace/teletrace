@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { AppBar, Box, Link, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Toolbar } from "@mui/material";
+
+import { LupaLogo } from "@/components/Elements/LupaLogo";
 
 import { Links } from "./Links";
 
@@ -34,10 +36,7 @@ export const Layout = ({ children }: LayoutProps) => {
     >
       <AppBar position="sticky">
         <Toolbar>
-          <Typography variant="h6" color="inherit" sx={{ flex: 1 }} noWrap>
-            <Link href="/">Lupa</Link>
-          </Typography>
-
+          <LupaLogo />
           <Links />
         </Toolbar>
       </AppBar>
