@@ -7,7 +7,7 @@
 </div>
 
 <h1 align="center">The Open-Source Tracing Platform.</h1>
-
+<span></span>
 <h3 align="center">
   <a href="https://solid-dollop-44b513ff.pages.github.io/"><b>📝 Explore the docs</b></a> &bull;
   <a href="https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ"><b>💬 Join Our Slack</b></a> &bull;
