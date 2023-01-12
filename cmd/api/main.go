@@ -46,12 +46,12 @@ func main() {
 	if err != nil {
 		logger.Fatal("Failed to create Span Reader for Elasticsearch", zap.Error(err))
 	}
-	systemId, err := usageReport.GetSystemId(sr, context.Background())
-	if err != nil {
-		logger.Fatal("Failed to get SystemId", zap.Error(err))
-	}
-	logger.Info("System ID retrieved", zap.String("systemId", systemId))
 	if cfg.AllowUsageReporting {
+		systemId, err := usageReport.GetSystemId(sr, context.Background())
+		if err != nil {
+			logger.Fatal("Failed to get SystemId", zap.Error(err))
+		}
+		logger.Info("System ID retrieved", zap.String("systemId", systemId))
 		usageReporter, err := usageReport.NewUsageReporter(context.Background(), logger, systemId, cfg.UsageReportURL)
 		if err != nil {
 			logger.Fatal("Failed to create usage reporter", zap.Error(err))

@@ -69,8 +69,8 @@ const (
 	allowUsageReportingEnvName = "ALLOW_USAGE_REPORTING"
 	allowUsageReportingDefault = true
 
-	UsageReportURLEnvName = "USAGE_REPORT_URL"
-	UsageReportURLDefault = "https://x7e6byq3xd.execute-api.us-east-1.amazonaws.com/prod/"
+	usageReportURLEnvName = "USAGE_REPORT_URL"
+	usageReportURLDefault = "https://x7e6byq3xd.execute-api.us-east-1.amazonaws.com/prod/"
 )
 
 // Config defines global configurations used throughout the application.
@@ -141,5 +141,5 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esIndexerWorkersCountEnvName, esIndexerWorkersCountDefault)
 	v.SetDefault(sqlitePathEnvName, sqlitePathEnvNameDefault)
 	v.SetDefault(allowUsageReportingEnvName, allowUsageReportingDefault)
-	v.SetDefault(UsageReportURLEnvName, UsageReportURLDefault)
+	v.SetDefault(usageReportURLEnvName, usageReportURLDefault)
 }
