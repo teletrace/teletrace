@@ -1,4 +1,5 @@
 PRAGMA foreign_keys = ON;
+PRAGMA wal_autocheckpoint = 1000;
 
 CREATE TABLE IF NOT EXISTS scopes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

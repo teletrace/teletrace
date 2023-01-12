@@ -33,6 +33,8 @@ func (exporter *sqliteTracesExporter) writeTraces(traces ptrace.Traces) error {
 		return fmt.Errorf("failed to begin transaction: %+v\n", err)
 	}
 
+	defer tx.Rollback()
+
 	resourceSpansSlice := traces.ResourceSpans()
 	for i := 0; i < resourceSpansSlice.Len(); i++ {
 		resourceSpans := resourceSpansSlice.At(i)
