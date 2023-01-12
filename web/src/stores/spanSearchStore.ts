@@ -111,7 +111,7 @@ const createTimeframeSlice: StateCreator<
   },
 });
 
-const isFiltersStructuresEqual = (
+const isFiltersStructureEqual = (
   k1: string,
   k2: string,
   o1: Operator,
@@ -139,7 +139,7 @@ const createFiltersSlice: StateCreator<
     createOrUpdateFilter: (filter: SearchFilter) =>
       set((state) => {
         const filterToUpdate = state.filtersState.filters.find((f) =>
-          isFiltersStructuresEqual(
+          isFiltersStructureEqual(
             f.keyValueFilter.key,
             filter.keyValueFilter.key,
             f.keyValueFilter.operator,
@@ -159,7 +159,7 @@ const createFiltersSlice: StateCreator<
           ...state.filtersState,
           filters: state.filtersState.filters.filter(
             (f) =>
-              !isFiltersStructuresEqual(
+              !isFiltersStructureEqual(
                 f.keyValueFilter.key,
                 key,
                 f.keyValueFilter.operator,
