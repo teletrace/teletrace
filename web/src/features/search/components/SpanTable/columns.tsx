@@ -53,7 +53,7 @@ export const columns: ColumnDef<TableSpan>[] = [
   {
     id: "span.name",
     accessorKey: "name",
-    header: "Span name",
+    header: "Span Name",
     enableSorting: false,
   },
   {
