@@ -15,9 +15,11 @@
  */
 
 import { Chip, Tooltip, Typography } from "@mui/material";
+import { useState } from "react";
 
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
+import { FilterBuilderDialog } from "../FilterBuilder";
 import { styles } from "./styles";
 
 const OPERATORS_FORMAT: Record<string, string> = {
@@ -43,6 +45,18 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
   const deleteFilter = useSpanSearchStore(
     (state) => state.filtersState.deleteFilter
   );
+  const [open, setOpen] = useState(false);
+  // TODO: ref
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+
+  const handleOpen = (event: React.MouseEvent<HTMLDivElement>) => {
+    setOpen(true);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const getTooltipForArray = (arrValue: (number | string)[]) => {
     return arrValue.map((value: number | string) => (
@@ -131,20 +145,27 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
       arrow
       PopperProps={{ sx: styles.tooltipPopper }}
     >
-      <Chip
-        size="small"
-        label={buildFilterLabel(
-          filter.keyValueFilter.key,
-          filter.keyValueFilter.operator,
-          filter.keyValueFilter.value
-        )}
+      <>
+        <Chip
+          size="small"
+          label={buildFilterLabel(
+            filter.keyValueFilter.key,
+            filter.keyValueFilter.operator,
+            filter.keyValueFilter.value
+          )}
         onDelete={() =>
           deleteFilter(
             filter.keyValueFilter.key,
             filter.keyValueFilter.operator
-          )
-        }
-      />
+          )}
+          onClick={handleOpen}
+                />
+        <FilterBuilderDialog
+          open={open}
+          onClose={handleClose}
+          anchorEl={anchorEl}
+        />
+      </>
     </Tooltip>
   );
 };

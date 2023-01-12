@@ -39,7 +39,7 @@ import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
 
 export type FilterDialogProps = {
-  anchorEl: HTMLButtonElement | null;
+  anchorEl: HTMLButtonElement | HTMLDivElement | null;
   open: boolean;
   onClose: () => void;
 };
