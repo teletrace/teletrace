@@ -19,11 +19,7 @@ import { immer } from "zustand/middleware/immer";
 
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-import {
-  DisplaySearchFilter,
-  KeyValueFilter,
-} from "../features/search/types/common";
-import { getFilterId } from "../features/search/utils/filters_utils";
+import { Operator, SearchFilter } from "../features/search/types/common";
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -115,19 +111,18 @@ const createTimeframeSlice: StateCreator<
   },
 });
 
-const createNewFilter: (kvf: KeyValueFilter) => DisplaySearchFilter = (
-  kvf
-) => ({
-  id: getFilterId(kvf.key, kvf.operator),
-  keyValueFilter: kvf,
-});
+const isFiltersStructuresEqual = (
+  k1: string,
+  k2: string,
+  o1: Operator,
+  o2: Operator
+) => k1 === k2 && o1 === o2;
 
 interface FiltersSlice {
   filtersState: {
-    filters: Array<DisplaySearchFilter>;
-    addFilter: (filter: KeyValueFilter) => void;
-    updateOrCreateFilter: (filter: DisplaySearchFilter) => void;
-    deleteFilter: (id: string) => void;
+    filters: Array<SearchFilter>;
+    createOrUpdateFilter: (filter: SearchFilter) => void;
+    deleteFilter: (key: string, operator: Operator) => void;
     clearFilters: () => void;
   };
 }
@@ -139,31 +134,38 @@ const createFiltersSlice: StateCreator<
 > = immer((set) => ({
   filtersState: {
     filters: [],
-    addFilter: (keyValueFilter: KeyValueFilter) =>
-      set((state) => {
-        state.filtersState.filters.push(createNewFilter(keyValueFilter));
-      }),
     // If this function is called with a filter that doesn't exist in the state, it will create and add it to 'filters'
     // If the filter exists, it will simply update it with the desired values
-    updateOrCreateFilter: (filter: DisplaySearchFilter) =>
+    createOrUpdateFilter: (filter: SearchFilter) =>
       set((state) => {
-        const filterToUpdate = state.filtersState.filters.find(
-          (f) => f.id === filter.id
+        const filterToUpdate = state.filtersState.filters.find((f) =>
+          isFiltersStructuresEqual(
+            f.keyValueFilter.key,
+            filter.keyValueFilter.key,
+            f.keyValueFilter.operator,
+            filter.keyValueFilter.operator
+          )
         );
 
         if (filterToUpdate !== undefined) {
           filterToUpdate.keyValueFilter = filter.keyValueFilter;
         } else {
-          state.filtersState.filters.push(
-            createNewFilter(filter.keyValueFilter)
-          );
+          state.filtersState.filters.push(filter);
         }
       }),
-    deleteFilter: (id: string) =>
+    deleteFilter: (key: string, operator: Operator) =>
       set((state) => ({
         filtersState: {
           ...state.filtersState,
-          filters: state.filtersState.filters.filter((f) => f.id != id),
+          filters: state.filtersState.filters.filter(
+            (f) =>
+              !isFiltersStructuresEqual(
+                f.keyValueFilter.key,
+                key,
+                f.keyValueFilter.operator,
+                operator
+              )
+          ),
         },
       })),
     clearFilters: () =>

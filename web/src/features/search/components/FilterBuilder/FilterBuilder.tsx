@@ -96,7 +96,9 @@ export const FilterBuilderDialog = ({
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
   const valueInputMode = valueSelectModeByOperators[dialogState.operator];
-  const addFilter = useSpanSearchStore((state) => state.filtersState.addFilter);
+  const createOrUpdateFilter = useSpanSearchStore(
+    (state) => state.filtersState.createOrUpdateFilter
+  );
 
   const onOperatorChange = (operator: Operator) => {
     setDialogState((prevState) => ({
@@ -214,7 +216,7 @@ export const FilterBuilderDialog = ({
       operator: dialogState.operator,
       value: convertValue(dialogState.tag?.type, dialogState.value),
     };
-    addFilter(newFilter);
+    createOrUpdateFilter({ keyValueFilter: newFilter });
     handleClose();
   };
 

@@ -37,9 +37,8 @@ import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
-import { DisplaySearchFilter, SearchFilter } from "../../types/common";
+import { SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
-import { getPredefinedFilterId } from "../../utils/filters_utils";
 import { styles } from "./styles";
 
 export type TagValuesSelectorProps = {
@@ -122,11 +121,7 @@ export const TagValuesSelector = ({
           </AccordionSummary>
           <AccordionActions>
             {value.length > 0 && (
-              <Button
-                onClick={() =>
-                  filtersState.deleteFilter(getPredefinedFilterId(tag, "in"))
-                }
-              >
+              <Button onClick={() => filtersState.deleteFilter(tag, "in")}>
                 Clear
               </Button>
             )}
@@ -147,8 +142,7 @@ export const TagValuesSelector = ({
                 loading={false}
                 options={tagOptions || []}
                 onChange={(values) => {
-                  const filter: DisplaySearchFilter = {
-                    id: getPredefinedFilterId(tag, "in"),
+                  const filter: SearchFilter = {
                     keyValueFilter: { key: tag, operator: "in", value: values },
                   };
 
@@ -158,9 +152,12 @@ export const TagValuesSelector = ({
                     filter.keyValueFilter.value.length == 0;
 
                   if (isEmptyCollectionFilter) {
-                    filtersState.deleteFilter(filter.id);
+                    filtersState.deleteFilter(
+                      filter.keyValueFilter.key,
+                      filter.keyValueFilter.operator
+                    );
                   } else {
-                    filtersState.updateOrCreateFilter(filter);
+                    filtersState.createOrUpdateFilter(filter);
                   }
                 }}
                 sx={styles.checkboxList}
