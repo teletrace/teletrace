@@ -62,9 +62,12 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   useEffect(() => {
     const element = expanded ? document.getElementById(spanID) : undefined;
     if (element) {
-      element.scrollIntoView({});
+      element.scrollIntoView({
+        behavior: "auto",
+        block: "start",
+      });
     }
-  });
+  }, []);
 
   return (
     <Box
