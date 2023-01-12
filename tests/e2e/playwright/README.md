@@ -1,7 +1,7 @@
 # End-to-End Testing with Playwright
 
 This project contains end-to-end tests for our application, which are designed to test the application as a whole, simulating the behavior of a real user.
-These tests use Playwright as the automation testing tool.
+These tests use [Playwright](https://playwright.dev/) as the automation testing tool.
 
 ## Running the Tests
 
