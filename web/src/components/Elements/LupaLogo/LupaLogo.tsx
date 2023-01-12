@@ -20,7 +20,7 @@ export const LupaLogo = () => {
   return (
     <>
       <Box sx={{ flex: 1 }}>
-        <IconButton href="/" sx={{ padding: 0 }}>
+        <IconButton href="/" sx={{ borderRadius: 1, marginLeft: -1 }}>
           <Typography variant="h6" color="inherit" noWrap>
             Lupa
           </Typography>
