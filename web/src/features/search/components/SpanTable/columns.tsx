@@ -28,7 +28,7 @@ export interface TableSpan {
   startTime: string;
   duration: number;
   name: string;
-  status: number;
+  status: string;
   serviceName: string;
   isNew: boolean;
 }

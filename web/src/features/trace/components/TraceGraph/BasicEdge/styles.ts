@@ -18,8 +18,8 @@ export const styles = {
   edgeLabelContainer: {
     display: "flex",
     justifyContent: "center",
+    alignItems: "center",
     flexDirection: "column",
-    background: "#1e1e1e",
     textAlign: "center",
     width: "fit-content",
     height: "fit-content",
@@ -31,12 +31,13 @@ export const styles = {
   },
   timeContainer: {
     color: "#ffffff",
+    background: "#0B0B0D",
   },
   counterContainer: {
     background: "#3b3c42",
     border: 1,
     borderColor: "#96979e",
     borderRadius: 0.5,
-    padding: 1,
+    padding: "0 8px",
   },
 };

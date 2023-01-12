@@ -16,33 +16,22 @@
 
 import { Paper, Stack } from "@mui/material";
 
-import { StatusCode } from "@/types/span";
-
-import { LiveSpansState, TimeFrameState } from "../../routes/SpanSearch";
 import { SearchFilter } from "../../types/common";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
 
 export type TagSidebarProps = {
   filters: Array<SearchFilter>;
-  timeframe: TimeFrameState;
   onChange: (entry: SearchFilter) => void;
-  liveSpans: LiveSpansState;
 };
 
 type TagOptions = {
   title: string;
   tag: string;
   isSearchable: boolean;
-  render?: (value: string | number) => React.ReactNode;
 };
 
-export const TagSidebar = ({
-  filters,
-  timeframe,
-  onChange,
-  liveSpans,
-}: TagSidebarProps) => {
+export const TagSidebar = ({ filters, onChange }: TagSidebarProps) => {
   const onFilterChange = (
     key: string,
     label: string,
@@ -55,7 +44,6 @@ export const TagSidebar = ({
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
-      render: (value) => StatusCode[parseInt(value.toString())],
     },
     {
       title: "Service Name",
@@ -103,11 +91,8 @@ export const TagSidebar = ({
                     f.keyValueFilter.operator === "in"
                   )
               )} // remove the current tag
-              timeframe={timeframe}
               onChange={(values) => onFilterChange(t.tag, t.title, values)}
               searchable={t.isSearchable}
-              render={t.render}
-              liveSpans={liveSpans}
             />
           );
         })}
