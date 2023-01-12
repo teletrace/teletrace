@@ -24,29 +24,37 @@ import (
 )
 
 func TestRemoveTablePrefixFromDynamicTag(t *testing.T) {
-	var err error
 	newTag := fmt.Sprintf("%s.leftover", filterTablesNames[0])
 	expectedTag := "leftover"
 	assert.Equal(t, expectedTag, removeTablePrefixFromDynamicTag(newTag))
-	assert.Nil(t, err)
 }
 
 func TestRemoveTablePrefixFromDynamicTagWithDelimiterInput(t *testing.T) {
-	var err error
 	anotherTag := "span.attributes.leftover.extra"
 	assert.Equal(t, "leftover.extra", removeTablePrefixFromDynamicTag(anotherTag))
-	assert.Nil(t, err)
 }
 
 func TestRemoveTablePrefixFromDynamicTagWithPrefixNotFromTable(t *testing.T) {
-	var err error
 	notFromFilterTableNames := "not.in.list"
 	assert.Equal(t, "", removeTablePrefixFromDynamicTag(notFromFilterTableNames))
-	assert.Nil(t, err)
 }
 
 func TestRemoveTablePrefixFromDynamicTagEmptyInput(t *testing.T) {
-	var err error
 	assert.Equal(t, "", removeTablePrefixFromDynamicTag(""))
-	assert.Nil(t, err)
+}
+
+func TestConvertSliceOfValuesToString(t *testing.T) {
+	sliceOfStrings := []interface{}{"I", "am", "a", "test", "slice"}
+	expectedOutoput := "'I','am','a','test','slice'"
+	assert.Equal(t, expectedOutoput, convertSliceOfValuesToString(sliceOfStrings))
+}
+
+func TestConvertSliceOfValuesToStringNotOnlyStrings(t *testing.T) {
+	sliceToTest := []interface{}{"twenty", 2, 4.3, "one", 1}
+	expectedString := "'twenty',2,4.3,'one',1"
+	assert.Equal(t, expectedString, convertSliceOfValuesToString(sliceToTest))
+}
+
+func TestConvertSliceOfValuesToStringEmptyInput(t *testing.T) {
+	assert.Equal(t, "", convertSliceOfValuesToString([]interface{}{}))
 }
