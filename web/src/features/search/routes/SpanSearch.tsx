@@ -18,6 +18,7 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 
 import { Head } from "@/components/Head";
+import {RefreshButton} from "@/features/search/components/RefreshButton";
 import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
@@ -49,9 +50,18 @@ export const SpanSearch = () => {
         display="flex"
         flexDirection="row"
       >
-        <Typography variant="h5" fontWeight="600">
-          Spans
-        </Typography>
+          <Typography
+              variant="h5"
+              fontWeight="600"
+              style={{
+                  marginRight: "10px",
+                  alignSelf: "center",
+                  paddingBottom: "3px",
+              }}
+          >
+              Spans
+          </Typography>
+          <RefreshButton />
         <Stack marginLeft="auto" direction="row">
           <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
             <TimeFrameSelector />

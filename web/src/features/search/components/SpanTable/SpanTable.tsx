@@ -48,23 +48,25 @@ export function SpanTable() {
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
+  const sortState = useSpanSearchStore(state => state.sortState);
 
-  const searchRequest = useMemo(() => {
-    const sort = sorting?.map((columnSort) => ({
+  useEffect(() => {
+    sortState.setSort(sorting?.map((columnSort) => ({
       field: columnSort.id,
       ascending: !columnSort.desc,
-    }));
-    return {
+    })));
+  }, [sorting]);
+
+  const searchRequest = useMemo(() => ({
       filters: filtersState.filters,
       timeframe: {
         startTimeUnixNanoSec:
           timeframeState.currentTimeframe.startTimeUnixNanoSec,
         endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
-      sort: sort,
+      sort: sortState.sort,
       metadata: undefined,
-    };
-  }, [filtersState.filters, timeframeState, sorting]);
+    }), [filtersState.filters, timeframeState, sorting]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
@@ -123,6 +125,10 @@ export function SpanTable() {
 
   const tableWrapper = tableWrapperRef.current;
   if (tableWrapper) {
+    document.addEventListener("refresh", () => {
+      tableWrapper.scrollTop = 0;
+    });
+
     const firstRow = tableWrapper.querySelector<HTMLElement>(
       "tbody tr:first-child"
     );
