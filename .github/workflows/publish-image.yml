@@ -24,8 +24,13 @@ jobs:
           username: ${{ secrets.GH_DOCKER_USERNAME }}
           password: ${{ secrets.GH_DOCKER_PASSWORD }}
 
+      - name: Set BUILD_INFO
+        run: echo "BUILD_INFO=$(git describe --tags)" >> $GITHUB_ENV
+
       - uses: docker/build-push-action@v3
         with:
           push: true
           file: ./cmd/all-in-one/Dockerfile
           tags: epsagon/lupa:demo
+          build-args: |
+            BUILD_INFO
