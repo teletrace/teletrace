@@ -8,9 +8,6 @@ const traceProvider = new NodeTracerProvider({
 });
 const collectorOptions = {
   url: "your_endpoint",
-  headers: {
-    authorization: "Bearer <Your Lupa Token>",
-  },
 };
 const httpExporter = new HTTPTraceExporter(collectorOptions);
 traceProvider.addSpanProcessor(new BatchSpanProcessor(httpExporter));
