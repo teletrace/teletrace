@@ -18,9 +18,8 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"strings"
-
 	"oss-tracing/pkg/model"
+	"strings"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
@@ -114,7 +113,7 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 			newFilterValue = convertSliceOfValuesToString(values)
 		} else if str, ok := filter.KeyValueFilter.Value.(string); ok {
 			if filterOperator == spansquery.OPERATOR_CONTAINS || filterOperator == spansquery.OPERATOR_NOT_CONTAINS {
-				newFilterValue = fmt.Sprintf("%s", str)
+				newFilterValue = str
 			} else {
 				newFilterValue = fmt.Sprintf("'%s'", str)
 			}

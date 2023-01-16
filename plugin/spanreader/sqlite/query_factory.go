@@ -18,10 +18,9 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"strings"
-
 	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	"strings"
 
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
