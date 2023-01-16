@@ -33,22 +33,22 @@ export const TagSidebar = () => {
       isSearchable: false,
     },
     {
-      title: "Service Name",
+      title: "Service name",
       tag: "resource.attributes.service.name",
       isSearchable: true,
     },
     {
-      title: "HTTP Route",
+      title: "HTTP route",
       tag: "span.attributes.http.route",
       isSearchable: true,
     },
     {
-      title: "HTTP Method",
+      title: "HTTP method",
       tag: "span.attributes.http.method",
       isSearchable: true,
     },
     {
-      title: "HTTP Status Code",
+      title: "HTTP status code",
       tag: "span.attributes.http.status_code",
       isSearchable: true,
     },
