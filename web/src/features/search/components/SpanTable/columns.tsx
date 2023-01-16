@@ -37,7 +37,7 @@ export const columns: ColumnDef<TableSpan>[] = [
   {
     id: "span.startTimeUnixNano",
     accessorKey: "startTime",
-    header: "Start Time",
+    header: "Start time",
     enableSorting: true,
   },
   {
@@ -53,7 +53,7 @@ export const columns: ColumnDef<TableSpan>[] = [
   {
     id: "span.name",
     accessorKey: "name",
-    header: "Span Name",
+    header: "Span name",
     enableSorting: false,
   },
   {
@@ -75,7 +75,7 @@ export const columns: ColumnDef<TableSpan>[] = [
   {
     id: "resource.attributes.service.name",
     accessorKey: "serviceName",
-    header: "Service Name",
+    header: "Service name",
     enableSorting: false,
   },
 ];
