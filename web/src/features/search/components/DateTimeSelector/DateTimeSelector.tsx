@@ -30,18 +30,18 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 
-import { msToNanoSec } from "@/utils/format";
+import { msToNano } from "@/utils/format";
 
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
   onCancel: () => void;
 };
 
 export const DateTimeSelector = ({
-  onClose,
+  closeDialog,
   onCancel,
 }: DateTimeSelectorProps) => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
@@ -57,7 +57,7 @@ export const DateTimeSelector = ({
   const [timeValid, setTimeValid] = useState<boolean>(true);
 
   const calcRange = () => {
-    const startRange = msToNanoSec(
+    const startRange = msToNano(
       startDate && startTime
         ? new Date(
             startDate.setHours(startTime.getHours(), startTime.getMinutes())
@@ -65,7 +65,7 @@ export const DateTimeSelector = ({
         : new Date().getTime()
     );
 
-    const endRange = msToNanoSec(
+    const endRange = msToNano(
       endTime && endDate
         ? new Date(
             endDate.setHours(endTime.getHours(), endTime.getMinutes())
@@ -83,7 +83,7 @@ export const DateTimeSelector = ({
         timeRange.startRange,
         timeRange.endRange
       );
-      onClose();
+      closeDialog();
     } else {
       setTimeValid(false);
       timeframeState.setRelativeTimeframe(
