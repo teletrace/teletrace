@@ -28,14 +28,12 @@ import (
 
 func newClient(logger *zap.Logger, cfg *Config) (*elasticsearch.Client, error) {
 	esConfig, err := elasticsearch.NewClient(elasticsearch.Config{
-
 		// basic connection setup
 		Addresses: cfg.Endpoints,
 		Username:  cfg.Username,
 		Password:  cfg.Password,
 		APIKey:    cfg.APIKey,
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("error creating Elasticsearch Client: %+v", err)
 	}
@@ -57,7 +55,6 @@ func newBulkIndexer(logger *zap.Logger, client *elasticsearch.Client, cfg *Confi
 			logger.Error(fmt.Sprintf("bulk indexer error: %v", err))
 		},
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("error creating the indexer: %v", err)
 	}

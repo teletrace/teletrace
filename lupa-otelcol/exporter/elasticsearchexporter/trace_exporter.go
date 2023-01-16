@@ -21,11 +21,11 @@ import (
 	"fmt"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter/internal/modeltranslator"
+	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
 )
 
 type elasticsearchTracesExporter struct {
@@ -65,19 +65,11 @@ func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
 	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
 
-	indexer, err := newBulkIndexer(e.logger, e.client, e.cfg)
-	if err != nil {
-		return fmt.Errorf("failed to create a new bulk indexer: %v", err)
-	}
+	var s []*internalspanv1.InternalSpan
 
-	defer indexer.Close(ctx)
-
-	errs := make([]error, 0, td.SpanCount())
 	for span := range internalSpans {
-		if err := writeSpan(ctx, e.logger, e.cfg.Index, indexer, span, e.maxRetries); err != nil {
-			errs = append(errs, err)
-		}
+		s = append(s, span)
 	}
 
-	return multierr.Combine(errs...)
+	return writeSpans(ctx, e.logger, e.client, e.cfg.Index, s...)
 }

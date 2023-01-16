@@ -45,9 +45,7 @@ func createDefaultConfig() component.ExporterConfig {
 		Index:            defaultIndex,
 		WorkersCount:     1,
 		Flush: FlushSettings{
-			Interval: 30,
-			// 5MB, the default in elastic's library
-			Bytes: 5 * 1024 * 1024,
+			Interval: 0,
 		},
 		Retry: RetrySettings{
 			Enabled:    true,
