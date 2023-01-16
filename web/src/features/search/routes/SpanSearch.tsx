@@ -20,6 +20,7 @@ import { useEffect } from "react";
 import { Head } from "@/components/Head";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
+import { RefreshButton } from "../components/RefreshButton";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
@@ -49,9 +50,18 @@ export const SpanSearch = () => {
         display="flex"
         flexDirection="row"
       >
-        <Typography variant="h5" fontWeight="600">
+        <Typography
+          variant="h5"
+          fontWeight="600"
+          style={{
+            marginRight: "10px",
+            alignSelf: "center",
+            paddingBottom: "3px",
+          }}
+        >
           Spans
         </Typography>
+        <RefreshButton />
         <Stack marginLeft="auto" direction="row">
           <Stack sx={{ paddingRight: "24px", justifyContent: "center" }}>
             <TimeFrameSelector />
