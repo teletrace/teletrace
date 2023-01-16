@@ -39,12 +39,18 @@ export const columns: ColumnDef<TableSpan>[] = [
     accessorKey: "startTime",
     header: "Start time",
     enableSorting: true,
+    minSize: 220,
+    maxSize: 220,
+    size: 220,
   },
   {
     id: "externalFields.durationNano",
     accessorKey: "duration",
     header: "Duration",
     enableSorting: true,
+    minSize: 100,
+    maxSize: 100,
+    size: 100,
     Cell: (mrtCell) => {
       const durationMs = mrtCell.cell.getValue() as number;
       return formatDurationAsMs(durationMs);
@@ -55,12 +61,18 @@ export const columns: ColumnDef<TableSpan>[] = [
     accessorKey: "name",
     header: "Span name",
     enableSorting: false,
+    size: 500,
+    minSize: 500,
+    maxSize: 1000,
   },
   {
     id: "span.status.code",
     accessorKey: "status",
     header: "Status",
     enableSorting: false,
+    minSize: 100,
+    maxSize: 100,
+    size: 100,
     Cell: (mrtCell) => {
       const code = mrtCell.cell.getValue();
       const isSuccessCode = code === StatusCode.Unset || code === StatusCode.OK;
@@ -77,5 +89,8 @@ export const columns: ColumnDef<TableSpan>[] = [
     accessorKey: "serviceName",
     header: "Service name",
     enableSorting: false,
+    minSize: 150,
+    maxSize: 300,
+    size: 150,
   },
 ];

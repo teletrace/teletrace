@@ -526,7 +526,6 @@ theme = createTheme(theme, {
           "&.MuiTableRow-head": {
             backgroundColor: theme.palette.grey[800],
           },
-          height: "45px",
           lineHeight: "unset",
           "&.MuiTableRow-root:not(.MuiTableRow-head)": {
             backgroundColor: theme.palette.grey[900],
@@ -548,7 +547,7 @@ theme = createTheme(theme, {
             color: theme.palette.grey[300],
             fontWeight: 500,
             verticalAlign: "middle",
-            padding: "12px 16px",
+            padding: "12px 8px",
             "& .Mui-TableHeadCell-Content": {
               borderRight: `2px solid ${theme.palette.grey[500]}`,
             },
@@ -560,8 +559,7 @@ theme = createTheme(theme, {
           },
           "&.MuiTableCell-body": {
             fontWeight: "normal",
-            paddingLeft: "16px",
-            paddingRight: "16px",
+            padding: "11px 8px",
             borderBottomColor: theme.palette.grey[700],
             textOverflow: "ellipsis",
             display: "block",
