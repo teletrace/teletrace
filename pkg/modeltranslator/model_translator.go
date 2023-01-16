@@ -22,9 +22,11 @@ import (
 	"go.opentelemetry.io/collector/pdata/ptrace"
 )
 
+type TranslationOption func(*internalspanv1.InternalSpan)
+
 // TranslateOTLPToInternalModel converts traces from the OLTP format
 // to the InternalSpan model used by the the ingestion pipeline consumers.
-func TranslateOTLPToInternalModel(td ptrace.Traces) []*internalspanv1.InternalSpan {
+func TranslateOTLPToInternalModel(td ptrace.Traces, opts ...TranslationOption) []*internalspanv1.InternalSpan {
 	var internalSpans []*internalspanv1.InternalSpan
 
 	resourceSpansSlice := td.ResourceSpans()
@@ -43,13 +45,16 @@ func TranslateOTLPToInternalModel(td ptrace.Traces) []*internalspanv1.InternalSp
 				internalSpan := getInternalSpan(span)
 				internalSpanExternalFields := getInternalSpanExternalFields(span)
 
-				internalSpans = append(internalSpans,
-					&internalspanv1.InternalSpan{
-						Resource:       internalSpanResource,
-						Scope:          internalSpanScope,
-						Span:           internalSpan,
-						ExternalFields: internalSpanExternalFields,
-					})
+				iSpan := &internalspanv1.InternalSpan{
+					Resource:       internalSpanResource,
+					Scope:          internalSpanScope,
+					Span:           internalSpan,
+					ExternalFields: internalSpanExternalFields,
+				}
+				for _, opt := range opts {
+					opt(iSpan)
+				}
+				internalSpans = append(internalSpans, iSpan)
 			}
 		}
 	}
@@ -86,8 +91,8 @@ func getInternalSpan(span ptrace.Span) *internalspanv1.Span {
 		ParentSpanId:           span.ParentSpanID().HexString(),
 		Name:                   span.Name(),
 		Kind:                   span.Kind().String(),
-		StartTimeUnixNano:      uint64(span.StartTimestamp() / (1000 * 1000)), // convert to MS
-		EndTimeUnixNano:        uint64(span.EndTimestamp() / (1000 * 1000)),   // convert to MS,
+		StartTimeUnixNano:      uint64(span.StartTimestamp()),
+		EndTimeUnixNano:        uint64(span.EndTimestamp()),
 		Attributes:             span.Attributes().AsRaw(),
 		DroppedAttributesCount: span.DroppedAttributesCount(),
 		Events:                 events,
@@ -107,7 +112,7 @@ func getInternalSpanEvents(span ptrace.Span) []*internalspanv1.SpanEvent {
 			&internalspanv1.SpanEvent{
 				Name:                   spanEvent.Name(),
 				Attributes:             spanEvent.Attributes().AsRaw(),
-				TimeUnixNano:           uint64(spanEvent.Timestamp() / (1000 * 1000)), // convert to MS,
+				TimeUnixNano:           uint64(spanEvent.Timestamp()),
 				DroppedAttributesCount: spanEvent.DroppedAttributesCount(),
 			})
 	}
@@ -141,6 +146,17 @@ func getInternalSpanStatus(span ptrace.Span) *internalspanv1.SpanStatus {
 func getInternalSpanExternalFields(span ptrace.Span) *internalspanv1.ExternalFields {
 	duration := span.EndTimestamp() - span.StartTimestamp()
 	return &internalspanv1.ExternalFields{
-		DurationNano: uint64(duration / (1000 * 1000)), // convert to MS,
+		DurationNano: uint64(duration),
+	}
+}
+
+func WithMiliSec() TranslationOption {
+	return func(s *internalspanv1.InternalSpan) {
+		s.Span.StartTimeUnixNano = uint64(s.Span.StartTimeUnixNano / (1000 * 1000))
+		s.Span.EndTimeUnixNano = uint64(s.Span.EndTimeUnixNano / (1000 * 1000))
+		s.ExternalFields.DurationNano = uint64(s.ExternalFields.DurationNano / (1000 * 1000))
+		for _, e := range s.Span.Events {
+			e.TimeUnixNano = uint64(e.TimeUnixNano / (1000 * 1000))
+		}
 	}
 }

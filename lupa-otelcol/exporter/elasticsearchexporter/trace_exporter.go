@@ -55,7 +55,7 @@ func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 }
 
 func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	internalSpans := modeltranslator.TranslateOTLPToInternalModel(td)
+	internalSpans := modeltranslator.TranslateOTLPToInternalModel(td, modeltranslator.WithMiliSec())
 
 	return writeSpans(ctx, e.logger, e.client, e.cfg.Index, internalSpans...)
 }

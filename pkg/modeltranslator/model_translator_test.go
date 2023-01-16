@@ -29,9 +29,18 @@ import (
 
 func TestModelTranslator(t *testing.T) {
 	traces := createOTLPTraces()
-	expectedInternalSpans := createExpectedInternalSpans()
+	expectedInternalSpans := createExpectedInternalSpans(true)
 
 	actualInternalSpans := TranslateOTLPToInternalModel(traces)
+
+	assert.ElementsMatch(t, expectedInternalSpans, actualInternalSpans)
+}
+
+func TestModelTranslatorWithMili(t *testing.T) {
+	traces := createOTLPTraces()
+	expectedInternalSpans := createExpectedInternalSpans(false)
+
+	actualInternalSpans := TranslateOTLPToInternalModel(traces, WithMiliSec())
 
 	assert.ElementsMatch(t, expectedInternalSpans, actualInternalSpans)
 }
@@ -61,8 +70,8 @@ func createOTLPTraces() ptrace.Traces {
 				span.SetParentSpanID(pcommon.SpanID([8]byte{3}))
 				span.SetName(fmt.Sprintf("[Span-%d]Name", k))
 				span.SetKind(ptrace.SpanKindServer)
-				span.SetStartTimestamp(0)
-				span.SetEndTimestamp(10)
+				span.SetStartTimestamp(10 * 60 * 1000 * 1000 * 1000) // 10 secs in nano
+				span.SetEndTimestamp(11 * 60 * 1000 * 1000 * 1000)   // 11 secs in nano
 				span.Attributes().PutStr("attribute", fmt.Sprintf("[Span-%d]attribute", k))
 				span.SetDroppedAttributesCount(3)
 				span.SetDroppedEventsCount(4)
@@ -72,7 +81,7 @@ func createOTLPTraces() ptrace.Traces {
 
 				for l := 0; l < 2; l++ {
 					spanEvent := span.Events().AppendEmpty()
-					spanEvent.SetTimestamp(5)
+					spanEvent.SetTimestamp(10 * 60 * 1000 * 1000 * 1000) // 10 secs in nano
 					spanEvent.SetName(fmt.Sprintf("[SpanEvent-%d]Name", l))
 					spanEvent.Attributes().PutStr("attribute", fmt.Sprintf("[SpanEvent-%d]attribute", l))
 					spanEvent.SetDroppedAttributesCount(6)
@@ -93,12 +102,18 @@ func createOTLPTraces() ptrace.Traces {
 	return td
 }
 
-func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
+func createExpectedInternalSpans(inNano bool) []*internalspanv1.InternalSpan {
+	var scale uint64
+	if inNano {
+		scale = uint64(1000 * 1000 * 1000)
+	} else {
+		scale = uint64(1000)
+	}
 	var spanEvents []*internalspanv1.SpanEvent
 	var spanLinks []*internalspanv1.SpanLink
 	for i := 0; i < 2; i++ {
 		spanEvents = append(spanEvents, &internalspanv1.SpanEvent{
-			TimeUnixNano: 5,
+			TimeUnixNano: 10 * 60 * scale,
 			Name:         fmt.Sprintf("[SpanEvent-%d]Name", i),
 			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[SpanEvent-%d]attribute", i),
@@ -141,8 +156,8 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			ParentSpanId:      pcommon.SpanID([8]byte{3}).HexString(),
 			Name:              fmt.Sprintf("[Span-%d]Name", i),
 			Kind:              "Server",
-			StartTimeUnixNano: 0,
-			EndTimeUnixNano:   10,
+			StartTimeUnixNano: 10 * 60 * scale,
+			EndTimeUnixNano:   11 * 60 * scale,
 			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[Span-%d]attribute", i),
 			},
@@ -159,7 +174,7 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 	}
 
 	externalFields := &internalspanv1.ExternalFields{
-		DurationNano: 10,
+		DurationNano: 1 * 60 * scale,
 	}
 
 	var internalSpans []*internalspanv1.InternalSpan

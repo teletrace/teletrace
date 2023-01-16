@@ -8,7 +8,7 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	go.opentelemetry.io/collector v0.64.1 // indirect
-	go.opentelemetry.io/collector/pdata v0.64.1 // indirect
+	go.opentelemetry.io/collector/pdata v0.64.1
 	go.opentelemetry.io/otel/trace v1.11.1 // indirect
 	go.uber.org/zap v1.23.0
 	google.golang.org/grpc v1.50.1 // indirect
@@ -29,7 +29,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000 // indirect
-	github.com/epsagon/lupa/pkg/modeltranslator v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
@@ -126,8 +125,4 @@ replace github.com/epsagon/lupa/model => ./model
 
 replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./lupa-otelcol/exporter/elasticsearchexporter
-
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./lupa-otelcol/exporter/sqliteexporter
-
-replace github.com/epsagon/lupa/pkg/modeltranslator => ./pkg/modeltranslator/
