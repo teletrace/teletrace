@@ -163,6 +163,7 @@ export function SpanTable({ filters = [] }: SpanTableProps) {
         enableRowNumbers={false}
         enableTopToolbar={false}
         enableBottomToolbar={false}
+        enableSortingRemoval={false}
         manualFiltering
         manualSorting
         enableStickyHeader={true}
