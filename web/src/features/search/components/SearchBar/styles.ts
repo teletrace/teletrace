@@ -15,8 +15,9 @@
  */
 
 export const styles = {
-  searchBarPaper: { minHeight: "40px", padding: "8px" },
+  searchBarPaper: { minHeight: "fit-content", padding: "8px" },
   searchBar: { justifyContent: "space-between" },
   filtersBar: { flexWrap: "wrap", rowGap: "8px" },
-  clear: { justifyContent: "center" },
+  clear: { justifyContent: "center", alignItems: "center" },
+  clearButton: { height: 24, width: 24 },
 };
