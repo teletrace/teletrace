@@ -31,17 +31,17 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 
 import { useSpanSearchStore } from "@/stores/spanSearchStore";
-import { msToNanoSec } from "@/utils/format";
+import { msToNanosec } from "@/utils/format";
 
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
   onCancel: () => void;
 };
 
 export const DateTimeSelector = ({
-  onClose,
+  closeDialog,
   onCancel,
 }: DateTimeSelectorProps) => {
   const { currentTimeframe, setAbsoluteTimeframe, setRelativeTimeframe } =
@@ -58,7 +58,7 @@ export const DateTimeSelector = ({
   const [timeValid, setTimeValid] = useState<boolean>(true);
 
   const calcRange = () => {
-    const startRange = msToNanoSec(
+    const startRange = msToNanosec(
       startDate && startTime
         ? new Date(
             startDate.setHours(startTime.getHours(), startTime.getMinutes())
@@ -66,7 +66,7 @@ export const DateTimeSelector = ({
         : new Date().getTime()
     );
 
-    const endRange = msToNanoSec(
+    const endRange = msToNanosec(
       endTime && endDate
         ? new Date(
             endDate.setHours(endTime.getHours(), endTime.getMinutes())
@@ -81,7 +81,7 @@ export const DateTimeSelector = ({
     if (timeRange.startRange < timeRange.endRange) {
       setTimeValid(true);
       setAbsoluteTimeframe(timeRange.startRange, timeRange.endRange);
-      onClose();
+      closeDialog();
     } else {
       setTimeValid(false);
       setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec);
