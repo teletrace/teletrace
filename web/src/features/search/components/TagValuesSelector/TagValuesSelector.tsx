@@ -106,6 +106,22 @@ export const TagValuesSelector = ({
       label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
     }));
 
+  const handleCheckboxChange = (values: (string | number)[]) => {
+    const filter: SearchFilter = {
+      keyValueFilter: { key: tag, operator: "in", value: values },
+    };
+
+    const isEmptyCollectionFilter =
+        ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
+        Array.isArray(filter.keyValueFilter.value) &&
+        filter.keyValueFilter.value.length == 0;
+
+    isEmptyCollectionFilter ?
+        filtersState.deleteFilter(filter.keyValueFilter.key, filter.keyValueFilter.operator)
+        :
+        filtersState.createOrUpdateFilter(filter);
+  };
+
   return (
     <div>
       <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
@@ -141,25 +157,7 @@ export const TagValuesSelector = ({
                 value={value}
                 loading={false}
                 options={tagOptions || []}
-                onChange={(values) => {
-                  const filter: SearchFilter = {
-                    keyValueFilter: { key: tag, operator: "in", value: values },
-                  };
-
-                  const isEmptyCollectionFilter =
-                    ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
-                    Array.isArray(filter.keyValueFilter.value) &&
-                    filter.keyValueFilter.value.length == 0;
-
-                  if (isEmptyCollectionFilter) {
-                    filtersState.deleteFilter(
-                      filter.keyValueFilter.key,
-                      filter.keyValueFilter.operator
-                    );
-                  } else {
-                    filtersState.createOrUpdateFilter(filter);
-                  }
-                }}
+                onChange={handleCheckboxChange}
                 sx={styles.checkboxList}
               />
             </Fragment>

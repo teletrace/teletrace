@@ -17,9 +17,9 @@
 import create, { StateCreator } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
+import { Operator, SearchFilter } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-import { Operator, SearchFilter } from "../features/search/types/common";
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -154,27 +154,16 @@ const createFiltersSlice: StateCreator<
         }
       }),
     deleteFilter: (key: string, operator: Operator) =>
-      set((state) => ({
-        filtersState: {
-          ...state.filtersState,
-          filters: state.filtersState.filters.filter(
-            (f) =>
-              !isFiltersStructureEqual(
-                f.keyValueFilter.key,
-                key,
-                f.keyValueFilter.operator,
-                operator
-              )
-          ),
-        },
-      })),
+      set((state) => {
+        const filterIndex = state.filtersState.filters.findIndex((f) =>
+            isFiltersStructureEqual(f.keyValueFilter.key, key, f.keyValueFilter.operator, operator)
+        );
+        state.filtersState.filters.splice(filterIndex, 1)
+      }),
     clearFilters: () =>
-      set((state) => ({
-        filtersState: {
-          ...state.filtersState,
-          filters: [],
-        },
-      })),
+      set((state) => {
+        state.filtersState.filters = []
+      }),
   },
 }));
 

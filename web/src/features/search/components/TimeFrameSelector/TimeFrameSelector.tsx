@@ -40,6 +40,8 @@ const options: RelativeTimeFrame[] = [
   { label: "1W", offsetRange: "1w", relativeTo: "now" },
 ];
 
+
+
 export const TimeFrameSelector = () => {
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
@@ -58,23 +60,6 @@ export const TimeFrameSelector = () => {
   );
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
 
-  const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
-    setOpen(true);
-    setAnchorEl(event.currentTarget);
-  };
-
-  function isRelativeTimeFrame(
-    object: TimeFrameTypes
-  ): object is RelativeTimeFrame {
-    return "offsetRange" in object;
-  }
-
-  function isCustomTimeFrame(
-    object: TimeFrameTypes
-  ): object is CustomTimeFrame {
-    return "startTime" in object;
-  }
-
   const setDiffOnNanoSecTf = (ts: number, diff: string) => {
     const datetime = ts === 0 ? new Date() : new Date(nanoSecToMs(ts));
     if (diff === "1h") datetime.setHours(datetime.getHours() - 1);
@@ -92,28 +77,19 @@ export const TimeFrameSelector = () => {
     setOpen(false);
   };
 
-  const handleBtnClicked = (
-    event: MouseEvent<HTMLElement>,
-    value: TimeFrameTypes
-  ) => {
+  const handleBtnClicked = (event: MouseEvent<HTMLElement>, value: TimeFrameTypes) => {
+    setIsSelected(value);
     if (value?.label === "Custom") {
-      handleCustomClick(event);
-    }
-
-    if (value.label !== "custom") {
+      setPreviousSelected(isSelected);
+      setOpen(true);
+      setAnchorEl(event.currentTarget);
+    } else {
+      const now = msToNanoSec(new Date().getTime());
       if (isRelativeTimeFrame(value)) {
-        const now = msToNanoSec(new Date().getTime());
         const offset = value.offsetRange;
         timeframeState.setRelativeTimeframe(setDiffOnNanoSecTf(now, offset));
       }
-    } else {
-      if (isCustomTimeFrame(value)) {
-        timeframeState.setAbsoluteTimeframe(value.startTime, value.endTime);
-      }
     }
-
-    setIsSelected(value);
-    setPreviousSelected(isSelected);
   };
 
   const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
@@ -195,6 +171,10 @@ type RelativeTimeFrame = {
   relativeTo: string;
   offsetRange: string;
 };
+
+function isRelativeTimeFrame(object: TimeFrameTypes): object is RelativeTimeFrame {
+  return "offsetRange" in object;
+}
 
 type CustomTimeFrame = {
   label: string;
