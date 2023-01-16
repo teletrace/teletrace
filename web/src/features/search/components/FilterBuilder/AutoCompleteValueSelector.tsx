@@ -116,6 +116,7 @@ export const AutoCompleteValueSelector = ({
       disableCloseOnSelect
       value={getSelectedValues() || null}
       id={"value-selector"}
+      noOptionsText="No results found"
       options={
         tagOptions?.filter(
           (option) =>
