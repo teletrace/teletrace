@@ -49,19 +49,20 @@ func main() {
 	if cfg.AllowUsageReporting {
 		systemId, err := usageReport.GetSystemId(sr, context.Background())
 		if err != nil {
-			logger.Fatal("Failed to get SystemId", zap.Error(err))
+			logger.Error("Failed to get SystemId", zap.Error(err))
+		} else {
+			logger.Info("System ID retrieved", zap.String("systemId", systemId))
+			usageReporter, err := usageReport.NewUsageReporter(context.Background(), logger, systemId, cfg.UsageReportURL)
+			if err != nil {
+				logger.Fatal("Failed to create usage reporter", zap.Error(err))
+			}
+			periodicRunner := gocron.NewScheduler(time.UTC)
+			_, err = periodicRunner.Every("15m").Do(usageReporter.ReportSystemUp)
+			if err != nil {
+				logger.Fatal("Error defining periodical reporting", zap.Error(err))
+			}
+			periodicRunner.StartAsync()
 		}
-		logger.Info("System ID retrieved", zap.String("systemId", systemId))
-		usageReporter, err := usageReport.NewUsageReporter(context.Background(), logger, systemId, cfg.UsageReportURL)
-		if err != nil {
-			logger.Fatal("Failed to create usage reporter", zap.Error(err))
-		}
-		periodicRunner := gocron.NewScheduler(time.UTC)
-		_, err = periodicRunner.Every("15m").Do(usageReporter.ReportSystemUp)
-		if err != nil {
-			logger.Fatal("Error defining periodical reporting", zap.Error(err))
-		}
-		periodicRunner.StartAsync()
 	}
 	api := api.NewAPI(logger, cfg, &sr)
 	if err := api.Start(); err != nil {
