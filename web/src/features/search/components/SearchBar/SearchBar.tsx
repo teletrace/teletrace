@@ -84,7 +84,11 @@ export function SearchBar({
               orientation="vertical"
               sx={{ borderColor: theme.palette.grey[700], marginRight: "13px" }}
             />
-            <IconButton onClick={onClearFilters} size="small">
+            <IconButton
+              sx={styles.clearButton}
+              onClick={onClearFilters}
+              size="small"
+            >
               <Close fontSize="inherit" />
             </IconButton>
           </Stack>
