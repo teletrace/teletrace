@@ -29,7 +29,14 @@ const newRowAnimation = keyframes`
  `;
 
 const styles: { [name: string]: CSSProperties } = {
-  progress: { margin: 0, position: "absolute", top: 45, right: 0, left: 0 },
+  progress: {
+    margin: 0,
+    position: "absolute",
+    top: 45,
+    right: 0,
+    left: 0,
+    zIndex: 1,
+  },
   container: { minHeight: 0, position: "relative", borderRadius: "8px" },
   tablePaper: { display: "flex", maxHeight: "100%" },
   tableContainer: { borderRadius: "8px" },

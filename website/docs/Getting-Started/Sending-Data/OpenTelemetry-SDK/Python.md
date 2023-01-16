@@ -16,10 +16,7 @@ provider = TracerProvider(resource=Resource.create())
 trace.set_tracer_provider(provider)
 
 http_exporter = OTLPHTTPExporter(
-  endpoint="your_endpoint",
-  headers= {
-    "authorization": "Bearer <Your Lupa Token>",
-  },
+  endpoint="your_endpoint"
 )
 
 processor = BatchSpanProcessor(http_exporter)

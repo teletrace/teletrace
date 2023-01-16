@@ -15,29 +15,20 @@
  */
 
 import { Divider, Stack, Typography } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { Head } from "@/components/Head";
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
-import { SearchFilter } from "../types/common";
+import { useSpanSearchStore } from "../stores//spanSearchStore";
 
-export type FiltersState = {
-  filters: Array<SearchFilter>;
-};
 export const SpanSearch = () => {
-  const [filtersState, setFiltersState] = useState<FiltersState>({
-    filters: [],
-  });
-
-  const { liveSpansState, timeframeState } = useSpanSearchStore(
-    (state) => state
-  );
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
 
   useEffect(() => {
     if (liveSpansState.isOn) {
@@ -46,37 +37,6 @@ export const SpanSearch = () => {
       );
     }
   }, [liveSpansState.isOn]);
-
-  const onFilterChange = useCallback(
-    (entry: SearchFilter, isDelete = false) => {
-      return setFiltersState((prevState: FiltersState) => {
-        const shouldRemoveFilter =
-          isDelete ||
-          (["in", "not_in"].includes(entry.keyValueFilter.operator) &&
-            Array.isArray(entry.keyValueFilter.value) &&
-            entry.keyValueFilter.value.length == 0);
-        const newFilters = [...prevState.filters];
-        const existIndex = newFilters.findIndex(
-          (f) =>
-            f.keyValueFilter.key === entry.keyValueFilter.key &&
-            f.keyValueFilter.operator === entry.keyValueFilter.operator
-        );
-        if (shouldRemoveFilter) {
-          if (existIndex > -1) {
-            newFilters.splice(existIndex, 1);
-          }
-        } else {
-          if (existIndex > -1) {
-            newFilters[existIndex] = entry;
-          } else {
-            newFilters.push(entry);
-          }
-        }
-        return { filters: newFilters };
-      });
-    },
-    [setFiltersState]
-  );
 
   return (
     <Stack display="flex" flexDirection="column" sx={{ height: "100%" }}>
@@ -107,10 +67,7 @@ export const SpanSearch = () => {
         sx={{ height: "100%", minWidth: 0, minHeight: 0 }}
       >
         <aside style={{ display: "flex", maxHeight: "100%" }}>
-          <TagSidebar
-            onChange={onFilterChange}
-            filters={filtersState.filters}
-          />
+          <TagSidebar />
         </aside>
 
         <Stack
@@ -119,17 +76,8 @@ export const SpanSearch = () => {
           spacing={1}
           sx={{ height: "100%", width: "100%", minWidth: 0 }}
         >
-          <SearchBar
-            filters={filtersState.filters}
-            onFilterAdded={onFilterChange}
-            onFilterDeleted={(filter) => onFilterChange(filter, true)}
-            onClearFilters={() =>
-              setFiltersState((prevState: FiltersState) => {
-                return { ...prevState, filters: [] };
-              })
-            }
-          />
-          <SpanTable filters={filtersState.filters} />
+          <SearchBar />
+          <SpanTable />
         </Stack>
       </Stack>
     </Stack>

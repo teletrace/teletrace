@@ -24,30 +24,29 @@ import {
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 const useGetTagOptions = (
   tag: string,
-  filters: Array<SearchFilter>,
   selectedOptions: (string | number)[],
   search: string
 ) => {
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+  const filters = useSpanSearchStore((state) => state.filtersState.filters);
+
   const searchQueryFilters: Array<SearchFilter> = search
     ? [
         ...filters,
         { keyValueFilter: { key: tag, operator: "contains", value: search } },
       ]
     : filters;
-
-  const { liveSpansState, timeframeState } = useSpanSearchStore(
-    (state) => state
-  );
 
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
@@ -74,7 +73,6 @@ const useGetTagOptions = (
 
 export type AutoCompleteValueSelectorProps = {
   tag: string;
-  filters: Array<SearchFilter>;
   value: (string | number)[];
   onChange: (value: FilterValueTypes) => void;
   error: boolean;
@@ -82,7 +80,6 @@ export type AutoCompleteValueSelectorProps = {
 
 export const AutoCompleteValueSelector = ({
   tag,
-  filters,
   value,
   onChange,
   error,
@@ -91,7 +88,6 @@ export const AutoCompleteValueSelector = ({
   const [searchDebounced] = useDebounce(search, 500);
   const { isLoading, tagOptions } = useGetTagOptions(
     tag,
-    filters,
     value,
     searchDebounced
   );
