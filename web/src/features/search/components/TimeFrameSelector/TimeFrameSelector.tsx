@@ -23,7 +23,6 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -31,6 +30,7 @@ import {
   nanoSecToMs,
 } from "@/utils/format";
 
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 const options: RelativeTimeFrame[] = [
@@ -41,17 +41,12 @@ const options: RelativeTimeFrame[] = [
 ];
 
 export const TimeFrameSelector = () => {
-  const [
-    liveSpansOn,
-    { currentTimeframe, setRelativeTimeframe, setAbsoluteTimeframe },
-  ] = useSpanSearchStore((state) => [
-    state.liveSpansState.isOn,
-    state.timeframeState,
-  ]);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
 
   const customOption: CustomTimeFrame = {
     label: "Custom",
-    startTime: currentTimeframe.startTimeUnixNanoSec,
+    startTime: timeframeState.currentTimeframe.startTimeUnixNanoSec,
     endTime: getCurrentTimestamp(),
   };
 
@@ -63,23 +58,6 @@ export const TimeFrameSelector = () => {
   );
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
 
-  const handleCustomClick = (event: MouseEvent<HTMLElement>) => {
-    setOpen(true);
-    setAnchorEl(event.currentTarget);
-  };
-
-  function isRelativeTimeFrame(
-    object: TimeFrameTypes
-  ): object is RelativeTimeFrame {
-    return "offsetRange" in object;
-  }
-
-  function isCustomTimeFrame(
-    object: TimeFrameTypes
-  ): object is CustomTimeFrame {
-    return "startTime" in object;
-  }
-
   const setDiffOnNanoSecTf = (ts: number, diff: string) => {
     const datetime = ts === 0 ? new Date() : new Date(nanoSecToMs(ts));
     if (diff === "1h") datetime.setHours(datetime.getHours() - 1);
@@ -89,29 +67,11 @@ export const TimeFrameSelector = () => {
     return msToNanoSec(datetime.getTime());
   };
 
-  const toTimeframeFromRelative = (timeFrame: RelativeTimeFrame) => {
-    const now = msToNanoSec(new Date().getTime());
-    currentTimeframe.endTimeUnixNanoSec = msToNanoSec(new Date().getTime());
-    const offset = timeFrame.offsetRange;
-    currentTimeframe.startTimeUnixNanoSec = setDiffOnNanoSecTf(now, offset);
-  };
-
-  const toTimeframeFromCustom = (customTimeFrame: CustomTimeFrame) => {
-    currentTimeframe.startTimeUnixNanoSec = customTimeFrame.startTime;
-    currentTimeframe.endTimeUnixNanoSec = customTimeFrame.endTime;
-  };
-
-  const calcTimeFrame = (timeframeType: TimeFrameTypes) => {
-    if (isRelativeTimeFrame(timeframeType)) {
-      toTimeframeFromRelative(timeframeType);
-    } else if (isCustomTimeFrame(timeframeType)) {
-      toTimeframeFromCustom(timeframeType);
-    }
-  };
-
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec);
+    timeframeState.setRelativeTimeframe(
+      timeframeState.currentTimeframe.startTimeUnixNanoSec
+    );
     setOpen(false);
   };
 
@@ -119,36 +79,35 @@ export const TimeFrameSelector = () => {
     event: MouseEvent<HTMLElement>,
     value: TimeFrameTypes
   ) => {
-    if (value?.label === "Custom") {
-      handleCustomClick(event);
-    }
-    calcTimeFrame(value);
-
-    value.label !== "Custom"
-      ? setRelativeTimeframe(currentTimeframe.startTimeUnixNanoSec)
-      : setAbsoluteTimeframe(
-          currentTimeframe.startTimeUnixNanoSec,
-          currentTimeframe.endTimeUnixNanoSec
-        );
-
     setIsSelected(value);
-    setPreviousSelected(isSelected);
+    if (value?.label === "Custom") {
+      setPreviousSelected(isSelected);
+      setOpen(true);
+      setAnchorEl(event.currentTarget);
+    } else {
+      const now = msToNanoSec(new Date().getTime());
+      if (isRelativeTimeFrame(value)) {
+        const offset = value.offsetRange;
+        timeframeState.setRelativeTimeframe(setDiffOnNanoSecTf(now, offset));
+      }
+    }
   };
 
   const getTooltipTitle = (offset?: string, liveSpansOn?: boolean): string => {
     const startTime = offset
-      ? setDiffOnNanoSecTf(currentTimeframe.endTimeUnixNanoSec, offset)
-      : currentTimeframe.startTimeUnixNanoSec;
+      ? setDiffOnNanoSecTf(
+          timeframeState.currentTimeframe.endTimeUnixNanoSec,
+          offset
+        )
+      : timeframeState.currentTimeframe.startTimeUnixNanoSec;
     const formattedEndTime =
       offset && liveSpansOn
         ? "Now"
-        : formatNanoToTimeString(currentTimeframe.endTimeUnixNanoSec);
+        : formatNanoToTimeString(
+            timeframeState.currentTimeframe.endTimeUnixNanoSec
+          );
     return `${formatNanoToTimeString(startTime)} -> ${formattedEndTime}`;
   };
-
-  if (!liveSpansOn) {
-    calcTimeFrame(isSelected);
-  }
 
   return (
     <div>
@@ -188,7 +147,7 @@ export const TimeFrameSelector = () => {
         {options.map((tf) => (
           <Tooltip
             key={tf.label}
-            title={getTooltipTitle(tf.offsetRange, liveSpansOn)}
+            title={getTooltipTitle(tf.offsetRange, liveSpansState.isOn)}
             placement="top-end"
             arrow
           >
@@ -213,6 +172,12 @@ type RelativeTimeFrame = {
   relativeTo: string;
   offsetRange: string;
 };
+
+function isRelativeTimeFrame(
+  object: TimeFrameTypes
+): object is RelativeTimeFrame {
+  return "offsetRange" in object;
+}
 
 type CustomTimeFrame = {
   label: string;

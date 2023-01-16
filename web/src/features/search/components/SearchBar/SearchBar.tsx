@@ -21,24 +21,12 @@ import { useState } from "react";
 
 import { theme } from "@/styles";
 
-import { SearchFilter } from "../../types/common";
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { FilterChip } from "../FilterChip/FilterChip";
 import { styles } from "./styles";
 
-export type SearchBarProps = {
-  filters: Array<SearchFilter>;
-  onFilterAdded: (entry: SearchFilter) => void;
-  onFilterDeleted: (entry: SearchFilter) => void;
-  onClearFilters: () => void;
-};
-
-export function SearchBar({
-  filters,
-  onFilterAdded,
-  onFilterDeleted,
-  onClearFilters,
-}: SearchBarProps) {
+export function SearchBar() {
   const [open, setOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -46,6 +34,8 @@ export function SearchBar({
     setOpen(true);
     setAnchorEl(event.currentTarget);
   };
+
+  const filtersState = useSpanSearchStore((state) => state.filtersState);
 
   const handleClose = () => {
     setOpen(false);
@@ -64,21 +54,15 @@ export function SearchBar({
             Add Filter
           </Button>
           <FilterBuilderDialog
-            filters={filters}
             open={open}
             onClose={handleClose}
-            onApply={onFilterAdded}
             anchorEl={anchorEl}
           />
-          {filters.map((filter, index) => (
-            <FilterChip
-              key={index}
-              filter={filter}
-              onFilterDeleted={onFilterDeleted}
-            />
+          {filtersState.filters.map((filter, index) => (
+            <FilterChip key={index} filter={filter} />
           ))}
         </Stack>
-        {filters.length > 0 && (
+        {filtersState.filters.length > 0 && (
           <Stack direction="row" sx={styles.clear}>
             <Divider
               orientation="vertical"
@@ -86,7 +70,7 @@ export function SearchBar({
             />
             <IconButton
               sx={styles.clearButton}
-              onClick={onClearFilters}
+              onClick={filtersState.clearFilters}
               size="small"
             >
               <Close fontSize="inherit" />

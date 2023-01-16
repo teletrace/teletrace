@@ -33,10 +33,10 @@ import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
@@ -44,23 +44,39 @@ import { styles } from "./styles";
 export type TagValuesSelectorProps = {
   tag: string;
   title: string;
-  value: Array<string | number>;
   searchable?: boolean;
-  filters: Array<SearchFilter>;
-  onChange?: (value: Array<string | number>) => void;
+  render?: (value: string | number) => React.ReactNode;
 };
+
+function extractFilterArrayValue(
+  tag: string,
+  filters: SearchFilter[]
+): Array<string | number> {
+  const filterIndex = filters.findIndex(
+    (f) => f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in"
+  );
+  const filterValue =
+    filterIndex > -1 ? filters[filterIndex].keyValueFilter.value : [];
+  return Array.isArray(filterValue) ? filterValue : [];
+}
 
 export const TagValuesSelector = ({
   title,
   tag,
-  value,
-  filters,
   searchable,
-  onChange,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
-  const clearTags = () => onChange?.([]);
+
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+  const timeframeState = useSpanSearchStore((state) => state.timeframeState);
+  const filtersState = useSpanSearchStore((state) => state.filtersState);
+
+  const value = extractFilterArrayValue(tag, filtersState.filters);
+  const filters = filtersState.filters.filter(
+    (f) => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in")
+  );
+
   const tagSearchFilter: SearchFilter = {
     keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
   };
@@ -69,12 +85,9 @@ export const TagValuesSelector = ({
       tagSearchFilter.keyValueFilter.value
         ? [...filters, tagSearchFilter]
         : filters,
-    [filters, tagSearchFilter]
+    [filters, tagSearchFilter.keyValueFilter]
   );
 
-  const { liveSpansState, timeframeState } = useSpanSearchStore(
-    (state) => state
-  );
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
     {
@@ -93,6 +106,24 @@ export const TagValuesSelector = ({
       label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
     }));
 
+  const handleCheckboxChange = (values: (string | number)[]) => {
+    const filter: SearchFilter = {
+      keyValueFilter: { key: tag, operator: "in", value: values },
+    };
+
+    const isEmptyCollectionFilter =
+      ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
+      Array.isArray(filter.keyValueFilter.value) &&
+      filter.keyValueFilter.value.length == 0;
+
+    isEmptyCollectionFilter
+      ? filtersState.deleteFilter(
+          filter.keyValueFilter.key,
+          filter.keyValueFilter.operator
+        )
+      : filtersState.createOrUpdateFilter(filter);
+  };
+
   return (
     <div>
       <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
@@ -108,7 +139,7 @@ export const TagValuesSelector = ({
           </AccordionSummary>
           <AccordionActions>
             {value.length > 0 && (
-              <Button size="small" onClick={clearTags}>
+              <Button onClick={() => filtersState.deleteFilter(tag, "in")}>
                 Clear
               </Button>
             )}
@@ -128,7 +159,7 @@ export const TagValuesSelector = ({
                 value={value}
                 loading={false}
                 options={tagOptions || []}
-                onChange={onChange}
+                onChange={handleCheckboxChange}
                 sx={styles.checkboxList}
               />
             </Fragment>
