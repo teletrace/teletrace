@@ -98,8 +98,8 @@ export const TagValuesSelector = ({
     tagFilters,
     liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
   );
-  const tagOptions = data
 
+  const tagOptions = data
     ?.filter((tag) => tag?.value.toString().includes(search))
     .map((tag) => ({
       value: tag.value,
@@ -155,13 +155,28 @@ export const TagValuesSelector = ({
                 <SearchField value={search} onChange={setSearch} />
               )}
 
-              <CheckboxList
-                value={value}
-                loading={false}
-                options={tagOptions || []}
-                onChange={handleCheckboxChange}
-                sx={styles.checkboxList}
-              />
+              {Boolean(tagOptions?.length) && (
+                <CheckboxList
+                  value={value}
+                  loading={false}
+                  options={tagOptions || []}
+                  onChange={handleCheckboxChange}
+                  sx={styles.checkboxList}
+                />
+              )}
+
+              {!tagOptions?.length &&
+                !isFetching &&
+                debouncedSearch === search && (
+                  <Typography
+                    component="div"
+                    variant="subtitle2"
+                    color="GrayText"
+                    sx={{ m: 1, mt: 2 }}
+                  >
+                    No results found
+                  </Typography>
+                )}
             </Fragment>
           )}
         </AccordionDetails>
