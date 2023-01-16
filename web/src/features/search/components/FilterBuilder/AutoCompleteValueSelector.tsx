@@ -24,10 +24,10 @@ import {
 import { useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";

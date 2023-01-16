@@ -33,10 +33,10 @@ import { useDebounce } from "use-debounce";
 
 import { CheckboxList } from "@/components/CheckboxList";
 import { SearchField } from "@/components/SearchField";
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { SearchFilter } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
@@ -112,14 +112,16 @@ export const TagValuesSelector = ({
     };
 
     const isEmptyCollectionFilter =
-        ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
-        Array.isArray(filter.keyValueFilter.value) &&
-        filter.keyValueFilter.value.length == 0;
+      ["in", "not_in"].includes(filter.keyValueFilter.operator) &&
+      Array.isArray(filter.keyValueFilter.value) &&
+      filter.keyValueFilter.value.length == 0;
 
-    isEmptyCollectionFilter ?
-        filtersState.deleteFilter(filter.keyValueFilter.key, filter.keyValueFilter.operator)
-        :
-        filtersState.createOrUpdateFilter(filter);
+    isEmptyCollectionFilter
+      ? filtersState.deleteFilter(
+          filter.keyValueFilter.key,
+          filter.keyValueFilter.operator
+        )
+      : filtersState.createOrUpdateFilter(filter);
   };
 
   return (

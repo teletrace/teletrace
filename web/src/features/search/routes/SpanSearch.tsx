@@ -18,13 +18,13 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 
 import { Head } from "@/components/Head";
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
+import { useSpanSearchStore } from "../stores//spanSearchStore";
 
 export const SpanSearch = () => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);

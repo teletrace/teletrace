@@ -20,7 +20,6 @@ import { immer } from "zustand/middleware/immer";
 import { Operator, SearchFilter } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
-
 interface LiveSpansSlice {
   liveSpansState: {
     isOn: boolean;
@@ -156,13 +155,18 @@ const createFiltersSlice: StateCreator<
     deleteFilter: (key: string, operator: Operator) =>
       set((state) => {
         const filterIndex = state.filtersState.filters.findIndex((f) =>
-            isFiltersStructureEqual(f.keyValueFilter.key, key, f.keyValueFilter.operator, operator)
+          isFiltersStructureEqual(
+            f.keyValueFilter.key,
+            key,
+            f.keyValueFilter.operator,
+            operator
+          )
         );
-        state.filtersState.filters.splice(filterIndex, 1)
+        state.filtersState.filters.splice(filterIndex, 1);
       }),
     clearFilters: () =>
       set((state) => {
-        state.filtersState.filters = []
+        state.filtersState.filters = [];
       }),
   },
 }));

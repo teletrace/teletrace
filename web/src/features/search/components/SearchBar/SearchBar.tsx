@@ -19,9 +19,9 @@ import { Button, Divider, IconButton, Paper } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useState } from "react";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { theme } from "@/styles";
 
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { FilterChip } from "../FilterChip/FilterChip";
 import { styles } from "./styles";

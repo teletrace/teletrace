@@ -16,8 +16,7 @@
 
 import { Chip, Tooltip, Typography } from "@mui/material";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
-
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { styles } from "./styles";
 

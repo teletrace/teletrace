@@ -23,7 +23,6 @@ import {
 } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import {
   formatNanoToTimeString,
   getCurrentTimestamp,
@@ -31,6 +30,7 @@ import {
   nanoSecToMs,
 } from "@/utils/format";
 
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
 const options: RelativeTimeFrame[] = [
@@ -39,8 +39,6 @@ const options: RelativeTimeFrame[] = [
   { label: "3D", offsetRange: "3d", relativeTo: "now" },
   { label: "1W", offsetRange: "1w", relativeTo: "now" },
 ];
-
-
 
 export const TimeFrameSelector = () => {
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
@@ -77,7 +75,10 @@ export const TimeFrameSelector = () => {
     setOpen(false);
   };
 
-  const handleBtnClicked = (event: MouseEvent<HTMLElement>, value: TimeFrameTypes) => {
+  const handleBtnClicked = (
+    event: MouseEvent<HTMLElement>,
+    value: TimeFrameTypes
+  ) => {
     setIsSelected(value);
     if (value?.label === "Custom") {
       setPreviousSelected(isSelected);
@@ -172,7 +173,9 @@ type RelativeTimeFrame = {
   offsetRange: string;
 };
 
-function isRelativeTimeFrame(object: TimeFrameTypes): object is RelativeTimeFrame {
+function isRelativeTimeFrame(
+  object: TimeFrameTypes
+): object is RelativeTimeFrame {
   return "offsetRange" in object;
 }
 

@@ -30,9 +30,9 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
 import { msToNanoSec } from "@/utils/format";
 
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {

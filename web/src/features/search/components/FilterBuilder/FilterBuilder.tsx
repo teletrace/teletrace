@@ -24,8 +24,7 @@ import {
 import { Stack } from "@mui/system";
 import React, { useState } from "react";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
-
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { AvailableTag } from "../../types/availableTags";
 import {
   FilterValueTypes,

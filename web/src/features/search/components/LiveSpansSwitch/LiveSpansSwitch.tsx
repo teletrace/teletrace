@@ -16,7 +16,7 @@
 
 import { FormControlLabel, FormGroup, Switch, Tooltip } from "@mui/material";
 
-import { useSpanSearchStore } from "@/stores/spanSearchStore";
+import { useSpanSearchStore } from "../../stores//spanSearchStore";
 
 export function LiveSpanSwitch() {
   const tooltipTitleDisabled =
