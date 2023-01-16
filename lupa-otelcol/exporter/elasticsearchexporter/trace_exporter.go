@@ -28,10 +28,9 @@ import (
 )
 
 type elasticsearchTracesExporter struct {
-	logger     *zap.Logger
-	cfg        *Config
-	client     *elasticsearch.Client
-	maxRetries int
+	logger *zap.Logger
+	cfg    *Config
+	client *elasticsearch.Client
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExporter, error) {
@@ -44,16 +43,10 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExp
 		return nil, fmt.Errorf("failed to create client: %+v", err)
 	}
 
-	maxRetries := 1
-	if cfg.Retry.Enabled {
-		maxRetries = cfg.Retry.MaxRetries
-	}
-
 	return &elasticsearchTracesExporter{
-		logger:     logger,
-		cfg:        cfg,
-		client:     esClient,
-		maxRetries: maxRetries,
+		logger: logger,
+		cfg:    cfg,
+		client: esClient,
 	}, nil
 }
 

@@ -43,14 +43,6 @@ func createDefaultConfig() component.ExporterConfig {
 	return &Config{
 		ExporterSettings: config.NewExporterSettings(component.NewID(typeStr)),
 		Index:            defaultIndex,
-		WorkersCount:     1,
-		Flush: FlushSettings{
-			Interval: 0,
-		},
-		Retry: RetrySettings{
-			Enabled:    true,
-			MaxRetries: 3,
-		},
 	}
 }
 
