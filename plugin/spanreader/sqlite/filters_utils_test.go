@@ -18,6 +18,7 @@ package sqlitespanreader
 
 import (
 	"fmt"
+	"oss-tracing/pkg/model"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,4 +58,56 @@ func TestConvertSliceOfValuesToStringNotOnlyStrings(t *testing.T) {
 
 func TestConvertSliceOfValuesToStringEmptyInput(t *testing.T) {
 	assert.Equal(t, "", convertSliceOfValuesToString([]interface{}{}))
+}
+
+func TestConvertFiltersValues(t *testing.T) {
+	filters := []model.SearchFilter{
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.event.attributes.name",
+				Operator: "in",
+				Value:    "message",
+			},
+		},
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.attributes.http.host",
+				Operator: "in",
+				Value:    "server:8080",
+			},
+		},
+	}
+	convertedFilters := convertFiltersValues(filters)
+	assert.Equal(t, len(filters), len(convertedFilters))
+	assert.Equal(t, "span.attributes.value", fmt.Sprint(convertedFilters[1].KeyValueFilter.Key))
+	assert.Equal(t, "in", fmt.Sprint(convertedFilters[1].KeyValueFilter.Operator))
+}
+
+func TestConvertFiltersValuesInvalidKey(t *testing.T) {
+	filters := []model.SearchFilter{
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "randomKey",
+				Operator: "in",
+				Value:    "server:",
+			},
+		},
+	}
+	convertedFilters := convertFiltersValues(filters)
+	assert.Empty(t, convertedFilters)
+}
+
+func TestConvertFiltersValuesEmptyInput(t *testing.T) {
+	filters := []model.SearchFilter{
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "",
+				Operator: "",
+				Value:    "",
+			},
+		},
+	}
+
+	convertedFilters := convertFiltersValues(filters)
+	assert.Empty(t, convertedFilters)
 }
