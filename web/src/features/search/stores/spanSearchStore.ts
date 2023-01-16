@@ -171,17 +171,17 @@ const createFiltersSlice: StateCreator<
   },
 }));
 
-interface SpansSlice {
+interface SortSlice {
   sortState: {
     sort: Sort[];
     setSort: (sort: Sort[]) => void;
   };
 }
-const createSpansSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice & SpansSlice,
+const createSortSlice: StateCreator<
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
   [],
   [],
-  SpansSlice
+  SortSlice
 > = (set) => ({
   sortState: {
     sort: [],
@@ -194,10 +194,10 @@ const createSpansSlice: StateCreator<
 });
 
 export const useSpanSearchStore = create<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice & SpansSlice
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
 >()((...set) => ({
   ...createTimeframeSlice(...set),
   ...createLiveSpansSlice(...set),
   ...createFiltersSlice(...set),
-  ...createSpansSlice(...set),
+  ...createSortSlice(...set),
 }));
