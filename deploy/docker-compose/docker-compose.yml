@@ -12,9 +12,6 @@ services:
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
     image: epsagon/lupa:latest
-    build:
-      dockerfile: cmd/all-in-one/Dockerfile
-      context: ../../
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
       interval: 60s
