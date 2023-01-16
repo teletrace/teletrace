@@ -21,6 +21,7 @@
     "date-fns": "^2.29.3",
     "dayjs": "^1.11.6",
     "elkjs": "^0.8.2",
+    "immer": "^9.0.17",
     "lodash-es": "^4.17.21",
     "material-react-table": "^1.5.2",
     "react": "^18.2.0",
