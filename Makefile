@@ -60,7 +60,7 @@ all-in-one:
 
 .PHONY: update-license-headers
 update-license-headers: bin/license-header-checker
-	bin/license-header-checker -v -a -r -i node_modules,web/src/features/trace/components/TraceTimeline,deploy/demo .github/license_header.txt . ts tsx js go css
+	bin/license-header-checker -v -a -r -i node_modules,web/src/features/trace/components/TraceTimeline,deploy/demo,tests/e2e/playwright/playwright.config.ts,lupa-otelcol/exporter/elasticsearchexporter/trace_exporter.go,lupa-otelcol/exporter/elasticsearchexporter/writer.go,web/src/components/Elements/BasicElements/Accordion.stories.tsx,web/src/components/Elements/BasicElements/Autocomplete.stories.tsx,web/src/components/Elements/BasicElements/Dialog.stories.tsx,web/src/components/Elements/BasicElements/Drawer.stories.tsx,web/src/components/Elements/BasicElements/List.stories.tsx,web/src/components/Elements/BasicElements/Snackbar.stories.tsx,web/src/components/Elements/BasicElements/TextField.stories.tsx,web/src/components/Elements/BasicElements/ToggleButtonGroup.stories.tsx,web/src/components/Elements/BasicElements/Tooltip.stories.tsx,web/src/components/Elements/BasicElements/Typography.stories.tsx .github/license_header.txt . ts tsx js go css
 
 bin/license-header-checker:
 	curl -s https://raw.githubusercontent.com/lluissm/license-header-checker/master/install.sh | bash
