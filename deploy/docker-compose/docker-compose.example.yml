@@ -1,5 +1,16 @@
 version: "3"
 services:
+  otel-collector:
+    image: otel/opentelemetry-collector:${OTEL_COLLECTOR_VERSION}
+    command: ["--config=/etc/otel-collector.yaml"]
+    volumes:
+      - ./otel-collector.yaml:/etc/otel-collector.yaml
+    depends_on:
+      lupa-api:
+        condition: service_healthy
+    networks:
+      - lupa
+
   demo-client:
     build:
       dockerfile: Dockerfile
@@ -26,3 +37,13 @@ services:
       - otel-collector
     networks:
       - lupa
+
+  kibana:
+    image: kibana:8.4.2
+    ports:
+      - "5601:5601"
+    networks:
+      - lupa
+    depends_on:
+      elasticsearch:
+        condition: service_healthy  
