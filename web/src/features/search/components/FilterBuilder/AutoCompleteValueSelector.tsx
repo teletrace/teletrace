@@ -103,13 +103,11 @@ export const AutoCompleteValueSelector = ({
     onChange(eventValue.map((v) => v.value));
   };
 
-  const getSelectedValues = () => {
-    return (
-      tagOptions?.filter(
-        (tagOption) => tagOption && value.includes(tagOption?.value)
-      ) || []
-    );
-  };
+  const getSelectedValues = () =>
+    tagOptions?.filter(
+      (tagOption) => tagOption && value.includes(tagOption?.value)
+    ) || [];
+
   return (
     <Autocomplete
       multiple
@@ -118,18 +116,16 @@ export const AutoCompleteValueSelector = ({
       loading={isLoading}
       clearOnBlur={false}
       disableCloseOnSelect
-      value={getSelectedValues() || null}
+      value={getSelectedValues()}
       id={"value-selector"}
       options={
-        tagOptions?.filter(
-          (option) =>
-            value.includes(option.value) ||
-            option.value.toString().includes(search)
+        tagOptions?.filter((option) =>
+          // TODO: once backend search isn't case sensitive: option.value.toString().toLowerCase().includes(search.toLowerCase())
+          option.value.toString().includes(search)
         ) || []
       }
       filterOptions={(x) => x}
       inputValue={search}
-      filterSelectedOptions
       isOptionEqualToValue={(option, value) => option.value === value.value}
       onInputChange={(event, newInputValue) => {
         setSearch(newInputValue);
