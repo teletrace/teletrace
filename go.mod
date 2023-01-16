@@ -8,7 +8,7 @@ require (
 	github.com/spf13/viper v1.14.0
 	github.com/stretchr/testify v1.8.1
 	go.opentelemetry.io/collector v0.64.1 // indirect
-	go.opentelemetry.io/collector/pdata v0.64.1
+	go.opentelemetry.io/collector/pdata v0.64.1 // indirect
 	go.opentelemetry.io/otel/trace v1.11.1 // indirect
 	go.uber.org/zap v1.23.0
 	google.golang.org/grpc v1.50.1 // indirect
@@ -18,6 +18,7 @@ require (
 	github.com/epsagon/lupa/lupa-otelcol v0.0.0-00010101000000-000000000000
 	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333
 	github.com/gin-contrib/cors v1.4.0
+	github.com/mattn/go-sqlite3 v1.14.16
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
 )
 
@@ -28,6 +29,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000 // indirect
+	github.com/epsagon/lupa/pkg/modeltranslator v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
@@ -46,7 +48,6 @@ require (
 	github.com/klauspost/compress v1.15.12 // indirect
 	github.com/knadh/koanf v1.4.4 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
-	github.com/mattn/go-sqlite3 v1.14.16 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
@@ -97,7 +98,6 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -129,3 +129,5 @@ replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./lupa-otelcol/exporter/elasticsearchexporter
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./lupa-otelcol/exporter/sqliteexporter
+
+replace github.com/epsagon/lupa/pkg/modeltranslator => ./pkg/modeltranslator/
