@@ -41,7 +41,7 @@ export const nanoSecToMs = (nanoSec: number) => {
   return nanoSec / (1000 * 1000);
 };
 
-export const msToNanoSec = (ms: number) => {
+export const msToNanosec = (ms: number) => {
   return ms * 1000000;
 };
 
@@ -61,7 +61,7 @@ export const formatNanoAsMsDateTime = (nanoSec: number) => {
 };
 
 export const getCurrentTimestamp = (): number => {
-  return msToNanoSec(new Date().getTime());
+  return msToNanosec(new Date().getTime());
 };
 
-export const ONE_HOUR_IN_NS = msToNanoSec(60 * 60 * 1000);
+export const ONE_HOUR_IN_NS = msToNanosec(60 * 60 * 1000);
