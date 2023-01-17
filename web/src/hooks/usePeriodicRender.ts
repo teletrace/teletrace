@@ -24,8 +24,8 @@ import { useEffect, useState } from "react";
  * @returns A callback function that triggers the rerender by changing a random nanoId
  */
 export function usePeriodicRender(
-    timeSinceLastRender: number,
-    calcNextRenderTime: (timeSinceLastRender: number) => number
+  timeSinceLastRender: number,
+  calcNextRenderTime: (timeSinceLastRender: number) => number
 ): () => void {
   const [periodicRenderTriggerId, setPeriodicRenderTriggerId] =
     useState<string>(nanoid());
