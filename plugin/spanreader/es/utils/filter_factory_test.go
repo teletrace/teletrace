@@ -18,10 +18,11 @@ package utils
 
 import (
 	"encoding/json"
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-	"github.com/stretchr/testify/assert"
 	"oss-tracing/pkg/model"
 	"testing"
+
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMustAndMustNotFilters(t *testing.T) {
@@ -61,11 +62,13 @@ func TestMustAndMustNotFilters(t *testing.T) {
 }`
 	query := types.NewQueryContainerBuilder()
 	kvFilters := []model.KeyValueFilter{
-		{Key: "resource.attributes.service.name",
+		{
+			Key:      "resource.attributes.service.name",
 			Operator: "in",
 			Value:    []string{"demo-server"},
 		},
-		{Key: "span.name",
+		{
+			Key:      "span.name",
 			Operator: "not_in",
 			Value:    []string{"ExecuteRequest"},
 		},
@@ -76,14 +79,16 @@ func TestMustAndMustNotFilters(t *testing.T) {
 	queryJson, err := json.Marshal(query.Build())
 	assert.Nil(t, err)
 	assert.JSONEq(t, expectedJson, string(queryJson))
-	//validate that filter orders doesn't effect
+	// validate that filter orders doesn't effect
 	query2 := types.NewQueryContainerBuilder()
 	kvFilters2 := []model.KeyValueFilter{
-		{Key: "span.name",
+		{
+			Key:      "span.name",
 			Operator: "not_in",
 			Value:    []string{"ExecuteRequest"},
 		},
-		{Key: "resource.attributes.service.name",
+		{
+			Key:      "resource.attributes.service.name",
 			Operator: "in",
 			Value:    []string{"demo-server"},
 		},
@@ -131,11 +136,13 @@ func TestMultiMustNotFilters(t *testing.T) {
 }`
 	query := types.NewQueryContainerBuilder()
 	kvFilters := []model.KeyValueFilter{
-		{Key: "resource.attributes.service.name",
+		{
+			Key:      "resource.attributes.service.name",
 			Operator: "not_in",
 			Value:    []string{"demo-server"},
 		},
-		{Key: "span.name",
+		{
+			Key:      "span.name",
 			Operator: "not_in",
 			Value:    []string{"ExecuteRequest"},
 		},
