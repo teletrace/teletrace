@@ -7,11 +7,13 @@ services:
     ports:
       - "8080:8080"
     command: ["--config=/etc/lupa-collector-config.yaml"]
+    build:
+      dockerfile: cmd/all-in-one/Dockerfile
+      context: ../../
     volumes:
       - ./lupa-otel-collector.yaml:/etc/lupa-collector-config.yaml
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
-    image: epsagon/lupa:latest
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
       interval: 60s
@@ -40,6 +42,16 @@ services:
       interval: 3s
       timeout: 10s
       retries: 50
+
+  kibana:
+    image: kibana:8.4.2
+    ports:
+      - "5601:5601"
+    networks:
+      - lupa
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
 
 volumes:
   es_data:
