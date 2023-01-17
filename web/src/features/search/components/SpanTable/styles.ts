@@ -32,7 +32,7 @@ const styles: { [name: string]: CSSProperties } = {
   progress: {
     margin: 0,
     position: "absolute",
-    top: 45,
+    top: 49,
     right: 0,
     left: 0,
     zIndex: 1,
