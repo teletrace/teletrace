@@ -17,10 +17,15 @@
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 
-// Allows a component to periodically rerender without any particular state change
+/**
+ * Allows a component to periodically rerender without any particular state change
+ * @param timeSinceLastRender The time elapsed since the last render
+ * @param calcNextRenderTime A callback function that calculates the amount of time until the next render
+ * @returns A callback function that triggers the rerender by changing a random nanoId
+ */
 export function usePeriodicRender(
-  timeSinceLastRefresh: number,
-  calcNextRenderTime: (timeSinceLastRender: number) => number
+    timeSinceLastRender: number,
+    calcNextRenderTime: (timeSinceLastRender: number) => number
 ): () => void {
   const [periodicRenderTriggerId, setPeriodicRenderTriggerId] =
     useState<string>(nanoid());
@@ -28,7 +33,7 @@ export function usePeriodicRender(
   useEffect(() => {
     const timeout = setTimeout(
       () => setPeriodicRenderTriggerId(nanoid()),
-      calcNextRenderTime(timeSinceLastRefresh) * 1000
+      calcNextRenderTime(timeSinceLastRender) * 1000
     );
 
     return () => clearTimeout(timeout);
