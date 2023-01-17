@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
  * Allows a component to periodically rerender without any particular state change
  * @param timeSinceLastRender The time elapsed since the last render
  * @param calcNextRenderTime A callback function that calculates the amount of time until the next render
- * @returns A callback function that triggers the rerender by changing a random nanoId
+ * @returns A callback function that resets the periodic render
  */
 export function usePeriodicRender(
   timeSinceLastRender: number,

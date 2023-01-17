@@ -60,6 +60,11 @@ export function RefreshButton() {
     }
   }, [isFetching]);
 
+  useEffect(() => {
+    setLastRefreshed(new Date());
+    resetPeriodicRender();
+  }, [timeframeState.currentTimeframe])
+
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
   }
