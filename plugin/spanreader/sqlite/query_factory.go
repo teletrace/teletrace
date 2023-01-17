@@ -207,7 +207,7 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 func buildDynamicTagsQuery() string {
 	var queries []string
 	for tableKey, table := range sqliteTableNameMap {
-		if isDynamicTagsTable(table) {
+		if isDynamicTagsTable(table) && tableKey != "span.resource.attributes" {
 			queries = append(queries, fmt.Sprintf("SELECT DISTINCT '%s' as table_key, t.key as tag_name, t.type as tag_type FROM %s t", tableKey, table))
 		}
 	}
