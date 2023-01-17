@@ -33,13 +33,7 @@ export function LiveSpanSwitch() {
     liveSpansState.setIsOn(event.target.checked);
   };
   return (
-    <Tooltip
-      title={
-        timeframeState.currentTimeframe.isRelative
-          ? tooltipTitleDisabled
-          : tooltipTitleEnabled
-      }
-    >
+    <Tooltip title={disabled ? tooltipTitleDisabled : tooltipTitleEnabled}>
       <FormGroup>
         <FormControlLabel
           control={

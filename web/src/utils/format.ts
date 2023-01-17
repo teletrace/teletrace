@@ -17,7 +17,7 @@
 import format from "date-fns/format";
 
 export const formatNanoToTimeString = (time: number): string => {
-  const ms = nanoSecToMs(time);
+  const ms = nanoToMs(time);
   return formatDateAsDateTime(ms, { showSec: false });
 };
 
@@ -37,16 +37,16 @@ export const formatNumber = (n: number) =>
     maximumFractionDigits: 1,
   }).format(n);
 
-export const nanoSecToMs = (nanoSec: number) => {
+export const nanoToMs = (nanoSec: number) => {
   return nanoSec / (1000 * 1000);
 };
 
-export const msToNanoSec = (ms: number) => {
+export const msToNano = (ms: number) => {
   return ms * 1000000;
 };
 
 export const roundNanoToTwoDecimalMs = (nanoSec: number) => {
-  const ms = nanoSecToMs(nanoSec);
+  const ms = nanoToMs(nanoSec);
   return Math.round(ms * 100) / 100;
 };
 
@@ -56,12 +56,12 @@ export const formatDurationAsMs = (nanoSec: number) => {
 };
 
 export const formatNanoAsMsDateTime = (nanoSec: number) => {
-  const ms = nanoSecToMs(nanoSec);
+  const ms = nanoToMs(nanoSec);
   return formatDateAsDateTime(ms, { showMs: true });
 };
 
 export const getCurrentTimestamp = (): number => {
-  return msToNanoSec(new Date().getTime());
+  return msToNano(new Date().getTime());
 };
 
-export const ONE_HOUR_IN_NS = msToNanoSec(60 * 60 * 1000);
+export const ONE_HOUR_IN_NS = msToNano(60 * 60 * 1000);
