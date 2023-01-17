@@ -6,12 +6,20 @@ This package includes the instrumentation agent as well as
 instrumentations for all supported libraries and all available data exporters.
 The package provides a completely automatic, out-of-the-box experience.
 
-### 1. Run the following code in your Terminal to initiate the SDK
+### 2. Run the following code in your Terminal to initiate the SDK
 
 ```bash
 export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 export OTEL_METRICS_EXPORTER=none
 export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://your-endpoint
+```
+
+Optional Configuration for batch processor
+
+```bash
+export OTEL_BSP_MAX_QUEUE_SIZE=2048
+export OTEL_BSP_MAX_EXPORT_BATCH_SIZE=512
+export OTEL_BSP_EXPORT_TIMEOUT=30000
 ```
 
 Enable the instrumentation agent using the `-javaagent` flag to the JVM.
@@ -21,10 +29,10 @@ java -javaagent:./opentelemetry_javaagent.jar \
   -jar <myapp>.jar
 ```
 
-### 2. Redeploy and run your code
+### 3. Redeploy and run your code
 
 Make sure your updated code is running. Invoke the instrumented code.
 
-### 3. Visit Lupa's spans page
+### 4. Visit Lupa's spans page
 
 You should be able to find the newly created span in Lupa's spans page. You can use filters to narrow down shown results to find the new spans more easily.
