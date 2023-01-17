@@ -24,7 +24,7 @@ import (
 	"testing"
 )
 
-func TestMustAndNotMustFilters(t *testing.T) {
+func TestMustAndMustNotFilters(t *testing.T) {
 	expectedJson := `{
 	"bool": {
 		"must": [
@@ -96,7 +96,7 @@ func TestMustAndNotMustFilters(t *testing.T) {
 	assert.JSONEq(t, expectedJson, string(queryJson2))
 }
 
-func TestMultiNotMustFilters(t *testing.T) {
+func TestMultiMustNotFilters(t *testing.T) {
 	expectedJson := `{
 	"bool": {
 		"must_not": [
