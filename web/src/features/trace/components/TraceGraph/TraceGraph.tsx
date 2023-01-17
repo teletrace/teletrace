@@ -179,7 +179,7 @@ const TraceGraphImpl = ({
   };
 
   return (
-    <Box sx={{ flex: 1 }}>
+    <Box sx={{ flex: 1, "& .react-flow__attribution": { display: "none" } }}>
       {isLoading ? (
         <Stack alignItems="center" justifyContent="center" height="100%">
           <CircularProgress />
