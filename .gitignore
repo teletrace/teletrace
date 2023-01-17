@@ -44,4 +44,4 @@ out/
 .idea/
 bin/
 
-*.db
+*.db*
