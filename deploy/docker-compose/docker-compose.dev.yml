@@ -59,4 +59,3 @@ volumes:
 networks:
   lupa:
     internal: false
-
