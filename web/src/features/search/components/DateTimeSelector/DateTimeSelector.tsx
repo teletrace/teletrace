@@ -30,18 +30,18 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { useState } from "react";
 
-import { msToNanoSec } from "@/utils/format";
+import { msToNano } from "@/utils/format";
 
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { styles } from "./styles";
 
 export type DateTimeSelectorProps = {
-  onClose: () => void;
+  closeDialog: () => void;
   onCancel: () => void;
 };
 
 export const DateTimeSelector = ({
-  onClose,
+  closeDialog,
   onCancel,
 }: DateTimeSelectorProps) => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
@@ -49,15 +49,20 @@ export const DateTimeSelector = ({
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(timeframeState.currentTimeframe.startTimeUnixNanoSec / 1000000)
   );
-  const [endDate, setEndDate] = useState<Date | null>(
-    new Date(timeframeState.currentTimeframe.endTimeUnixNanoSec / 1000000)
-  );
+  const [endDate, setEndDate] = useState<Date | null>(() => {
+    if (timeframeState.currentTimeframe.endTimeUnixNanoSec !== 0) {
+      return new Date(
+        timeframeState.currentTimeframe.endTimeUnixNanoSec / 1000000
+      );
+    }
+    return new Date();
+  });
   const [startTime, setStartTime] = useState<Date | null>(startDate);
   const [endTime, setEndTime] = useState<Date | null>(endDate);
   const [timeValid, setTimeValid] = useState<boolean>(true);
 
   const calcRange = () => {
-    const startRange = msToNanoSec(
+    const startRange = msToNano(
       startDate && startTime
         ? new Date(
             startDate.setHours(startTime.getHours(), startTime.getMinutes())
@@ -65,7 +70,7 @@ export const DateTimeSelector = ({
         : new Date().getTime()
     );
 
-    const endRange = msToNanoSec(
+    const endRange = msToNano(
       endTime && endDate
         ? new Date(
             endDate.setHours(endTime.getHours(), endTime.getMinutes())
@@ -83,7 +88,7 @@ export const DateTimeSelector = ({
         timeRange.startRange,
         timeRange.endRange
       );
-      onClose();
+      closeDialog();
     } else {
       setTimeValid(false);
       timeframeState.setRelativeTimeframe(
@@ -101,7 +106,10 @@ export const DateTimeSelector = ({
             <Stack direction="row" spacing={2}>
               <DatePicker
                 inputFormat="dd-MM-yyyy"
-                onChange={(startDate) => setStartDate(startDate)}
+                onChange={(startDate) => {
+                  setTimeValid(true);
+                  setStartDate(startDate);
+                }}
                 renderInput={(props) => (
                   <TextField {...props} sx={styles.dateInput} />
                 )}
@@ -109,7 +117,10 @@ export const DateTimeSelector = ({
               />
               <TimePicker
                 ampm={false}
-                onChange={(startTime) => setStartTime(startTime)}
+                onChange={(startTime) => {
+                  setTimeValid(true);
+                  setStartTime(startTime);
+                }}
                 value={startTime}
                 renderInput={(params) => (
                   <TextField {...params} sx={styles.timeInput} />
@@ -126,6 +137,7 @@ export const DateTimeSelector = ({
                   <TextField {...props} sx={styles.dateInput} />
                 )}
                 onChange={(endDate) => {
+                  setTimeValid(true);
                   setEndDate(endDate);
                 }}
                 value={endDate}
@@ -133,6 +145,7 @@ export const DateTimeSelector = ({
               <TimePicker
                 ampm={false}
                 onChange={(endTime) => {
+                  setTimeValid(true);
                   setEndTime(endTime);
                 }}
                 value={endTime}
