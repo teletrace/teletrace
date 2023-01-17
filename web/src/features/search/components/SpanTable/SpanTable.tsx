@@ -37,7 +37,6 @@ export function SpanTable() {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef =
     useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
-
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
@@ -150,23 +149,18 @@ export function SpanTable() {
     desc: !sort.ascending,
   }));
 
-  function updateSortingState(updaterOrValue: Updater<SortingState>) {
-    if (typeof updaterOrValue === "function") {
-      const s = updaterOrValue(sortingState);
-      sortState.setSort(
-        s?.map((columnSort) => ({
-          field: columnSort.id,
-          ascending: !columnSort.desc,
-        }))
-      );
-      console.log(s);
-    }
-  }
+  const updateSortingState = (updater: Updater<SortingState>) =>
+    typeof updater === "function" &&
+    sortState.setSort(
+      updater(sortingState)?.map((columnSort) => ({
+        field: columnSort.id,
+        ascending: !columnSort.desc,
+      }))
+    );
 
   return (
     <div style={styles.container}>
       {isRefetching && <LinearProgress sx={styles.progress} />}
-      <pre> {JSON.stringify(sortingState)} </pre>
       <MaterialReactTable
         columns={columns}
         data={tableSpans}
