@@ -17,11 +17,9 @@ package usageReport
 
 import (
 	"context"
-	"log"
-	"oss-tracing/pkg/model/usageevents"
-
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"go.uber.org/zap"
+	"oss-tracing/pkg/model/usageevents"
 )
 
 type UsageReporter struct {
@@ -34,7 +32,7 @@ type UsageReporter struct {
 func (r *UsageReporter) ReportSystemUp() {
 	c, err := cloudevents.NewClientHTTP()
 	if err != nil {
-		log.Fatalf("failed to create client, %v", err)
+		r.logger.Error("failed to create client", zap.Error(err))
 	}
 
 	// Create an Event.

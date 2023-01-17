@@ -17,6 +17,9 @@ package usageReport
 
 import (
 	"context"
+	"github.com/go-co-op/gocron"
+	"go.uber.org/zap"
+	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model/metadata/v1"
 	"oss-tracing/pkg/spanreader"
 	"time"
@@ -41,4 +44,26 @@ func GetSystemId(sr spanreader.SpanReader, ctx context.Context) (string, error) 
 		return systemId, nil
 	}
 	return systemIdRes.Value, nil
+}
+
+func InitializePeriodicalUsageReporting(sr spanreader.SpanReader, cfg *config.Config, logger *zap.Logger) (*gocron.Scheduler, error) {
+	systemId, err := GetSystemId(sr, context.Background())
+	if err != nil {
+		logger.Error("Failed to get SystemId", zap.Error(err))
+		return nil, err
+	}
+	logger.Info("System ID retrieved", zap.String("systemId", systemId))
+	usageReporter, err := NewUsageReporter(context.Background(), logger, systemId, cfg.UsageReportURL)
+	if err != nil {
+		logger.Error("Failed to create usage reporter", zap.Error(err))
+		return nil, err
+	}
+	periodicRunner := gocron.NewScheduler(time.UTC)
+	_, err = periodicRunner.Every("15m").Do(usageReporter.ReportSystemUp)
+	if err != nil {
+		logger.Error("Error defining periodical reporting", zap.Error(err))
+		return nil, err
+	}
+	periodicRunner.StartAsync()
+	return periodicRunner, nil
 }
