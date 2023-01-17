@@ -177,6 +177,10 @@ interface SortSlice {
     setSort: (sort: Sort[]) => void;
   };
 }
+
+const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
+const DEFAULT_SORT_ASC = false;
+
 const createSortSlice: StateCreator<
   LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
   [],
@@ -184,11 +188,13 @@ const createSortSlice: StateCreator<
   SortSlice
 > = (set) => ({
   sortState: {
-    sort: [],
+    sort: [{ field: DEFAULT_SORT_FIELD, ascending: DEFAULT_SORT_ASC }],
     setSort: (sort: Sort[]) =>
       set((state) => ({
-        ...state,
-        sort: sort,
+        sortState: {
+          ...state.sortState,
+          sort: sort,
+        },
       })),
   },
 });
