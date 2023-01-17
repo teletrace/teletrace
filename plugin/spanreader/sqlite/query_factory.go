@@ -135,7 +135,7 @@ func getSearchQuery(tables string, filters string, orders string) string {
 		"JOIN link_attributes la ON links.id = la.link_id GROUP BY links.id) " + // join between links and link attributes for map between link and theirs attributes
 		"AS links GROUP BY links.span_id) " +
 		"AS links ON links.span_id = iq.span_id " // join between links and spans
-	groupQuery := " GROUP BY iq.span_id " // group by span_id internal span params
+	groupQuery := " GROUP BY iq.span_id "                      // group by span_id internal span params
 	limitQuery := fmt.Sprintf(" LIMIT %d", LimitOfSpanRecords) // set limit on number of records
 	return spanIdentifiersQuery + internalSpanParamsQuery + spanSchemaJoinQuery + resourceAttributesJoinQuery + spanAttributesJoinQuery + scopesJoinQuery + eventsJoinQuery + LinksJoinQuery + groupQuery + orders + limitQuery
 }
