@@ -15,12 +15,7 @@
  */
 
 import { CalendarTodayOutlined } from "@mui/icons-material";
-import {
-  Popover,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-} from "@mui/material";
+import { Popover, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { MouseEvent, useRef, useState } from "react";
 
 import { formatNanoToTimeString, msToNano, nanoToMs } from "@/utils/format";
@@ -36,7 +31,6 @@ const options: RelativeTimeFrame[] = [
 ];
 
 export const TimeFrameSelector = () => {
-  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
 
   const customOption: CustomTimeFrame = {
@@ -90,21 +84,12 @@ export const TimeFrameSelector = () => {
     }
   };
 
-  const getTooltipTitle = (offset?: string): string => {
-    const now = msToNano(new Date().getTime());
-    const startTime = offset
-      ? getRelativeStartTime(now, offset)
-      : timeframeState.currentTimeframe.startTimeUnixNanoSec;
-    const formattedEndTime = liveSpansState.isOn
-      ? "Now"
-      : offset
-      ? formatNanoToTimeString(now)
-      : formatNanoToTimeString(
-          timeframeState.currentTimeframe.endTimeUnixNanoSec
-        );
-
-    return `${formatNanoToTimeString(startTime)} -> ${formattedEndTime}`;
-  };
+  const getFormattedCustomTimeframe = (): string =>
+    `${formatNanoToTimeString(
+      timeframeState.currentTimeframe.startTimeUnixNanoSec
+    )} -> ${formatNanoToTimeString(
+      timeframeState.currentTimeframe.endTimeUnixNanoSec
+    )}`;
 
   return (
     <div>
@@ -137,27 +122,20 @@ export const TimeFrameSelector = () => {
         >
           <CalendarTodayOutlined sx={{ paddingRight: "7px" }} />
           {isSelected?.label === customOption?.label && !open
-            ? getTooltipTitle()
+            ? getFormattedCustomTimeframe()
             : customOption.label}
         </ToggleButton>
 
         {options.map((timeframe) => (
-          <Tooltip
+          <ToggleButton
+            onClick={handleBtnClicked}
+            selected={isSelected?.label === timeframe?.label}
+            value={timeframe}
+            ref={buttonRef}
             key={timeframe.label}
-            title={getTooltipTitle(timeframe.offsetRange)}
-            placement="top-end"
-            arrow
           >
-            <ToggleButton
-              onClick={handleBtnClicked}
-              selected={isSelected?.label === timeframe?.label}
-              value={timeframe}
-              ref={buttonRef}
-              key={timeframe.label}
-            >
-              {timeframe.label}
-            </ToggleButton>
-          </Tooltip>
+            {timeframe.label}
+          </ToggleButton>
         ))}
       </ToggleButtonGroup>
     </div>
