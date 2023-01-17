@@ -106,7 +106,7 @@ func BuildFilters(b *types.QueryContainerBuilder, fs []model.KeyValueFilter, opt
 		if filter.Must {
 			must = append(must, (*qc).Build())
 		} else {
-			mustNot = append(must, (*qc).Build())
+			mustNot = append(mustNot, (*qc).Build())
 		}
 	}
 
