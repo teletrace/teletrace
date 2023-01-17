@@ -17,7 +17,7 @@
 import create, { StateCreator } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-import { Operator, SearchFilter } from "@/features/search";
+import { Operator, SearchFilter, Sort } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
 interface LiveSpansSlice {
@@ -171,10 +171,39 @@ const createFiltersSlice: StateCreator<
   },
 }));
 
+interface SortSlice {
+  sortState: {
+    sort: Sort[];
+    setSort: (sort: Sort[]) => void;
+  };
+}
+
+const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
+const DEFAULT_SORT_ASC = false;
+
+const createSortSlice: StateCreator<
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
+  [],
+  [],
+  SortSlice
+> = (set) => ({
+  sortState: {
+    sort: [{ field: DEFAULT_SORT_FIELD, ascending: DEFAULT_SORT_ASC }],
+    setSort: (sort: Sort[]) =>
+      set((state) => ({
+        sortState: {
+          ...state.sortState,
+          sort: sort,
+        },
+      })),
+  },
+});
+
 export const useSpanSearchStore = create<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
 >()((...set) => ({
   ...createTimeframeSlice(...set),
   ...createLiveSpansSlice(...set),
   ...createFiltersSlice(...set),
+  ...createSortSlice(...set),
 }));
