@@ -57,9 +57,6 @@ export const TimeFrameSelector = () => {
 
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    timeframeState.setRelativeTimeframe(
-      timeframeState.currentTimeframe.startTimeUnixNanoSec
-    );
     setOpen(false);
   };
 
