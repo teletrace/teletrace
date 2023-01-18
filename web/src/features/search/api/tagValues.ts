@@ -79,12 +79,9 @@ export const useTagValues = (
 };
 
 const mergeTagValues = (
-  currentTagValues?: Array<TagValue>,
-  allTagValues?: Array<TagValue>
+  currentTagValues: Array<TagValue>,
+  allTagValues: Array<TagValue>
 ) => {
-  if (currentTagValues === undefined || allTagValues === undefined) {
-    return undefined;
-  }
   const tagValuesMap: Record<string, TagValue> = {};
   for (const { value } of allTagValues) {
     tagValuesMap[value] = { value: value, count: 0 };
@@ -103,15 +100,21 @@ const mergeTagValues = (
 
 export const useTagValuesWithAll = (
   tag: string,
+  search: string,
   timeframe: Timeframe,
   filters: SearchFilter[],
   intervalInMilli?: number
 ) => {
+  const searchFilter: SearchFilter | undefined = search
+    ? { keyValueFilter: { key: tag, operator: "contains", value: search } }
+    : undefined;
   const currentValuesRequest: TagValuesRequest = {
-    filters: filters,
+    filters: searchFilter ? [...filters, searchFilter] : filters,
     timeframe: timeframe,
   };
-  const allValuesRequest: TagValuesRequest = { filters: [] };
+  const allValuesRequest: TagValuesRequest = {
+    filters: searchFilter ? [searchFilter] : [],
+  };
   const {
     data: currentTagValues,
     isFetching: isFetchingCurrent,
@@ -122,12 +125,16 @@ export const useTagValuesWithAll = (
     isFetching: isFetchingAllValues,
     isError: isErrorAllValues,
   } = useTagValues(tag, allValuesRequest, intervalInMilli);
+  const resultData =
+    currentTagValues === undefined || allTagValues === undefined
+      ? undefined
+      : mergeTagValues(
+          currentTagValues.values || [],
+          allTagValues.values || []
+        );
   return {
     isFetching: isFetchingAllValues || isFetchingCurrent,
     isError: isErrorAllValues || isErrorCurrent,
-    data: mergeTagValues(
-      currentTagValues?.values || [],
-      allTagValues?.values || []
-    ),
+    data: resultData,
   };
 };

@@ -77,34 +77,22 @@ export const TagValuesSelector = ({
     (f) => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in")
   );
 
-  const tagSearchFilter: SearchFilter = {
-    keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
-  };
-  const tagFilters: Array<SearchFilter> = useMemo(
-    () =>
-      tagSearchFilter.keyValueFilter.value
-        ? [...filters, tagSearchFilter]
-        : filters,
-    [filters, tagSearchFilter.keyValueFilter]
-  );
-
   const { data, isError, isFetching } = useTagValuesWithAll(
     tag,
+    debouncedSearch,
     {
       startTimeUnixNanoSec:
         timeframeState.currentTimeframe.startTimeUnixNanoSec,
       endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
     },
-    tagFilters,
+    filters,
     liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
   );
 
-  const tagOptions = data
-    ?.filter((tag) => tag?.value.toString().includes(search))
-    .map((tag) => ({
-      value: tag.value,
-      label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
-    }));
+  const tagOptions = data?.map((tag) => ({
+    value: tag.value,
+    label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
+  }));
 
   const handleCheckboxChange = (values: (string | number)[]) => {
     const filter: SearchFilter = {
