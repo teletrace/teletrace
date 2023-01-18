@@ -61,8 +61,8 @@ export const columns: ColumnDef<TableSpan>[] = [
     accessorKey: "name",
     header: "Span name",
     enableSorting: false,
-    size: 500,
-    minSize: 500,
+    size: 470,
+    minSize: 470,
     maxSize: 1000,
   },
   {
