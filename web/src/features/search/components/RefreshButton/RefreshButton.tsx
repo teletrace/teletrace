@@ -66,7 +66,7 @@ export function RefreshButton() {
 
   useEffect(() => {
     resetRefresh();
-  }, [timeframeState]);
+  }, [timeframeState, filtersState.filters]);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
