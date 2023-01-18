@@ -27,7 +27,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
