@@ -551,6 +551,9 @@ theme = createTheme(theme, {
             "& .Mui-TableHeadCell-Content": {
               borderRight: `2px solid ${theme.palette.grey[500]}`,
             },
+            ":first-of-type": {
+              paddingLeft: "16px",
+            },
             ":last-of-type": {
               "& .Mui-TableHeadCell-Content": {
                 borderRight: "unset",
@@ -563,6 +566,9 @@ theme = createTheme(theme, {
             borderBottomColor: theme.palette.grey[700],
             textOverflow: "ellipsis",
             display: "block",
+            ":first-of-type": {
+              paddingLeft: "16px",
+            },
           },
         },
       },
