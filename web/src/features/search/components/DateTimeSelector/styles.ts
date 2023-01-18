@@ -16,11 +16,11 @@
 
 export const styles = {
   timeInput: {
-    width: "104px",
+    width: "141px",
     "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
   },
   dateInput: {
-    width: "152px",
+    width: "155px",
     "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
   },
   alert: {
