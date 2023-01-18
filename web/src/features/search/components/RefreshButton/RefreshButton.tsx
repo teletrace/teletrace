@@ -47,7 +47,7 @@ export function RefreshButton() {
   const filtersState = useSpanSearchStore((state) => state.filtersState);
   const sortState = useSpanSearchStore((state) => state.sortState);
 
-  const { isFetching } = useSpansQuery({
+  const { isFetching, remove: clearSpansQuery } = useSpansQuery({
     timeframe: timeframeState.currentTimeframe,
     filters: filtersState.filters,
     sort: sortState.sort,
@@ -84,6 +84,7 @@ export function RefreshButton() {
 
     document.dispatchEvent(new Event("refresh"));
     setIsRefreshing(true);
+    clearSpansQuery();
   };
 
   return (
