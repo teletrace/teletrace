@@ -20,7 +20,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
@@ -61,7 +60,7 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 
 	defer res.Body.Close()
 
-	body, err := decodeResponse(res)
+	body, err := spanreaderes.DecodeResponse(res)
 	if err != nil {
 		switch err := err.(type) {
 		case *errors.ElasticSearchError:
@@ -136,24 +135,4 @@ func buildSort(b *search.RequestBuilder, s ...spansquery.Sort) *search.RequestBu
 		sorts = addSortField(TieBreakerField, true, sorts)
 	}
 	return b.Sort(types.NewSortBuilder().Sort(sorts))
-}
-
-func decodeResponse(res *http.Response) (map[string]any, error) {
-	// check errors
-	var err error
-	var body map[string]any
-	decoder := json.NewDecoder(res.Body)
-	decoder.UseNumber()
-	if err = decoder.Decode(&body); err != nil {
-		return nil, fmt.Errorf("failed parsing the response body: %s", err)
-	}
-
-	if res.StatusCode >= 400 {
-		esError, err := errors.ESErrorFromHttpResponse(res.Status, body)
-		if err != nil {
-			return nil, err
-		}
-		return nil, esError
-	}
-	return body, nil
 }
