@@ -109,7 +109,7 @@ export function SpanTable() {
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
-    if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
+    if (scrollHeight - scrollTop - clientHeight < 400 && !isFetching) {
       debouncedFetchNextPage();
     }
   };
