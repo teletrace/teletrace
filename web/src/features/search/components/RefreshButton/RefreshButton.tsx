@@ -56,7 +56,7 @@ export function RefreshButton() {
   const resetRefresh = () => {
     setLastRefreshed(new Date());
     resetPeriodicRender();
-  }
+  };
 
   useEffect(() => {
     if (liveSpansState.isOn) {
@@ -66,7 +66,7 @@ export function RefreshButton() {
 
   useEffect(() => {
     resetRefresh();
-  }, [timeframeState])
+  }, [timeframeState]);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
