@@ -19,6 +19,7 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
+	"oss-tracing/pkg/model/metadata/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
 
@@ -202,6 +203,14 @@ func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesReq
 	return &tagsquery.TagValuesResponse{
 		Values: currentTagValues,
 	}, nil
+}
+
+func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
+	return nil, fmt.Errorf("Not implemented method")
+}
+
+func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
+	return nil, fmt.Errorf("Not implemented method")
 }
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
