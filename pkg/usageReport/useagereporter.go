@@ -17,9 +17,10 @@ package usageReport
 
 import (
 	"context"
+	"oss-tracing/pkg/model/usageevents"
+
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"go.uber.org/zap"
-	"oss-tracing/pkg/model/usageevents"
 )
 
 type UsageReporter struct {

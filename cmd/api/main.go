@@ -18,13 +18,14 @@ package main
 
 import (
 	"context"
-	"go.uber.org/zap"
 	"log"
 	"oss-tracing/pkg/api"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/pkg/usageReport"
 	spanreaderes "oss-tracing/plugin/spanreader/es"
+
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -44,7 +45,10 @@ func main() {
 		logger.Fatal("Failed to create Span Reader for Elasticsearch", zap.Error(err))
 	}
 	if cfg.AllowUsageReporting {
-		usageReport.InitializePeriodicalUsageReporting(sr, &cfg, logger)
+		_, err = usageReport.InitializePeriodicalUsageReporting(sr, &cfg, logger)
+		if err != nil {
+			logger.Error("Failed to start usage reporting task", zap.Error(err))
+		}
 	}
 	api := api.NewAPI(logger, cfg, &sr)
 	if err := api.Start(); err != nil {

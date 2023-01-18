@@ -17,12 +17,13 @@ package usageReport
 
 import (
 	"context"
-	"github.com/go-co-op/gocron"
-	"go.uber.org/zap"
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/model/metadata/v1"
 	"oss-tracing/pkg/spanreader"
 	"time"
+
+	"github.com/go-co-op/gocron"
+	"go.uber.org/zap"
 
 	"github.com/google/uuid"
 )
