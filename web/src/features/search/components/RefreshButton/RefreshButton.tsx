@@ -53,19 +53,26 @@ export function RefreshButton() {
     sort: sortState.sort,
   });
 
+  const resetRefresh = () => {
+    setLastRefreshed(new Date());
+    resetPeriodicRender();
+  };
+
   useEffect(() => {
     if (liveSpansState.isOn) {
-      setLastRefreshed(new Date());
-      resetPeriodicRender();
+      resetRefresh();
     }
   }, [isFetching]);
+
+  useEffect(() => {
+    resetRefresh();
+  }, [timeframeState]);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
   }
 
   const handleRefresh = () => {
-    setLastRefreshed(new Date());
     timeframeState.currentTimeframe.isRelative
       ? timeframeState.setRelativeTimeframe(
           timeframeState.currentTimeframe.startTimeUnixNanoSec
@@ -75,10 +82,8 @@ export function RefreshButton() {
           timeframeState.currentTimeframe.endTimeUnixNanoSec
         );
 
-    const event = new Event("refresh");
-    document.dispatchEvent(event);
+    document.dispatchEvent(new Event("refresh"));
     setIsRefreshing(true);
-    resetPeriodicRender();
   };
 
   return (
