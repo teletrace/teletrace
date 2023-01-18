@@ -99,7 +99,7 @@ export const DateTimeSelector = ({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <DialogContent sx={{ width: "320px" }}>
+      <DialogContent sx={{ width: "350px" }}>
         <Stack spacing={2}>
           <FormControl>
             <FormLabel>From</FormLabel>
@@ -117,6 +117,9 @@ export const DateTimeSelector = ({
               />
               <TimePicker
                 ampm={false}
+                views={["hours", "minutes", "seconds"]}
+                inputFormat="HH:mm:ss"
+                mask="__:__:__"
                 onChange={(startTime) => {
                   setTimeValid(true);
                   setStartTime(startTime);
@@ -144,6 +147,10 @@ export const DateTimeSelector = ({
               />
               <TimePicker
                 ampm={false}
+                openTo="hours"
+                views={["hours", "minutes", "seconds"]}
+                inputFormat="HH:mm:ss"
+                mask="__:__:__"
                 onChange={(endTime) => {
                   setTimeValid(true);
                   setEndTime(endTime);

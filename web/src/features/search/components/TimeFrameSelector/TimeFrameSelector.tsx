@@ -87,7 +87,7 @@ export const TimeFrameSelector = () => {
   const getFormattedCustomTimeframe = (): string =>
     `${formatNanoToTimeString(
       timeframeState.currentTimeframe.startTimeUnixNanoSec
-    )} -> ${formatNanoToTimeString(
+    )} - ${formatNanoToTimeString(
       timeframeState.currentTimeframe.endTimeUnixNanoSec
     )}`;
 
