@@ -90,18 +90,19 @@ export const DateTimeSelector = ({
 
   const handleApply = () => {
     const timeRange = calcRange();
-    if (timeRange.startRange < timeRange.endRange) {
-      setTimeValid(true);
-      timeframeState.setAbsoluteTimeframe(
-        timeRange.startRange,
-        timeRange.endRange
-      );
-      closeDialog();
-    } else {
+    if ((timeRange.startRange || timeRange.endRange) > msToNano(Date.now())) {
       setTimeValid(false);
-      timeframeState.setRelativeTimeframe(
-        timeframeState.currentTimeframe.startTimeUnixNanoSec
-      );
+    } else {
+      if (timeRange.startRange <= timeRange.endRange) {
+        setTimeValid(true);
+        timeframeState.setAbsoluteTimeframe(
+          timeRange.startRange,
+          timeRange.endRange
+        );
+        closeDialog();
+      } else {
+        setTimeValid(false);
+      }
     }
   };
 
