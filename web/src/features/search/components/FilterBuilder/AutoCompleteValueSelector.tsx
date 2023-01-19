@@ -22,6 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
 import { formatNumber } from "@/utils/format";
@@ -128,14 +129,19 @@ export const AutoCompleteValueSelector = ({
           sx={styles.selectValueInput}
         />
       )}
-      renderOption={(props, option) => (
+      renderOption={(props, option, state) => (
         <ListItem {...props}>
           <Stack
-            sx={{ width: "100%" }}
+            sx={styles.selectValueResult}
             direction="row"
             justifyContent="space-between"
           >
-            <Typography>{option.value}</Typography>
+            <Highlighter
+              highlightClassName="valueLabelHighlight"
+              searchWords={state.inputValue.toLowerCase().split(" ")}
+              autoEscape={true}
+              textToHighlight={option.value.toString()}
+            />
             <Typography>{formatNumber(option.count)}</Typography>
           </Stack>
         </ListItem>
