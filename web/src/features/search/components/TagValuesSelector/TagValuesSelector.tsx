@@ -151,7 +151,7 @@ export const TagValuesSelector = ({
                 sx={styles.checkboxList}
               />
 
-              {!tagOptions?.length && debouncedSearch === search && (
+              {!tagOptions?.length && debouncedSearch === search && !isLoading && (
                 <Typography
                   component="div"
                   variant="subtitle2"

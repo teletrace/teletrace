@@ -58,7 +58,6 @@ const useGetTagOptions = (
   if (searchTagValues) {
     selectedOptions.forEach((item) => {
       if (!searchTagValues.find((e) => e.value === item)) {
-        console.log(item);
         searchTagValues?.push({ value: item, count: 0 });
       }
     });

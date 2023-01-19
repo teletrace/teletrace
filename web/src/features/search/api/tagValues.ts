@@ -41,42 +41,7 @@ export const fetchTagValues = async ({
   tag,
   tagValuesRequest,
 }: FetchTagValuesParams): Promise<TagValuesResponse> => {
-  if (!tagValuesRequest.timeframe) {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-  }
   return axiosClient.post(`/v1/tags/${tag}`, tagValuesRequest);
-};
-
-/**
- * react hook to fetch tag values
- *
- * @param tag            the tag to fetch values for
- * @param tagValuesRequest  optional query to filter results by
- */
-export const useTagValues = (
-  tag: string,
-  tagValuesRequest: TagValuesRequest,
-  intervalInMilli?: number
-) => {
-  return useQuery({
-    queryKey: [
-      "tagValues",
-      tag,
-      tagValuesRequest.timeframe?.startTimeUnixNanoSec,
-      tagValuesRequest.timeframe?.endTimeUnixNanoSec,
-      tagValuesRequest.filters,
-    ],
-    keepPreviousData: true,
-    queryFn: () =>
-      tag
-        ? fetchTagValues({
-            tag,
-            tagValuesRequest,
-          })
-        : Promise.resolve<TagValuesResponse>({ values: [] }),
-    getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
-    refetchInterval: intervalInMilli || false,
-  });
 };
 
 const mergeTagValues = (
@@ -99,12 +64,11 @@ const mergeTagValues = (
   });
 };
 
-export const useTagValuesWithAll = (
+const queryFnBuilder = (
   tag: string,
   search: string,
   timeframe: Timeframe,
-  filters: SearchFilter[],
-  intervalInMilli?: number
+  filters: SearchFilter[]
 ) => {
   const searchFilter: SearchFilter | undefined = search
     ? { keyValueFilter: { key: tag, operator: "contains", value: search } }
@@ -116,30 +80,44 @@ export const useTagValuesWithAll = (
   const allValuesRequest: TagValuesRequest = {
     filters: searchFilter ? [searchFilter] : [],
   };
-  const {
-    data: currentTagValues,
-    isFetching: isFetchingCurrent,
-    isError: isErrorCurrent,
-    isLoading: isLoadingCurrent,
-  } = useTagValues(tag, currentValuesRequest, intervalInMilli);
-  const {
-    data: allTagValues,
-    isFetching: isFetchingAllValues,
-    isError: isErrorAllValues,
-    isLoading: isLoadingAllValues,
-  } = useTagValues(tag, allValuesRequest, intervalInMilli);
 
-  const resultData =
-    currentTagValues === undefined || allTagValues === undefined
-      ? undefined
-      : mergeTagValues(
-          currentTagValues.values || [],
-          allTagValues.values || []
-        );
-  return {
-    isFetching: isFetchingAllValues || isFetchingCurrent,
-    isLoading: isLoadingAllValues || isLoadingCurrent,
-    isError: isErrorAllValues || isErrorCurrent,
-    data: resultData,
+  const queryFn = async () => {
+    if (tag) {
+      const currentTimeframeQuery = fetchTagValues({
+        tag,
+        tagValuesRequest: currentValuesRequest,
+      });
+      const allTimeQuery = fetchTagValues({
+        tag,
+        tagValuesRequest: allValuesRequest,
+      });
+      const data = await Promise.all([currentTimeframeQuery, allTimeQuery]);
+      return mergeTagValues(data[0].values || [], data[1].values || []);
+    }
+    return [];
   };
+
+  return queryFn;
+};
+
+export const useTagValuesWithAll = (
+  tag: string,
+  search: string,
+  timeframe: Timeframe,
+  filters: SearchFilter[],
+  intervalInMilli?: number
+) => {
+  return useQuery({
+    queryKey: [
+      "tagValues",
+      tag,
+      timeframe?.startTimeUnixNanoSec,
+      timeframe?.endTimeUnixNanoSec,
+      filters,
+      search,
+    ],
+    keepPreviousData: true,
+    queryFn: queryFnBuilder(tag, search, timeframe, filters),
+    refetchInterval: intervalInMilli || false,
+  });
 };
