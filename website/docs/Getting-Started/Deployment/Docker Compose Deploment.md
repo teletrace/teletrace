@@ -8,7 +8,7 @@ This guide will walk you through the process of setting up Lupa using the provid
 
 ## Steps
 
-- Copy provided Docker Compose configuration to your machine.
+- Create a file named `docker-compose.yml` and paste the provided docker compose configuration into the file.
 
 ```yaml
 version: "3"
@@ -20,7 +20,7 @@ services:
       - "4318:4318"
     command: ["--config=/etc/lupa-collector-config.yaml"]
     volumes:
-      - ./lupa-otel-collector.yaml:/etc/lupa-collector-config.yaml
+      - ./lupa-collector-config.yaml:/etc/lupa-collector-config.yaml
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
     image: epsagon/lupa:latest
@@ -85,7 +85,7 @@ service:
       exporters: [elasticsearch]
 ```
 
-- In the terminal, navigate to the directory containing the Docker Compose configuration and run the command docker-compose up. This will start the Lupa service, as well as an Elasticsearch instance.
+- In the terminal, navigate to the directory containing the Docker Compose configuration and run the command `docker-compose up -d`. This will start the Lupa service, as well as an Elasticsearch instance.
 - Lupa will be running on port 8080 and can be accessed via http://localhost:8080/v1/ping. You can also access Elasticsearch on port 9200 via http://localhost:9200/.
 
 ## Configuration
@@ -96,6 +96,6 @@ The lupa-collector-config.yaml file contains configurations for receivers, proce
 
 ## Troubleshooting
 
-- If the Lupa service is not running, check the logs for any errors.
+- If the Lupa service is not running, check the logs for any errors with `docker-compose logs lupa-api`.
 - If you are unable to access Elasticsearch, check that the service is running and healthy by running `docker-compose ps`.
 - If data is not being exported to Elasticsearch, check the configuration of the exporter and ensure the Elasticsearch endpoint is correct.
