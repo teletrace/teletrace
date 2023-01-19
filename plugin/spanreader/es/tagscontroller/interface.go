@@ -27,4 +27,7 @@ type TagsController interface {
 
 	// Get the values and appearance count of all tags as specified by request.Tags
 	GetTagsValues(ctx context.Context, request tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
+
+	// Get statistics for numeric tag values
+	GetTagsStatistics(ctx context.Context, req *tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error)
 }

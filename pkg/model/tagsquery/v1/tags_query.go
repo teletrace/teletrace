@@ -44,6 +44,23 @@ type TagValuesResponse struct {
 	Values   []TagValueInfo  `json:"values"`
 }
 
+type TagStatisticsRequest struct {
+	Edge bool
+	Avg  bool
+	P99  bool
+}
+
+type EdgeValues struct {
+	Min float64
+	Max float64
+}
+
+type TagStatisticsResponse struct {
+	Edge *EdgeValues
+	Avg  *float64
+	P99  *float64
+}
+
 type GetAvailableTagsRequest struct{}
 
 type GetAvailableTagsResponse struct {

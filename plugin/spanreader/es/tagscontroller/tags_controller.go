@@ -101,6 +101,10 @@ func (r *tagsController) GetTagsValues(
 	return r.parseGetTagsValuesResponseBody(body)
 }
 
+func (r *tagsController) GetTagsStatistics(ctx context.Context, req *tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
+	return nil, nil
+}
+
 // Get elasticsearch mappings for specific tags
 func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
 	var result []tagsquery.TagInfo
