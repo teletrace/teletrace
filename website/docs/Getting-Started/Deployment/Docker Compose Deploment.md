@@ -86,7 +86,7 @@ service:
 ```
 
 - In the terminal, navigate to the directory containing the Docker Compose configuration and run the command `docker-compose up -d`. This will start the Lupa service, as well as an Elasticsearch instance.
-- Lupa will be running on port 8080 and can be accessed via http://localhost:8080/v1/ping. You can also access Elasticsearch on port 9200 via http://localhost:9200/.
+- Lupa will be running on port 8080 and can be accessed via http://localhost:8080/. You can also access Elasticsearch on port 9200 via http://localhost:9200/.
 
 ## Configuration
 
