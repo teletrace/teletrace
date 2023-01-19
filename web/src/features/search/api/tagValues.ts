@@ -28,7 +28,6 @@ import {
 type FetchTagValuesParams = {
   tag: string;
   tagValuesRequest: TagValuesRequest;
-  nextToken: string;
 };
 
 /**
@@ -38,10 +37,13 @@ type FetchTagValuesParams = {
  * @param tagValuesRequest   optional search request to narrow down options
  * @param nextToken       pagination token
  */
-export const fetchTagValues = ({
+export const fetchTagValues = async ({
   tag,
   tagValuesRequest,
 }: FetchTagValuesParams): Promise<TagValuesResponse> => {
+  if (!tagValuesRequest.timeframe) {
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+  }
   return axiosClient.post(`/v1/tags/${tag}`, tagValuesRequest);
 };
 
@@ -65,12 +67,11 @@ export const useTagValues = (
       tagValuesRequest.filters,
     ],
     keepPreviousData: true,
-    queryFn: ({ pageParam }) =>
+    queryFn: () =>
       tag
         ? fetchTagValues({
             tag,
             tagValuesRequest,
-            nextToken: pageParam,
           })
         : Promise.resolve<TagValuesResponse>({ values: [] }),
     getNextPageParam: (lastPage) => lastPage.metadata?.nextToken || undefined,
@@ -119,12 +120,15 @@ export const useTagValuesWithAll = (
     data: currentTagValues,
     isFetching: isFetchingCurrent,
     isError: isErrorCurrent,
+    isLoading: isLoadingCurrent,
   } = useTagValues(tag, currentValuesRequest, intervalInMilli);
   const {
     data: allTagValues,
     isFetching: isFetchingAllValues,
     isError: isErrorAllValues,
+    isLoading: isLoadingAllValues,
   } = useTagValues(tag, allValuesRequest, intervalInMilli);
+
   const resultData =
     currentTagValues === undefined || allTagValues === undefined
       ? undefined
@@ -134,6 +138,7 @@ export const useTagValuesWithAll = (
         );
   return {
     isFetching: isFetchingAllValues || isFetchingCurrent,
+    isLoading: isLoadingAllValues || isLoadingCurrent,
     isError: isErrorAllValues || isErrorCurrent,
     data: resultData,
   };

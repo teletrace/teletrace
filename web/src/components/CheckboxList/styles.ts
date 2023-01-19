@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { CSSProperties } from "react";
-
-export const styles: Record<string, CSSProperties> = {
+export const styles = {
   skeleton: {
-    fontSize: "1.5rem",
+    height: "32px",
   },
-
+  listItemCheckbox: {
+    paddingTop: "6px",
+    paddingBottom: "6px",
+  },
   listItemButton: {
     padding: "0 16px 0 16px",
   },
