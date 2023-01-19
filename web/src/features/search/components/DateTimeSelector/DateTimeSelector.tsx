@@ -91,9 +91,6 @@ export const DateTimeSelector = ({
       closeDialog();
     } else {
       setTimeValid(false);
-      // timeframeState.setRelativeTimeframe(
-      //   timeframeState.currentTimeframe.startTimeUnixNanoSec
-      // );
     }
   };
 
