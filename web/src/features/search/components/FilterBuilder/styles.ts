@@ -53,6 +53,14 @@ export const styles = {
       },
     },
   },
+  selectValueResult: {
+    width: "100%",
+    ".valueLabelHighlight": {
+      backgroundColor: primaryActionColors.primaryClicked,
+      fontWeight: 900,
+      color: "white",
+    },
+  },
   textValueInput: {
     "& .MuiInputBase-root": {
       paddingRight: "unset",
