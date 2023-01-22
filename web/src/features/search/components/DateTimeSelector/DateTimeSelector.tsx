@@ -65,7 +65,11 @@ export const DateTimeSelector = ({
     const startRange = msToNano(
       startDate && startTime
         ? new Date(
-            startDate.setHours(startTime.getHours(), startTime.getMinutes())
+            startDate.setHours(
+              startTime.getHours(),
+              startTime.getMinutes(),
+              startTime.getSeconds()
+            )
           ).getTime()
         : new Date().getTime()
     );
@@ -73,7 +77,11 @@ export const DateTimeSelector = ({
     const endRange = msToNano(
       endTime && endDate
         ? new Date(
-            endDate.setHours(endTime.getHours(), endTime.getMinutes())
+            endDate.setHours(
+              endTime.getHours(),
+              endTime.getMinutes(),
+              endTime.getSeconds()
+            )
           ).getTime()
         : new Date().getTime()
     );
@@ -82,18 +90,19 @@ export const DateTimeSelector = ({
 
   const handleApply = () => {
     const timeRange = calcRange();
-    if (timeRange.startRange < timeRange.endRange) {
-      setTimeValid(true);
-      timeframeState.setAbsoluteTimeframe(
-        timeRange.startRange,
-        timeRange.endRange
-      );
-      closeDialog();
-    } else {
+    if ((timeRange.startRange || timeRange.endRange) > msToNano(Date.now())) {
       setTimeValid(false);
-      timeframeState.setRelativeTimeframe(
-        timeframeState.currentTimeframe.startTimeUnixNanoSec
-      );
+    } else {
+      if (timeRange.startRange <= timeRange.endRange) {
+        setTimeValid(true);
+        timeframeState.setAbsoluteTimeframe(
+          timeRange.startRange,
+          timeRange.endRange
+        );
+        closeDialog();
+      } else {
+        setTimeValid(false);
+      }
     }
   };
 
@@ -114,6 +123,7 @@ export const DateTimeSelector = ({
                   <TextField {...props} sx={styles.dateInput} />
                 )}
                 value={startDate}
+                disableFuture={true}
               />
               <TimePicker
                 ampm={false}
@@ -144,6 +154,7 @@ export const DateTimeSelector = ({
                   setEndDate(endDate);
                 }}
                 value={endDate}
+                disableFuture={true}
               />
               <TimePicker
                 ampm={false}
