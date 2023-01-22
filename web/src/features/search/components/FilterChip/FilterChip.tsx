@@ -140,13 +140,13 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
   };
 
   return (
-    <Tooltip
-      title={getTooltipTitle()}
-      placement="top-end"
-      arrow
-      PopperProps={{ sx: styles.tooltipPopper }}
-    >
-      <>
+    <>
+      <Tooltip
+        title={getTooltipTitle()}
+        placement="top-end"
+        arrow
+        PopperProps={{ sx: styles.tooltipPopper }}
+      >
         <Chip
           size="small"
           label={buildFilterLabel(
@@ -162,13 +162,13 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
           }
           onClick={handleOpen}
         />
-        <FilterBuilderDialog
-          open={openEditDialog}
-          onClose={handleClose}
-          anchorEl={anchorEl}
-          initialFilter={filter.keyValueFilter}
-        />
-      </>
-    </Tooltip>
+      </Tooltip>
+      <FilterBuilderDialog
+        open={openEditDialog}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        initialFilter={filter.keyValueFilter}
+      />
+    </>
   );
 };
