@@ -96,7 +96,6 @@ export const FilterBuilderDialog = ({
   );
 
   const initialState: FilterBuilderDialogState = {
-    //tag: initialFilter?.keyValueFilter.key || null,
     tag: null,
     formError: initialFormErrors,
     value: [],

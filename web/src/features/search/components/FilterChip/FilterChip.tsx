@@ -46,7 +46,6 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
     (state) => state.filtersState.deleteFilter
   );
   const [open, setOpen] = useState(false);
-  // TODO: ref
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLDivElement>) => {
