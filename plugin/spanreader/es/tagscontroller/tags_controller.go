@@ -124,16 +124,17 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
-	result := &tagsquery.TagStatisticsResponse{
-		Edge: &tagsquery.EdgeValues{},
-	}
+	result := &tagsquery.TagStatisticsResponse{}
 
 	if aggregations, ok := body["aggregations"].(map[string]any); ok {
-		if request.Edge {
+		if request.Min {
 			min := aggregations["min"].(map[string]any)["value"].(float64)
+			result.Min = &min
+		}
+
+		if request.Max {
 			max := aggregations["max"].(map[string]any)["value"].(float64)
-			result.Edge.Min = min
-			result.Edge.Max = max
+			result.Max = &max
 		}
 
 		if request.Avg {
@@ -160,7 +161,7 @@ func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search
 	builder.Size(0)
 
 	aggs := make(map[string]*types.AggregationContainerBuilder)
-	if request.Edge {
+	if request.Min {
 		aggs["min"] = types.NewAggregationContainerBuilder().Min(types.NewMinAggregationBuilder().Field(types.Field(request.Tag)))
 		aggs["max"] = types.NewAggregationContainerBuilder().Max(types.NewMaxAggregationBuilder().Field(types.Field(request.Tag)))
 	}

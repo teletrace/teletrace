@@ -47,7 +47,8 @@ type TagValuesResponse struct {
 type TagStatisticsRequest struct {
 	Timeframe *model.Timeframe `json:"timeframe"`
 	Tag       string           `json:"tag"`
-	Edge      bool             `json:"edge"`
+	Min       bool             `json:"min"`
+	Max       bool             `json:"max"`
 	Avg       bool             `json:"avg"`
 	P99       bool             `json:"p99"`
 }
@@ -60,15 +61,11 @@ func (r *TagStatisticsRequest) Validate() error {
 	return nil
 }
 
-type EdgeValues struct {
-	Min float64 `json:"min"`
-	Max float64 `json:"max"`
-}
-
 type TagStatisticsResponse struct {
-	Edge *EdgeValues `json:"edge"`
-	Avg  *float64    `json:"avg"`
-	P99  *float64    `json:"p99"`
+	Min *float64 `json:"min"`
+	Max *float64 `json:"max"`
+	Avg *float64 `json:"avg"`
+	P99 *float64 `json:"p99"`
 }
 
 type GetAvailableTagsRequest struct{}
