@@ -46,7 +46,7 @@ export type FilterDialogProps = {
   initialFilter?: KeyValueFilter;
 };
 
-const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
+const valueTypeByOperators: { [key: string]: ValueInputMode } = {
   in: "select",
   not_in: "select",
   contains: "text",
@@ -105,7 +105,7 @@ export const FilterBuilderDialog = ({
   };
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
-  const valueInputMode = valueSelectModeByOperators[dialogState.operator];
+  const valueInputMode = valueTypeByOperators[dialogState.operator];
   const createOrUpdateFilter = useSpanSearchStore(
     (state) => state.filtersState.createOrUpdateFilter
   );
@@ -117,12 +117,17 @@ export const FilterBuilderDialog = ({
   }, [initialFilter]);
 
   const onOperatorChange = (operator: Operator) => {
-    setDialogState((prevState) => ({
-      ...prevState,
-      operator,
-      value: [],
-      formError: { ...prevState.formError, value: false },
-    }));
+    setDialogState((prevState) => {
+      const shouldResetValue =
+        valueTypeByOperators[prevState.operator] !==
+        valueTypeByOperators[operator];
+      return {
+        ...prevState,
+        operator,
+        value: shouldResetValue ? [] : prevState.value,
+        formError: { ...prevState.formError, value: false },
+      };
+    });
   };
 
   const onTagChange = (tag: AvailableTag | null) => {
@@ -191,7 +196,7 @@ export const FilterBuilderDialog = ({
 
   const validateForm = (state: FilterBuilderDialogState): FormErrors => {
     const errors: FormErrors = { ...initialFormErrors };
-    const stateInputMode = valueSelectModeByOperators[state.operator];
+    const stateInputMode = valueTypeByOperators[state.operator];
     if (state.tag === null || state.tag.name === "") {
       errors.tag = true;
     }
