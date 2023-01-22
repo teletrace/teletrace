@@ -37,7 +37,7 @@ type FetchTagValuesParams = {
  * @param tagValuesRequest   optional search request to narrow down options
  * @param nextToken       pagination token
  */
-export const fetchTagValues = async ({
+export const fetchTagValues = ({
   tag,
   tagValuesRequest,
 }: FetchTagValuesParams): Promise<TagValuesResponse> => {
