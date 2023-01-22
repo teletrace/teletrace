@@ -80,7 +80,7 @@ export const AutoCompleteValueSelector = ({
   error,
 }: AutoCompleteValueSelectorProps) => {
   const [search, setSearch] = useState("");
-  const [searchDebounced] = useDebounce(search, 500);
+  const [searchDebounced] = useDebounce(search, 170);
   const { isLoading, tagOptions } = useGetTagOptions(
     tag,
     value,
