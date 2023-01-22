@@ -138,6 +138,7 @@ func (api *API) tagsStatistics(c *gin.Context) {
 
 	c.JSON(http.StatusOK, res)
 }
+
 func (api *API) getSystemId(c *gin.Context) {
 	res, err := (*api.spanReader).GetSystemId(c, metadata.GetSystemIdRequest{})
 	if err != nil {
