@@ -1,6 +1,6 @@
 Send traces to **Lupa** directly from your code using an OTLP Trace Exporter.
 
-### 1. Downdload the [latest version](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar).
+### 1. Download the [latest version](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar).
 
 This package includes the instrumentation agent as well as
 instrumentations for all supported libraries and all available data exporters.

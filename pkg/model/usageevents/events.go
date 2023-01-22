@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-export const styles = {
-  timeInput: {
-    width: "141px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  dateInput: {
-    width: "155px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  alert: {
-    paddingRight: "12px",
-    paddingLeft: "12px",
-    alignItems: "center",
-    backgroundColor: "rgba(239, 88, 84, 0.12)",
-    fontWeight: 400,
-    letterSpacing: 0.15,
-  },
-};
+package usageevents
+
+import (
+	cloudevents "github.com/cloudevents/sdk-go/v2"
+)
+
+const (
+	SystemUp = "lupa.up"
+)
+
+func CreateUpEvent(systemId string) cloudevents.Event {
+	event := cloudevents.NewEvent()
+	event.SetType(SystemUp)
+	event.SetSource(systemId)
+	return event
+}

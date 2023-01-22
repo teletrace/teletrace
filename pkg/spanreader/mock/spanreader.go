@@ -18,6 +18,7 @@ package mock
 
 import (
 	"context"
+	"oss-tracing/pkg/model/metadata/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
 
@@ -75,6 +76,14 @@ func (sr spanReader) GetTagsValues(
 
 func (sr spanReader) Initialize() error {
 	return nil
+}
+
+func (sr spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
+	return &metadata.GetSystemIdResponse{Value: "352b4249-ba14-4f8f-a439-a5df0812cf37"}, nil
+}
+
+func (sr spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
+	return &metadata.SetSystemIdResponse{}, nil
 }
 
 func NewSpanReaderMock() (spanreader.SpanReader, error) {

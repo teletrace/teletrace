@@ -1,11 +1,10 @@
 version: "3"
 services:
   lupa-api:
-    expose:
-      - "4317"
-      - "4318"
     ports:
       - "8080:8080"
+      - "4317:4317"
+      - "4318:4318"
     command: ["--config=/etc/lupa-collector-config.yaml"]
     build:
       dockerfile: cmd/all-in-one/Dockerfile

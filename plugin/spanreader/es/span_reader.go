@@ -20,8 +20,10 @@ import (
 	"context"
 	"fmt"
 	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/model/metadata/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
+	"oss-tracing/plugin/spanreader/es/metadatacontroller"
 	"oss-tracing/plugin/spanreader/es/searchcontroller"
 	"oss-tracing/plugin/spanreader/es/tagscontroller"
 
@@ -33,11 +35,12 @@ import (
 const spanIdField = "span.spanId"
 
 type spanReader struct {
-	cfg              ElasticConfig
-	logger           *zap.Logger
-	ctx              context.Context
-	searchController searchcontroller.SearchController
-	tagsController   tagscontroller.TagsController
+	cfg                ElasticConfig
+	logger             *zap.Logger
+	ctx                context.Context
+	searchController   searchcontroller.SearchController
+	tagsController     tagscontroller.TagsController
+	metadataController metadatacontroller.MetadataController
 }
 
 func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
@@ -95,39 +98,65 @@ func (sr *spanReader) convertFilterKeysToKeywords(filters []model.SearchFilter) 
 	}
 }
 
+func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
+	res, err := sr.metadataController.GetSystemId(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("GetSystemId failed with error: %+v", err)
+	}
+	return res, nil
+}
+
+func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
+	res, err := sr.metadataController.SetSystemId(ctx, r)
+	if err != nil {
+		return nil, fmt.Errorf("GetSystemId failed with error: %+v", err)
+	}
+	return res, nil
+}
+
 func (sr *spanReader) Initialize() error {
 	// This method may be implemented for other databases, not needed in ES.
 	return nil
 }
 
-func NewSpanReader(ctx context.Context, logger *zap.Logger, cfg ElasticConfig) (spanreader.SpanReader, error) {
+func NewSpanReader(ctx context.Context, logger *zap.Logger, elasticSpansCfg ElasticConfig, elasticMetaCfg ElasticConfig) (spanreader.SpanReader, error) {
 	errMsg := "cannot create a new span reader: %w"
 
-	rawClient, err := newRawClient(logger, cfg)
+	rawClient, err := newRawClient(logger, elasticSpansCfg)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	typedClient, err := newTypedClient(logger, cfg)
+	typedClient, err := newTypedClient(logger, elasticSpansCfg)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	sc, err := searchcontroller.NewSearchController(logger, typedClient, cfg.Index)
+	sc, err := searchcontroller.NewSearchController(logger, typedClient, elasticSpansCfg.Index)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	tc, err := tagscontroller.NewTagsController(logger, rawClient, typedClient, cfg.Index)
+	tc, err := tagscontroller.NewTagsController(logger, rawClient, typedClient, elasticSpansCfg.Index)
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
+
+	metaTypedClient, err := newTypedClient(logger, elasticMetaCfg)
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
+	mc, err := metadatacontroller.NewMetadataController(logger, metaTypedClient, elasticMetaCfg.Index)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
 	return &spanReader{
-		cfg:              cfg,
-		logger:           logger,
-		ctx:              ctx,
-		searchController: sc,
-		tagsController:   tc,
+		cfg:                elasticSpansCfg,
+		logger:             logger,
+		ctx:                ctx,
+		searchController:   sc,
+		tagsController:     tc,
+		metadataController: mc,
 	}, nil
 }

@@ -27,7 +27,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
@@ -66,7 +66,7 @@ export const TagValuesSelector = ({
   searchable,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebounce(search, 500);
+  const [debouncedSearch] = useDebounce(search, 170);
 
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
@@ -77,34 +77,22 @@ export const TagValuesSelector = ({
     (f) => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in")
   );
 
-  const tagSearchFilter: SearchFilter = {
-    keyValueFilter: { key: tag, operator: "contains", value: debouncedSearch },
-  };
-  const tagFilters: Array<SearchFilter> = useMemo(
-    () =>
-      tagSearchFilter.keyValueFilter.value
-        ? [...filters, tagSearchFilter]
-        : filters,
-    [filters, tagSearchFilter.keyValueFilter]
-  );
-
-  const { data, isError, isFetching } = useTagValuesWithAll(
+  const { data, isError, isFetching, isLoading } = useTagValuesWithAll(
     tag,
+    debouncedSearch,
     {
       startTimeUnixNanoSec:
         timeframeState.currentTimeframe.startTimeUnixNanoSec,
       endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
     },
-    tagFilters,
+    filters,
     liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
   );
 
-  const tagOptions = data
-    ?.filter((tag) => tag?.value.toString().includes(search))
-    .map((tag) => ({
-      value: tag.value,
-      label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
-    }));
+  const tagOptions = data?.map((tag) => ({
+    value: tag.value,
+    label: <CheckboxListLabel key={tag.value} tag={tag} search={search} />,
+  }));
 
   const handleCheckboxChange = (values: (string | number)[]) => {
     const filter: SearchFilter = {
@@ -151,32 +139,28 @@ export const TagValuesSelector = ({
             <Alert severity="error">Failed loading tag values</Alert>
           ) : (
             <Fragment>
-              {searchable && !!data && (
+              {searchable && !isLoading && (
                 <SearchField value={search} onChange={setSearch} />
               )}
 
-              {Boolean(tagOptions?.length) && (
-                <CheckboxList
-                  value={value}
-                  loading={false}
-                  options={tagOptions || []}
-                  onChange={handleCheckboxChange}
-                  sx={styles.checkboxList}
-                />
-              )}
+              <CheckboxList
+                value={value}
+                loading={isLoading}
+                options={tagOptions || []}
+                onChange={handleCheckboxChange}
+                sx={styles.checkboxList}
+              />
 
-              {!tagOptions?.length &&
-                !isFetching &&
-                debouncedSearch === search && (
-                  <Typography
-                    component="div"
-                    variant="subtitle2"
-                    color="GrayText"
-                    sx={{ m: 1, mt: 2 }}
-                  >
-                    No results found
-                  </Typography>
-                )}
+              {!tagOptions?.length && debouncedSearch === search && !isLoading && (
+                <Typography
+                  component="div"
+                  variant="subtitle2"
+                  color="GrayText"
+                  sx={{ m: 1, mt: 2 }}
+                >
+                  No results found
+                </Typography>
+              )}
             </Fragment>
           )}
         </AccordionDetails>

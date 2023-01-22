@@ -65,7 +65,11 @@ export const DateTimeSelector = ({
     const startRange = msToNano(
       startDate && startTime
         ? new Date(
-            startDate.setHours(startTime.getHours(), startTime.getMinutes())
+            startDate.setHours(
+              startTime.getHours(),
+              startTime.getMinutes(),
+              startTime.getSeconds()
+            )
           ).getTime()
         : new Date().getTime()
     );
@@ -73,7 +77,11 @@ export const DateTimeSelector = ({
     const endRange = msToNano(
       endTime && endDate
         ? new Date(
-            endDate.setHours(endTime.getHours(), endTime.getMinutes())
+            endDate.setHours(
+              endTime.getHours(),
+              endTime.getMinutes(),
+              endTime.getSeconds()
+            )
           ).getTime()
         : new Date().getTime()
     );
@@ -82,24 +90,25 @@ export const DateTimeSelector = ({
 
   const handleApply = () => {
     const timeRange = calcRange();
-    if (timeRange.startRange < timeRange.endRange) {
-      setTimeValid(true);
-      timeframeState.setAbsoluteTimeframe(
-        timeRange.startRange,
-        timeRange.endRange
-      );
-      closeDialog();
-    } else {
+    if ((timeRange.startRange || timeRange.endRange) > msToNano(Date.now())) {
       setTimeValid(false);
-      timeframeState.setRelativeTimeframe(
-        timeframeState.currentTimeframe.startTimeUnixNanoSec
-      );
+    } else {
+      if (timeRange.startRange <= timeRange.endRange) {
+        setTimeValid(true);
+        timeframeState.setAbsoluteTimeframe(
+          timeRange.startRange,
+          timeRange.endRange
+        );
+        closeDialog();
+      } else {
+        setTimeValid(false);
+      }
     }
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <DialogContent sx={{ width: "320px" }}>
+      <DialogContent sx={{ width: "350px" }}>
         <Stack spacing={2}>
           <FormControl>
             <FormLabel>From</FormLabel>
@@ -114,9 +123,13 @@ export const DateTimeSelector = ({
                   <TextField {...props} sx={styles.dateInput} />
                 )}
                 value={startDate}
+                disableFuture={true}
               />
               <TimePicker
                 ampm={false}
+                views={["hours", "minutes", "seconds"]}
+                inputFormat="HH:mm:ss"
+                mask="__:__:__"
                 onChange={(startTime) => {
                   setTimeValid(true);
                   setStartTime(startTime);
@@ -141,9 +154,14 @@ export const DateTimeSelector = ({
                   setEndDate(endDate);
                 }}
                 value={endDate}
+                disableFuture={true}
               />
               <TimePicker
                 ampm={false}
+                openTo="hours"
+                views={["hours", "minutes", "seconds"]}
+                inputFormat="HH:mm:ss"
+                mask="__:__:__"
                 onChange={(endTime) => {
                   setTimeValid(true);
                   setEndTime(endTime);

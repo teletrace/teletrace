@@ -32,7 +32,7 @@ const styles: { [name: string]: CSSProperties } = {
   progress: {
     margin: 0,
     position: "absolute",
-    top: 45,
+    top: 49,
     right: 0,
     left: 0,
     zIndex: 1,
@@ -42,6 +42,32 @@ const styles: { [name: string]: CSSProperties } = {
   tableContainer: { borderRadius: "8px" },
   newTableRow: {
     animation: `${newRowAnimation} 1s ease`,
+  },
+  emptyStateStack: {
+    width: "100%",
+    justifyContent: "center",
+    marginTop: "28px",
+    marginBottom: "24px",
+  },
+  empyStateIcon: {
+    width: "40px",
+    height: "40px",
+    display: "flex",
+    alignSelf: "center",
+    color: theme.palette.grey[300],
+    marginBottom: "17px",
+  },
+  emptyStateFirstMesssage: {
+    justifyContent: "center",
+    display: "flex",
+    fontWeight: 600,
+    lineHeight: "24px",
+    marginBottom: "4px",
+  },
+  emptyStateSecondMessage: {
+    justifyContent: "center",
+    display: "flex",
+    color: theme.palette.grey[300],
   },
 };
 

@@ -47,25 +47,32 @@ export function RefreshButton() {
   const filtersState = useSpanSearchStore((state) => state.filtersState);
   const sortState = useSpanSearchStore((state) => state.sortState);
 
-  const { isFetching } = useSpansQuery({
+  const { isFetching, remove: clearSpansQuery } = useSpansQuery({
     timeframe: timeframeState.currentTimeframe,
     filters: filtersState.filters,
     sort: sortState.sort,
   });
 
+  const resetRefresh = () => {
+    setLastRefreshed(new Date());
+    resetPeriodicRender();
+  };
+
   useEffect(() => {
     if (liveSpansState.isOn) {
-      setLastRefreshed(new Date());
-      resetPeriodicRender();
+      resetRefresh();
     }
   }, [isFetching]);
+
+  useEffect(() => {
+    resetRefresh();
+  }, [timeframeState, filtersState.filters]);
 
   if (isRefreshing && !isFetching) {
     setIsRefreshing(false);
   }
 
   const handleRefresh = () => {
-    setLastRefreshed(new Date());
     timeframeState.currentTimeframe.isRelative
       ? timeframeState.setRelativeTimeframe(
           timeframeState.currentTimeframe.startTimeUnixNanoSec
@@ -75,10 +82,9 @@ export function RefreshButton() {
           timeframeState.currentTimeframe.endTimeUnixNanoSec
         );
 
-    const event = new Event("refresh");
-    document.dispatchEvent(event);
+    clearSpansQuery();
+    document.dispatchEvent(new Event("refresh"));
     setIsRefreshing(true);
-    resetPeriodicRender();
   };
 
   return (

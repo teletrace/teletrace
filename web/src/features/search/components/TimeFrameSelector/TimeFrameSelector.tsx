@@ -57,9 +57,6 @@ export const TimeFrameSelector = () => {
 
   const handleCancel = () => {
     setIsSelected(previousSelected);
-    timeframeState.setRelativeTimeframe(
-      timeframeState.currentTimeframe.startTimeUnixNanoSec
-    );
     setOpen(false);
   };
 
@@ -87,7 +84,7 @@ export const TimeFrameSelector = () => {
   const getFormattedCustomTimeframe = (): string =>
     `${formatNanoToTimeString(
       timeframeState.currentTimeframe.startTimeUnixNanoSec
-    )} -> ${formatNanoToTimeString(
+    )} - ${formatNanoToTimeString(
       timeframeState.currentTimeframe.endTimeUnixNanoSec
     )}`;
 

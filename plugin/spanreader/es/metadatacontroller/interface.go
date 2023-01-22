@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-export const styles = {
-  timeInput: {
-    width: "141px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  dateInput: {
-    width: "155px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  alert: {
-    paddingRight: "12px",
-    paddingLeft: "12px",
-    alignItems: "center",
-    backgroundColor: "rgba(239, 88, 84, 0.12)",
-    fontWeight: 400,
-    letterSpacing: 0.15,
-  },
-};
+package metadatacontroller
+
+import (
+	"context"
+	"oss-tracing/pkg/model/metadata/v1"
+)
+
+type MetadataController interface {
+	GetSystemId(ctx context.Context) (*metadata.GetSystemIdResponse, error)
+	SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error)
+}

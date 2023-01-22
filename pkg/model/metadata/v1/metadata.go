@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-export const styles = {
-  timeInput: {
-    width: "141px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  dateInput: {
-    width: "155px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  alert: {
-    paddingRight: "12px",
-    paddingLeft: "12px",
-    alignItems: "center",
-    backgroundColor: "rgba(239, 88, 84, 0.12)",
-    fontWeight: 400,
-    letterSpacing: 0.15,
-  },
-};
+package metadata
+
+type GetSystemIdRequest struct{}
+
+type GetSystemIdResponse struct {
+	Value string `json:"value"`
+}
+
+type SetSystemIdRequest struct {
+	Value string `json:"value"`
+}
+
+type SetSystemIdResponse struct{}
