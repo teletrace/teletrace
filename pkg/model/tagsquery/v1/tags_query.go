@@ -45,12 +45,13 @@ type TagValuesResponse struct {
 }
 
 type TagStatisticsRequest struct {
-	Timeframe *model.Timeframe `json:"timeframe"`
-	Tag       string           `json:"tag"`
-	Min       bool             `json:"min"`
-	Max       bool             `json:"max"`
-	Avg       bool             `json:"avg"`
-	P99       bool             `json:"p99"`
+	Timeframe     *model.Timeframe     `json:"timeframe"`
+	SearchFilters []model.SearchFilter `json:"filters"`
+	Tag           string               `json:"tag"`
+	Min           bool                 `json:"min"`
+	Max           bool                 `json:"max"`
+	Avg           bool                 `json:"avg"`
+	P99           bool                 `json:"p99"`
 }
 
 func (r *TagStatisticsRequest) Validate() error {

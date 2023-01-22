@@ -128,32 +128,43 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 
 	if aggregations, ok := body["aggregations"].(map[string]any); ok {
 		if request.Min {
-			min := aggregations["min"].(map[string]any)["value"].(float64)
-			result.Min = &min
+			result.Min = getStatisticsAggValue(request.Tag, aggregations, "min")
 		}
 
 		if request.Max {
-			max := aggregations["max"].(map[string]any)["value"].(float64)
-			result.Max = &max
+			result.Max = getStatisticsAggValue(request.Tag, aggregations, "max")
 		}
 
 		if request.Avg {
-			avg := aggregations["avg"].(map[string]any)["value"].(float64)
-			result.Avg = &avg
+			result.Avg = getStatisticsAggValue(request.Tag, aggregations, "avg")
 		}
 
 		if request.P99 {
-			p99 := aggregations["percentiles"].(map[string]any)["values"].(map[string]any)["99.0"].(float64)
-			result.P99 = &p99
+			result.P99 = getStatisticsAggValue(request.Tag, aggregations, "percentiles")
 		}
 	}
 	return result, nil
 }
 
+func getStatisticsAggValue(tag string, aggs map[string]any, statistic string) *float64 {
+	var value float64
+	if statistic == "percentiles" {
+		value = aggs[statistic].(map[string]any)["values"].(map[string]any)["99.0"].(float64)
+	} else {
+		value = aggs[statistic].(map[string]any)["value"].(float64)
+	}
+
+	if tag == "span.startTimeUnixNano" || tag == "span.endTimeUnixNano" || tag == "externalFields.durationNano" {
+		value *= 1e6
+	}
+
+	return &value
+}
+
 func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search.Request, error) {
 	builder := search.NewRequestBuilder()
 	timeframeFilters := spanreaderes.CreateTimeframeFilters(request.Timeframe)
-	filters := append(timeframeFilters)
+	filters := append(request.SearchFilters, timeframeFilters...)
 	_, err := spanreaderes.BuildQuery(builder, filters...)
 	if err != nil {
 		return nil, err
@@ -163,6 +174,9 @@ func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search
 	aggs := make(map[string]*types.AggregationContainerBuilder)
 	if request.Min {
 		aggs["min"] = types.NewAggregationContainerBuilder().Min(types.NewMinAggregationBuilder().Field(types.Field(request.Tag)))
+	}
+
+	if request.Max {
 		aggs["max"] = types.NewAggregationContainerBuilder().Max(types.NewMaxAggregationBuilder().Field(types.Field(request.Tag)))
 	}
 

@@ -176,7 +176,6 @@ func (exporter *sqliteTracesExporter) writeAttributes(
 }
 
 func hashResourceAttribute(key string, value pcommon.Value, valueType string) string {
-
 	hash := md5.New()
 	hash.Write([]byte(value.AsString() + key + valueType))
 	src := hash.Sum(nil)
