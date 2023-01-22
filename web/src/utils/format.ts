@@ -18,6 +18,12 @@ import format from "date-fns/format";
 
 export const EMPTY_STRING = "Empty Value";
 
+export const replaceWithEmptyString = (
+  val: string | number
+): string | number => {
+  return val == "" ? EMPTY_STRING : val;
+};
+
 export const formatNanoToTimeString = (time: number): string => {
   const ms = nanoToMs(time);
   return formatDateAsDateTime(ms, { showSec: true });

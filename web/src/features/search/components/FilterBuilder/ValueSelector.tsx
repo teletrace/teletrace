@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EMPTY_STRING } from "@/utils/format";
+import { replaceWithEmptyString } from "@/utils/format";
 import { Close } from "@mui/icons-material";
 import {
   FormLabel,
@@ -54,7 +54,7 @@ export const ValueSelector = ({
   };
 
   const valueArr = (Array.isArray(value) ? value : [value]).map((val) =>
-    val == "" ? EMPTY_STRING : val
+    replaceWithEmptyString(val)
   );
 
   return (
