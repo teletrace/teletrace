@@ -52,6 +52,7 @@ export const TagSelector = ({
     <FormControl required sx={styles.tagsSelector}>
       <FormLabel required={false}>Key</FormLabel>
       <Autocomplete
+        autoHighlight={true}
         disabled={disabled}
         openOnFocus
         loading={isLoading}
