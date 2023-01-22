@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { replaceWithEmptyString } from "@/utils/format";
 import { Close } from "@mui/icons-material";
 import {
   FormLabel,
@@ -28,6 +27,8 @@ import { FilterValueTypes, ValueInputMode } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
 import { AutoCompleteValueSelector } from "./AutoCompleteValueSelector";
 import { styles } from "./styles";
+
+import { replaceWithEmptyString } from "@/utils/format";
 
 export type ValueSelectorProps = {
   tag: string;

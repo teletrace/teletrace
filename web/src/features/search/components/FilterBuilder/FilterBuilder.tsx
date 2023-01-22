@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { replaceWithEmptyString } from "@/utils/format";
 import {
   Button,
   DialogActions,
@@ -39,6 +38,8 @@ import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
+
+import { replaceWithEmptyString } from "@/utils/format";
 
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | HTMLDivElement | null;

@@ -25,13 +25,13 @@ import { useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
-import { formatNumber, replaceWithEmptyString } from "@/utils/format";
-
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
+
+import { formatNumber, replaceWithEmptyString } from "@/utils/format";
 
 const useGetTagOptions = (
   tag: string,
