@@ -31,6 +31,7 @@ import {
   KeyValueFilter,
   Operator,
   OperatorCategory,
+  SearchFilter,
   ValueInputMode,
 } from "../../types/common";
 import { OperatorSelector } from "./OperatorSelector";
@@ -42,6 +43,7 @@ export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | HTMLDivElement | null;
   open: boolean;
   onClose: () => void;
+  initialFilter?: SearchFilter;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -84,13 +86,15 @@ export const FilterBuilderDialog = ({
   onClose,
   open,
   anchorEl,
+  initialFilter,
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const initialState: FilterBuilderDialogState = {
+    //tag: initialFilter?.keyValueFilter.key || null,
     tag: null,
     formError: initialFormErrors,
-    value: [],
-    operator: "in",
+    value: initialFilter?.keyValueFilter.value || [],
+    operator: initialFilter?.keyValueFilter.operator || "in",
   };
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);

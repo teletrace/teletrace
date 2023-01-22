@@ -153,17 +153,19 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
             filter.keyValueFilter.operator,
             filter.keyValueFilter.value
           )}
-        onDelete={() =>
-          deleteFilter(
-            filter.keyValueFilter.key,
-            filter.keyValueFilter.operator
-          )}
+          onDelete={() =>
+            deleteFilter(
+              filter.keyValueFilter.key,
+              filter.keyValueFilter.operator
+            )
+          }
           onClick={handleOpen}
-                />
+        />
         <FilterBuilderDialog
           open={open}
           onClose={handleClose}
           anchorEl={anchorEl}
+          initialFilter={filter}
         />
       </>
     </Tooltip>
