@@ -24,6 +24,8 @@ import {
 import { Stack } from "@mui/system";
 import React, { useEffect, useState } from "react";
 
+import { replaceWithEmptyString } from "@/utils/format";
+
 import { useAvailableTags } from "../../api/availableTags";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { AvailableTag } from "../../types/availableTags";
@@ -38,8 +40,6 @@ import { OperatorSelector } from "./OperatorSelector";
 import { styles } from "./styles";
 import { TagSelector } from "./TagSelector";
 import { ValueSelector } from "./ValueSelector";
-
-import { replaceWithEmptyString } from "@/utils/format";
 
 export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | HTMLDivElement | null;

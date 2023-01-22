@@ -23,12 +23,12 @@ import {
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
+import { replaceWithEmptyString } from "@/utils/format";
+
 import { FilterValueTypes, ValueInputMode } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
 import { AutoCompleteValueSelector } from "./AutoCompleteValueSelector";
 import { styles } from "./styles";
-
-import { replaceWithEmptyString } from "@/utils/format";
 
 export type ValueSelectorProps = {
   tag: string;

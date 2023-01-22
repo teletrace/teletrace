@@ -17,12 +17,12 @@
 import { Chip, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 
+import { replaceWithEmptyString } from "@/utils/format";
+
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { styles } from "./styles";
-
-import { replaceWithEmptyString } from "@/utils/format";
 
 const OPERATORS_FORMAT: Record<string, string> = {
   in: "IN",
