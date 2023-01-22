@@ -147,6 +147,12 @@ func (exporter *sqliteTracesExporter) writeSpan(
 
 func (exporter *sqliteTracesExporter) writeAttributes(
 	tx *sql.Tx, attributes pcommon.Map, attributeKind AttributeKind, id any) error {
+
+	var resourceAttributesIds map[string]string
+	if attributeKind == Resource {
+		resourceAttributesIds, _ = id.(map[string]string)
+	}
+
 	for key := range attributes.AsRaw() {
 		value, _ := attributes.Get(key)
 
@@ -156,9 +162,8 @@ func (exporter *sqliteTracesExporter) writeAttributes(
 		}
 
 		// In case attributeKind is a resource attribute, id is actually a map - so check and convert to get current resource id
-		if attributeKind == "resource" {
-			ids, _ := id.(map[string]string)
-			id = ids[key]
+		if attributeKind == Resource && len(resourceAttributesIds) > 0 {
+			id = resourceAttributesIds[key]
 		}
 
 		if err := insertAttribute(tx, attributeKind, id, key, finalValue, value.Type().String()); err != nil {
