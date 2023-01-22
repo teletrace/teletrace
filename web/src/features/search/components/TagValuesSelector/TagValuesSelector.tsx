@@ -66,7 +66,7 @@ export const TagValuesSelector = ({
   searchable,
 }: TagValuesSelectorProps) => {
   const [search, setSearch] = useState("");
-  const [debouncedSearch] = useDebounce(search, 500);
+  const [debouncedSearch] = useDebounce(search, 170);
 
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
@@ -77,7 +77,7 @@ export const TagValuesSelector = ({
     (f) => !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === "in")
   );
 
-  const { data, isError, isFetching } = useTagValuesWithAll(
+  const { data, isError, isFetching, isLoading } = useTagValuesWithAll(
     tag,
     debouncedSearch,
     {
@@ -139,32 +139,28 @@ export const TagValuesSelector = ({
             <Alert severity="error">Failed loading tag values</Alert>
           ) : (
             <Fragment>
-              {searchable && !!data && (
+              {searchable && !isLoading && (
                 <SearchField value={search} onChange={setSearch} />
               )}
 
-              {Boolean(tagOptions?.length) && (
-                <CheckboxList
-                  value={value}
-                  loading={false}
-                  options={tagOptions || []}
-                  onChange={handleCheckboxChange}
-                  sx={styles.checkboxList}
-                />
-              )}
+              <CheckboxList
+                value={value}
+                loading={isLoading}
+                options={tagOptions || []}
+                onChange={handleCheckboxChange}
+                sx={styles.checkboxList}
+              />
 
-              {!tagOptions?.length &&
-                !isFetching &&
-                debouncedSearch === search && (
-                  <Typography
-                    component="div"
-                    variant="subtitle2"
-                    color="GrayText"
-                    sx={{ m: 1, mt: 2 }}
-                  >
-                    No results found
-                  </Typography>
-                )}
+              {!tagOptions?.length && debouncedSearch === search && !isLoading && (
+                <Typography
+                  component="div"
+                  variant="subtitle2"
+                  color="GrayText"
+                  sx={{ m: 1, mt: 2 }}
+                >
+                  No results found
+                </Typography>
+              )}
             </Fragment>
           )}
         </AccordionDetails>
