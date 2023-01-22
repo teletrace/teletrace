@@ -45,16 +45,16 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
   const deleteFilter = useSpanSearchStore(
     (state) => state.filtersState.deleteFilter
   );
-  const [open, setOpen] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLDivElement>) => {
-    setOpen(true);
+    setOpenEditDialog(true);
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenEditDialog(false);
   };
 
   const getTooltipForArray = (arrValue: (number | string)[]) => {
@@ -161,7 +161,7 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
           onClick={handleOpen}
         />
         <FilterBuilderDialog
-          open={open}
+          open={openEditDialog}
           onClose={handleClose}
           anchorEl={anchorEl}
           initialFilter={filter.keyValueFilter}

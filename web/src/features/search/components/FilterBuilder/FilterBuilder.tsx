@@ -96,10 +96,12 @@ export const FilterBuilderDialog = ({
   );
 
   const initialState: FilterBuilderDialogState = {
-    tag: null,
+    tag: initialFilter
+      ? availableTagsOptions?.find((x) => x.name === initialFilter?.key) || null
+      : null,
     formError: initialFormErrors,
-    value: [],
-    operator: "in",
+    value: initialFilter?.value || [],
+    operator: initialFilter?.operator || "in",
   };
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
@@ -110,14 +112,7 @@ export const FilterBuilderDialog = ({
 
   useEffect(() => {
     if (initialFilter) {
-      setDialogState((prevState) => ({
-        ...prevState,
-        operator: initialFilter?.operator,
-        value: initialFilter?.value,
-        tag:
-          availableTagsOptions?.find((x) => x.name === initialFilter?.key) ||
-          null,
-      }));
+      setDialogState(initialState);
     }
   }, [initialFilter]);
 

@@ -143,13 +143,13 @@ const createFiltersSlice: StateCreator<
       previousFilter?: SearchFilter
     ) =>
       set((state) => {
-        const searchByFilter = previousFilter ?? filter;
+        const targetFilter = previousFilter ?? filter;
         const filterToUpdate = state.filtersState.filters.find((f) =>
           isFiltersStructureEqual(
             f.keyValueFilter.key,
-            searchByFilter.keyValueFilter.key,
+            targetFilter.keyValueFilter.key,
             f.keyValueFilter.operator,
-            searchByFilter.keyValueFilter.operator
+            targetFilter.keyValueFilter.operator
           )
         );
 
