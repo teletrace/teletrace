@@ -103,6 +103,7 @@ export const AutoCompleteValueSelector = ({
   };
   return (
     <Autocomplete
+      autoHighlight={true}
       multiple
       openOnFocus
       size="small"
