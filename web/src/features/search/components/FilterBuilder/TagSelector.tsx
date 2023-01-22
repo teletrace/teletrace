@@ -26,9 +26,15 @@ export type TagSelectorProps = {
   value: AvailableTag | null;
   onChange: (f: AvailableTag | null) => void;
   error: boolean;
+  disabled?: boolean;
 };
 
-export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
+export const TagSelector = ({
+  value,
+  onChange,
+  error,
+  disabled = false,
+}: TagSelectorProps) => {
   const { data: availableTags, isLoading } = useAvailableTags();
 
   const availableTagsOptions = availableTags?.pages.flatMap(
@@ -46,6 +52,7 @@ export const TagSelector = ({ value, onChange, error }: TagSelectorProps) => {
     <FormControl required sx={styles.tagsSelector}>
       <FormLabel required={false}>Key</FormLabel>
       <Autocomplete
+        disabled={disabled}
         openOnFocus
         loading={isLoading}
         value={value}
