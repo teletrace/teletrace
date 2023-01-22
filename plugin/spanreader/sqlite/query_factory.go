@@ -85,15 +85,17 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 	if queryParams.filters != "" { // add WHERE clause if there are filters
 		queryParams.filters = fmt.Sprintf("WHERE %s", queryParams.filters)
 	}
+	if queryParams.mtmFilters != "" { // add WHERE clause if there are mtm
+		queryParams.mtmFilters = fmt.Sprintf("WHERE %s", queryParams.mtmFilters)
+	}
 	if queryParams.orders != "" { // add ORDER BY clause if there are order by fields
 		queryParams.orders = fmt.Sprintf("ORDER BY %s", queryParams.orders)
 	}
-	searchQueryResponse.query = getSearchQuery(queryBuilder.buildTables(), queryParams.filters, queryParams.orders)
+	searchQueryResponse.query = getSearchQuery(queryBuilder.buildTables(), queryParams.filters, queryParams.mtmFilters, queryParams.orders)
 	return searchQueryResponse, nil
 }
 
-func getSearchQuery(tables string, filters string, orders string) string {
-	spanIdentifiersQuery := fmt.Sprintf("WITH initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s)", tables, filters) // base query for search query
+func getSearchQuery(tables string, filters string, mtmFilters string, orders string) string {
 	internalSpanParamsQuery := " SELECT iq.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, " +
 		"spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, " +
 		"spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, " +
@@ -137,6 +139,14 @@ func getSearchQuery(tables string, filters string, orders string) string {
 		"AS links ON links.span_id = iq.span_id " // join between links and spans
 	groupQuery := " GROUP BY iq.span_id " // group by span_id internal span params
 	limitQuery := fmt.Sprintf(" LIMIT %d", LimitOfSpanRecords) // set limit on number of records
+	// This query shall be executed iff there are filters that requires pre-joined-query due to many-to-many-based condition
+	if mtmFilters != "" {
+		filters += " AND spans.span_id NOT IN mtm_joined_query"
+		resAttrSpansJoinedQuery := fmt.Sprintf("WITH mtm_joined_query as (SELECT spans.span_id FROM spans JOIN resource_attributes %s),", mtmFilters)
+		spanIdentifiersQuery := fmt.Sprintf("initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s)", tables, filters) // base query for search query
+		return resAttrSpansJoinedQuery + spanIdentifiersQuery + internalSpanParamsQuery + spanSchemaJoinQuery + resourceAttributesJoinQuery + spanAttributesJoinQuery + scopesJoinQuery + eventsJoinQuery + LinksJoinQuery + groupQuery + orders + limitQuery
+	}
+	spanIdentifiersQuery := fmt.Sprintf("WITH initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s)", tables, filters) // base query for search query
 	return spanIdentifiersQuery + internalSpanParamsQuery + spanSchemaJoinQuery + resourceAttributesJoinQuery + spanAttributesJoinQuery + scopesJoinQuery + eventsJoinQuery + LinksJoinQuery + groupQuery + orders + limitQuery
 }
 

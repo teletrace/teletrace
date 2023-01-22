@@ -25,18 +25,20 @@ import (
 )
 
 type SqliteQueryParamsResponse struct {
-	tables  string
-	fields  string
-	filters string
-	orders  string
+	tables     string
+	fields     string
+	mtmFilters string
+	filters    string
+	orders     string
 }
 
-func newSqliteQueryParamsResponse(fields string, tables string, filters string, orders string) *SqliteQueryParamsResponse {
+func newSqliteQueryParamsResponse(fields string, tables string, filters string, mtmFilters string, orders string) *SqliteQueryParamsResponse {
 	return &SqliteQueryParamsResponse{
-		fields:  fields,
-		tables:  tables,
-		filters: filters,
-		orders:  orders,
+		fields:     fields,
+		tables:     tables,
+		filters:    filters,
+		mtmFilters: mtmFilters,
+		orders:     orders,
 	}
 }
 
@@ -220,11 +222,11 @@ func (qb *QueryBuilder) buildQueryParams() (*SqliteQueryParamsResponse, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error adding join conditions: %v", err)
 	}
-	filters := qb.buildFilters()
+	filters, mtmFilters := qb.buildFilters()
 	orders := qb.buildOrders()
 	fields := qb.buildFields()
 	tables := qb.buildTables()
-	return newSqliteQueryParamsResponse(fields, tables, filters, orders), nil
+	return newSqliteQueryParamsResponse(fields, tables, filters, mtmFilters, orders), nil
 }
 
 func (qb *QueryBuilder) buildTables() string {
@@ -238,15 +240,27 @@ func (qb *QueryBuilder) buildFields() string {
 	return strings.Join(qb.getFields(), ", ")
 }
 
-func (qb *QueryBuilder) buildFilters() string {
+func (qb *QueryBuilder) buildFilters() (string, string) {
 	if len(qb.getFilters()) == 0 {
-		return ""
+		return "", ""
 	}
 	var filterStrings []string
+	var mtmFilterStrings []string
 	for _, filter := range qb.getFilters() {
-		filterStrings = append(filterStrings, qb.covertFilterToSqliteQuery(filter))
+		if strings.Contains(string(filter.KeyValueFilter.Key), "resource_attributes") &&
+		(strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_EQUALS) ||
+		strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_CONTAINS) ||
+		strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_EXISTS) ||
+		strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_IN)) {
+			mtmFilterStrings = append(mtmFilterStrings, qb.covertFilterToSqliteQuery(filter))
+		} else {
+			filterStrings = append(filterStrings, qb.covertFilterToSqliteQuery(filter))
+		}
 	}
-	return strings.Join(filterStrings, " AND ")
+	if len(mtmFilterStrings) > 0 {
+		return strings.Join(filterStrings, " AND "), strings.Join(mtmFilterStrings, " AND ")
+	}
+	return strings.Join(filterStrings, " AND "), ""
 }
 
 func (qb *QueryBuilder) buildOrders() string {
