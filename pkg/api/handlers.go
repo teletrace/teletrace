@@ -114,6 +114,30 @@ func (api *API) tagsValues(c *gin.Context) {
 	c.JSON(http.StatusOK, tagValues)
 }
 
+func (api *API) tagsStatistics(c *gin.Context) {
+	var req tagsquery.TagStatisticsRequest
+	isValidationError := api.validateRequestBody(&req, c)
+	if isValidationError {
+		return
+	}
+
+	if req.Timeframe != nil {
+		if (req.Timeframe).EndTime == 0 {
+			req.Timeframe = &model.Timeframe{
+				StartTime: req.Timeframe.StartTime,
+				EndTime:   uint64(time.Now().UnixNano()),
+			}
+		}
+	}
+
+	res, err := (*api.spanReader).GetTagsStatistics(c, req)
+	if err != nil {
+		respondWithError(http.StatusInternalServerError, err, c)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
 func (api *API) getSystemId(c *gin.Context) {
 	res, err := (*api.spanReader).GetSystemId(c, metadata.GetSystemIdRequest{})
 	if err != nil {

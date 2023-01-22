@@ -112,6 +112,7 @@ func (api *API) registerRoutes() {
 	v1.GET("/trace/:id", api.getTraceById)
 	v1.GET("/tags", api.getAvailableTags)
 	v1.POST("/tags/:tag", api.tagsValues)
+	v1.POST("/tags/statistics", api.tagsStatistics)
 }
 
 // Start runs the configured API instance.

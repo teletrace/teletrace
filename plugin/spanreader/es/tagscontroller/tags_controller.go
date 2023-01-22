@@ -101,8 +101,79 @@ func (r *tagsController) GetTagsValues(
 	return r.parseGetTagsValuesResponseBody(body)
 }
 
-func (r *tagsController) GetTagsStatistics(ctx context.Context, req *tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
-	return nil, nil
+func (r *tagsController) GetTagsStatistics(ctx context.Context, req tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
+	return r.performGetTagsStatisticsRequest(ctx, req)
+}
+
+func (r *tagsController) performGetTagsStatisticsRequest(
+	ctx context.Context,
+	request tagsquery.TagStatisticsRequest,
+) (*tagsquery.TagStatisticsResponse, error) {
+	req, err := buildTagsStatisticsRequest(request)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build query: %s", err)
+	}
+
+	res, err := r.client.API.Search().Request(req).Index(r.idx).Do(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to perform search: %s", err)
+	}
+
+	var body map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
+	}
+
+	result := &tagsquery.TagStatisticsResponse{
+		Edge: &tagsquery.EdgeValues{},
+	}
+
+	if aggregations, ok := body["aggregations"].(map[string]any); ok {
+		if request.Edge {
+			min := aggregations["min"].(map[string]any)["value"].(float64)
+			max := aggregations["max"].(map[string]any)["value"].(float64)
+			result.Edge.Min = min
+			result.Edge.Max = max
+		}
+
+		if request.Avg {
+			avg := aggregations["avg"].(map[string]any)["value"].(float64)
+			result.Avg = &avg
+		}
+
+		if request.P99 {
+			p99 := aggregations["percentiles"].(map[string]any)["values"].(map[string]any)["99.0"].(float64)
+			result.P99 = &p99
+		}
+	}
+	return result, nil
+}
+
+func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search.Request, error) {
+	builder := search.NewRequestBuilder()
+	timeframeFilters := spanreaderes.CreateTimeframeFilters(request.Timeframe)
+	filters := append(timeframeFilters)
+	_, err := spanreaderes.BuildQuery(builder, filters...)
+	if err != nil {
+		return nil, err
+	}
+	builder.Size(0)
+
+	aggs := make(map[string]*types.AggregationContainerBuilder)
+	if request.Edge {
+		aggs["min"] = types.NewAggregationContainerBuilder().Min(types.NewMinAggregationBuilder().Field(types.Field(request.Tag)))
+		aggs["max"] = types.NewAggregationContainerBuilder().Max(types.NewMaxAggregationBuilder().Field(types.Field(request.Tag)))
+	}
+
+	if request.Avg {
+		aggs["avg"] = types.NewAggregationContainerBuilder().Avg(types.NewAverageAggregationBuilder().Field(types.Field(request.Tag)))
+	}
+
+	if request.P99 {
+		aggs["percentiles"] = types.NewAggregationContainerBuilder().Percentiles(types.NewPercentilesAggregationBuilder().Field(types.Field(request.Tag)))
+	}
+
+	return builder.Aggregations(aggs).Build(), nil
 }
 
 // Get elasticsearch mappings for specific tags

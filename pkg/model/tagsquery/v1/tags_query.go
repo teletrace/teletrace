@@ -45,20 +45,30 @@ type TagValuesResponse struct {
 }
 
 type TagStatisticsRequest struct {
-	Edge bool
-	Avg  bool
-	P99  bool
+	Timeframe *model.Timeframe `json:"timeframe"`
+	Tag       string           `json:"tag"`
+	Edge      bool             `json:"edge"`
+	Avg       bool             `json:"avg"`
+	P99       bool             `json:"p99"`
+}
+
+func (r *TagStatisticsRequest) Validate() error {
+	if r.Timeframe != nil && r.Timeframe.EndTime < r.Timeframe.StartTime && r.Timeframe.EndTime != 0 {
+		return fmt.Errorf("endTime cannot be smaller than startTime")
+	}
+
+	return nil
 }
 
 type EdgeValues struct {
-	Min float64
-	Max float64
+	Min float64 `json:"min"`
+	Max float64 `json:"max"`
 }
 
 type TagStatisticsResponse struct {
-	Edge *EdgeValues
-	Avg  *float64
-	P99  *float64
+	Edge *EdgeValues `json:"edge"`
+	Avg  *float64    `json:"avg"`
+	P99  *float64    `json:"p99"`
 }
 
 type GetAvailableTagsRequest struct{}
