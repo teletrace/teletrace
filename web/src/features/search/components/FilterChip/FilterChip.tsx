@@ -165,7 +165,7 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
           open={open}
           onClose={handleClose}
           anchorEl={anchorEl}
-          initialFilter={filter}
+          initialFilter={filter.keyValueFilter}
         />
       </>
     </Tooltip>

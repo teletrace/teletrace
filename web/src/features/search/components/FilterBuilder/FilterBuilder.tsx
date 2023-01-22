@@ -22,8 +22,9 @@ import {
   Popover,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import { useAvailableTags } from "../../api/availableTags";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { AvailableTag } from "../../types/availableTags";
 import {
@@ -31,7 +32,6 @@ import {
   KeyValueFilter,
   Operator,
   OperatorCategory,
-  SearchFilter,
   ValueInputMode,
 } from "../../types/common";
 import { OperatorSelector } from "./OperatorSelector";
@@ -43,7 +43,7 @@ export type FilterDialogProps = {
   anchorEl: HTMLButtonElement | HTMLDivElement | null;
   open: boolean;
   onClose: () => void;
-  initialFilter?: SearchFilter;
+  initialFilter?: KeyValueFilter;
 };
 
 const valueSelectModeByOperators: { [key: string]: ValueInputMode } = {
@@ -89,12 +89,18 @@ export const FilterBuilderDialog = ({
   initialFilter,
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
+  const { data: availableTags } = useAvailableTags();
+
+  const availableTagsOptions = availableTags?.pages.flatMap(
+    (page) => page.Tags
+  );
+
   const initialState: FilterBuilderDialogState = {
     //tag: initialFilter?.keyValueFilter.key || null,
     tag: null,
     formError: initialFormErrors,
-    value: initialFilter?.keyValueFilter.value || [],
-    operator: initialFilter?.keyValueFilter.operator || "in",
+    value: [],
+    operator: "in",
   };
   const [dialogState, setDialogState] =
     useState<FilterBuilderDialogState>(initialState);
@@ -102,6 +108,19 @@ export const FilterBuilderDialog = ({
   const createOrUpdateFilter = useSpanSearchStore(
     (state) => state.filtersState.createOrUpdateFilter
   );
+
+  useEffect(() => {
+    if (initialFilter) {
+      setDialogState((prevState) => ({
+        ...prevState,
+        operator: initialFilter?.operator,
+        value: initialFilter?.value,
+        tag:
+          availableTagsOptions?.find((x) => x.name === initialFilter?.key) ||
+          null,
+      }));
+    }
+  }, [initialFilter]);
 
   const onOperatorChange = (operator: Operator) => {
     setDialogState((prevState) => ({
@@ -219,7 +238,10 @@ export const FilterBuilderDialog = ({
       operator: dialogState.operator,
       value: convertValue(dialogState.tag?.type, dialogState.value),
     };
-    createOrUpdateFilter({ keyValueFilter: newFilter });
+    createOrUpdateFilter(
+      { keyValueFilter: newFilter },
+      initialFilter && { keyValueFilter: initialFilter }
+    );
     handleClose();
   };
 
@@ -244,6 +266,7 @@ export const FilterBuilderDialog = ({
                 value={dialogState.tag}
                 onChange={onTagChange}
                 error={dialogState.formError.tag}
+                disabled={!!initialFilter}
               />
               <OperatorSelector
                 value={dialogState.operator}
