@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { EMPTY_STRING } from "@/utils/format";
 import {
   Button,
   DialogActions,
@@ -168,7 +169,8 @@ export const FilterBuilderDialog = ({
       return v;
     }
     if (tagType === "string") {
-      return v.toString();
+      const vStr = v.toString();
+      return vStr == EMPTY_STRING ? "" : vStr;
     }
     if (tagType === "long" || tagType == "float") {
       return Number(v);

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { EMPTY_STRING } from "@/utils/format";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 
@@ -82,6 +83,9 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
   const formatStrValue = (value: string, filterLength: number) => {
     if (filterLength > MAX_FILTER_LENGTH) {
       value = `${value.substring(0, MAX_FILTER_LENGTH)}...`;
+    }
+    if (value == "") {
+      value = EMPTY_STRING;
     }
     return `"${value}"`;
   };

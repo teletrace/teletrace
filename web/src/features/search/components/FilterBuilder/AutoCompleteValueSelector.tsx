@@ -25,7 +25,7 @@ import { useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
-import { formatNumber } from "@/utils/format";
+import { EMPTY_STRING, formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
@@ -140,7 +140,11 @@ export const AutoCompleteValueSelector = ({
               highlightClassName="valueLabelHighlight"
               searchWords={state.inputValue.toLowerCase().split(" ")}
               autoEscape={true}
-              textToHighlight={option.value.toString()}
+              textToHighlight={
+                option.value.toString() == ""
+                  ? EMPTY_STRING
+                  : option.value.toString()
+              }
             />
             <Typography>{formatNumber(option.count)}</Typography>
           </Stack>

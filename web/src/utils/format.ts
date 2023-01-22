@@ -16,6 +16,8 @@
 
 import format from "date-fns/format";
 
+export const EMPTY_STRING = "Empty Value";
+
 export const formatNanoToTimeString = (time: number): string => {
   const ms = nanoToMs(time);
   return formatDateAsDateTime(ms, { showSec: true });
