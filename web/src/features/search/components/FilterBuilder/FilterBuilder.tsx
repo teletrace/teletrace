@@ -117,10 +117,13 @@ export const FilterBuilderDialog = ({
   }, [initialFilter]);
 
   const onOperatorChange = (operator: Operator) => {
+    const shouldResetValue =
+      valueSelectModeByOperators[dialogState.operator] !==
+      valueSelectModeByOperators[operator];
     setDialogState((prevState) => ({
       ...prevState,
       operator,
-      value: [],
+      value: shouldResetValue ? [] : prevState.value,
       formError: { ...prevState.formError, value: false },
     }));
   };
