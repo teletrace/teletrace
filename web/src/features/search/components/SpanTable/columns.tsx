@@ -33,7 +33,7 @@ export interface TableSpan {
   isNew: boolean;
 }
 
-export const sizeLImitedColumns = new Set([
+export const sizeLimitedColumns = new Set([
   "span.startTimeUnixNano",
   "externalFields.durationNano",
   "span.status.code",

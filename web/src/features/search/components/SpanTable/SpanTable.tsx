@@ -29,7 +29,7 @@ import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { TableSpan, columns, sizeLImitedColumns } from "./columns";
+import { TableSpan, columns, sizeLimitedColumns } from "./columns";
 import { ReactComponent as NoResultsFoundIcon } from "./no_results_found.svg";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -219,12 +219,12 @@ export function SpanTable() {
           key: row.original.spanId, // required for new spans animation
         })}
         muiTableBodyCellProps={({ column }) =>
-          sizeLImitedColumns.has(column.columnDef.id)
+          sizeLimitedColumns.has(column.columnDef.id)
             ? { sx: { maxWidth: column.columnDef.maxSize } }
             : {}
         }
         muiTableHeadCellProps={({ column }) =>
-          sizeLImitedColumns.has(column.columnDef.id)
+          sizeLimitedColumns.has(column.columnDef.id)
             ? { sx: { maxWidth: column.columnDef.maxSize } }
             : {}
         }
