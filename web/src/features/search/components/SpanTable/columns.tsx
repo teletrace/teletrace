@@ -33,15 +33,20 @@ export interface TableSpan {
   isNew: boolean;
 }
 
+export const sizeLImitedColumns = new Set([
+  "span.startTimeUnixNano",
+  "externalFields.durationNano",
+  "span.status.code",
+]);
 export const columns: ColumnDef<TableSpan>[] = [
   {
     id: "span.startTimeUnixNano",
     accessorKey: "startTime",
     header: "Start time",
     enableSorting: true,
-    minSize: 220,
-    maxSize: 220,
-    size: 220,
+    minSize: 230,
+    maxSize: 230,
+    size: 230,
   },
   {
     id: "externalFields.durationNano",
@@ -61,8 +66,8 @@ export const columns: ColumnDef<TableSpan>[] = [
     accessorKey: "name",
     header: "Span name",
     enableSorting: false,
-    size: 470,
-    minSize: 470,
+    size: 460,
+    minSize: 460,
     maxSize: 1000,
   },
   {
