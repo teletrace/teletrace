@@ -26,6 +26,7 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var retryOnStatus = []int{500, 502, 503, 504, 429}
@@ -49,13 +50,18 @@ func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.
 			Action: "create",
 			Body:   body,
 			OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, resp esutil.BulkIndexerResponseItem, err error) {
+
+				info := []zapcore.Field{
+					zap.String("name", index),
+					zap.Int("attempts", attempts),
+					zap.Int("status", resp.Status),
+					zap.Any("internalSpan", doc),
+					zap.NamedError("reason", err),
+				}
+
 				switch {
 				case attempts < maxRetries && shouldRetryEvent(resp.Status):
-					logger.Debug("Retrying to index",
-						zap.String("name", index),
-						zap.Int("attempt", attempts),
-						zap.Int("status", resp.Status),
-						zap.NamedError("reason", err))
+					logger.Debug("retrying to index", info...)
 
 					attempts++
 					_, _ = body.Seek(0, io.SeekStart)
@@ -63,20 +69,13 @@ func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.
 
 				case resp.Status == 0 && err != nil:
 					// Encoding error. We didn't even attempt to send the event
-					logger.Error("drop docs: failed to add docs to the bulk request buffer.",
-						zap.NamedError("reason", err))
+					logger.Error("drop docs (EndodingError)", info...)
 
 				case err != nil:
-					logger.Error("drop docs: failed to index",
-						zap.String("name", index),
-						zap.Int("attempt", attempts),
-						zap.Int("status", resp.Status),
-						zap.NamedError("reason", err))
+					logger.Error("drop docs: failed to index (UnknownError)", info...)
 
 				default:
-					logger.Error(fmt.Sprintf("drop docs: failed to index: %#v", resp.Error),
-						zap.Int("attempt", attempts),
-						zap.Int("status", resp.Status))
+					logger.Error("drop docs: failed to index (Fallback)", info...)
 				}
 			},
 		},
