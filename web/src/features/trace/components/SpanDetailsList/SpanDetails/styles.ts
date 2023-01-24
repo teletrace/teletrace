@@ -90,4 +90,8 @@ export const styles = {
   accordionDetails: {
     padding: "0",
   },
+  spanURLCopyIcon: {
+    position: "absolute",
+    right: "16px",
+  },
 };
