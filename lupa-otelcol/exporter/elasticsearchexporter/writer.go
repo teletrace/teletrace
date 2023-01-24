@@ -52,7 +52,7 @@ func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.
 			OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, resp esutil.BulkIndexerResponseItem, err error) {
 
 				info := []zapcore.Field{
-					zap.String("name", index),
+					zap.String("index", index),
 					zap.Int("attempts", attempts),
 					zap.Int("status", resp.Status),
 					zap.Any("internalSpan", doc),
