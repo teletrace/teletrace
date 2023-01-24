@@ -17,6 +17,7 @@
 package sqlitespanreader
 
 import (
+	"encoding/json"
 	"fmt"
 	"oss-tracing/pkg/model"
 	"strings"
@@ -82,6 +83,29 @@ func (qb *QueryBuilder) addFilters(filters []model.SearchFilter) error {
 		}
 	}
 	return nil
+}
+
+func isMtmTable(key model.FilterKey) bool {
+	for _, mtmTable := range sqliteMtmTablesSlice {
+		if strings.Contains(string(key), mtmTable) {
+			return true
+		}
+	}
+	return false
+}
+
+func isMtmFilter(filter model.SearchFilter) bool {
+
+	if isMtmTable(filter.KeyValueFilter.Key) {
+		for notOperator, operator := range sqliteMtmFiltersNegationMap {
+			if filter.KeyValueFilter.Operator == model.FilterOperator(notOperator) {
+				filter.KeyValueFilter.Operator = model.FilterOperator(operator)
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 func (qb *QueryBuilder) addOrders(orders []spansquery.Sort) {
@@ -247,17 +271,21 @@ func (qb *QueryBuilder) buildFilters() (string, string) {
 	var filterStrings []string
 	var mtmFilterStrings []string
 	for _, filter := range qb.getFilters() {
-		if strings.Contains(string(filter.KeyValueFilter.Key), "resource_attributes") &&
-		(strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_EQUALS) ||
-		strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_CONTAINS) ||
-		strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_EXISTS) ||
-		strings.Contains(string(filter.KeyValueFilter.Operator), spansquery.OPERATOR_NOT_IN)) {
+
+		if isMtmFilter(filter) {
+			fmt.Println("KeyValueFilter inside mtm values:")
+			fmt.Println(filter.KeyValueFilter.Key)
+			fmt.Println(filter.KeyValueFilter.Operator)
+			fmt.Println(filter.KeyValueFilter.Value)
 			mtmFilterStrings = append(mtmFilterStrings, qb.covertFilterToSqliteQuery(filter))
 		} else {
 			filterStrings = append(filterStrings, qb.covertFilterToSqliteQuery(filter))
 		}
 	}
 	if len(mtmFilterStrings) > 0 {
+		b, _ := json.MarshalIndent(mtmFilterStrings, "", "  ")
+		fmt.Printf("\n\n***************\n\nmtmFilterStrings:\n")
+		fmt.Print(string(b))
 		return strings.Join(filterStrings, " AND "), strings.Join(mtmFilterStrings, " AND ")
 	}
 	return strings.Join(filterStrings, " AND "), ""

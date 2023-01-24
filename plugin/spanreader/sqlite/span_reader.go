@@ -53,6 +53,7 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 		return nil, fmt.Errorf("failed to prepare query: %v", err)
 	}
 	defer stmt.Close()
+	fmt.Printf("\n\n******************************************************\nQUERY\n%s\n**************************************\n", searchQueryResponse.query)
 	rows, err := stmt.QueryContext(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query spans: %v", err)

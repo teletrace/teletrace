@@ -142,7 +142,7 @@ func getSearchQuery(tables string, filters string, mtmFilters string, orders str
 	// This query shall be executed iff there are filters that requires pre-joined-query due to many-to-many-based condition
 	if mtmFilters != "" {
 		filters += " AND spans.span_id NOT IN mtm_joined_query"
-		resAttrSpansJoinedQuery := fmt.Sprintf("WITH mtm_joined_query as (SELECT spans.span_id FROM spans JOIN resource_attributes %s),", mtmFilters)
+		resAttrSpansJoinedQuery := fmt.Sprintf("WITH mtm_joined_query as (SELECT spans.span_id FROM spans JOIN span_resource_attributes sra ON spans.span_id = sra.span_id JOIN resource_attributes ON sra.resource_attribute_id = resource_attributes.resource_id %s),", mtmFilters)
 		spanIdentifiersQuery := fmt.Sprintf("initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s)", tables, filters) // base query for search query
 		return resAttrSpansJoinedQuery + spanIdentifiersQuery + internalSpanParamsQuery + spanSchemaJoinQuery + resourceAttributesJoinQuery + spanAttributesJoinQuery + scopesJoinQuery + eventsJoinQuery + LinksJoinQuery + groupQuery + orders + limitQuery
 	}
