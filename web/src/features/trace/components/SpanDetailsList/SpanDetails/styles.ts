@@ -34,7 +34,9 @@ export const styles = {
     },
     "&:hover": {
       ".span-copy-button": {
-        display: "block",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       },
     },
   },
