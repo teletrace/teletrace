@@ -21,6 +21,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
+  IconButton,
   Stack,
   Tooltip,
   Typography,
@@ -128,10 +129,13 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
               setTimeout(() => setIsCopyTooltipVisible(false), 1500)
             }
           >
-            <Link
+            <IconButton
+              className="span-copy-button"
               sx={styles.spanURLCopyIcon}
               onClick={(event) => handleURLCopy(event as React.MouseEvent)}
-            />
+            >
+              <Link />
+            </IconButton>
           </Tooltip>
         </AccordionSummary>
         <AccordionDetails sx={styles.accordionDetails}>

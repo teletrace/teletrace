@@ -32,6 +32,11 @@ export const styles = {
     "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
       transform: "rotate(90deg)",
     },
+    "&:hover": {
+      ".span-copy-button": {
+        display: "block",
+      },
+    },
   },
   expandedAccordion: {
     backgroundColor: "#2B2D32",
@@ -93,5 +98,7 @@ export const styles = {
   spanURLCopyIcon: {
     position: "absolute",
     right: "16px",
+    display: "none",
+    cursor: "pointer",
   },
 };
