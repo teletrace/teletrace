@@ -223,7 +223,7 @@ func Test_HandleTimestamp_Values(t *testing.T) {
 
 	// Act
 	uut := tagsController{}
-	result, err := uut.parseGetTagsValuesResponseBody(body)
+	result, err := uut.parseGetTagsValuesResponseBody(body, convertTimestampsFromMilliToNano)
 	if err != nil {
 		t.Fatal(err)
 	}
