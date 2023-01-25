@@ -18,25 +18,29 @@ import { Close, Search } from "@mui/icons-material";
 import {
   IconButton,
   InputAdornment,
+  SxProps,
   TextField,
   TextFieldProps,
+  Theme,
 } from "@mui/material";
 
 export type SearchFieldProps = {
   value: string;
   onChange: (s: string) => void;
+  sx?: SxProps<Theme>;
 } & Omit<TextFieldProps, "onChange">;
 
 export const SearchField = ({
   value,
   onChange,
+  sx,
   ...props
 }: SearchFieldProps) => {
   const clearInput = () => onChange("");
 
   return (
     <TextField
-      sx={{ paddingBottom: "8px" }}
+      sx={sx}
       fullWidth
       value={value}
       onChange={(e) => onChange(e.target.value)}

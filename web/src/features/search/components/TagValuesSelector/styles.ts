@@ -45,6 +45,9 @@ export const styles: Record<string, SxProps<Theme>> = {
     paddingBottom: "0px",
     paddingTop: "0px",
   },
+  searchField: {
+    paddingBottom: "8px",
+  },
   valueLabel: {
     direction: "rtl",
     textOverflow: "ellipsis",

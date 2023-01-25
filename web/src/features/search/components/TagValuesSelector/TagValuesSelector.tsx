@@ -140,7 +140,11 @@ export const TagValuesSelector = ({
           ) : (
             <Fragment>
               {searchable && !isLoading && (
-                <SearchField value={search} onChange={setSearch} />
+                <SearchField
+                  value={search}
+                  onChange={setSearch}
+                  sx={styles.searchField}
+                />
               )}
 
               <CheckboxList
