@@ -16,8 +16,6 @@
 
 /** types used to send usage analytics to lupa backend */
 
-export type SystemIdRequest = {};
-
 export type SystemIdResponse = {
   value: string;
 };

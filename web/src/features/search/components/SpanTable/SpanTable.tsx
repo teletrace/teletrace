@@ -28,6 +28,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
+import { sendEvent, useSystemId } from "../../api/usageAnalytics";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { TableSpan, columns, sizeLimitedColumns } from "./columns";
 import { ReactComponent as NoResultsFoundIcon } from "./no_results_found.svg";
@@ -45,6 +46,7 @@ export function SpanTable() {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
   const sortState = useSpanSearchStore((state) => state.sortState);
+  const { data: systemId } = useSystemId();
 
   const searchRequest = useMemo(
     () => ({
@@ -59,6 +61,12 @@ export function SpanTable() {
     }),
     [filtersState.filters, timeframeState, sortState.sort]
   );
+
+  useEffect(() => {
+    if (systemId) {
+      sendEvent();
+    }
+  }, []);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
@@ -176,6 +184,7 @@ export function SpanTable() {
   return (
     <div style={styles.container}>
       {isRefetching && <LinearProgress sx={styles.progress} />}
+      <div>{`${systemId}`}</div>
       <MaterialReactTable
         columns={columns}
         data={tableSpans}

@@ -14,18 +14,31 @@
  * limitations under the License.
  */
 
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { SystemIdRequest, SystemIdResponse } from "../types/usageAnalyitcs";
+import { useQuery } from "@tanstack/react-query";
+import { CloudEvent, emitterFor, httpTransport } from "cloudevents";
+
 import { axiosClient } from "@/libs/axios";
 
-export const fetchSystemId = (
-  request: SystemIdRequest
-): Promise<SystemIdResponse> => {
-  return axiosClient.get("/v1/system-id");
-};
+import { SystemIdResponse } from "../types/usageAnalyitcs";
+
+const fetchSystemId = async (): Promise<SystemIdResponse> =>
+  await axiosClient.get("/v1/system-id");
 
 export const useSystemId = () =>
-  useInfiniteQuery({
+  useQuery({
     queryKey: ["systemId"],
-    queryFn: () => fetchSystemId({}),
+    queryFn: async () => {
+      const data = await fetchSystemId();
+      return data?.value;
+    },
   });
+
+export const sendEvent = () => {
+  const emit = emitterFor(
+    httpTransport(
+      "https://x7e6byq3xd.execute-api.us-east-1.amazonaws.com/prod/"
+    )
+  );
+  const ce = new CloudEvent({ type: "1", source: "2", data: {} });
+  emit(ce);
+};

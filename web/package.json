@@ -37,7 +37,8 @@
     "tween-functions": "^1.2.0",
     "u-basscss": "^2.0.1",
     "use-debounce": "^9.0.2",
-    "zustand": "^4.2.0"
+    "zustand": "^4.2.0",
+    "cloudevents": "6.0.3"
   },
   "devDependencies": {
     "@craco/craco": "^6.4.5",
