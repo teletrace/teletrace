@@ -26,10 +26,9 @@ import (
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
 
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
 )
@@ -110,7 +109,6 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 	ctx context.Context,
 	request tagsquery.TagStatisticsRequest,
 ) (*tagsquery.TagStatisticsResponse, error) {
-
 	req, err := buildTagsStatisticsRequest(request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query: %s", err)
