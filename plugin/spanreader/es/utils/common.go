@@ -101,10 +101,6 @@ func IsConvertedTimestamp(key model.FilterKey) bool {
 	return false
 }
 
-func MilliToNanoUint64(millis uint64) uint64 {
-	return millis * 1e6
-}
-
 func MilliToNanoFloat64(millis float64) float64 {
 	return millis * 1e6
 }
