@@ -63,7 +63,11 @@ func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 }
 
 func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
+	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(
+		td,
+		modeltranslator.WithMiliSec(),
+		modeltranslator.WithDedupAttributes(),
+	)
 
 	indexer, err := newBulkIndexer(e.logger, e.client, e.cfg)
 	if err != nil {
