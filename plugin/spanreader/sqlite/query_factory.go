@@ -93,7 +93,7 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 }
 
 func getSearchQuery(tables string, filters string, orders string) string {
-	spanIdentifiersQuery := fmt.Sprintf("WITH initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s LIMIT %d)", tables, filters, LimitOfSpanRecords) // base query for search query
+	spanIdentifiersQuery := fmt.Sprintf("WITH initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s)", tables, filters) // base query for search query
 	internalSpanParamsQuery := " SELECT iq.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, " +
 		"spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, " +
 		"spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, " +
@@ -135,8 +135,9 @@ func getSearchQuery(tables string, filters string, orders string) string {
 		"JOIN link_attributes la ON links.id = la.link_id GROUP BY links.id) " + // join between links and link attributes for map between link and theirs attributes
 		"AS links GROUP BY links.span_id) " +
 		"AS links ON links.span_id = iq.span_id " // join between links and spans
-	groupQuery := " GROUP BY iq.span_id " // group by span_id internal span params
-	return spanIdentifiersQuery + internalSpanParamsQuery + spanSchemaJoinQuery + resourceAttributesJoinQuery + spanAttributesJoinQuery + scopesJoinQuery + eventsJoinQuery + LinksJoinQuery + groupQuery + orders
+	groupQuery := " GROUP BY iq.span_id "                      // group by span_id internal span params
+	limitQuery := fmt.Sprintf(" LIMIT %d", LimitOfSpanRecords) // set limit on number of records
+	return spanIdentifiersQuery + internalSpanParamsQuery + spanSchemaJoinQuery + resourceAttributesJoinQuery + spanAttributesJoinQuery + scopesJoinQuery + eventsJoinQuery + LinksJoinQuery + groupQuery + orders + limitQuery
 }
 
 func extractNextToken(orders []spansquery.Sort, nextToken spansquery.ContinuationToken) (*extractOrderResponse, error) {
@@ -206,7 +207,7 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 func buildDynamicTagsQuery() string {
 	var queries []string
 	for tableKey, table := range sqliteTableNameMap {
-		if isDynamicTagsTable(table) {
+		if isDynamicTagsTable(table) && tableKey != "span.resource.attributes" {
 			queries = append(queries, fmt.Sprintf("SELECT DISTINCT '%s' as table_key, t.key as tag_name, t.type as tag_type FROM %s t", tableKey, table))
 		}
 	}

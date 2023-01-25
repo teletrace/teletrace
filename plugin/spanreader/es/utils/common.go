@@ -17,9 +17,12 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"oss-tracing/plugin/spanreader/es/errors"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
@@ -65,4 +68,24 @@ func BuildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.Req
 	}
 
 	return b.Query(query), nil
+}
+
+func DecodeResponse(res *http.Response) (map[string]any, error) {
+	// check errors
+	var err error
+	var body map[string]any
+	decoder := json.NewDecoder(res.Body)
+	decoder.UseNumber()
+	if err = decoder.Decode(&body); err != nil {
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
+	}
+
+	if res.StatusCode >= 400 {
+		esError, err := errors.ESErrorFromHttpResponse(res.Status, body)
+		if err != nil {
+			return nil, err
+		}
+		return nil, esError
+	}
+	return body, nil
 }

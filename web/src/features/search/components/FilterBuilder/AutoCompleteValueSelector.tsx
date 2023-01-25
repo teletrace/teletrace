@@ -22,13 +22,14 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
 import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { FilterValueTypes, SearchFilter } from "../../types/common";
+import { FilterValueTypes } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
@@ -41,29 +42,22 @@ const useGetTagOptions = (
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filters = useSpanSearchStore((state) => state.filtersState.filters);
 
-  const searchQueryFilters: Array<SearchFilter> = search
-    ? [
-        ...filters,
-        { keyValueFilter: { key: tag, operator: "contains", value: search } },
-      ]
-    : filters;
-
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
       tag,
+      search,
       {
         startTimeUnixNanoSec:
           timeframeState.currentTimeframe.startTimeUnixNanoSec,
         endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
-      searchQueryFilters,
+      filters,
       liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
     );
   // add selected options to options (if missing). Since we don't show them (due to filterSelectedOptions prop) the selected the count doesn't matter
   if (searchTagValues) {
     selectedOptions.forEach((item) => {
       if (!searchTagValues.find((e) => e.value === item)) {
-        console.log(item);
         searchTagValues?.push({ value: item, count: 0 });
       }
     });
@@ -85,7 +79,7 @@ export const AutoCompleteValueSelector = ({
   error,
 }: AutoCompleteValueSelectorProps) => {
   const [search, setSearch] = useState("");
-  const [searchDebounced] = useDebounce(search, 500);
+  const [searchDebounced] = useDebounce(search, 170);
   const { isLoading, tagOptions } = useGetTagOptions(
     tag,
     value,
@@ -108,6 +102,7 @@ export const AutoCompleteValueSelector = ({
   };
   return (
     <Autocomplete
+      autoHighlight={true}
       multiple
       openOnFocus
       size="small"
@@ -117,13 +112,7 @@ export const AutoCompleteValueSelector = ({
       value={getSelectedValues() || null}
       id={"value-selector"}
       noOptionsText="No results found"
-      options={
-        tagOptions?.filter(
-          (option) =>
-            value.includes(option.value) ||
-            option.value.toString().includes(search)
-        ) || []
-      }
+      options={tagOptions || []}
       filterOptions={(x) => x}
       inputValue={search}
       filterSelectedOptions
@@ -140,14 +129,19 @@ export const AutoCompleteValueSelector = ({
           sx={styles.selectValueInput}
         />
       )}
-      renderOption={(props, option) => (
+      renderOption={(props, option, state) => (
         <ListItem {...props}>
           <Stack
-            sx={{ width: "100%" }}
+            sx={styles.selectValueResult}
             direction="row"
             justifyContent="space-between"
           >
-            <Typography>{option.value}</Typography>
+            <Highlighter
+              highlightClassName="valueLabelHighlight"
+              searchWords={state.inputValue.toLowerCase().split(" ")}
+              autoEscape={true}
+              textToHighlight={option.value.toString()}
+            />
             <Typography>{formatNumber(option.count)}</Typography>
           </Stack>
         </ListItem>

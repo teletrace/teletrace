@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import { LinearProgress } from "@mui/material";
-import { ColumnFiltersState, SortingState } from "@tanstack/react-table";
+import { LinearProgress, Typography } from "@mui/material";
+import {
+  ColumnFiltersState,
+  SortingState,
+  Updater,
+} from "@tanstack/react-table";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -25,50 +29,40 @@ import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { TableSpan, columns } from "./columns";
+import { TableSpan, columns, sizeLimitedColumns } from "./columns";
+import { ReactComponent as NoResultsFoundIcon } from "./no_results_found.svg";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
-
-const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
-const DEFAULT_SORT_ASC = false;
 
 export function SpanTable() {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef =
     useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
-
-  const sortDefault: SortingState = [
-    { id: DEFAULT_SORT_FIELD, desc: !DEFAULT_SORT_ASC },
-  ];
-
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>();
-  const [sorting, setSorting] = useState<SortingState>(sortDefault);
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
+  const sortState = useSpanSearchStore((state) => state.sortState);
 
-  const searchRequest = useMemo(() => {
-    const sort = sorting?.map((columnSort) => ({
-      field: columnSort.id,
-      ascending: !columnSort.desc,
-    }));
-    return {
+  const searchRequest = useMemo(
+    () => ({
       filters: filtersState.filters,
       timeframe: {
         startTimeUnixNanoSec:
           timeframeState.currentTimeframe.startTimeUnixNanoSec,
         endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
-      sort: sort,
+      sort: sortState.sort,
       metadata: undefined,
-    };
-  }, [filtersState.filters, timeframeState, sorting]);
+    }),
+    [filtersState.filters, timeframeState, sortState.sort]
+  );
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
-  }, [filtersState.filters, timeframeState, sorting]);
+  }, [filtersState.filters, timeframeState, sortState.sort]);
 
   const {
     data,
@@ -116,13 +110,17 @@ export function SpanTable() {
   const debouncedFetchNextPage = useDebouncedCallback(fetchNextPage, 100);
   const fetchMoreOnBottomReached = (tableWrapper: HTMLDivElement) => {
     const { scrollHeight, scrollTop, clientHeight } = tableWrapper;
-    if (scrollHeight - scrollTop - clientHeight < 200 && !isFetching) {
+    if (scrollHeight - scrollTop - clientHeight < 400 && !isFetching) {
       debouncedFetchNextPage();
     }
   };
 
   const tableWrapper = tableWrapperRef.current;
   if (tableWrapper) {
+    document.addEventListener("refresh", () => {
+      tableWrapper.scrollTop = 0;
+    });
+
     const firstRow = tableWrapper.querySelector<HTMLElement>(
       "tbody tr:first-child"
     );
@@ -146,6 +144,34 @@ export function SpanTable() {
         `${window.location.origin}/trace/${row.original.traceId}?spanId=${row.original.spanId}`
       );
   };
+
+  const sortingState = sortState.sort.map((sort) => ({
+    id: sort.field,
+    desc: !sort.ascending,
+  }));
+
+  const updateSortingState = (updater: Updater<SortingState>) =>
+    typeof updater === "function" &&
+    sortState.setSort(
+      updater(sortingState)?.map((columnSort) => ({
+        field: columnSort.id,
+        ascending: !columnSort.desc,
+      }))
+    );
+
+  const emptyState = (
+    <tr>
+      <td style={styles.emptyStateStack}>
+        <NoResultsFoundIcon style={styles.empyStateIcon} />
+        <Typography style={styles.emptyStateFirstMesssage} variant="subtitle1">
+          No matching spans found
+        </Typography>
+        <Typography style={styles.emptyStateSecondMessage} variant="body1">
+          Expand the time range or adjust your filters
+        </Typography>
+      </td>
+    </tr>
+  );
 
   return (
     <div style={styles.container}>
@@ -174,13 +200,13 @@ export function SpanTable() {
         }
         onColumnFiltersChange={setColumnFilters}
         onGlobalFilterChange={setGlobalFilter}
-        onSortingChange={setSorting}
+        onSortingChange={updateSortingState}
         state={{
           columnFilters,
           globalFilter,
           isLoading,
           showAlertBanner: isError,
-          sorting,
+          sorting: sortingState,
         }}
         rowVirtualizerInstanceRef={virtualizerInstanceRef}
         muiTableContainerProps={{
@@ -194,8 +220,23 @@ export function SpanTable() {
           sx: row.original.isNew ? styles.newTableRow : null,
           key: row.original.spanId, // required for new spans animation
         })}
+        muiTableBodyCellProps={({ column }) =>
+          sizeLimitedColumns.has(column.columnDef.id)
+            ? { sx: { maxWidth: column.columnDef.maxSize } }
+            : {}
+        }
+        muiTableHeadCellProps={({ column }) =>
+          sizeLimitedColumns.has(column.columnDef.id)
+            ? { sx: { maxWidth: column.columnDef.maxSize } }
+            : {}
+        }
         getRowId={(originalRow) => originalRow.spanId}
         initialState={{ density: "compact" }}
+        muiTableBodyProps={
+          tableSpans?.length === 0 && !isLoading
+            ? { children: emptyState, sx: { height: "unset" } }
+            : undefined
+        }
       />
     </div>
   );

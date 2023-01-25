@@ -16,7 +16,10 @@
 
 package spanreaderes
 
-import "oss-tracing/pkg/config"
+import (
+	"fmt"
+	"oss-tracing/pkg/config"
+)
 
 type ElasticConfig struct {
 	Endpoint     string
@@ -35,5 +38,16 @@ func NewElasticConfig(cfg config.Config) ElasticConfig {
 		ApiKey:       cfg.ESAPIKey,
 		ServiceToken: cfg.ESServiceToken,
 		Index:        cfg.ESIndex,
+	}
+}
+
+func NewElasticMetaConfig(cfg config.Config) ElasticConfig {
+	return ElasticConfig{
+		Endpoint:     cfg.ESEndpoints,
+		Username:     cfg.ESUsername,
+		Password:     cfg.ESPassword,
+		ApiKey:       cfg.ESAPIKey,
+		ServiceToken: cfg.ESServiceToken,
+		Index:        fmt.Sprintf("meta-%s", cfg.ESIndex),
 	}
 }

@@ -69,10 +69,17 @@ Using docker-compose:
 docker-compose -f deploy/docker-compose/docker-compose.yml up
 ```
 
+Using docker-compose for development purposes:
+
+```sh
+docker-compose -f deploy/docker-compose/docker-compose.dev.yml up
+```
+
 Using docker-compose with example data:
 
 ```sh
 docker-compose -f deploy/docker-compose/docker-compose.yml -f deploy/docker-compose/docker-compose.example.yml up
+docker-compose -f deploy/docker-compose/docker-compose.dev.yml -f deploy/docker-compose/docker-compose.example.yml up
 ```
 
 Alternatively, using docker CLI:

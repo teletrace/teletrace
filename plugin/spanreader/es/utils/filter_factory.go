@@ -106,7 +106,7 @@ func BuildFilters(b *types.QueryContainerBuilder, fs []model.KeyValueFilter, opt
 		if filter.Must {
 			must = append(must, (*qc).Build())
 		} else {
-			mustNot = append(must, (*qc).Build())
+			mustNot = append(mustNot, (*qc).Build())
 		}
 	}
 
@@ -130,7 +130,7 @@ func createEqualsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, e
 
 	m := map[types.Field]*types.MatchPhraseQueryBuilder{}
 
-	m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%+v", f.Value)) // TODO hacky, should be better typing with PB request
+	m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%+v", f.Value))
 
 	return qc.MatchPhrase(m), nil
 }
@@ -153,7 +153,16 @@ func createInFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error
 	for _, v := range sliceVal {
 		m := map[types.Field]*types.MatchPhraseQueryBuilder{}
 
-		m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%+v", v))
+		if vStr, ok := v.(string); ok {
+			if vStr == "" {
+				key := fmt.Sprintf("%s.keyword", f.Key)
+				m[types.Field(key)] = types.NewMatchPhraseQueryBuilder().Query("")
+			} else {
+				m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%s", v))
+			}
+		} else {
+			m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%+v", v))
+		}
 
 		shouldQueriesArray = append(shouldQueriesArray, m)
 	}

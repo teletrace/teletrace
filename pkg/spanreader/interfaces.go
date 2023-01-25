@@ -18,6 +18,7 @@ package spanreader
 
 import (
 	"context"
+	"oss-tracing/pkg/model/metadata/v1"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 )
@@ -27,4 +28,6 @@ type SpanReader interface {
 	Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error)
 	GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error)
 	GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
+	GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error)
+	SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error)
 }

@@ -17,7 +17,7 @@
 import create, { StateCreator } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-import { Operator, SearchFilter } from "@/features/search";
+import { Operator, SearchFilter, Sort } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 
 interface LiveSpansSlice {
@@ -120,7 +120,10 @@ const isFiltersStructureEqual = (
 interface FiltersSlice {
   filtersState: {
     filters: Array<SearchFilter>;
-    createOrUpdateFilter: (filter: SearchFilter) => void;
+    createOrUpdateFilter: (
+      filter: SearchFilter,
+      previousFilter?: SearchFilter
+    ) => void;
     deleteFilter: (key: string, operator: Operator) => void;
     clearFilters: () => void;
   };
@@ -135,14 +138,18 @@ const createFiltersSlice: StateCreator<
     filters: [],
     // If this function is called with a filter that doesn't exist in the state, it will create and add it to 'filters'
     // If the filter exists, it will simply update it with the desired values
-    createOrUpdateFilter: (filter: SearchFilter) =>
+    createOrUpdateFilter: (
+      filter: SearchFilter,
+      previousFilter?: SearchFilter
+    ) =>
       set((state) => {
+        const targetFilter = previousFilter ?? filter;
         const filterToUpdate = state.filtersState.filters.find((f) =>
           isFiltersStructureEqual(
             f.keyValueFilter.key,
-            filter.keyValueFilter.key,
+            targetFilter.keyValueFilter.key,
             f.keyValueFilter.operator,
-            filter.keyValueFilter.operator
+            targetFilter.keyValueFilter.operator
           )
         );
 
@@ -171,10 +178,39 @@ const createFiltersSlice: StateCreator<
   },
 }));
 
+interface SortSlice {
+  sortState: {
+    sort: Sort[];
+    setSort: (sort: Sort[]) => void;
+  };
+}
+
+const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
+const DEFAULT_SORT_ASC = false;
+
+const createSortSlice: StateCreator<
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
+  [],
+  [],
+  SortSlice
+> = (set) => ({
+  sortState: {
+    sort: [{ field: DEFAULT_SORT_FIELD, ascending: DEFAULT_SORT_ASC }],
+    setSort: (sort: Sort[]) =>
+      set((state) => ({
+        sortState: {
+          ...state.sortState,
+          sort: sort,
+        },
+      })),
+  },
+});
+
 export const useSpanSearchStore = create<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
 >()((...set) => ({
   ...createTimeframeSlice(...set),
   ...createLiveSpansSlice(...set),
   ...createFiltersSlice(...set),
+  ...createSortSlice(...set),
 }));

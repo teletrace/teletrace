@@ -26,6 +26,7 @@ import (
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/pkg/spanreader"
+	"oss-tracing/pkg/usageReport"
 	"syscall"
 
 	spanreaderes "oss-tracing/plugin/spanreader/es"
@@ -55,6 +56,12 @@ func main() {
 			log.Fatalf("Failed to initialize SpanReader plugin %v", err)
 		}
 	}
+	if cfg.AllowUsageReporting {
+		_, err = usageReport.InitializePeriodicalUsageReporting(sr, &cfg, logger)
+		if err != nil {
+			logger.Error("Failed to start usage reporting task", zap.Error(err))
+		}
+	}
 	api := api.NewAPI(logger, cfg, &sr)
 
 	collector, err := collector.NewCollector()
@@ -79,7 +86,7 @@ func initializeSpanReader(cfg config.Config, logger *zap.Logger) (spanreader.Spa
 	case "sqlite":
 		return sqlite.NewSqliteSpanReader(context.Background(), logger, sqlite.NewSqliteConfig(cfg))
 	case "elasticsearch":
-		return spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg))
+		return spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg), spanreaderes.NewElasticMetaConfig(cfg))
 	default:
 		return nil, fmt.Errorf("Invalid spans storage plugin %s", cfg.SpansStoragePlugin)
 	}
