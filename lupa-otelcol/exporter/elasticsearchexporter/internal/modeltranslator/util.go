@@ -1,52 +1,69 @@
+/**
+ * Copyright 2022 Cisco Systems, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package modeltranslator
 
 import (
-    internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
-    "sort"
-    "strings"
+	"sort"
+	"strings"
+
+	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
 )
 
 func dedupSortedAttributes(attrs internalspanv1.Attributes) internalspanv1.Attributes {
-    dedupedAttrs := internalspanv1.Attributes{}
+	dedupedAttrs := internalspanv1.Attributes{}
 
-    if len(attrs) == 0 {
-        return attrs
-    }
+	if len(attrs) == 0 {
+		return attrs
+	}
 
-    prev := ""
-    var attr string
-    for attr = range attrs {
-        if prev != "" {
-            if len(prev) < len(attr) && strings.HasPrefix(attr, prev) && attr[len(prev)] == '.' {
-                dedupedAttrs[prev+".value"] = attrs[attr]
-            } else {
-                dedupedAttrs[prev] = attrs[attr]
-            }
-        }
-        prev = attr
-    }
+	prev := ""
+	var attr string
+	for attr = range attrs {
+		if prev != "" {
+			if len(prev) < len(attr) && strings.HasPrefix(attr, prev) && attr[len(prev)] == '.' {
+				dedupedAttrs[prev+".value"] = attrs[attr]
+			} else {
+				dedupedAttrs[prev] = attrs[attr]
+			}
+		}
+		prev = attr
+	}
 
-    dedupedAttrs[attr] = attrs[attr]
+	dedupedAttrs[attr] = attrs[attr]
 
-    return dedupedAttrs
+	return dedupedAttrs
 }
 
 func sortAttributes(attrs internalspanv1.Attributes) internalspanv1.Attributes {
-    if len(attrs) == 0 {
-        return attrs
-    }
+	if len(attrs) == 0 {
+		return attrs
+	}
 
-    keys := make([]string, 0, len(attrs))
+	keys := make([]string, 0, len(attrs))
 
-    for k := range attrs {
-        keys = append(keys, k)
-    }
-    sort.Strings(keys)
+	for k := range attrs {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
 
-    sortedAttrs := internalspanv1.Attributes{}
+	sortedAttrs := internalspanv1.Attributes{}
 
-    for _, k := range keys {
-        sortedAttrs[k] = attrs[k]
-    }
-    return sortedAttrs
+	for _, k := range keys {
+		sortedAttrs[k] = attrs[k]
+	}
+	return sortedAttrs
 }
