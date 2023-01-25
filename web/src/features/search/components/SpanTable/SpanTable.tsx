@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LinearProgress, Stack, Typography } from "@mui/material";
+import { LinearProgress, Typography } from "@mui/material";
 import {
   ColumnFiltersState,
   SortingState,
@@ -29,7 +29,7 @@ import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { TableSpan, columns } from "./columns";
+import { TableSpan, columns, sizeLimitedColumns } from "./columns";
 import { ReactComponent as NoResultsFoundIcon } from "./no_results_found.svg";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -160,15 +160,17 @@ export function SpanTable() {
     );
 
   const emptyState = (
-    <Stack display="flex" style={styles.emptyStateStack} direction="column">
-      <NoResultsFoundIcon style={styles.empyStateIcon} />
-      <Typography style={styles.emptyStateFirstMesssage} variant="subtitle1">
-        No matching spans found
-      </Typography>
-      <Typography style={styles.emptyStateSecondMessage} variant="body1">
-        Expand the time range or adjust your filters
-      </Typography>
-    </Stack>
+    <tr>
+      <td style={styles.emptyStateStack}>
+        <NoResultsFoundIcon style={styles.empyStateIcon} />
+        <Typography style={styles.emptyStateFirstMesssage} variant="subtitle1">
+          No matching spans found
+        </Typography>
+        <Typography style={styles.emptyStateSecondMessage} variant="body1">
+          Expand the time range or adjust your filters
+        </Typography>
+      </td>
+    </tr>
   );
 
   return (
@@ -218,6 +220,16 @@ export function SpanTable() {
           sx: row.original.isNew ? styles.newTableRow : null,
           key: row.original.spanId, // required for new spans animation
         })}
+        muiTableBodyCellProps={({ column }) =>
+          sizeLimitedColumns.has(column.columnDef.id)
+            ? { sx: { maxWidth: column.columnDef.maxSize } }
+            : {}
+        }
+        muiTableHeadCellProps={({ column }) =>
+          sizeLimitedColumns.has(column.columnDef.id)
+            ? { sx: { maxWidth: column.columnDef.maxSize } }
+            : {}
+        }
         getRowId={(originalRow) => originalRow.spanId}
         initialState={{ density: "compact" }}
         muiTableBodyProps={

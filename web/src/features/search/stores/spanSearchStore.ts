@@ -120,7 +120,10 @@ const isFiltersStructureEqual = (
 interface FiltersSlice {
   filtersState: {
     filters: Array<SearchFilter>;
-    createOrUpdateFilter: (filter: SearchFilter) => void;
+    createOrUpdateFilter: (
+      filter: SearchFilter,
+      previousFilter?: SearchFilter
+    ) => void;
     deleteFilter: (key: string, operator: Operator) => void;
     clearFilters: () => void;
   };
@@ -135,14 +138,18 @@ const createFiltersSlice: StateCreator<
     filters: [],
     // If this function is called with a filter that doesn't exist in the state, it will create and add it to 'filters'
     // If the filter exists, it will simply update it with the desired values
-    createOrUpdateFilter: (filter: SearchFilter) =>
+    createOrUpdateFilter: (
+      filter: SearchFilter,
+      previousFilter?: SearchFilter
+    ) =>
       set((state) => {
+        const targetFilter = previousFilter ?? filter;
         const filterToUpdate = state.filtersState.filters.find((f) =>
           isFiltersStructureEqual(
             f.keyValueFilter.key,
-            filter.keyValueFilter.key,
+            targetFilter.keyValueFilter.key,
             f.keyValueFilter.operator,
-            filter.keyValueFilter.operator
+            targetFilter.keyValueFilter.operator
           )
         );
 

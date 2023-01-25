@@ -118,7 +118,7 @@ export const TimeFrameSelector = () => {
           key={customOption.label}
         >
           <CalendarTodayOutlined sx={{ paddingRight: "7px" }} />
-          {isSelected?.label === customOption?.label && !open
+          {isSelected?.label === customOption?.label
             ? getFormattedCustomTimeframe()
             : customOption.label}
         </ToggleButton>

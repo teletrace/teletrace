@@ -21,6 +21,7 @@ import {
   ListItemButton,
   ListItemText,
   Skeleton,
+  Stack,
   SxProps,
   Theme,
 } from "@mui/material";
@@ -63,11 +64,11 @@ export const CheckboxList = ({
 
   if (loading)
     return (
-      <Fragment>
+      <Stack>
         <Skeleton sx={styles.skeleton} />
         <Skeleton sx={styles.skeleton} />
         <Skeleton sx={styles.skeleton} />
-      </Fragment>
+      </Stack>
     );
 
   return (
@@ -81,6 +82,7 @@ export const CheckboxList = ({
               onClick={() => handleToggle(opt.value)}
             >
               <Checkbox
+                sx={styles.listItemCheckbox}
                 disableRipple
                 edge="start"
                 checked={value.indexOf(opt.value) !== -1}

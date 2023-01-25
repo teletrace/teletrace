@@ -58,7 +58,6 @@ const useGetTagOptions = (
   if (searchTagValues) {
     selectedOptions.forEach((item) => {
       if (!searchTagValues.find((e) => e.value === item)) {
-        console.log(item);
         searchTagValues?.push({ value: item, count: 0 });
       }
     });
@@ -80,7 +79,7 @@ export const AutoCompleteValueSelector = ({
   error,
 }: AutoCompleteValueSelectorProps) => {
   const [search, setSearch] = useState("");
-  const [searchDebounced] = useDebounce(search, 500);
+  const [searchDebounced] = useDebounce(search, 170);
   const { isLoading, tagOptions } = useGetTagOptions(
     tag,
     value,
@@ -103,6 +102,7 @@ export const AutoCompleteValueSelector = ({
   };
   return (
     <Autocomplete
+      autoHighlight={true}
       multiple
       openOnFocus
       size="small"
