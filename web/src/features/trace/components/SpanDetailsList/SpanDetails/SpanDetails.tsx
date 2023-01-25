@@ -45,6 +45,7 @@ function getBasicAttributes(span: InternalSpan): Attributes {
   return {
     service_name: span.resource.attributes["service.name"],
     name: span.span.name,
+    parent_id: span.span.parentSpanId || "",
     status: span.span.status.code,
     kind: span.span.kind,
     duration: formatDurationAsMs(span.externalFields.durationNano),
