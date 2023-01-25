@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
+	"oss-tracing/plugin/spanreader/es/tagscontroller/statistics"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
 
@@ -109,6 +110,7 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 	ctx context.Context,
 	request tagsquery.TagStatisticsRequest,
 ) (*tagsquery.TagStatisticsResponse, error) {
+
 	req, err := buildTagsStatisticsRequest(request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query: %s", err)
@@ -124,41 +126,17 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
-	result := &tagsquery.TagStatisticsResponse{}
+	result := &tagsquery.TagStatisticsResponse{
+		Statistics: make(map[tagsquery.TagStatistic]float64),
+	}
 
 	if aggregations, ok := body["aggregations"].(map[string]any); ok {
-		if request.Min {
-			result.Min = getStatisticsAggValue(request.Tag, aggregations, "min")
-		}
-
-		if request.Max {
-			result.Max = getStatisticsAggValue(request.Tag, aggregations, "max")
-		}
-
-		if request.Avg {
-			result.Avg = getStatisticsAggValue(request.Tag, aggregations, "avg")
-		}
-
-		if request.P99 {
-			result.P99 = getStatisticsAggValue(request.Tag, aggregations, "percentiles")
+		for _, d := range request.DesiredStatistics {
+			s := statistics.TagStatisticToStrategy[d]
+			result.Statistics[d] = s.GetValue(request.Tag, aggregations)
 		}
 	}
 	return result, nil
-}
-
-func getStatisticsAggValue(tag string, aggs map[string]any, statistic string) *float64 {
-	var value float64
-	if statistic == "percentiles" {
-		value = aggs[statistic].(map[string]any)["values"].(map[string]any)["99.0"].(float64)
-	} else {
-		value = aggs[statistic].(map[string]any)["value"].(float64)
-	}
-
-	if tag == "span.startTimeUnixNano" || tag == "span.endTimeUnixNano" || tag == "externalFields.durationNano" {
-		value *= 1e6
-	}
-
-	return &value
 }
 
 func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search.Request, error) {
@@ -172,20 +150,10 @@ func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search
 	builder.Size(0)
 
 	aggs := make(map[string]*types.AggregationContainerBuilder)
-	if request.Min {
-		aggs["min"] = types.NewAggregationContainerBuilder().Min(types.NewMinAggregationBuilder().Field(types.Field(request.Tag)))
-	}
 
-	if request.Max {
-		aggs["max"] = types.NewAggregationContainerBuilder().Max(types.NewMaxAggregationBuilder().Field(types.Field(request.Tag)))
-	}
-
-	if request.Avg {
-		aggs["avg"] = types.NewAggregationContainerBuilder().Avg(types.NewAverageAggregationBuilder().Field(types.Field(request.Tag)))
-	}
-
-	if request.P99 {
-		aggs["percentiles"] = types.NewAggregationContainerBuilder().Percentiles(types.NewPercentilesAggregationBuilder().Field(types.Field(request.Tag)))
+	for _, d := range request.DesiredStatistics {
+		s := statistics.TagStatisticToStrategy[d]
+		s.AddAggregationContainerBuilder(request.Tag, aggs)
 	}
 
 	return builder.Aggregations(aggs).Build(), nil

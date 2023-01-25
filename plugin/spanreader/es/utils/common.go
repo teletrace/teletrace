@@ -28,6 +28,8 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
+var convertedTimestampKeys = []model.FilterKey{"span.startTimeUnixNano", "span.endTimeUnixNano", "externalFields.durationNano"}
+
 func CreateTimeframeFilters(tf *model.Timeframe) []model.SearchFilter {
 	if tf == nil {
 		return []model.SearchFilter{}
@@ -61,7 +63,7 @@ func BuildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.Req
 			kvFilters = append(kvFilters, *f.KeyValueFilter)
 		}
 	}
-	query, err = BuildFilters(query, kvFilters, WithMiliSecTimestampAsNanoSec())
+	query, err = BuildFilters(query, kvFilters, WithMilliSecTimestampAsNanoSec())
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not build filters: %+v", err)
@@ -88,4 +90,21 @@ func DecodeResponse(res *http.Response) (map[string]any, error) {
 		return nil, esError
 	}
 	return body, nil
+}
+
+func IsConvertedTimestamp(key model.FilterKey) bool {
+	for _, ctk := range convertedTimestampKeys {
+		if ctk == key {
+			return true
+		}
+	}
+	return false
+}
+
+func MilliToNano(millis uint64) uint64 {
+	return millis * 1e6
+}
+
+func NanoToMilli(nanos uint64) uint64 {
+	return nanos / 1e6
 }

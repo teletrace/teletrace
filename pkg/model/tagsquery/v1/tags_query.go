@@ -44,14 +44,20 @@ type TagValuesResponse struct {
 	Values   []TagValueInfo  `json:"values"`
 }
 
+type TagStatistic string
+
+const (
+	Min TagStatistic = "min"
+	Max              = "max"
+	Avg              = "avg"
+	P99              = "p99"
+)
+
 type TagStatisticsRequest struct {
-	Timeframe     *model.Timeframe     `json:"timeframe"`
-	SearchFilters []model.SearchFilter `json:"filters"`
-	Tag           string               `json:"tag"`
-	Min           bool                 `json:"min"`
-	Max           bool                 `json:"max"`
-	Avg           bool                 `json:"avg"`
-	P99           bool                 `json:"p99"`
+	Timeframe         *model.Timeframe     `json:"timeframe"`
+	SearchFilters     []model.SearchFilter `json:"filters"`
+	Tag               string               `json:"tag"`
+	DesiredStatistics []TagStatistic       `json:"desiredStatistics"`
 }
 
 func (r *TagStatisticsRequest) Validate() error {
@@ -63,10 +69,7 @@ func (r *TagStatisticsRequest) Validate() error {
 }
 
 type TagStatisticsResponse struct {
-	Min *float64 `json:"min"`
-	Max *float64 `json:"max"`
-	Avg *float64 `json:"avg"`
-	P99 *float64 `json:"p99"`
+	Statistics map[TagStatistic]float64 `json:"statistics"`
 }
 
 type GetAvailableTagsRequest struct{}
