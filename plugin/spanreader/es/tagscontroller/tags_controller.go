@@ -33,6 +33,8 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+type TagValueParseOption func(string, *tagsquery.TagValueInfo)
+
 // Currently we use both raw and typed since fields mapping typed API has issue with querying the mapping of *
 type tagsController struct {
 	rawClient *elasticsearch.Client
@@ -98,7 +100,7 @@ func (r *tagsController) GetTagsValues(
 		return map[string]*tagsquery.TagValuesResponse{}, err
 	}
 
-	return r.parseGetTagsValuesResponseBody(body)
+	return r.parseGetTagsValuesResponseBody(body, convertTimestampsFromMilliToNano)
 }
 
 // Get elasticsearch mappings for specific tags
@@ -220,6 +222,7 @@ func (r *tagsController) performGetTagsValuesRequest(
 
 func (r *tagsController) parseGetTagsValuesResponseBody(
 	body map[string]any,
+	opts ...TagValueParseOption,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 	// To get an idea of how the response looks like, check the unit test at tags_controller_test.go
 
@@ -239,8 +242,7 @@ func (r *tagsController) parseGetTagsValuesResponseBody(
 
 			for _, v := range aggregation["buckets"].([]any) {
 				bucket := v.(map[string]any)
-				internalValue := bucket["key"]
-				value := handleTagValue(tag, internalValue)
+				value := bucket["key"]
 				count, err := bucket["doc_count"].(json.Number).Int64()
 				if err != nil {
 					return nil, err
@@ -262,7 +264,11 @@ func (r *tagsController) parseGetTagsValuesResponseBody(
 	for tag, valueInfoMap := range tagValueInfos {
 		var currentTagValues []tagsquery.TagValueInfo
 		for _, info := range valueInfoMap {
+			for _, opt := range opts {
+				opt(tag, &info)
+			}
 			currentTagValues = append(currentTagValues, info)
+
 		}
 		if currentTagValues != nil {
 			result[tag] = &tagsquery.TagValuesResponse{
@@ -274,13 +280,12 @@ func (r *tagsController) parseGetTagsValuesResponseBody(
 	return result, nil
 }
 
-func handleTagValue(tag string, value any) any {
+func convertTimestampsFromMilliToNano(tag string, tagValue *tagsquery.TagValueInfo) {
 	if tag == "span.startTimeUnixNano" || tag == "span.endTimeUnixNano" || tag == "externalFields.durationNano" {
-		if valueInt64, err := (value).(json.Number).Int64(); err == nil {
-			return valueInt64 * 1000 * 1000
+		if valueInt64, err := (tagValue.Value).(json.Number).Int64(); err == nil {
+			tagValue.Value = valueInt64 * 1000 * 1000
 		}
 	}
-	return value
 }
 
 // Remove keyword tags that are a duplication of an elasticsearch text field

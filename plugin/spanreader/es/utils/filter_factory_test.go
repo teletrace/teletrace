@@ -18,7 +18,6 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"oss-tracing/pkg/model"
 	"testing"
 
@@ -140,12 +139,12 @@ func TestMultiMustNotFilters(t *testing.T) {
 		{
 			Key:      "resource.attributes.service.name",
 			Operator: "not_in",
-			Value:    []string{"demo-server"},
+			Value:    []interface{}{"demo-server"},
 		},
 		{
 			Key:      "span.name",
 			Operator: "not_in",
-			Value:    []string{"ExecuteRequest"},
+			Value:    []interface{}{"ExecuteRequest"},
 		},
 	}
 
@@ -213,6 +212,5 @@ func TestTimestampsConversion(t *testing.T) {
 	assert.Nil(t, err)
 	queryJson, err := json.Marshal(query.Build())
 	assert.Nil(t, err)
-	fmt.Println(string(queryJson))
 	assert.JSONEq(t, expectedJson, string(queryJson))
 }
