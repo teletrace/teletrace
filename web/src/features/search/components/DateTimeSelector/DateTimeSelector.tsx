@@ -38,11 +38,13 @@ import { styles } from "./styles";
 export type DateTimeSelectorProps = {
   closeDialog: () => void;
   onCancel: () => void;
+  onApply: () => void;
 };
 
 export const DateTimeSelector = ({
   closeDialog,
   onCancel,
+  onApply,
 }: DateTimeSelectorProps) => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
 
@@ -100,6 +102,7 @@ export const DateTimeSelector = ({
           timeRange.endRange
         );
         closeDialog();
+        onApply();
       } else {
         setTimeValid(false);
       }
