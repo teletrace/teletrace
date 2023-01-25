@@ -61,7 +61,9 @@ func createTracesExporter(
 		exporter.pushTracesData,
 		exporterhelper.WithShutdown(exporter.Shutdown),
 		exporterhelper.WithRetry(exporterhelper.RetrySettings{
-			Enabled: true,
+			Enabled:        true,
+			MaxInterval:    3,
+			MaxElapsedTime: 10,
 		}),
 	)
 }

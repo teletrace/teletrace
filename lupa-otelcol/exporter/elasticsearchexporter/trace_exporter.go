@@ -24,7 +24,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/epsagon/lupa/pkg/modeltranslator"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter/internal/modeltranslator"
 )
 
 type elasticsearchTracesExporter struct {
@@ -55,7 +55,12 @@ func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 }
 
 func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	internalSpans := modeltranslator.TranslateOTLPToInternalModel(td, modeltranslator.WithMiliSec())
+	internalSpans := modeltranslator.TranslateOTLPToInternalModel(
+		td,
+		modeltranslator.WithMiliSec(),
+		modeltranslator.WithSortAttributes(),
+		modeltranslator.WithDedupAttributes(),
+	)
 
 	return writeSpans(ctx, e.logger, e.client, e.cfg.Index, internalSpans...)
 }
