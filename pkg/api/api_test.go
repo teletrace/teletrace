@@ -24,6 +24,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"oss-tracing/pkg/config"
+	"oss-tracing/pkg/model"
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	spanreader "oss-tracing/pkg/spanreader/mock"
@@ -232,6 +233,44 @@ func TestTagsValuesWithMalformedRequestBody(t *testing.T) {
 	api.router.ServeHTTP(resRecorder, req)
 
 	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
+}
+
+func TestTagsStatistics(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	body := tagsquery.TagStatisticsRequest{
+		Tag:               "someNumber",
+		DesiredStatistics: []tagsquery.TagStatistic{"min", "max", "avg", "p99"},
+		Timeframe: &model.Timeframe{
+			StartTime: 0,
+			EndTime:   0,
+		},
+	}
+	jsonBody, _ := json.Marshal(&body)
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/tags/statistics"), bytes.NewReader(jsonBody))
+	resRecorder := httptest.NewRecorder()
+	srMock, _ := spanreader.NewSpanReaderMock()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	var resBody *tagsquery.TagStatisticsResponse
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Statistics)
+
+	expectedMin := 0.0
+	expectedMax := 10.0
+	expectedAverage := 5.0
+	expectedP99 := 9.0
+	assert.Equal(t, expectedMin, resBody.Statistics[tagsquery.Min])
+	assert.Equal(t, expectedMax, resBody.Statistics[tagsquery.Max])
+	assert.Equal(t, expectedAverage, resBody.Statistics[tagsquery.Avg])
+	assert.Equal(t, expectedP99, resBody.Statistics[tagsquery.P99])
 }
 
 func TestRootStaticRoute(t *testing.T) {
