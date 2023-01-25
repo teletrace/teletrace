@@ -91,7 +91,7 @@ func (sr *spanReader) GetTagsValues(
 func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
 	res, err := sr.tagsController.GetTagsStatistics(ctx, r)
 	if err != nil {
-		return nil, fmt.Errorf("GetTagsValues failed with error: %+v", err)
+		return nil, fmt.Errorf("GetTagsStatistics failed with error: %+v", err)
 	}
 
 	return res, nil
