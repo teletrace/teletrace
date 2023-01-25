@@ -17,10 +17,11 @@
 package statistics
 
 import (
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
 var TagStatisticToStrategy = map[tagsquery.TagStatistic]StatisticStrategy{
