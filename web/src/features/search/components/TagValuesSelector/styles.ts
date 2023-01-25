@@ -42,7 +42,7 @@ export const styles: Record<string, SxProps<Theme>> = {
   checkboxList: {
     marginRight: "-16px",
     marginLeft: "-16px",
-    paddingBottom: "0",
+    paddingBottom: "0px",
     paddingTop: "0px",
   },
   valueLabel: {

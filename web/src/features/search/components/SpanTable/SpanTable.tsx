@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LinearProgress, Stack, Typography } from "@mui/material";
+import { LinearProgress, Typography } from "@mui/material";
 import {
   ColumnFiltersState,
   SortingState,
