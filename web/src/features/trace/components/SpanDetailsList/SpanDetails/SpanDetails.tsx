@@ -42,10 +42,9 @@ export interface SpanDetailsProps {
 }
 
 function getBasicAttributes(span: InternalSpan): Attributes {
-  return {
+  const returnAttributes: Attributes = {
     service_name: span.resource.attributes["service.name"],
     name: span.span.name,
-    parent_id: span.span.parentSpanId || "",
     status: span.span.status.code,
     kind: span.span.kind,
     duration: formatDurationAsMs(span.externalFields.durationNano),
@@ -53,6 +52,9 @@ function getBasicAttributes(span: InternalSpan): Attributes {
     span_id: span.span.spanId,
     trace_id: span.span.traceId,
   };
+  span.span.parentSpanId &&
+    (returnAttributes["parent_span_id"] = span.span.parentSpanId);
+  return returnAttributes;
 }
 
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
