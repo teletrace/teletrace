@@ -42,19 +42,21 @@ export const SpanAttribute = ({ attKey, attValue }: SpanAttributeProps) => {
         {attKey}
       </Typography>
       <MiddleTruncatedTypography text={attValue.toString()} sx={styles.value} />
-      <Tooltip
-        title="Copied!"
-        placement="top"
-        open={isCopyTooltipVisible}
-        onOpen={() => setTimeout(() => setIsCopyTooltipVisible(false), 3000)}
-      >
-        <ContentCopy
-          sx={styles.copy}
-          className="copy-button"
-          role="button"
-          onClick={onCopyClick}
-        />
-      </Tooltip>
+      {attValue.toString() && (
+        <Tooltip
+          title="Copied!"
+          placement="top"
+          open={isCopyTooltipVisible}
+          onOpen={() => setTimeout(() => setIsCopyTooltipVisible(false), 3000)}
+        >
+          <ContentCopy
+            sx={styles.copy}
+            className="copy-button"
+            role="button"
+            onClick={onCopyClick}
+          />
+        </Tooltip>
+      )}
     </Box>
   );
 };
