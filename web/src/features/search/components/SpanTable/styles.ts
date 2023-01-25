@@ -48,6 +48,8 @@ const styles: { [name: string]: CSSProperties } = {
     justifyContent: "center",
     marginTop: "28px",
     marginBottom: "24px",
+    display: "flex",
+    flexDirection: "column",
   },
   empyStateIcon: {
     width: "40px",

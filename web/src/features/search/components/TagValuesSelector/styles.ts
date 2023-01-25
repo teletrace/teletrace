@@ -42,8 +42,11 @@ export const styles: Record<string, SxProps<Theme>> = {
   checkboxList: {
     marginRight: "-16px",
     marginLeft: "-16px",
-    paddingBottom: "0",
-    "&:empty, &:first-child": { paddingTop: "0px" },
+    paddingBottom: "0px",
+    paddingTop: "0px",
+  },
+  searchField: {
+    paddingBottom: "8px",
   },
   valueLabel: {
     direction: "rtl",
