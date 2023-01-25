@@ -18,6 +18,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"oss-tracing/pkg/model"
 	"testing"
 
@@ -65,12 +66,12 @@ func TestMustAndMustNotFilters(t *testing.T) {
 		{
 			Key:      "resource.attributes.service.name",
 			Operator: "in",
-			Value:    []string{"demo-server"},
+			Value:    []interface{}{"demo-server"},
 		},
 		{
 			Key:      "span.name",
 			Operator: "not_in",
-			Value:    []string{"ExecuteRequest"},
+			Value:    []interface{}{"ExecuteRequest"},
 		},
 	}
 
@@ -85,12 +86,12 @@ func TestMustAndMustNotFilters(t *testing.T) {
 		{
 			Key:      "span.name",
 			Operator: "not_in",
-			Value:    []string{"ExecuteRequest"},
+			Value:    []interface{}{"ExecuteRequest"},
 		},
 		{
 			Key:      "resource.attributes.service.name",
 			Operator: "in",
-			Value:    []string{"demo-server"},
+			Value:    []interface{}{"demo-server"},
 		},
 	}
 
@@ -152,5 +153,66 @@ func TestMultiMustNotFilters(t *testing.T) {
 	assert.Nil(t, err)
 	queryJson, err := json.Marshal(query.Build())
 	assert.Nil(t, err)
+	assert.JSONEq(t, expectedJson, string(queryJson))
+}
+
+func TestTimestampsConversion(t *testing.T) {
+	expectedJson := `{
+		"bool": {
+			"must": [
+				{
+					"range": {
+						"span.startTimeUnixNano": {
+							"gte": 1674547535463
+						}
+					}
+				},
+				{
+					"range": {
+						"span.endTimeUnixNano": {
+							"lte": 1674564490999
+						}
+					}
+				},
+				{
+					"bool": {
+						"should": [
+							{
+								"match_phrase": {
+									"externalFields.durationNano": {
+										"query": "1234123"
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	}`
+	query := types.NewQueryContainerBuilder()
+	kvFilters := []model.KeyValueFilter{
+		{
+			Key:      "span.startTimeUnixNano",
+			Operator: "gte",
+			Value:    uint64(1674547535463000000),
+		},
+		{
+			Key:      "span.endTimeUnixNano",
+			Operator: "lte",
+			Value:    uint64(1674564490999000000),
+		},
+		{
+			Key:      "externalFields.durationNano",
+			Operator: "in",
+			Value:    []interface{}{json.Number("1234123456789")},
+		},
+	}
+
+	query, err := BuildFilters(query, kvFilters, WithMiliSecTimestampAsNanoSec())
+	assert.Nil(t, err)
+	queryJson, err := json.Marshal(query.Build())
+	assert.Nil(t, err)
+	fmt.Println(string(queryJson))
 	assert.JSONEq(t, expectedJson, string(queryJson))
 }

@@ -101,7 +101,9 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 
 	buffer := bytes.NewBufferString(responseContent)
 	body := make(map[string]any)
-	_ = json.NewDecoder(buffer).Decode(&body)
+	decoder := json.NewDecoder(buffer)
+	decoder.UseNumber()
+	_ = decoder.Decode(&body)
 
 	// Act
 	uut := tagsController{}
@@ -154,16 +156,104 @@ func Test_ParseGetTagsValuesResponseBody_ValidResponse(t *testing.T) {
 		tagsquery.TagValuesResponse{
 			Values: []tagsquery.TagValueInfo{
 				{
-					Value: float64(200),
+					Value: json.Number("200"),
 					Count: 3,
 				},
 				{
-					Value: float64(404),
+					Value: json.Number("404"),
 					Count: 2,
 				},
 				{
-					Value: float64(500),
+					Value: json.Number("500"),
 					Count: 1,
+				},
+			},
+		},
+	)
+}
+
+func Test_HandleTimestamp_Values(t *testing.T) {
+	responseContent := `{
+  "took": 70,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 10000,
+      "relation": "gte"
+    },
+    "max_score": null,
+    "hits": []
+  },
+  "aggregations": {
+    "externalFields.durationNano": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 332071,
+      "buckets": [
+        {
+          "key": 8,
+          "doc_count": 4956
+        },
+        {
+          "key": 14,
+          "doc_count": 4900
+        },
+        {
+          "key": 10,
+          "doc_count": 4833
+        },
+        {
+          "key": 13,
+          "doc_count": 4831
+        }
+      ]
+    }
+  }
+}`
+	buffer := bytes.NewBufferString(responseContent)
+	body := make(map[string]any)
+	decoder := json.NewDecoder(buffer)
+	decoder.UseNumber()
+	_ = decoder.Decode(&body)
+
+	// Act
+	uut := tagsController{}
+	result, err := uut.parseGetTagsValuesResponseBody(body)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Assert
+	assert.Len(t, result, 1)
+	assertTag := func(tag string, expectedInfos tagsquery.TagValuesResponse) {
+		assert.Contains(t, result, tag)
+		assert.ElementsMatch(t, result[tag].Values, expectedInfos.Values)
+	}
+
+	assertTag(
+		"externalFields.durationNano",
+		tagsquery.TagValuesResponse{
+			Values: []tagsquery.TagValueInfo{
+				{
+					Value: int64(8 * 1000 * 1000),
+					Count: 4956,
+				},
+				{
+					Value: int64(14 * 1000 * 1000),
+					Count: 4900,
+				},
+				{
+					Value: int64(10 * 1000 * 1000),
+					Count: 4833,
+				},
+				{
+					Value: int64(13 * 1000 * 1000),
+					Count: 4831,
 				},
 			},
 		},
@@ -253,7 +343,7 @@ func Test_BuildTagsValuesRequest_sanity(t *testing.T) {
 	filter := model.KeyValueFilter{
 		Key:      "resource.attributes.service.name",
 		Operator: "in",
-		Value:    []string{"demo-server"},
+		Value:    []interface{}{"demo-server"},
 	}
 	request := tagsquery.TagValuesRequest{
 		Timeframe: &model.Timeframe{StartTime: 1669194382741000000, EndTime: 1669799182741000000},
@@ -310,7 +400,7 @@ func Test_BuildTagsValuesRequest_BuildWithoutTimeframe(t *testing.T) {
 	filter := model.KeyValueFilter{
 		Key:      "resource.attributes.service.name",
 		Operator: "in",
-		Value:    []string{"demo-server"},
+		Value:    []interface{}{"demo-server"},
 	}
 	request := tagsquery.TagValuesRequest{
 		Timeframe: nil,

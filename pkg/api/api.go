@@ -63,6 +63,7 @@ func NewAPI(logger *zap.Logger, config config.Config, sr *spanreader.SpanReader)
 func newRouter(logger *zap.Logger, config config.Config) *gin.Engine {
 	setGinMode(config)
 	router := gin.New()
+	gin.EnableJsonDecoderUseNumber()
 	return router
 }
 

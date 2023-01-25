@@ -210,7 +210,9 @@ func (r *tagsController) performGetTagsValuesRequest(
 	}
 
 	var body map[string]any
-	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+	decoder := json.NewDecoder(res.Body)
+	decoder.UseNumber()
+	if err := decoder.Decode(&body); err != nil {
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 	return body, err
@@ -237,16 +239,19 @@ func (r *tagsController) parseGetTagsValuesResponseBody(
 
 			for _, v := range aggregation["buckets"].([]any) {
 				bucket := v.(map[string]any)
-				value := bucket["key"]
-				count := int(bucket["doc_count"].(float64))
-
+				internalValue := bucket["key"]
+				value := handleTagValue(tag, internalValue)
+				count, err := bucket["doc_count"].(json.Number).Int64()
+				if err != nil {
+					return nil, err
+				}
 				if info, found := tagValueInfos[tag][value]; !found {
 					tagValueInfos[tag][value] = tagsquery.TagValueInfo{
 						Value: value,
-						Count: count,
+						Count: int(count),
 					}
 				} else {
-					info.Count += count
+					info.Count += int(count)
 					tagValueInfos[tag][value] = info
 				}
 			}
@@ -256,11 +261,8 @@ func (r *tagsController) parseGetTagsValuesResponseBody(
 	// populate the result
 	for tag, valueInfoMap := range tagValueInfos {
 		var currentTagValues []tagsquery.TagValueInfo
-		for value, info := range valueInfoMap {
-			currentTagValues = append(currentTagValues, tagsquery.TagValueInfo{
-				Value: value,
-				Count: info.Count,
-			})
+		for _, info := range valueInfoMap {
+			currentTagValues = append(currentTagValues, info)
 		}
 		if currentTagValues != nil {
 			result[tag] = &tagsquery.TagValuesResponse{
@@ -270,6 +272,15 @@ func (r *tagsController) parseGetTagsValuesResponseBody(
 	}
 
 	return result, nil
+}
+
+func handleTagValue(tag string, value any) any {
+	if tag == "span.startTimeUnixNano" || tag == "span.endTimeUnixNano" || tag == "externalFields.durationNano" {
+		if valueInt64, err := (value).(json.Number).Int64(); err == nil {
+			return valueInt64 * 1000 * 1000
+		}
+	}
+	return value
 }
 
 // Remove keyword tags that are a duplication of an elasticsearch text field

@@ -118,7 +118,13 @@ func BuildFilters(b *types.QueryContainerBuilder, fs []model.KeyValueFilter, opt
 func WithMiliSecTimestampAsNanoSec() FilterParseOption {
 	return func(f *model.KeyValueFilter) {
 		if f.Key == "span.startTimeUnixNano" || f.Key == "span.endTimeUnixNano" || f.Key == "externalFields.durationNano" {
-			if v, ok := (f.Value).(uint64); ok {
+			if f.Operator == spansquery.OPERATOR_IN || f.Operator == spansquery.OPERATOR_NOT_IN {
+				for i, filterValue := range (f.Value).([]interface{}) {
+					if filterValueInt64, err := (filterValue).(json.Number).Int64(); err == nil {
+						f.Value.([]interface{})[i] = filterValueInt64 / (1000 * 1000)
+					}
+				}
+			} else if v, ok := (f.Value).(uint64); ok {
 				f.Value = v / (1000 * 1000)
 			}
 		}
@@ -138,28 +144,23 @@ func createEqualsFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, e
 func createInFilter(f model.KeyValueFilter) (*types.QueryContainerBuilder, error) {
 	var shouldQueriesArray []map[types.Field]*types.MatchPhraseQueryBuilder
 
-	jsVal, err := json.Marshal(f.Value)
-	if err != nil {
-		return nil, fmt.Errorf("Could not parse IN filter value: %+v", err)
-	}
-
-	sliceVal := []any{}
-	err = json.Unmarshal(jsVal, &sliceVal)
-
-	if err != nil {
-		return nil, fmt.Errorf("Could not parse IN filter value as array: %+v", err)
-	}
-
-	for _, v := range sliceVal {
+	for _, v := range f.Value.([]interface{}) {
 		m := map[types.Field]*types.MatchPhraseQueryBuilder{}
-
-		if vStr, ok := v.(string); ok {
+		vStr, ok := v.(string)
+		if !ok {
+			if vStringer, ok := v.(fmt.Stringer); ok {
+				vStr = vStringer.String()
+			}
+		}
+		if ok {
 			if vStr == "" {
 				key := fmt.Sprintf("%s.keyword", f.Key)
 				m[types.Field(key)] = types.NewMatchPhraseQueryBuilder().Query("")
 			} else {
 				m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%s", v))
 			}
+		} else if vInt64, ok := v.(int64); ok {
+			m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%d", vInt64))
 		} else {
 			m[types.Field(f.Key)] = types.NewMatchPhraseQueryBuilder().Query(fmt.Sprintf("%+v", v))
 		}
