@@ -26,7 +26,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, StatusCode } from "@/types/span";
@@ -64,7 +64,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   const X_DIVIDER = "|";
   const hasError: boolean = span.span.status.code === StatusCode.Error;
 
-  const handleURLCopy = (event: React.MouseEvent): void => {
+  const handleURLCopy = (event: MouseEvent): void => {
     event.stopPropagation();
     const spanIdRegexExpr = /(spanId=)[^&|^?]+/;
     const location = window.location.href;
@@ -132,7 +132,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             <IconButton
               className="span-copy-button"
               sx={styles.spanURLCopyIcon}
-              onClick={(event) => handleURLCopy(event as React.MouseEvent)}
+              onClick={(event) => handleURLCopy(event as MouseEvent)}
             >
               <Link />
             </IconButton>
