@@ -48,9 +48,9 @@ type TagStatistic string
 
 const (
 	Min TagStatistic = "min"
-	Max              = "max"
-	Avg              = "avg"
-	P99              = "p99"
+	Max TagStatistic = "max"
+	Avg TagStatistic = "avg"
+	P99 TagStatistic = "p99"
 )
 
 type TagStatisticsRequest struct {

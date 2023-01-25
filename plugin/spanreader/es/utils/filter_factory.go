@@ -119,7 +119,7 @@ func WithMilliSecTimestampAsNanoSec() FilterParseOption {
 	return func(f *model.KeyValueFilter) {
 		if IsConvertedTimestamp(f.Key) {
 			if v, ok := (f.Value).(uint64); ok {
-				f.Value = NanoToMilli(v)
+				f.Value = NanoToMilliUint64(v)
 			}
 		}
 	}
