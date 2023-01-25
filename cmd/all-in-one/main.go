@@ -26,6 +26,7 @@ import (
 	"oss-tracing/pkg/config"
 	"oss-tracing/pkg/logs"
 	"oss-tracing/pkg/spanreader"
+	"oss-tracing/pkg/usageReport"
 	"syscall"
 
 	spanreaderes "oss-tracing/plugin/spanreader/es"
@@ -53,6 +54,12 @@ func main() {
 			log.Fatalf("Failed to initialize SpanReader of %s plugin %v", cfg.SpansStoragePlugin, err)
 		} else {
 			log.Fatalf("Failed to initialize SpanReader plugin %v", err)
+		}
+	}
+	if cfg.AllowUsageReporting {
+		_, err = usageReport.InitializePeriodicalUsageReporting(sr, &cfg, logger)
+		if err != nil {
+			logger.Error("Failed to start usage reporting task", zap.Error(err))
 		}
 	}
 	api := api.NewAPI(logger, cfg, &sr)
