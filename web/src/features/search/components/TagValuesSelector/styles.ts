@@ -43,7 +43,7 @@ export const styles: Record<string, SxProps<Theme>> = {
     marginRight: "-16px",
     marginLeft: "-16px",
     paddingBottom: "0",
-    "&:empty, &:first-child": { paddingTop: "0px" },
+    paddingTop: "0px",
   },
   valueLabel: {
     direction: "rtl",

@@ -36,6 +36,7 @@ export const SearchField = ({
 
   return (
     <TextField
+      sx={{ paddingBottom: "8px" }}
       fullWidth
       value={value}
       onChange={(e) => onChange(e.target.value)}

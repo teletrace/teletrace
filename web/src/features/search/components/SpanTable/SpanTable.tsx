@@ -160,15 +160,17 @@ export function SpanTable() {
     );
 
   const emptyState = (
-    <Stack display="flex" style={styles.emptyStateStack} direction="column">
-      <NoResultsFoundIcon style={styles.empyStateIcon} />
-      <Typography style={styles.emptyStateFirstMesssage} variant="subtitle1">
-        No matching spans found
-      </Typography>
-      <Typography style={styles.emptyStateSecondMessage} variant="body1">
-        Expand the time range or adjust your filters
-      </Typography>
-    </Stack>
+    <tr>
+      <td style={styles.emptyStateStack}>
+        <NoResultsFoundIcon style={styles.empyStateIcon} />
+        <Typography style={styles.emptyStateFirstMesssage} variant="subtitle1">
+          No matching spans found
+        </Typography>
+        <Typography style={styles.emptyStateSecondMessage} variant="body1">
+          Expand the time range or adjust your filters
+        </Typography>
+      </td>
+    </tr>
   );
 
   return (

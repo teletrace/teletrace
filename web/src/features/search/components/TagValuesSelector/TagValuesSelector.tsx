@@ -156,7 +156,7 @@ export const TagValuesSelector = ({
                   component="div"
                   variant="subtitle2"
                   color="GrayText"
-                  sx={{ m: 1, mt: 2 }}
+                  sx={{ m: 1 }}
                 >
                   No results found
                 </Typography>
