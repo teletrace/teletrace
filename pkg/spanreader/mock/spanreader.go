@@ -75,7 +75,14 @@ func (sr spanReader) GetTagsValues(
 }
 
 func (sr spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
-	return nil, nil
+	return &tagsquery.TagStatisticsResponse{
+		Statistics: map[tagsquery.TagStatistic]float64{
+			"min": 0,
+			"max": 10,
+			"avg": 5,
+			"p99": 9,
+		},
+	}, nil
 }
 
 func (sr spanReader) Initialize() error {
