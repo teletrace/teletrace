@@ -33,7 +33,7 @@ export type NumericTagSliderProps = {
     title: string;
 };
 export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
-    const [sliderValue, setSliderValue] = useState<number[]>([0, 0]);
+    const [sliderValue, setSliderValue] = useState<number[]>([]);
 
     const timeframeState = useSpanSearchStore((state) => state.timeframeState);
     const filtersState = useSpanSearchStore((state) => state.filtersState);
@@ -47,9 +47,29 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
 
     useEffect(() => {
         if (data) {
-            setSliderValue([data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max]])
+            setSliderValue([data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max]]);
         }
     }, [ data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max] ]);
+
+    useEffect(() => {
+        if (sliderValue.length !== 0) {
+            filtersState.createOrUpdateFilter({
+                keyValueFilter: {
+                    key: tag,
+                    operator: "gte",
+                    value: sliderValue[0],
+                }
+            });
+
+            filtersState.createOrUpdateFilter({
+                keyValueFilter: {
+                    key: tag,
+                    operator: "lte",
+                    value: sliderValue[1],
+                }
+            });
+        }
+    }, [ sliderValue ]);
 
     return (
         <div>
