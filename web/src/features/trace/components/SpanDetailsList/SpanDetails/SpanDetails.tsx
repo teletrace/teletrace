@@ -67,7 +67,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
     if (expanded && accordionRef.current) {
       accordionRef.current.scrollIntoView();
     }
-  }, []);
+  }, [expanded]);
 
   return (
     <Box
