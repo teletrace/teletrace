@@ -127,6 +127,7 @@ const updateGraphNode = (
   g.spans.push({ ...internalSpan });
   g.hasError = g.hasError || internalSpan.span.status.code === StatusCode.Error;
   g.duration = g.duration + internalSpan.externalFields.durationNano;
+  // g.duration = Math.max(g.duration, internalSpan.externalFields.durationNano);
 };
 
 const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {

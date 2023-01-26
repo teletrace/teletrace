@@ -102,6 +102,12 @@ function createAndSendTrace(
       addSpansAttributes(span, spanProps.attributes);
     }
 
+    for (let i = 0; i <= Math.floor(Math.random() * 40000000); i += 1) {
+      // empty
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+      sleep(4000);
+    }
+
     span.end();
 
     spanIdToSpan.push({ spanId: spanProps.spanId, span: span });

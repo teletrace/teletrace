@@ -41,41 +41,51 @@ const span2: SpanProps = {
 
 const span3: SpanProps = {
   spanId: "span-3",
-  parentSpanID: "span-2",
+  parentSpanID: "span-1",
 };
 
 const span4: SpanProps = {
   spanId: "span-4",
-  parentSpanID: "span-2",
+  parentSpanID: "span-3",
 };
 
 const span5: SpanProps = {
   spanId: "span-5",
+  parentSpanID: "span-3",
+};
+
+const span6: SpanProps = {
+  spanId: "span-6",
   parentSpanID: "span-1",
 };
 
+const span7: SpanProps = {
+  spanId: "span-7",
+  parentSpanID: null,
+};
+
 const Service1: TraceProps = {
-  serviceName: "test-service-1",
-  traceName: "test-trace-1",
+  serviceName: "graph1-test-service-1",
+  traceName: "graph1-test-trace-1",
   spans: [span1],
 };
 
 const Service2: TraceProps = {
-  serviceName: "test-service-2",
-  traceName: "test-trace-2",
-  spans: [span2],
+  serviceName: "graph1-test-service-2",
+  traceName: "graph1-test-trace-2",
+  spans: [span2, span3, span5],
 };
 
 const Service3: TraceProps = {
-  serviceName: "test-service-3",
-  traceName: "test-trace-3",
-  spans: [span3],
+  serviceName: "graph1-test-service-3",
+  traceName: "graph1-test-trace-3",
+  spans: [span4],
 };
 
 const Service4: TraceProps = {
-  serviceName: "test-service-4",
-  traceName: "test-trace-4",
-  spans: [span4, span5],
+  serviceName: "graph6-service-4",
+  traceName: "graph6-trace-4",
+  spans: [span5, span6, span2],
 };
 
 export function SendDefaultTrace(): SpanIdToSpan[] {
@@ -84,7 +94,7 @@ export function SendDefaultTrace(): SpanIdToSpan[] {
   traces.push(Service1);
   traces.push(Service2);
   traces.push(Service3);
-  traces.push(Service4);
+  // traces.push(Service4);
 
   const result = createAndSendMultipleTraces(traces);
   console.log(result);
