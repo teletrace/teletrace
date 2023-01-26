@@ -69,7 +69,7 @@ func writeSpan(ctx context.Context, logger *zap.Logger, index string, bi esutil.
 
 				case resp.Status == 0 && err != nil:
 					// Encoding error. We didn't even attempt to send the event
-					logger.Error("drop docs (EndodingError)", info...)
+					logger.Error("drop docs (EncodingError)", info...)
 
 				case err != nil:
 					logger.Error("drop docs: failed to index (UnknownError)", info...)

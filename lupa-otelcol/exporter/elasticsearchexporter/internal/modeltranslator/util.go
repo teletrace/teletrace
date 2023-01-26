@@ -42,9 +42,9 @@ func dedupAttributes(attrs internalspanv1.Attributes) internalspanv1.Attributes 
 	for _, attr = range keys {
 		if prev != "" {
 			if len(prev) < len(attr) && strings.HasPrefix(attr, prev) && attr[len(prev)] == '.' {
-				dedupedAttrs[prev+".value"] = attrs[attr]
+				dedupedAttrs[prev+".value"] = attrs[prev]
 			} else {
-				dedupedAttrs[prev] = attrs[attr]
+				dedupedAttrs[prev] = attrs[prev]
 			}
 		}
 		prev = attr
