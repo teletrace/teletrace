@@ -21,12 +21,11 @@ import {
     CircularProgress,
     Paper, Slider, Stack, TextField,
 } from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
-import {useTagStatistics} from "@/features/search/api/tagStatistics";
-import {useSpanSearchStore} from "@/features/search/stores/spanSearchStore";
-import {TagStatistic, TagStatisticsRequest} from "@/features/search/types/tagStatistics";
-
+import {useTagStatistics} from "../../api/tagStatistics";
+import {useSpanSearchStore} from "../../stores/spanSearchStore";
+import {TagStatistic} from "../../types/tagStatistics";
 import {styles} from "./styles";
 
 export type NumericTagSliderProps = {
@@ -45,6 +44,12 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
         timeframe: timeframeState.currentTimeframe,
         desiredStatistics: [TagStatistic.Min, TagStatistic.Max]
     });
+
+    useEffect(() => {
+        if (data) {
+            setSliderValue([data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max]])
+        }
+    }, [ data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max] ]);
 
     return (
         <div>
