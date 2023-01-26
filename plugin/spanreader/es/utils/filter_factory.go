@@ -118,8 +118,11 @@ func BuildFilters(b *types.QueryContainerBuilder, fs []model.KeyValueFilter, opt
 func WithMilliSecTimestampAsNanoSec() FilterParseOption {
 	return func(f *model.KeyValueFilter) {
 		if IsConvertedTimestamp(f.Key) {
-			if v, ok := (f.Value).(uint64); ok {
-				f.Value = NanoToMilliUint64(v)
+			switch castValue := f.Value.(type) {
+			case float64:
+				f.Value = NanoToMilliFloat64(castValue)
+			case uint64:
+				f.Value = NanoToMilliUint64(castValue)
 			}
 		}
 	}

@@ -108,3 +108,7 @@ func MilliToNanoFloat64(millis float64) float64 {
 func NanoToMilliUint64(nanos uint64) uint64 {
 	return nanos / 1e6
 }
+
+func NanoToMilliFloat64(nanos float64) float64 {
+	return nanos / 1e6
+}
