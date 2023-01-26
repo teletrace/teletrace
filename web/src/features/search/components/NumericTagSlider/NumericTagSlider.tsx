@@ -127,6 +127,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                             <TextField
                                 sx={styles.rangeInput}
                                 value={sliderValue[0]}
+                                disabled={sliderValue.length === 0 || isFetching}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     const value = Number(event.target.value);
                                     setSliderValue([value, sliderValue[1]]);
@@ -135,6 +136,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                             <TextField
                                 sx={styles.rangeInput}
                                 value={sliderValue[1]}
+                                disabled={sliderValue.length === 0 || isFetching}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     const value = Number(event.target.value);
                                     setSliderValue([sliderValue[0], value]);
@@ -147,7 +149,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                             value={[sliderValue[0], sliderValue[1]]}
                             min={absoluteMin}
                             max={absoluteMax}
-                            disabled={isFetching}
+                            disabled={sliderValue.length === 0 || isFetching}
                             onChange={(_, newSliderValue: number | number[]) => {
                                 setSliderValue(newSliderValue as number[]);
                             }}
