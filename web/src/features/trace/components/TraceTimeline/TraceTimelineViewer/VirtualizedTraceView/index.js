@@ -272,7 +272,7 @@ class VirtualizedTraceViewImpl extends React.Component {
         };
       }
     }
-    const { selectedSpanId } = this.props;
+    const { selectedSpanId, setSelectedSpanId } = this.props;
     return (
       <div
         className="VirtualizedTraceView--row"
@@ -298,6 +298,7 @@ class VirtualizedTraceViewImpl extends React.Component {
           traceStartTime={trace.startTime}
           span={span}
           selectedSpanId={selectedSpanId}
+          setSelectedSpanId={setSelectedSpanId}
         />
       </div>
     );
