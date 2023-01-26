@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {nanoToMs} from "@/utils/format";
 import {ArrowForwardIosSharp} from "@mui/icons-material";
 import {
     Accordion, AccordionDetails,
@@ -34,6 +35,8 @@ export type NumericTagSliderProps = {
 };
 export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     const [sliderValue, setSliderValue] = useState<number[]>([]);
+    const [absoluteMin, setAbsoluteMin] = useState<number | undefined>(undefined);
+    const [absoluteMax, setAbsoluteMax] = useState<number | undefined>(undefined);
 
     const timeframeState = useSpanSearchStore((state) => state.timeframeState);
     const filtersState = useSpanSearchStore((state) => state.filtersState);
@@ -46,12 +49,40 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     });
 
     useEffect(() => {
-        if (data) {
-            setSliderValue([data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max]]);
+        if (sliderValue.length === 0) {
+            if (data) {
+                const min = data?.statistics[TagStatistic.Min];
+                const max = data?.statistics[TagStatistic.Max];
+                setSliderValue([min, max]);
+                setAbsoluteMin(min);
+                setAbsoluteMax(max);
+            }
         }
+
     }, [ data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max] ]);
 
+
     useEffect(() => {
+        if (data) {
+            const min = data?.statistics[TagStatistic.Min];
+            const max = data?.statistics[TagStatistic.Max];
+            if (absoluteMin) {
+                if (min < absoluteMin) {
+                    setAbsoluteMin(min);
+                }
+            }
+
+            if (absoluteMax) {
+                if (max > absoluteMax) {
+                    setAbsoluteMax(max);
+                }
+            }
+        }
+
+
+    }, [ sliderValue ]);
+
+    const handleChangeCommitted = () => {
         if (sliderValue.length !== 0) {
             filtersState.createOrUpdateFilter({
                 keyValueFilter: {
@@ -69,7 +100,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                 }
             });
         }
-    }, [ sliderValue ]);
+    };
 
     return (
         <div>
@@ -89,7 +120,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                 <AccordionDetails sx={styles.accordionDetails}>
                     {
                     isError ?
-                    <Alert severity="error">Failed loading tag range slider</Alert>
+                    <Alert severity="error">Failed loading {title} range slider</Alert>
                         :
                     <Paper>
                         <Stack display="flex" flexDirection="row" justifyContent="space-between">
@@ -114,11 +145,13 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                         <Slider
                             valueLabelDisplay="auto"
                             value={[sliderValue[0], sliderValue[1]]}
-                            min={data?.statistics[TagStatistic.Min]}
-                            max={data?.statistics[TagStatistic.Max]}
-                            onChange={(_: Event, newSliderValue: number | number[]) => {
+                            min={absoluteMin}
+                            max={absoluteMax}
+                            disabled={isFetching}
+                            onChange={(_, newSliderValue: number | number[]) => {
                                 setSliderValue(newSliderValue as number[]);
                             }}
+                            onChangeCommitted={(_) => handleChangeCommitted()}
                         />
                     </Paper>
                     }
