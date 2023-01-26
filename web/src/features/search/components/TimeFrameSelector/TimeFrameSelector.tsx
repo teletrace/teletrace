@@ -44,7 +44,6 @@ export const TimeFrameSelector = () => {
     options[0]
   );
   const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
-  const [rangeApplied, setRangeApplied] = useState<boolean>(false);
 
   const getRelativeStartTime = (timestamp: number, offset: string) => {
     const datetime =
@@ -79,7 +78,6 @@ export const TimeFrameSelector = () => {
       timeframeState.setRelativeTimeframe(
         getRelativeStartTime(now, value.offsetRange)
       );
-      setRangeApplied(false);
     }
   };
 
@@ -108,7 +106,6 @@ export const TimeFrameSelector = () => {
         <DateTimeSelector
           closeDialog={() => setOpen(false)}
           onCancel={handleCancel}
-          onApply={() => setRangeApplied(true)}
         />
       </Popover>
 
@@ -121,7 +118,8 @@ export const TimeFrameSelector = () => {
           key={customOption.label}
         >
           <CalendarTodayOutlined sx={{ paddingRight: "7px" }} />
-          {isSelected?.label === customOption?.label && rangeApplied
+          {isSelected?.label === customOption?.label &&
+          !timeframeState.currentTimeframe.isRelative
             ? getFormattedCustomTimeframe()
             : customOption.label}
         </ToggleButton>
