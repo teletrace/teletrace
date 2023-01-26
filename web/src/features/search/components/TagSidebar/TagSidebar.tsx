@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-import { Paper, Stack } from "@mui/material";
+import {Paper, Stack} from "@mui/material";
 
+import { NumericTagSlider } from "../NumericTagSlider";
 import { TagValuesSelector } from "../TagValuesSelector";
 import { styles } from "./styles";
 
 type TagOptions = {
   title: string;
   tag: string;
-  isSearchable: boolean;
+  selectorType: SelectorType;
+  isSearchable?: boolean;
+
 };
+
+export enum SelectorType {
+  ValuesSelector,
+  RangeSlider,
+}
 
 export const TagSidebar = () => {
   const tags: Array<TagOptions> = [
@@ -31,26 +39,38 @@ export const TagSidebar = () => {
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
+      selectorType: SelectorType.ValuesSelector,
+
+    },
+    {
+      title: "Duration (ms)",
+      tag: "externalFields.durationNano",
+      isSearchable: false,
+      selectorType: SelectorType.RangeSlider,
     },
     {
       title: "Service name",
       tag: "resource.attributes.service.name",
       isSearchable: true,
+      selectorType: SelectorType.ValuesSelector,
     },
     {
       title: "HTTP route",
       tag: "span.attributes.http.route",
       isSearchable: true,
+      selectorType: SelectorType.ValuesSelector,
     },
     {
       title: "HTTP method",
       tag: "span.attributes.http.method",
       isSearchable: true,
+      selectorType: SelectorType.ValuesSelector,
     },
     {
       title: "HTTP status code",
       tag: "span.attributes.http.status_code",
       isSearchable: true,
+      selectorType: SelectorType.ValuesSelector,
     },
   ];
 
@@ -59,12 +79,10 @@ export const TagSidebar = () => {
       <Stack spacing="2px" sx={styles.sideTagBar}>
         {tags.map((t) => {
           return (
-            <TagValuesSelector
-              key={t.tag}
-              title={t.title}
-              tag={t.tag}
-              searchable={t.isSearchable}
-            />
+            t.selectorType === SelectorType.ValuesSelector ?
+              <TagValuesSelector title={t.title} tag={t.tag} searchable={t.isSearchable}/>
+                  :
+              <NumericTagSlider tag={t.tag} title={t.title} />
           );
         })}
       </Stack>
