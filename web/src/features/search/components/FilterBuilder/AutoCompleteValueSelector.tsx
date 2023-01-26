@@ -29,18 +29,24 @@ import { formatNumber } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { FilterValueTypes } from "../../types/common";
+import { FilterValueTypes, Operator } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
 import { styles } from "./styles";
 
 const useGetTagOptions = (
   tag: string,
   selectedOptions: (string | number)[],
-  search: string
+  search: string,
+  operator: Operator
 ) => {
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filters = useSpanSearchStore((state) => state.filtersState.filters);
+
+  const filtersWithoutMe = filters.filter(
+    (f) =>
+      !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === operator)
+  );
 
   const { data: searchTagValues, isFetching: isFetchingSearch } =
     useTagValuesWithAll(
@@ -51,7 +57,7 @@ const useGetTagOptions = (
           timeframeState.currentTimeframe.startTimeUnixNanoSec,
         endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
-      filters,
+      filtersWithoutMe,
       liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
     );
   // add selected options to options (if missing). Since we don't show them (due to filterSelectedOptions prop) the selected the count doesn't matter
@@ -70,11 +76,13 @@ export type AutoCompleteValueSelectorProps = {
   value: (string | number)[];
   onChange: (value: FilterValueTypes) => void;
   error: boolean;
+  operator: Operator;
 };
 
 export const AutoCompleteValueSelector = ({
   tag,
   value,
+  operator,
   onChange,
   error,
 }: AutoCompleteValueSelectorProps) => {
@@ -83,7 +91,8 @@ export const AutoCompleteValueSelector = ({
   const { isLoading, tagOptions } = useGetTagOptions(
     tag,
     value,
-    searchDebounced
+    searchDebounced,
+    operator
   );
   const errorHelperText = error ? "Value is required" : "";
   const handleSelectChange = (

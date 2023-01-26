@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import { FilterValueTypes, ValueInputMode } from "../../types/common";
+import { FilterValueTypes, ValueInputMode, Operator } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
 import { AutoCompleteValueSelector } from "./AutoCompleteValueSelector";
 import { styles } from "./styles";
@@ -35,11 +35,13 @@ export type ValueSelectorProps = {
   valueInputMode: ValueInputMode;
   onChange: (value: FilterValueTypes) => void;
   error: boolean;
+  operator: Operator;
 };
 
 export const ValueSelector = ({
   tag,
   value,
+  operator,
   valueInputMode,
   onChange,
   error,
@@ -62,6 +64,7 @@ export const ValueSelector = ({
             value={Array.isArray(value) ? value : [value]}
             onChange={onChange}
             tag={tag}
+            operator={operator}
           />
         ) : null}
         {valueInputMode === "text" ? (
