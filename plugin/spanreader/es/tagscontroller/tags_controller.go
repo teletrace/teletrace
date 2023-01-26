@@ -131,7 +131,9 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 	if aggregations, ok := body["aggregations"].(map[string]any); ok {
 		for _, d := range request.DesiredStatistics {
 			r := statistics.TagStatisticToResolver[d]
-			result.Statistics[d] = r.GetValue(request.Tag, aggregations)
+			if v, exists := r.GetValue(request.Tag, aggregations); exists {
+				result.Statistics[d] = v
+			}
 		}
 	}
 	return result, nil

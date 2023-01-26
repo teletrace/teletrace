@@ -33,7 +33,7 @@ var TagStatisticToResolver = map[tagsquery.TagStatistic]StatisticResolver{
 
 type StatisticResolver interface {
 	AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder)
-	GetValue(tag string, aggs map[string]any) float64
+	GetValue(tag string, aggs map[string]any) (float64, bool)
 }
 
 type minResolver struct{}
@@ -42,14 +42,17 @@ func (s *minResolver) AddAggregationContainerBuilder(tag string, aggs map[string
 	aggs["min"] = types.NewAggregationContainerBuilder().Min(types.NewMinAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *minResolver) GetValue(tag string, aggs map[string]any) float64 {
-	value := aggs["min"].(map[string]any)["value"].(float64)
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value)
+func (s *minResolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+	value := aggs["min"].(map[string]any)["value"]
+	if value == nil {
+		return -1, false
 	}
 
-	return value
+	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
+		value = spanreaderes.MilliToNanoFloat64(value.(float64))
+	}
+
+	return value.(float64), true
 }
 
 type maxResolver struct{}
@@ -58,14 +61,17 @@ func (s *maxResolver) AddAggregationContainerBuilder(tag string, aggs map[string
 	aggs["max"] = types.NewAggregationContainerBuilder().Max(types.NewMaxAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *maxResolver) GetValue(tag string, aggs map[string]any) float64 {
-	value := aggs["max"].(map[string]any)["value"].(float64)
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value)
+func (s *maxResolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+	value := aggs["max"].(map[string]any)["value"]
+	if value == nil {
+		return -1, false
 	}
 
-	return value
+	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
+		value = spanreaderes.MilliToNanoFloat64(value.(float64))
+	}
+
+	return value.(float64), true
 }
 
 type avgResolver struct{}
@@ -74,14 +80,17 @@ func (s *avgResolver) AddAggregationContainerBuilder(tag string, aggs map[string
 	aggs["avg"] = types.NewAggregationContainerBuilder().Avg(types.NewAverageAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *avgResolver) GetValue(tag string, aggs map[string]any) float64 {
-	value := aggs["avg"].(map[string]any)["value"].(float64)
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value)
+func (s *avgResolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+	value := aggs["avg"].(map[string]any)["value"]
+	if value == nil {
+		return -1, false
 	}
 
-	return value
+	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
+		value = spanreaderes.MilliToNanoFloat64(value.(float64))
+	}
+
+	return value.(float64), true
 }
 
 type p99Resolver struct{}
@@ -90,12 +99,15 @@ func (s *p99Resolver) AddAggregationContainerBuilder(tag string, aggs map[string
 	aggs["percentiles"] = types.NewAggregationContainerBuilder().Percentiles(types.NewPercentilesAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *p99Resolver) GetValue(tag string, aggs map[string]any) float64 {
-	value := aggs["percentiles"].(map[string]any)["values"].(map[string]any)["99.0"].(float64)
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value)
+func (s *p99Resolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+	value := aggs["percentiles"].(map[string]any)["values"].(map[string]any)["99.0"]
+	if value == nil {
+		return -1, false
 	}
 
-	return value
+	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
+		value = spanreaderes.MilliToNanoFloat64(value.(float64))
+	}
+
+	return value.(float64), true
 }

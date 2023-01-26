@@ -23,6 +23,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
+	google.golang.org/appengine v1.6.7
 )
 
 require (
