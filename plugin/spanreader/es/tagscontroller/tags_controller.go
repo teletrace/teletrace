@@ -130,8 +130,8 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 
 	if aggregations, ok := body["aggregations"].(map[string]any); ok {
 		for _, d := range request.DesiredStatistics {
-			s := statistics.TagStatisticToStrategy[d]
-			result.Statistics[d] = s.GetValue(request.Tag, aggregations)
+			r := statistics.TagStatisticToResolver[d]
+			result.Statistics[d] = r.GetValue(request.Tag, aggregations)
 		}
 	}
 	return result, nil
@@ -150,8 +150,8 @@ func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search
 	aggs := make(map[string]*types.AggregationContainerBuilder)
 
 	for _, d := range request.DesiredStatistics {
-		s := statistics.TagStatisticToStrategy[d]
-		s.AddAggregationContainerBuilder(request.Tag, aggs)
+		r := statistics.TagStatisticToResolver[d]
+		r.AddAggregationContainerBuilder(request.Tag, aggs)
 	}
 
 	return builder.Aggregations(aggs).Build(), nil
