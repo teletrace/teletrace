@@ -166,14 +166,14 @@ func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRe
 
 func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesRequest, tag string) (*tagsquery.TagValuesResponse, error) {
 	var currentTagValues []tagsquery.TagValueInfo
-	query, err := buildTagValuesQuery(r, tag)
+	tagValueQueryResponse, err := buildTagValuesQuery(r, tag)
 	if err != nil {
 		sr.logger.Error("failed to build tag values query for: "+tag, zap.Error(err))
 		return nil, err
 	}
-	stmt, err := sr.client.db.PrepareContext(ctx, query)
+	stmt, err := sr.client.db.PrepareContext(ctx, tagValueQueryResponse.query)
 	if err != nil {
-		sr.logger.Error("failed to prepare query: "+query, zap.Error(err))
+		sr.logger.Error("failed to prepare query: "+tagValueQueryResponse.query, zap.Error(err))
 		return nil, err
 	}
 	defer stmt.Close()
