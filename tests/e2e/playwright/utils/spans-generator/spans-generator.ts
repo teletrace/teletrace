@@ -46,25 +46,25 @@ export type SpanIdToSpan = {
   span: Span;
 };
 
-export function CreateAndSendMultipleTraces(
+export function createAndSendMultipleTraces(
   traces: TraceProps[]
 ): SpanIdToSpan[] {
   let spanIdToSpan: SpanIdToSpan[] = [];
 
   for (const trace of traces) {
-    spanIdToSpan = CreateAndSendTrace(trace, spanIdToSpan);
+    spanIdToSpan = createAndSendTrace(trace, spanIdToSpan);
   }
 
   return spanIdToSpan;
 }
 
-function AddSpansAttributes(span: Span, attributes: Attributes[]) {
+function addSpansAttributes(span: Span, attributes: Attributes[]) {
   for (let attribute of attributes) {
     span.setAttribute(attribute.key, attribute.value);
   }
 }
 
-function CreateAndSendTrace(
+function createAndSendTrace(
   { serviceName, traceName, spans }: TraceProps,
   spanIdToSpan: SpanIdToSpan[]
 ): SpanIdToSpan[] {
@@ -99,7 +99,7 @@ function CreateAndSendTrace(
     }
 
     if (spanProps.attributes) {
-      AddSpansAttributes(span, spanProps.attributes);
+      addSpansAttributes(span, spanProps.attributes);
     }
 
     span.end();

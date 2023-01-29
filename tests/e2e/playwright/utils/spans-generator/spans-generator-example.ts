@@ -23,7 +23,7 @@ This example creates 4 services:
  */
 
 import {
-  CreateAndSendMultipleTraces,
+  createAndSendMultipleTraces,
   SpanIdToSpan,
   SpanProps,
   TraceProps,
@@ -86,7 +86,7 @@ export function SendDefaultTrace(): SpanIdToSpan[] {
   traces.push(Service3);
   traces.push(Service4);
 
-  const result = CreateAndSendMultipleTraces(traces);
+  const result = createAndSendMultipleTraces(traces);
   return result;
 }
 
