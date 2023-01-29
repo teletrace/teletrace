@@ -20,11 +20,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
-	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
+
+	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 
