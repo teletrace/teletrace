@@ -15,11 +15,65 @@
  */
 
 import { test, expect } from "@playwright/test";
+import {
+  CreateAndSendMultipleTraces,
+  SpanProps,
+  TraceProps,
+} from "../../utils/spans-generator/spans-generator";
+import { ElasticConnector } from "../../utils/connectors/elastic-connector";
+
+let traceId;
+let spanId;
+
+function CreateStaticData(): TraceProps[] {
+  const span1: SpanProps = {
+    spanId: "span-1",
+    parentSpanID: null,
+  };
+
+  const span2: SpanProps = {
+    spanId: "span-2",
+    parentSpanID: "span-1",
+  };
+
+  const Service1: TraceProps = {
+    serviceName: "test-service-1",
+    traceName: "test-trace-1",
+    spans: [span1],
+  };
+
+  const Service2: TraceProps = {
+    serviceName: "test-service-2",
+    traceName: "test-trace-2",
+    spans: [span2],
+  };
+  const traces: TraceProps[] = [Service1, Service2];
+  return traces;
+}
+
+test.beforeAll(async () => {
+  console.log("before all");
+  const traces = CreateStaticData();
+  const result = CreateAndSendMultipleTraces(traces);
+
+  expect(result.length > 0).toBeTruthy();
+
+  traceId = result[0].span.spanContext().traceId;
+  spanId = result[0].span.spanContext().spanId;
+
+  console.log(traceId);
+  console.log("#########################");
+  console.log(spanId);
+});
+
+test.afterAll(async () => {
+  console.log("after all");
+  const e = new ElasticConnector();
+  e.clean();
+});
 
 test.beforeEach(async ({ page }) => {
-  await page.goto(
-    "http://localhost:8080/trace/b9e89f4a6cf509036090086bdb5763e2?spanId=6ca52f2162cf019b"
-  );
+  await page.goto(`http://localhost:8080/trace/${traceId}?spanId=${spanId}`);
 
   // Waiting for seletor to ensure graph has been rendered to the screen
   await page.waitForSelector(".react-flow__renderer");
