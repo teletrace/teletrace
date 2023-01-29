@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.opentelemetry.io/collector/pdata/pcommon"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
@@ -46,6 +47,18 @@ func NewTagsController(logger *zap.Logger, rawClient *elasticsearch.Client, clie
 		client:    client,
 		idx:       idx,
 	}, nil
+}
+
+var tagsValueTypeMap = map[string]pcommon.ValueType{
+	"text":    pcommon.ValueTypeStr,
+	"keyword": pcommon.ValueTypeStr,
+	"long":    pcommon.ValueTypeInt,
+	"integer": pcommon.ValueTypeInt,
+	"byte":    pcommon.ValueTypeInt,
+	"short":   pcommon.ValueTypeInt,
+	"float":   pcommon.ValueTypeDouble,
+	"double":  pcommon.ValueTypeDouble,
+	"boolean": pcommon.ValueTypeBool,
 }
 
 // Get available tags.
@@ -152,7 +165,7 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 				if _, ok := tagsMap[fieldName]; !ok {
 					tagsMap[fieldName] = tagsquery.TagInfo{
 						Name: fieldName,
-						Type: valueData.(map[string]any)["type"].(string),
+						Type: tagsValueTypeMap[valueData.(map[string]any)["type"].(string)].String(),
 					}
 				}
 			}
