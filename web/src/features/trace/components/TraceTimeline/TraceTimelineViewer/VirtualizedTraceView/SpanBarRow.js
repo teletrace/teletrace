@@ -57,6 +57,7 @@ export default class SpanBarRow extends React.PureComponent {
       removeHoverIndentGuideId,
       addHoverIndentGuideId,
       selectedSpanId,
+      setSelectedSpanId,
     } = this.props;
     const { duration, hasChildren: isParent, operationName, process } = span;
     const serviceName = process.serviceName;
@@ -92,6 +93,7 @@ export default class SpanBarRow extends React.PureComponent {
           ${isDetailExpanded ? "is-expanded" : ""}
           ${selectedSpanId === span.spanID ? "is-active" : ""}
         `}
+        onClick={() => setSelectedSpanId(span.spanID)}
       >
         <TimelineRow.Cell className="span-name-column" width={columnDivision}>
           <div className="span-name-wrapper">
