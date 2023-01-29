@@ -20,11 +20,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
-	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 
@@ -41,14 +42,6 @@ type tagsController struct {
 	idx       string
 }
 
-func NewTagsController(logger *zap.Logger, rawClient *elasticsearch.Client, client *elasticsearch.TypedClient, idx string) (TagsController, error) {
-	return &tagsController{
-		rawClient: rawClient,
-		client:    client,
-		idx:       idx,
-	}, nil
-}
-
 var tagsValueTypeMap = map[string]pcommon.ValueType{
 	"text":    pcommon.ValueTypeStr,
 	"keyword": pcommon.ValueTypeStr,
@@ -59,6 +52,14 @@ var tagsValueTypeMap = map[string]pcommon.ValueType{
 	"float":   pcommon.ValueTypeDouble,
 	"double":  pcommon.ValueTypeDouble,
 	"boolean": pcommon.ValueTypeBool,
+}
+
+func NewTagsController(logger *zap.Logger, rawClient *elasticsearch.Client, client *elasticsearch.TypedClient, idx string) (TagsController, error) {
+	return &tagsController{
+		rawClient: rawClient,
+		client:    client,
+		idx:       idx,
+	}, nil
 }
 
 // Get available tags.
