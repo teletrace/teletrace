@@ -16,44 +16,19 @@
 
 import { test, expect } from "@playwright/test";
 import {
-  CreateAndSendMultipleTraces,
+  createAndSendMultipleTraces,
+  createDynamicSpansAndServices,
   SpanProps,
   TraceProps,
 } from "../../utils/spans-generator/spans-generator";
 import { ElasticConnector } from "../../utils/connectors/elastic-connector";
 
-let traceId;
-let spanId;
-
-function CreateStaticData(): TraceProps[] {
-  const span1: SpanProps = {
-    spanId: "span-1",
-    parentSpanID: null,
-  };
-
-  const span2: SpanProps = {
-    spanId: "span-2",
-    parentSpanID: "span-1",
-  };
-
-  const Service1: TraceProps = {
-    serviceName: "test-service-1",
-    traceName: "test-trace-1",
-    spans: [span1],
-  };
-
-  const Service2: TraceProps = {
-    serviceName: "test-service-2",
-    traceName: "test-trace-2",
-    spans: [span2],
-  };
-  const traces: TraceProps[] = [Service1, Service2];
-  return traces;
-}
+let traceId: string;
+let spanId: string;
 
 test.beforeAll(async () => {
-  const traces = CreateStaticData();
-  const result = CreateAndSendMultipleTraces(traces);
+  const traces = createDynamicSpansAndServices(2, 1);
+  const result = createAndSendMultipleTraces(traces);
 
   expect(result.length > 0).toBeTruthy();
 
@@ -84,27 +59,30 @@ test.describe("TraceGraph Component Test Suite", () => {
 
     expect(edgeNum).toBe(1);
   });
-});
 
-test("Test selected node behavior", async ({ page }) => {
-  await page.getByRole("button", { name: "fit view" }).click();
+  test("Test selected node behavior", async ({ page }) => {
+    await page.getByRole("button", { name: "fit view" }).click();
 
-  const graphNodes = await page.locator(".react-flow__node[data-testid]").all();
+    const graphNodes = await page
+      .locator(".react-flow__node[data-testid]")
+      .all();
 
-  for (const node of graphNodes) {
-    const testid_name = await node.getAttribute("data-testid");
+    for (const node of graphNodes) {
+      const testid_name = await node.getAttribute("data-testid");
 
-    expect(testid_name).toBeTruthy();
+      expect(testid_name).toBeTruthy();
 
-    if (testid_name) {
-      const clickableNode = page.getByTestId(testid_name);
-      await clickableNode.click();
-      expect(await node.getAttribute("class")).toContain("selected");
-      const nodeChildElements = await node.locator(".MuiBox-root").all();
-      const borderColor = await nodeChildElements[1].evaluate((childElement) =>
-        window.getComputedStyle(childElement).getPropertyValue("border")
-      );
-      expect(borderColor).toBe("1px solid rgb(0, 158, 180)");
+      if (testid_name) {
+        const clickableNode = page.getByTestId(testid_name);
+        await clickableNode.click();
+        expect(await node.getAttribute("class")).toContain("selected");
+        const nodeChildElements = await node.locator(".MuiBox-root").all();
+        const borderColor = await nodeChildElements[1].evaluate(
+          (childElement) =>
+            window.getComputedStyle(childElement).getPropertyValue("border")
+        );
+        expect(borderColor).toBe("1px solid rgb(0, 158, 180)");
+      }
     }
-  }
+  });
 });
