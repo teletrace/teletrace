@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {nanoToMs} from "@/utils/format";
 import {ArrowForwardIosSharp} from "@mui/icons-material";
 import {
     Accordion, AccordionDetails,
@@ -24,8 +23,10 @@ import {
 } from "@mui/material";
 import {useEffect, useState} from "react";
 
+import {msToNano, nanoToMs} from "@/utils/format";
+
 import {useTagStatistics} from "../../api/tagStatistics";
-import {useSpanSearchStore} from "../../stores/spanSearchStore";
+import {isFiltersStructureEqual, useSpanSearchStore} from "../../stores/spanSearchStore";
 import {TagStatistic} from "../../types/tagStatistics";
 import {styles} from "./styles";
 
@@ -34,7 +35,7 @@ export type NumericTagSliderProps = {
     title: string;
 };
 export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
-    const [sliderValue, setSliderValue] = useState<number[]>([]);
+    const [sliderValues, setSliderValues] = useState<number[]>([]);
     const [absoluteMin, setAbsoluteMin] = useState<number | undefined>(undefined);
     const [absoluteMax, setAbsoluteMax] = useState<number | undefined>(undefined);
 
@@ -49,58 +50,87 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     });
 
     useEffect(() => {
-        if (sliderValue.length === 0) {
-            if (data) {
+        if (sliderValues.length === 0 && data) {
+            if (Object.keys(data.statistics).length !== 0) {
                 const min = data?.statistics[TagStatistic.Min];
                 const max = data?.statistics[TagStatistic.Max];
-                setSliderValue([min, max]);
+                setSliderValues([min, max]);
                 setAbsoluteMin(min);
                 setAbsoluteMax(max);
             }
         }
-
-    }, [ data?.statistics[TagStatistic.Min], data?.statistics[TagStatistic.Max] ]);
-
+    }, [ data?.statistics ])
 
     useEffect(() => {
         if (data) {
             const min = data?.statistics[TagStatistic.Min];
             const max = data?.statistics[TagStatistic.Max];
-            if (absoluteMin) {
-                if (min < absoluteMin) {
-                    setAbsoluteMin(min);
-                }
+            if (absoluteMin && min < absoluteMin) {
+                setAbsoluteMin(min);
             }
 
-            if (absoluteMax) {
-                if (max > absoluteMax) {
-                    setAbsoluteMax(max);
-                }
+            if (absoluteMax && max > absoluteMax) {
+                setAbsoluteMax(max);
             }
         }
+    }, [ timeframeState.currentTimeframe ]);
 
+    const gteFilterExists = () => filtersState.filters.find(filter =>
+        isFiltersStructureEqual(
+            filter.keyValueFilter.key,
+            tag,
+            filter.keyValueFilter.operator,
+            "gte",
+        )
+    ) !== undefined;
 
-    }, [ sliderValue ]);
+    const lteFilterExists = () =>  filtersState.filters.find(filter =>
+        isFiltersStructureEqual(
+            filter.keyValueFilter.key,
+            tag,
+            filter.keyValueFilter.operator,
+            "lte",
+        )
+    ) !== undefined;
 
-    const handleChangeCommitted = () => {
-        if (sliderValue.length !== 0) {
-            filtersState.createOrUpdateFilter({
-                keyValueFilter: {
-                    key: tag,
-                    operator: "gte",
-                    value: sliderValue[0],
-                }
-            });
+    useEffect(() => {
+        if (sliderValues.length > 0) {
+            setSliderValues([
+                gteFilterExists() ? sliderValues[0] : absoluteMin ?? 0,
+                lteFilterExists() ? sliderValues[1] : absoluteMax ?? 0,
+            ]);
+        }
+    }, [ filtersState.filters.length ])
 
-            filtersState.createOrUpdateFilter({
-                keyValueFilter: {
-                    key: tag,
-                    operator: "lte",
-                    value: sliderValue[1],
-                }
-            });
+    const onChange = () => {
+        if (sliderValues.length > 0) {
+            if (sliderValues[0] === absoluteMin) {
+                gteFilterExists() && filtersState.deleteFilter(tag, "gte");
+            } else {
+                filtersState.createOrUpdateFilter({
+                    keyValueFilter: {
+                        key: tag,
+                        operator: "gte",
+                        value: sliderValues[0],
+                    }
+                });
+            }
+
+            if (sliderValues[1] === absoluteMax) {
+                lteFilterExists() && filtersState.deleteFilter(tag, "lte");
+            } else {
+                filtersState.createOrUpdateFilter({
+                    keyValueFilter: {
+                        key: tag,
+                        operator: "lte",
+                        value: sliderValues[1],
+                    }
+                });
+            }
         }
     };
+
+    const displayTextBoxValue = (v: number) => sliderValues.length > 0 ? nanoToMs(v) : "-"
 
     return (
         <div>
@@ -126,34 +156,39 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                         <Stack display="flex" flexDirection="row" justifyContent="space-between">
                             <TextField
                                 sx={styles.rangeInput}
-                                value={sliderValue[0]}
-                                disabled={sliderValue.length === 0 || isFetching}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    const value = Number(event.target.value);
-                                    setSliderValue([value, sliderValue[1]]);
+                                value={displayTextBoxValue(sliderValues[0])}
+                                disabled={sliderValues.length === 0 || isFetching}
+                                onChange={(event) => {
+                                    if (event.target.value) {
+                                        const leftValueAsNano = msToNano(Number(event.target.value));
+                                        setSliderValues([leftValueAsNano, sliderValues[1]]);
+                                    }
                                 }}
                             />
                             <TextField
                                 sx={styles.rangeInput}
-                                value={sliderValue[1]}
-                                disabled={sliderValue.length === 0 || isFetching}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                    const value = Number(event.target.value);
-                                    setSliderValue([sliderValue[0], value]);
+                                value={displayTextBoxValue(sliderValues[1])}
+                                disabled={sliderValues.length === 0 || isFetching}
+                                onChange={(event) => {
+                                    if (event.target.value) {
+                                        const rightValueAsNano = msToNano(Number(event.target.value));
+                                        setSliderValues([sliderValues[0], rightValueAsNano]);
+                                    }
                                 }}
                             />
                         </Stack>
                         <br />
                         <Slider
                             valueLabelDisplay="auto"
-                            value={[sliderValue[0], sliderValue[1]]}
-                            min={absoluteMin}
-                            max={absoluteMax}
-                            disabled={sliderValue.length === 0 || isFetching}
+                            value={[nanoToMs(sliderValues[0]), nanoToMs(sliderValues[1])]}
+                            min={absoluteMin === undefined ? undefined : nanoToMs(absoluteMin)}
+                            max={absoluteMax === undefined ? undefined : nanoToMs(absoluteMax)}
+                            disabled={sliderValues.length === 0 || isFetching}
                             onChange={(_, newSliderValue: number | number[]) => {
-                                setSliderValue(newSliderValue as number[]);
+                                const sliderValuesAsNano = (newSliderValue as number[]).map(v => msToNano(v));
+                                setSliderValues(sliderValuesAsNano);
                             }}
-                            onChangeCommitted={(_) => handleChangeCommitted()}
+                            onChangeCommitted={onChange}
                         />
                     </Paper>
                     }
