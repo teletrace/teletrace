@@ -52,7 +52,6 @@ function CreateStaticData(): TraceProps[] {
 }
 
 test.beforeAll(async () => {
-  console.log("before all");
   const traces = CreateStaticData();
   const result = CreateAndSendMultipleTraces(traces);
 
@@ -60,16 +59,11 @@ test.beforeAll(async () => {
 
   traceId = result[0].span.spanContext().traceId;
   spanId = result[0].span.spanContext().spanId;
-
-  console.log(traceId);
-  console.log("#########################");
-  console.log(spanId);
 });
 
 test.afterAll(async () => {
-  console.log("after all");
-  const e = new ElasticConnector();
-  e.clean();
+  const elasticConnector = new ElasticConnector();
+  await elasticConnector.clean();
 });
 
 test.beforeEach(async ({ page }) => {
