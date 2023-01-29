@@ -30,17 +30,23 @@ const (
 )
 
 func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) { // create a query string from the request
+	var order string
+	var err error
+	var extractedNextToken *extractOrderResponse
 	searchQueryResponse := newSearchQueryResponse()
-	extractedNextToken, err := extractNextToken(r.Sort, r.Metadata.NextToken)
-	if err != nil {
-		return nil, fmt.Errorf("failed to extract next token: %v", err)
-	}
 	filters := createTimeframeFilters(r.Timeframe)
-	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
-	orderFilter := extractedNextToken.getFilter()
-	if orderFilter.KeyValueFilter != nil {
-		filters = append(filters, orderFilter)
+	if r.Sort != nil {
+		extractedNextToken, err = extractNextToken(r.Sort, r.Metadata.NextToken)
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract next token: %v", err)
+		}
+		order = fmt.Sprintf(" ORDER BY %s %s ", extractedNextToken.getSortTag(), extractedNextToken.getSortBy())
+		orderFilter := extractedNextToken.getFilter()
+		if orderFilter.KeyValueFilter != nil {
+			filters = append(filters, orderFilter)
+		}
 	}
+	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
 	subQueryBuilder := newSubQueryBuilder("spans")
 	err = subQueryBuilder.addFiltersToSubQuery(filters)
 	if err != nil {
@@ -59,7 +65,6 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 	if err != nil {
 		return nil, fmt.Errorf("failed to get sub query: %v", err)
 	}
-	order := fmt.Sprintf(" ORDER BY %s %s ", extractedNextToken.getSortTag(), extractedNextToken.getSortBy())
 	searchQueryResponse.query = getSearchQuery(subQuery, order)
 	return searchQueryResponse, nil
 }
