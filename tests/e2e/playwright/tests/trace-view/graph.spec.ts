@@ -62,8 +62,7 @@ test.beforeAll(async () => {
 });
 
 test.afterAll(async () => {
-  const elasticConnector = new ElasticConnector();
-  await elasticConnector.clean();
+  await new ElasticConnector().clean();
 });
 
 test.beforeEach(async ({ page }) => {
