@@ -21,6 +21,14 @@ type searchQueryResponse struct {
 	sort  string
 }
 
+func (sqr *searchQueryResponse) getQuery() string {
+	return sqr.query
+}
+
+func (sqr *searchQueryResponse) getSort() string {
+	return sqr.sort
+}
+
 func newSearchQueryResponse() *searchQueryResponse {
 	return &searchQueryResponse{
 		query: "",

@@ -20,6 +20,10 @@ type tagValueQueryResponse struct {
 	query string
 }
 
+func (tqr *tagValueQueryResponse) getQuery() string {
+	return tqr.query
+}
+
 func newTagValueQueryResponse(query string) *tagValueQueryResponse {
 	return &tagValueQueryResponse{
 		query: query,
