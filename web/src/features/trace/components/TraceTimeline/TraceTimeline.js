@@ -17,7 +17,7 @@ import { useMemo, useState } from "react";
 import TimelineViewer from "./TimelineViewer";
 import { transformTraceData } from "./utils/trace";
 
-export function TraceTimeline({ trace, selectedSpanId }) {
+export function TraceTimeline({ trace, selectedSpanId, setSelectedSpanId }) {
   const [traceState, setTraceState] = useState({
     childrenHiddenIDs: new Set(),
     detailStates: new Map(),
@@ -94,6 +94,7 @@ export function TraceTimeline({ trace, selectedSpanId }) {
     <TimelineViewer
       trace={transformedTrace}
       selectedSpanId={selectedSpanId}
+      setSelectedSpanId={setSelectedSpanId}
       setColumnWidth={setColumnWidth}
       removeHoverIndentGuideId={removeHoverIndentGuideId}
       setTrace={setTrace}

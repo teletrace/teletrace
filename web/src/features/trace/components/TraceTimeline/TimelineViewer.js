@@ -193,6 +193,7 @@ class TimelineViewer extends Component {
       traceState,
       addHoverIndentGuideId,
       selectedSpanId,
+      setSelectedSpanId,
     } = this.props;
     const { viewRange, headerHeight } = this.state;
 
@@ -228,6 +229,7 @@ class TimelineViewer extends Component {
               childrenToggle={childrenToggle}
               addHoverIndentGuideId={addHoverIndentGuideId}
               selectedSpanId={selectedSpanId}
+              setSelectedSpanId={setSelectedSpanId}
             />
           </section>
         )}
