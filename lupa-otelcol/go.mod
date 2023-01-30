@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
+	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.64.0
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/processor/batchprocessor v0.64.1
 	go.opentelemetry.io/collector/receiver/otlpreceiver v0.64.1
@@ -12,6 +13,7 @@ require (
 
 require (
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2 // indirect
+	github.com/antonmedv/expr v1.9.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
@@ -45,6 +47,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mostynb/go-grpc-compression v1.1.17 // indirect
+	github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal v0.64.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/prometheus/client_golang v1.13.1 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -53,6 +56,7 @@ require (
 	github.com/prometheus/statsd_exporter v0.22.7 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/shirou/gopsutil/v3 v3.22.10 // indirect
+	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
@@ -75,7 +79,7 @@ require (
 	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect
 	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
-	golang.org/x/text v0.3.8 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20221027153422-115e99e71e1c // indirect
 	google.golang.org/grpc v1.50.1 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect

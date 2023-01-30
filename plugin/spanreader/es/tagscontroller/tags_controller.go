@@ -244,7 +244,7 @@ func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.
 	for _, mapping := range tagsMappings {
 		aggregationKey := mapping.Name
 		aggregationField := aggregationKey
-		if mapping.Type == "text" {
+		if mapping.Type == "Str" {
 			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
 		}
 		aggs[aggregationKey] = types.NewAggregationContainerBuilder()
