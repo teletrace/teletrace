@@ -24,6 +24,7 @@ import {
 import {useEffect, useState} from "react";
 
 import {msToNano, nanoToMs} from "@/utils/format";
+import {isNumeric} from "@/utils/numbers";
 
 import {useTagStatistics} from "../../api/tagStatistics";
 import {isFiltersStructureEqual, useSpanSearchStore} from "../../stores/spanSearchStore";
@@ -106,7 +107,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     };
     useEffect(resetSliderValueOnFilterRemoved, [ filtersState.filters.length ]);
 
-    const onSliderChange = () => {
+    const handleFilters = () => {
         if (sliderValues.length > 0) {
             if (sliderValues[0] === absoluteMin) {
                 gteFilterExists() && filtersState.deleteFilter(tag, "gte");
@@ -136,7 +137,6 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
 
     const convertDisplayValue = (v: number, convertFn: (v: number) => number) => isConvertedTimestamp(tag) ? convertFn(v) : v;
     const getTextBoxValue = (v: number) => sliderValues.length > 0 ? convertDisplayValue(v, nanoToMs) : "-"
-
     return (
         <div>
             <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
@@ -164,10 +164,18 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                 value={getTextBoxValue(sliderValues[0])}
                                 disabled={sliderValues.length === 0 || isFetching}
                                 onChange={(event) => {
-                                    setSliderValues([
-                                        convertDisplayValue(Number(event.target.value), msToNano),
-                                        sliderValues[1]]
-                                    );
+                                    if (isNumeric(event.target.value)) {
+                                        setSliderValues([
+                                            convertDisplayValue(Number(event.target.value), msToNano),
+                                            sliderValues[1]]
+                                        );
+                                    }
+                                }}
+                                onBlur={handleFilters}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        handleFilters();
+                                    }
                                 }}
                             />
                             <TextField
@@ -175,10 +183,18 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                 value={getTextBoxValue(sliderValues[1])}
                                 disabled={sliderValues.length === 0 || isFetching}
                                 onChange={(event) => {
-                                    setSliderValues([
-                                        sliderValues[0],
-                                        convertDisplayValue(Number(event.target.value), msToNano),
-                                    ]);
+                                    if (isNumeric(event.target.value)) {
+                                        setSliderValues([
+                                            sliderValues[0],
+                                            convertDisplayValue(Number(event.target.value), msToNano),
+                                        ]);
+                                    }
+                                }}
+                                onBlur={handleFilters}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        handleFilters();
+                                    }
                                 }}
                             />
                         </Stack>
@@ -193,7 +209,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                 const sliderValuesAsNano = (newSliderValue as number[]).map(v => convertDisplayValue(v, msToNano));
                                 setSliderValues(sliderValuesAsNano);
                             }}
-                            onChangeCommitted={onSliderChange}
+                            onChangeCommitted={handleFilters}
                         />
                     </Paper>
                     }
