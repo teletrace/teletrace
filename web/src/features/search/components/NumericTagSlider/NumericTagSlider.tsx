@@ -28,6 +28,7 @@ import {msToNano, nanoToMs} from "@/utils/format";
 import {useTagStatistics} from "../../api/tagStatistics";
 import {isFiltersStructureEqual, useSpanSearchStore} from "../../stores/spanSearchStore";
 import {TagStatistic} from "../../types/tagStatistics";
+import {isConvertedTimestamp} from "../../utils/TagsUtils";
 import {styles} from "./styles";
 
 export type NumericTagSliderProps = {
@@ -133,7 +134,8 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
         }
     };
 
-    const displayTextBoxValue = (v: number) => sliderValues.length > 0 ? nanoToMs(v) : "-"
+    const convertDisplayValue = (v: number, convertFn: (v: number) => number) => isConvertedTimestamp(tag) ? convertFn(v) : v;
+    const getTextBoxValue = (v: number) => sliderValues.length > 0 ? convertDisplayValue(v, nanoToMs) : "-"
 
     return (
         <div>
@@ -159,36 +161,36 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                         <Stack display="flex" flexDirection="row" justifyContent="space-between">
                             <TextField
                                 sx={styles.rangeInput}
-                                value={displayTextBoxValue(sliderValues[0])}
+                                value={getTextBoxValue(sliderValues[0])}
                                 disabled={sliderValues.length === 0 || isFetching}
                                 onChange={(event) => {
-                                    if (event.target.value) {
-                                        const leftValueAsNano = msToNano(Number(event.target.value));
-                                        setSliderValues([leftValueAsNano, sliderValues[1]]);
-                                    }
+                                    setSliderValues([
+                                        convertDisplayValue(Number(event.target.value), msToNano),
+                                        sliderValues[1]]
+                                    );
                                 }}
                             />
                             <TextField
                                 sx={styles.rangeInput}
-                                value={displayTextBoxValue(sliderValues[1])}
+                                value={getTextBoxValue(sliderValues[1])}
                                 disabled={sliderValues.length === 0 || isFetching}
                                 onChange={(event) => {
-                                    if (event.target.value) {
-                                        const rightValueAsNano = msToNano(Number(event.target.value));
-                                        setSliderValues([sliderValues[0], rightValueAsNano]);
-                                    }
+                                    setSliderValues([
+                                        sliderValues[0],
+                                        convertDisplayValue(Number(event.target.value), msToNano),
+                                    ]);
                                 }}
                             />
                         </Stack>
                         <br />
                         <Slider
                             valueLabelDisplay="auto"
-                            value={[nanoToMs(sliderValues[0]), nanoToMs(sliderValues[1])]}
-                            min={absoluteMin === undefined ? undefined : nanoToMs(absoluteMin)}
-                            max={absoluteMax === undefined ? undefined : nanoToMs(absoluteMax)}
+                            value={[convertDisplayValue(sliderValues[0], nanoToMs), convertDisplayValue(sliderValues[1], nanoToMs)]}
+                            min={absoluteMin === undefined ? undefined : convertDisplayValue(absoluteMin, nanoToMs)}
+                            max={absoluteMax === undefined ? undefined : convertDisplayValue(absoluteMax, nanoToMs)}
                             disabled={sliderValues.length === 0 || isFetching}
                             onChange={(_, newSliderValue: number | number[]) => {
-                                const sliderValuesAsNano = (newSliderValue as number[]).map(v => msToNano(v));
+                                const sliderValuesAsNano = (newSliderValue as number[]).map(v => convertDisplayValue(v, msToNano));
                                 setSliderValues(sliderValuesAsNano);
                             }}
                             onChangeCommitted={onSliderChange}
