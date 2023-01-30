@@ -67,7 +67,7 @@ func createOTLPTraces() ptrace.Traces {
 				span.SetName(fmt.Sprintf("[Span-%d]Name", k))
 				span.SetKind(ptrace.SpanKindServer)
 				span.SetStartTimestamp(0)
-				span.SetEndTimestamp(10)
+				span.SetEndTimestamp(10 * (1000 * 1000))
 				span.Attributes().PutStr("attribute", fmt.Sprintf("[Span-%d]attribute", k))
 				span.SetDroppedAttributesCount(3)
 				span.SetDroppedEventsCount(4)
@@ -77,7 +77,7 @@ func createOTLPTraces() ptrace.Traces {
 
 				for l := 0; l < 2; l++ {
 					spanEvent := span.Events().AppendEmpty()
-					spanEvent.SetTimestamp(5)
+					spanEvent.SetTimestamp(5 * (1000 * 1000))
 					spanEvent.SetName(fmt.Sprintf("[SpanEvent-%d]Name", l))
 					spanEvent.Attributes().PutStr("attribute", fmt.Sprintf("[SpanEvent-%d]attribute", l))
 					spanEvent.SetDroppedAttributesCount(6)
@@ -145,7 +145,7 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			TraceState:        fmt.Sprintf("[Span-%d]TraceState", i),
 			ParentSpanId:      pcommon.SpanID([8]byte{3}).HexString(),
 			Name:              fmt.Sprintf("[Span-%d]Name", i),
-			Kind:              2, // SERVER
+			Kind:              ptrace.SpanKindServer.String(),
 			StartTimeUnixNano: 0,
 			EndTimeUnixNano:   10,
 			Attributes: internalspanv1.Attributes{
@@ -157,7 +157,7 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			Links:                  spanLinks,
 			DroppedLinksCount:      5,
 			Status: &internalspanv1.SpanStatus{
-				Code:    1, // OK
+				Code:    ptrace.StatusCodeOk.String(),
 				Message: fmt.Sprintf("[SpanStatus-%d]Message", i),
 			},
 		})
