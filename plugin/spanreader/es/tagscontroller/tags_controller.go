@@ -27,12 +27,10 @@ import (
 
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
-	"go.opentelemetry.io/collector/pdata/pcommon"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
 )
