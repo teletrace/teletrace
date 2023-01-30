@@ -247,7 +247,7 @@ func Test_BuildTagsValuesRequest_sanity(t *testing.T) {
 	tagsMapping := []tagsquery.TagInfo{
 		{
 			Name: "scope.name",
-			Type: "text",
+			Type: "Str",
 		},
 	}
 	filter := model.KeyValueFilter{
@@ -304,7 +304,7 @@ func Test_BuildTagsValuesRequest_BuildWithoutTimeframe(t *testing.T) {
 	tagsMapping := []tagsquery.TagInfo{
 		{
 			Name: "scope.name",
-			Type: "text",
+			Type: "Str",
 		},
 	}
 	filter := model.KeyValueFilter{
