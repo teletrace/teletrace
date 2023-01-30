@@ -87,7 +87,6 @@ export function SendDefaultTrace(): SpanIdToSpan[] {
   traces.push(Service4);
 
   const result = createAndSendMultipleTraces(traces);
-  console.log(result);
   return result;
 }
 

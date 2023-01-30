@@ -71,11 +71,11 @@ export const TraceView = () => {
     setLayuotSizes(allSizes);
   }
 
-  const handleInitialNodeSelection = useCallback((node: GraphNode) => {
+  const handleAutoSelectedNodeChange = useCallback((node: GraphNode) => {
     setSelectedNode(node);
   }, []);
 
-  const handleSelectedNodeChange = useCallback((node: GraphNode) => {
+  const handleGraphNodeClick = useCallback((node: GraphNode) => {
     setSelectedNode(node);
     setSelectedSpanId(null);
   }, []);
@@ -124,11 +124,11 @@ export const TraceView = () => {
             >
               <TraceGraph
                 spans={trace}
+                selectedSpanId={selectedSpanId}
                 initiallyFocusedSpanId={initiallyFocusedSpanId}
-                onInitialNodeSelection={handleInitialNodeSelection}
-                onSelectedNodeChange={handleSelectedNodeChange}
+                onAutoSelectedNodeChange={handleAutoSelectedNodeChange}
+                onGraphNodeClick={handleGraphNodeClick}
               />
-
               <SpanDetailsList
                 spans={selectedNode?.spans}
                 selectedSpanId={selectedSpanId}
@@ -142,7 +142,11 @@ export const TraceView = () => {
             sx={styles.timelineWrapper}
             divider={<Divider orientation="vertical" flexItem />}
           >
-            <TraceTimeline trace={trace} selectedSpanId={selectedSpanId} />
+            <TraceTimeline
+              trace={trace}
+              selectedSpanId={selectedSpanId}
+              setSelectedSpanId={setSelectedSpanId}
+            />
           </Stack>
         </ReactSplit>
       </ReactSplit>

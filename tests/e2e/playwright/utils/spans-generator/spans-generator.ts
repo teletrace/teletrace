@@ -46,6 +46,35 @@ export type SpanIdToSpan = {
   span: Span;
 };
 
+export function createDynamicSpansAndServices(
+  numOfNodes: number,
+  numOfEdges: number
+): TraceProps[] {
+  let spansList: SpanProps[] = [];
+  let tracesList: TraceProps[] = [];
+
+  if (numOfEdges > numOfNodes) {
+    throw "Number of edges can't be bigger than number of nodes";
+  }
+
+  for (let i = 0; i <= numOfEdges; i++) {
+    const span: SpanProps = {
+      spanId: `span-${i}`,
+      parentSpanID: i > 0 ? `span-${i - 1}` : null,
+    };
+    spansList.push(span);
+  }
+  for (let i = 0; i < numOfNodes; i++) {
+    const service: TraceProps = {
+      serviceName: `service-${i}`,
+      traceName: `trace-${i}`,
+      spans: [spansList[i]],
+    };
+    tracesList.push(service);
+  }
+  return tracesList;
+}
+
 export function createAndSendMultipleTraces(
   traces: TraceProps[]
 ): SpanIdToSpan[] {
