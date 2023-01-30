@@ -107,14 +107,6 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     };
     useEffect(resetSliderValueOnFilterRemoved, [ filtersState.filters.length ]);
 
-    const onLeftTextFieldApplied = () => {
-        if (absoluteMin && sliderValues[0] < absoluteMin) {
-            sliderValues[0] = absoluteMin;
-        }
-
-        handleFilters();
-    };
-
     const handleFilters = () => {
         if (sliderValues.length > 0) {
             if (sliderValues[0] === absoluteMin) {
