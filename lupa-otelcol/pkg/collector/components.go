@@ -17,12 +17,14 @@
 package collector
 
 import (
+	"fmt"
+
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
-
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
 )
 
 func components() (component.Factories, error) {
@@ -30,14 +32,15 @@ func components() (component.Factories, error) {
 		otlpreceiver.NewFactory(),
 	)
 	if err != nil {
-		return component.Factories{}, err
+		return component.Factories{}, fmt.Errorf("failed to make receiver factory map: %w", err)
 	}
 
 	processors, err := component.MakeProcessorFactoryMap(
 		batchprocessor.NewFactory(),
+		attributesprocessor.NewFactory(),
 	)
 	if err != nil {
-		return component.Factories{}, err
+		return component.Factories{}, fmt.Errorf("failed to make processor factory map: %w", err)
 	}
 
 	exporters, err := component.MakeExporterFactoryMap(
@@ -45,7 +48,7 @@ func components() (component.Factories, error) {
 		sqliteexporter.NewFactory(),
 	)
 	if err != nil {
-		return component.Factories{}, err
+		return component.Factories{}, fmt.Errorf("failed to make exporter factory map: %w", err)
 	}
 
 	factories := component.Factories{
