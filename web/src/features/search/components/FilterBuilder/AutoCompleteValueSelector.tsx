@@ -43,7 +43,7 @@ const useGetTagOptions = (
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filters = useSpanSearchStore((state) => state.filtersState.filters);
 
-  const filtersExcludingThisFilter = filters.filter(
+  const filterExcludingCurrent = filters.filter(
     (f) =>
       !(f.keyValueFilter.key === tag && f.keyValueFilter.operator === operator)
   );
@@ -57,7 +57,7 @@ const useGetTagOptions = (
           timeframeState.currentTimeframe.startTimeUnixNanoSec,
         endTimeUnixNanoSec: timeframeState.currentTimeframe.endTimeUnixNanoSec,
       },
-      filtersExcludingThisFilter,
+      filterExcludingCurrent,
       liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
     );
   // add selected options to options (if missing). Since we don't show them (due to filterSelectedOptions prop) the selected the count doesn't matter
