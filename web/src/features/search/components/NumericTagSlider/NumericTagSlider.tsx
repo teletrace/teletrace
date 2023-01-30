@@ -116,43 +116,46 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     }
 
     const handleFilters = () => {
-        if (absoluteMin && sliderValues[0] < absoluteMin) {
-            setSliderValues([absoluteMin, sliderValues[1]]);
-            deleteGteIfExists();
-            return;
-        }
-
-        if (absoluteMax && sliderValues[1] > absoluteMax) {
-            setSliderValues([sliderValues[0], absoluteMax]);
-            deleteLteIfExists();
-            return;
-        }
-
-        if (sliderValues.length > 0) {
-            if (sliderValues[0] === absoluteMin) {
+        if (absoluteMin && absoluteMax) {
+            if (sliderValues[0] < absoluteMin || sliderValues[0] > absoluteMax) {
+                setSliderValues([absoluteMin, sliderValues[1]]);
                 deleteGteIfExists();
-            } else {
-                filtersState.createOrUpdateFilter({
-                    keyValueFilter: {
-                        key: tag,
-                        operator: "gte",
-                        value: sliderValues[0],
-                    }
-                });
+                return;
             }
 
-            if (sliderValues[1] === absoluteMax) {
+            if (sliderValues[1] > absoluteMax || sliderValues[1] < absoluteMin) {
+                setSliderValues([sliderValues[0], absoluteMax]);
                 deleteLteIfExists();
-            } else {
-                filtersState.createOrUpdateFilter({
-                    keyValueFilter: {
-                        key: tag,
-                        operator: "lte",
-                        value: sliderValues[1],
-                    }
-                });
+                return;
+            }
+
+            if (sliderValues.length > 0) {
+                if (sliderValues[0] === absoluteMin) {
+                    deleteGteIfExists();
+                } else {
+                    filtersState.createOrUpdateFilter({
+                        keyValueFilter: {
+                            key: tag,
+                            operator: "gte",
+                            value: sliderValues[0],
+                        }
+                    });
+                }
+
+                if (sliderValues[1] === absoluteMax) {
+                    deleteLteIfExists();
+                } else {
+                    filtersState.createOrUpdateFilter({
+                        keyValueFilter: {
+                            key: tag,
+                            operator: "lte",
+                            value: sliderValues[1],
+                        }
+                    });
+                }
             }
         }
+
     };
 
     const convertDisplayValue = (v: number, convertFn: (v: number) => number) => isConvertedTimestamp(tag) ? convertFn(v) : v;
