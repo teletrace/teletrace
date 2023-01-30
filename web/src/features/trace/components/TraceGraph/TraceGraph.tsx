@@ -51,9 +51,10 @@ import "reactflow/dist/style.css";
 
 export interface TraceGraphProps {
   spans: InternalSpan[];
+  selectedSpanId: string | null;
   initiallyFocusedSpanId: string | null;
-  onInitialNodeSelection: (node: GraphNode) => void;
-  onSelectedNodeChange: (node: GraphNode) => void;
+  onAutoSelectedNodeChange: (node: GraphNode) => void;
+  onGraphNodeClick: (node: GraphNode) => void;
 }
 
 const nodeTypes = { basicNode: BasicNode };
@@ -61,9 +62,10 @@ const edgeTypes = { basicEdge: BasicEdge };
 
 const TraceGraphImpl = ({
   spans,
+  selectedSpanId,
   initiallyFocusedSpanId,
-  onInitialNodeSelection,
-  onSelectedNodeChange,
+  onAutoSelectedNodeChange,
+  onGraphNodeClick,
 }: TraceGraphProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
@@ -115,31 +117,38 @@ const TraceGraphImpl = ({
     [setEdges, setNodes]
   );
 
-  useEffect(() => {
-    if (!initiallyFocusedSpanId) {
-      return;
-    }
-    for (const node of traceData.nodes) {
-      const isSpanWithinNode = node.data.graphNode.spans.some(
-        (span) => span.span.spanId === initiallyFocusedSpanId
-      );
-      if (isSpanWithinNode) {
-        markSelectedNode(traceData.nodes, traceData.edges, node);
-        onInitialNodeSelection(node.data.graphNode);
-        break;
+  const selectNodeBySpanId = useCallback(
+    (spanId: string | null) => {
+      if (!spanId) {
+        return;
       }
-    }
-  }, [
-    traceData,
-    markSelectedNode,
-    initiallyFocusedSpanId,
-    onInitialNodeSelection,
-  ]);
+      for (const node of traceData.nodes) {
+        const isSpanWithinNode = node.data.graphNode.spans.some(
+          (span) => span.span.spanId === spanId
+        );
+        if (isSpanWithinNode) {
+          markSelectedNode(traceData.nodes, traceData.edges, node);
+          onAutoSelectedNodeChange(node.data.graphNode);
+          break;
+        }
+      }
+    },
+    [traceData, markSelectedNode, onAutoSelectedNodeChange]
+  );
+
+  useEffect(
+    () => selectNodeBySpanId(initiallyFocusedSpanId),
+    [initiallyFocusedSpanId, selectNodeBySpanId]
+  );
+  useEffect(
+    () => selectNodeBySpanId(selectedSpanId),
+    [selectedSpanId, selectNodeBySpanId]
+  );
 
   const onNodeClick = (event: ReactMouseEvent, node: Node<NodeData>) => {
     event.stopPropagation();
     markSelectedNode(nodes, edges, node);
-    onSelectedNodeChange(node.data.graphNode);
+    onGraphNodeClick(node.data.graphNode);
   };
 
   const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {

@@ -75,9 +75,9 @@ const operatorCategoryFromValueType = (
   valueType?: string
 ): OperatorCategory => {
   if (!valueType) return "text";
-  else if (["keyword", "text"].includes(valueType)) return "text";
-  else if (["long", "float"].includes(valueType)) return "number";
-  else if (valueType === "boolean") return "boolean";
+  else if (["Str"].includes(valueType)) return "text";
+  else if (["Int", "Double"].includes(valueType)) return "number";
+  else if (valueType === "Bool") return "boolean";
 
   return "text";
 };
@@ -172,14 +172,14 @@ export const FilterBuilderDialog = ({
     if (!tagType) {
       return v;
     }
-    if (tagType === "string") {
+    if (tagType === "Str") {
       return v.toString();
     }
-    if (tagType === "long" || tagType == "float") {
+    if (tagType === "Int" || tagType == "Double") {
       return Number(v);
     }
     // TODO: add it back
-    // if (tagType === "boolean") {
+    // if (tagType === "Bool") {
     //   return v.toString().toLowerCase() === "true"
     // }
     return v;
@@ -283,6 +283,7 @@ export const FilterBuilderDialog = ({
                   onChange={onValueChange}
                   valueInputMode={valueInputMode}
                   error={dialogState.formError.value}
+                  operator={dialogState.operator}
                 />
               </Stack>
             ) : null}
