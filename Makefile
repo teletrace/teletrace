@@ -5,6 +5,9 @@ SILENT ?= true
 OUT_DIR ?= $(ROOT)/out
 BIN_DIR := $(OUT_DIR)/bin
 
+# Absolute path list of all the nested Go modules directories within the project
+GO_MODULES := $(shell find . -type f -name "go.mod" -exec dirname {} \; | xargs realpath)
+
 ifneq ($(SILENT), false)
 .SILENT:
 endif
@@ -51,8 +54,11 @@ backend-lint-fix:
 	golangci-lint run --sort-results --fix ./...
 
 backend-test:
-	go test -v ./...
-
+	set -e; \
+	for module in $(GO_MODULES); do \
+		cd $${module} && \
+		go test -v ./...; \
+	done;
 
 .PHONY: all-in-one
 all-in-one:
