@@ -49,7 +49,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
         desiredStatistics: [TagStatistic.Min, TagStatistic.Max]
     });
 
-    useEffect(() => {
+    const initializeSliderValues = () => {
         if (sliderValues.length === 0 && data) {
             if (Object.keys(data.statistics).length !== 0) {
                 const min = data?.statistics[TagStatistic.Min];
@@ -59,9 +59,10 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                 setAbsoluteMax(max);
             }
         }
-    }, [ data?.statistics ])
+    };
+    useEffect(initializeSliderValues, [ data?.statistics ]);
 
-    useEffect(() => {
+    const discoverNewAbsoluteMinMax = () => {
         if (data) {
             const min = data?.statistics[TagStatistic.Min];
             const max = data?.statistics[TagStatistic.Max];
@@ -73,7 +74,8 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                 setAbsoluteMax(max);
             }
         }
-    }, [ timeframeState.currentTimeframe ]);
+    };
+    useEffect(discoverNewAbsoluteMinMax, [ timeframeState.currentTimeframe ]);
 
     const gteFilterExists = () => filtersState.filters.find(filter =>
         isFiltersStructureEqual(
@@ -93,16 +95,17 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
         )
     ) !== undefined;
 
-    useEffect(() => {
+    const resetSliderValueOnFilterRemoved = () => {
         if (sliderValues.length > 0) {
             setSliderValues([
                 gteFilterExists() ? sliderValues[0] : absoluteMin ?? 0,
                 lteFilterExists() ? sliderValues[1] : absoluteMax ?? 0,
             ]);
         }
-    }, [ filtersState.filters.length ])
+    };
+    useEffect(resetSliderValueOnFilterRemoved, [ filtersState.filters.length ]);
 
-    const onChange = () => {
+    const onSliderChange = () => {
         if (sliderValues.length > 0) {
             if (sliderValues[0] === absoluteMin) {
                 gteFilterExists() && filtersState.deleteFilter(tag, "gte");
@@ -188,7 +191,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                 const sliderValuesAsNano = (newSliderValue as number[]).map(v => msToNano(v));
                                 setSliderValues(sliderValuesAsNano);
                             }}
-                            onChangeCommitted={onChange}
+                            onChangeCommitted={onSliderChange}
                         />
                     </Paper>
                     }
