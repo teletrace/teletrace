@@ -107,6 +107,14 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     };
     useEffect(resetSliderValueOnFilterRemoved, [ filtersState.filters.length ]);
 
+    const onLeftTextFieldApplied = () => {
+        if (absoluteMin && sliderValues[0] < absoluteMin) {
+            sliderValues[0] = absoluteMin;
+        }
+
+        handleFilters();
+    };
+
     const handleFilters = () => {
         if (sliderValues.length > 0) {
             if (sliderValues[0] === absoluteMin) {
@@ -174,6 +182,11 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                 onBlur={handleFilters}
                                 onKeyDown={(event) => {
                                     if (event.key === 'Enter') {
+                                        if (absoluteMin && sliderValues[0] < absoluteMin) {
+                                            setSliderValues([absoluteMin, sliderValues[1]]);
+
+                                        }
+
                                         handleFilters();
                                     }
                                 }}
@@ -193,6 +206,10 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                 onBlur={handleFilters}
                                 onKeyDown={(event) => {
                                     if (event.key === 'Enter') {
+                                        if (absoluteMax && sliderValues[1] > absoluteMax) {
+                                            setSliderValues([sliderValues[0], absoluteMax]);
+                                        }
+
                                         handleFilters();
                                     }
                                 }}
