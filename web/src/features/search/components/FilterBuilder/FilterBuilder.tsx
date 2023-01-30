@@ -283,6 +283,7 @@ export const FilterBuilderDialog = ({
                   onChange={onValueChange}
                   valueInputMode={valueInputMode}
                   error={dialogState.formError.value}
+                  operator={dialogState.operator}
                 />
               </Stack>
             ) : null}
