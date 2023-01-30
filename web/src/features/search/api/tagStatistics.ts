@@ -14,26 +14,32 @@
  * limitations under the License.
  */
 
-import {nanoToMs} from "@/utils/format";
 import { useQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
+import { nanoToMs } from "@/utils/format";
 
-import {TagStatisticsRequest, TagStatisticsResponse} from "../types/tagStatistics";
-
+import {
+  TagStatisticsRequest,
+  TagStatisticsResponse,
+} from "../types/tagStatistics";
 
 /**
  * fetch tag statistics
  */
 
-export const fetchTagStatistics = (tagStatisticsRequest: TagStatisticsRequest): Promise<TagStatisticsResponse> => {
+export const fetchTagStatistics = (
+  tagStatisticsRequest: TagStatisticsRequest
+): Promise<TagStatisticsResponse> => {
   return axiosClient.post("/v1/tags/statistics", tagStatisticsRequest);
 };
 
 /**
  * react hook to fetch tag statistics
  */
-export const useTagStatistics = (tagStatisticsRequest: TagStatisticsRequest) => {
+export const useTagStatistics = (
+  tagStatisticsRequest: TagStatisticsRequest
+) => {
   return useQuery({
     queryKey: [
       "tagStatistics",

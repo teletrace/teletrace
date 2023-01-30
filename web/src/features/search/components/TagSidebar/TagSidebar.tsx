@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {Paper, Stack} from "@mui/material";
+import { Paper, Stack } from "@mui/material";
 
 import { NumericTagSlider } from "../NumericTagSlider";
 import { TagValuesSelector } from "../TagValuesSelector";
@@ -25,7 +25,6 @@ type TagOptions = {
   tag: string;
   selectorType: SelectorType;
   isSearchable?: boolean;
-
 };
 
 export enum SelectorType {
@@ -40,7 +39,6 @@ export const TagSidebar = () => {
       tag: "span.status.code",
       isSearchable: false,
       selectorType: SelectorType.ValuesSelector,
-
     },
     {
       title: "Duration (ms)",
@@ -78,11 +76,14 @@ export const TagSidebar = () => {
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
       <Stack spacing="2px" sx={styles.sideTagBar}>
         {tags.map((t) => {
-          return (
-            t.selectorType === SelectorType.ValuesSelector ?
-              <TagValuesSelector title={t.title} tag={t.tag} searchable={t.isSearchable}/>
-                  :
-              <NumericTagSlider tag={t.tag} title={t.title} />
+          return t.selectorType === SelectorType.ValuesSelector ? (
+            <TagValuesSelector
+              title={t.title}
+              tag={t.tag}
+              searchable={t.isSearchable}
+            />
+          ) : (
+            <NumericTagSlider tag={t.tag} title={t.title} />
           );
         })}
       </Stack>

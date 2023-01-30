@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-export const isNumeric = (val: string) : boolean => {
-    return !isNaN(Number(val));
-}
+export const isNumeric = (val: string): boolean => {
+  return !isNaN(Number(val));
+};

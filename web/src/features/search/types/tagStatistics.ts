@@ -26,10 +26,10 @@ export enum TagStatistic {
 export type TagStatisticsRequest = {
   filters: SearchFilter[];
   timeframe: Timeframe;
-  tag: string,
-  desiredStatistics: TagStatistic[]
+  tag: string;
+  desiredStatistics: TagStatistic[];
 };
 
 export type TagStatisticsResponse = {
-  statistics: Record<TagStatistic, number>
+  statistics: Record<TagStatistic, number>;
 };
