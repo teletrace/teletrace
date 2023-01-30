@@ -107,10 +107,30 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
     };
     useEffect(resetSliderValueOnFilterRemoved, [ filtersState.filters.length ]);
 
+    function deleteGteIfExists() {
+        gteFilterExists() && filtersState.deleteFilter(tag, "gte");
+    }
+
+    function deleteLteIfExists() {
+        lteFilterExists() && filtersState.deleteFilter(tag, "lte");
+    }
+
     const handleFilters = () => {
+        if (absoluteMin && sliderValues[0] < absoluteMin) {
+            setSliderValues([absoluteMin, sliderValues[1]]);
+            deleteGteIfExists();
+            return;
+        }
+
+        if (absoluteMax && sliderValues[1] > absoluteMax) {
+            setSliderValues([sliderValues[0], absoluteMax]);
+            deleteLteIfExists();
+            return;
+        }
+
         if (sliderValues.length > 0) {
             if (sliderValues[0] === absoluteMin) {
-                gteFilterExists() && filtersState.deleteFilter(tag, "gte");
+                deleteGteIfExists();
             } else {
                 filtersState.createOrUpdateFilter({
                     keyValueFilter: {
@@ -122,7 +142,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
             }
 
             if (sliderValues[1] === absoluteMax) {
-                lteFilterExists() && filtersState.deleteFilter(tag, "lte");
+                deleteLteIfExists();
             } else {
                 filtersState.createOrUpdateFilter({
                     keyValueFilter: {
@@ -172,16 +192,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                     }
                                 }}
                                 onBlur={handleFilters}
-                                onKeyDown={(event) => {
-                                    if (event.key === 'Enter') {
-                                        if (absoluteMin && sliderValues[0] < absoluteMin) {
-                                            setSliderValues([absoluteMin, sliderValues[1]]);
-
-                                        }
-
-                                        handleFilters();
-                                    }
-                                }}
+                                onKeyDown={(event) => event.key === 'Enter' && handleFilters()}
                             />
                             <TextField
                                 sx={styles.rangeInput}
@@ -196,15 +207,7 @@ export const NumericTagSlider = ({title, tag}: NumericTagSliderProps) => {
                                     }
                                 }}
                                 onBlur={handleFilters}
-                                onKeyDown={(event) => {
-                                    if (event.key === 'Enter') {
-                                        if (absoluteMax && sliderValues[1] > absoluteMax) {
-                                            setSliderValues([sliderValues[0], absoluteMax]);
-                                        }
-
-                                        handleFilters();
-                                    }
-                                }}
+                                onKeyDown={(event) => event.key === 'Enter' && handleFilters()}
                             />
                         </Stack>
                         <br />
