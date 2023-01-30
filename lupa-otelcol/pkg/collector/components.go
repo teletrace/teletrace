@@ -17,12 +17,12 @@
 package collector
 
 import (
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
-
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
 )
 
 func components() (component.Factories, error) {
@@ -35,6 +35,7 @@ func components() (component.Factories, error) {
 
 	processors, err := component.MakeProcessorFactoryMap(
 		batchprocessor.NewFactory(),
+		attributesprocessor.NewFactory(),
 	)
 	if err != nil {
 		return component.Factories{}, err
