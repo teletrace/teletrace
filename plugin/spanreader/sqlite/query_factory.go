@@ -205,7 +205,11 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 }
 
 func buildTagStatisticsQuery(r tagsquery.TagStatisticsRequest) (string, error) {
-	prepareSqliteFilter, err := newSqliteFilter(sqliteFieldsMap[r.Tag])
+	tag := r.Tag
+	if _, ok := sqliteFieldsMap[r.Tag]; ok {
+		tag = sqliteFieldsMap[r.Tag]
+	}
+	prepareSqliteFilter, err := newSqliteFilter(tag)
 	if err != nil {
 		return "", fmt.Errorf("illegal tag name: %s", r.Tag)
 	}
@@ -224,14 +228,10 @@ func buildTagStatisticsQuery(r tagsquery.TagStatisticsRequest) (string, error) {
 		queryBuilder.addDynamicTagValueField(prepareSqliteFilter.getTableName())
 		err := queryBuilder.addNewDynamicTagFilter(prepareSqliteFilter.getTableKey(), prepareSqliteFilter.getTag())
 		if err != nil {
-			return "", fmt.Errorf("illegal tag name: %s", r.Tag)
+			return "", fmt.Errorf("illegal tag name: %s", prepareSqliteFilter.getTag())
 		}
 	} else {
-		if field, ok := sqliteFieldsMap[r.Tag]; ok {
-			queryBuilder.addField(field)
-		} else {
-			return "", fmt.Errorf("illegal tag name: %s", r.Tag)
-		}
+		queryBuilder.addField(prepareSqliteFilter.getTag())
 	}
 	queryParams, err := queryBuilder.buildQueryParams()
 	if err != nil {
@@ -243,16 +243,16 @@ func buildTagStatisticsQuery(r tagsquery.TagStatisticsRequest) (string, error) {
 
 	targetResults := ""
 	for _, statistic := range r.DesiredStatistics {
-		if targetResults != "" {
-			targetResults += ","
+		if statistic != tagsquery.P99 && targetResults != "" {
+			targetResults += ", "
 		}
 		switch statistic {
 		case tagsquery.Min:
-			targetResults += fmt.Sprintf("MIN(%s) as min", r.Tag)
+			targetResults += fmt.Sprintf("MIN(%s) as min", queryParams.fields)
 		case tagsquery.Max:
-			targetResults += fmt.Sprintf("MAX(%s) as max", r.Tag)
+			targetResults += fmt.Sprintf("MAX(%s) as max", queryParams.fields)
 		case tagsquery.Avg:
-			targetResults += fmt.Sprintf("AVG(%s) as avg", r.Tag)
+			targetResults += fmt.Sprintf("AVG(%s) as avg", queryParams.fields)
 		}
 	}
 

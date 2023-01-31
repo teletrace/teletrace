@@ -215,7 +215,7 @@ func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdReq
 
 func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
 	query, err := buildTagStatisticsQuery(r)
-	fmt.Printf("query: %s", query)
+	fmt.Printf("query:\t%s\n", query)
 	return nil, err
 }
 
