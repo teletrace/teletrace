@@ -6,11 +6,11 @@ on:
     branches: [main, master]
 jobs:
   test:
-		strategy:
-			matrix:
-				db: [ElasticSearch]
+    strategy:
+      matrix:
+        db: [ElasticSearch]
     timeout-minutes: 60
-		# if: ${{ !startsWith(github.head_ref, 'mergify/') }}
+    # if: ${{ !startsWith(github.head_ref, 'mergify/') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,10 +22,10 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-				uses: ./.github/actions/run-tests
-				id: run-tests-per-db
-					with:
-						db: ${{ matrix.db }}
+        uses: ./.github/actions/run-tests
+        id: run-tests-per-db
+          with:
+            db: ${{ matrix.db }}
         run: npx playwright test
       - uses: actions/upload-artifact@v3
         if: always()
