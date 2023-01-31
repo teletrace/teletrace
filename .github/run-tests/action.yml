@@ -1,0 +1,17 @@
+name: Run E2E tests per DB
+description: Run E2E tests per DB
+
+inputs:
+  db:
+    required: true
+    description: db name
+
+runs:
+  using: composite
+  steps:
+    - id: run-tests-per-db
+      shell: bash
+      run: |
+        if [[${{ inputs.db }} == ElasticSearch]]; then
+          docker-compose -f deploy/docker-compose/docker-compose.yml up
+        fi
