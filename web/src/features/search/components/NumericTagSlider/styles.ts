@@ -35,4 +35,8 @@ export const styles: Record<string, SxProps<Theme>> = {
   rangeInput: {
     width: "100px",
   },
+  tooltipPopper: {
+    "& .MuiTooltip-tooltip": { maxWidth: "none" },
+    whiteSpace: "nowrap",
+  },
 };

@@ -24,7 +24,7 @@ import {
   Paper,
   Slider,
   Stack,
-  TextField,
+  TextField, Tooltip, Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -171,6 +171,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
     isConvertedTimestamp(tag) ? convertFn(v) : v;
   const getTextBoxValue = (v: number) =>
     sliderValues.length > 0 ? convertDisplayValue(v, nanoToMs) : "-";
+
   return (
     <div>
       <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
@@ -196,46 +197,74 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
                 flexDirection="row"
                 justifyContent="space-between"
               >
-                <TextField
-                  sx={styles.rangeInput}
-                  value={getTextBoxValue(sliderValues[0])}
-                  disabled={sliderValues.length === 0 || isFetching}
-                  onChange={(event) => {
-                    if (isNumeric(event.target.value)) {
-                      setSliderValues([
-                        convertDisplayValue(
-                          Number(event.target.value),
-                          msToNano
-                        ),
-                        sliderValues[1],
-                      ]);
+                <Tooltip
+                  open={absoluteMin !== undefined && sliderValues[0] < absoluteMin}
+                  title={(
+                      <>
+                        <Typography>
+                          You are below the min value { absoluteMin && `(${convertDisplayValue(absoluteMin, nanoToMs)})` }
+                        </Typography>
+                      </>
+                  )}
+                  placement="top-end"
+                  arrow
+                  PopperProps={{ sx: styles.tooltipPopper }}
+                >
+                  <TextField
+                    sx={styles.rangeInput}
+                    value={getTextBoxValue(sliderValues[0])}
+                    disabled={sliderValues.length === 0 || isFetching}
+                    onChange={(event) => {
+                      if (isNumeric(event.target.value)) {
+                        setSliderValues([
+                          convertDisplayValue(
+                            Number(event.target.value),
+                            msToNano
+                          ),
+                          sliderValues[1],
+                        ]);
+                      }
+                    }}
+                    onBlur={handleFilters}
+                    onKeyDown={(event) =>
+                      event.key === "Enter" && handleFilters()
                     }
-                  }}
-                  onBlur={handleFilters}
-                  onKeyDown={(event) =>
-                    event.key === "Enter" && handleFilters()
-                  }
-                />
-                <TextField
-                  sx={styles.rangeInput}
-                  value={getTextBoxValue(sliderValues[1])}
-                  disabled={sliderValues.length === 0 || isFetching}
-                  onChange={(event) => {
-                    if (isNumeric(event.target.value)) {
-                      setSliderValues([
-                        sliderValues[0],
-                        convertDisplayValue(
-                          Number(event.target.value),
-                          msToNano
-                        ),
-                      ]);
+                  />
+                </Tooltip>
+                <Tooltip
+                    open={absoluteMax !== undefined && sliderValues[1] > absoluteMax}
+                    title={(
+                        <>
+                          <Typography>
+                            You are above the max value { absoluteMax && `(${convertDisplayValue(absoluteMax, nanoToMs)})` }
+                          </Typography>
+                        </>
+                    )}
+                    placement="top-end"
+                    arrow
+                    PopperProps={{ sx: styles.tooltipPopper }}
+                >
+                  <TextField
+                    sx={styles.rangeInput}
+                    value={getTextBoxValue(sliderValues[1])}
+                    disabled={sliderValues.length === 0 || isFetching}
+                    onChange={(event) => {
+                      if (isNumeric(event.target.value)) {
+                        setSliderValues([
+                          sliderValues[0],
+                          convertDisplayValue(
+                            Number(event.target.value),
+                            msToNano
+                          ),
+                        ]);
+                      }
+                    }}
+                    onBlur={handleFilters}
+                    onKeyDown={(event) =>
+                      event.key === "Enter" && handleFilters()
                     }
-                  }}
-                  onBlur={handleFilters}
-                  onKeyDown={(event) =>
-                    event.key === "Enter" && handleFilters()
-                  }
-                />
+                  />
+                </Tooltip>
               </Stack>
               <br />
               <Slider
@@ -262,6 +291,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
                   setSliderValues(sliderValuesAsNano);
                 }}
                 onChangeCommitted={handleFilters}
+                size="small"
               />
             </Paper>
           )}
