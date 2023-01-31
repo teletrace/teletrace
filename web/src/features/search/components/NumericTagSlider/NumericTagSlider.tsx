@@ -24,7 +24,9 @@ import {
   Paper,
   Slider,
   Stack,
-  TextField, Tooltip, Typography,
+  TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 
@@ -198,14 +200,18 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
                 justifyContent="space-between"
               >
                 <Tooltip
-                  open={absoluteMin !== undefined && sliderValues[0] < absoluteMin}
-                  title={(
-                      <>
-                        <Typography>
-                          You are below the min value { absoluteMin && `(${convertDisplayValue(absoluteMin, nanoToMs)})` }
-                        </Typography>
-                      </>
-                  )}
+                  open={
+                    absoluteMin !== undefined && sliderValues[0] < absoluteMin
+                  }
+                  title={
+                    <>
+                      <Typography>
+                        You are below the min value{" "}
+                        {absoluteMin &&
+                          `(${convertDisplayValue(absoluteMin, nanoToMs)})`}
+                      </Typography>
+                    </>
+                  }
                   placement="top-end"
                   arrow
                   PopperProps={{ sx: styles.tooltipPopper }}
@@ -232,17 +238,21 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
                   />
                 </Tooltip>
                 <Tooltip
-                    open={absoluteMax !== undefined && sliderValues[1] > absoluteMax}
-                    title={(
-                        <>
-                          <Typography>
-                            You are above the max value { absoluteMax && `(${convertDisplayValue(absoluteMax, nanoToMs)})` }
-                          </Typography>
-                        </>
-                    )}
-                    placement="top-end"
-                    arrow
-                    PopperProps={{ sx: styles.tooltipPopper }}
+                  open={
+                    absoluteMax !== undefined && sliderValues[1] > absoluteMax
+                  }
+                  title={
+                    <>
+                      <Typography>
+                        You are above the max value{" "}
+                        {absoluteMax &&
+                          `(${convertDisplayValue(absoluteMax, nanoToMs)})`}
+                      </Typography>
+                    </>
+                  }
+                  placement="top-end"
+                  arrow
+                  PopperProps={{ sx: styles.tooltipPopper }}
                 >
                   <TextField
                     sx={styles.rangeInput}
