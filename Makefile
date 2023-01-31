@@ -63,7 +63,7 @@ backend-test:
 .PHONY: backend-coverage
 backend-coverage:
 	./scripts/backend-coverage.sh ${ROOT} ${GO_MODULES}
- 
+
 .PHONY: all-in-one
 all-in-one:
 	docker build --build-arg BUILD_INFO=$(git describe --tags) -f $(ROOT)/cmd/all-in-one/Dockerfile -t lupa-aio:latest .
