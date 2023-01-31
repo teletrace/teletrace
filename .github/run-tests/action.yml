@@ -12,6 +12,6 @@ runs:
     - id: run-tests-per-db
       shell: bash
       run: |
-        if [[${{ inputs.db }} == ElasticSearch]]; then
+        if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
           docker-compose -f deploy/docker-compose/docker-compose.yml up
         fi
