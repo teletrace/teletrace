@@ -204,6 +204,61 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s %s GROUP BY %s", queryParams.fields, queryParams.tables, queryParams.filters, queryParams.fields), nil
 }
 
+func buildTagStatisticsQuery(r tagsquery.TagStatisticsRequest) (string, error) {
+	prepareSqliteFilter, err := newSqliteFilter(sqliteFieldsMap[r.Tag])
+	if err != nil {
+		return "", fmt.Errorf("illegal tag name: %s", r.Tag)
+	}
+	queryBuilder := newQueryBuilder()
+	var filters []model.SearchFilter
+	if r.Timeframe != nil {
+		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
+	}
+	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
+	err = queryBuilder.addFilters(filters)
+	if err != nil {
+		return "", err
+	}
+	queryBuilder.addTable(prepareSqliteFilter.getTableName())
+	if prepareSqliteFilter.isDynamicTable() {
+		queryBuilder.addDynamicTagValueField(prepareSqliteFilter.getTableName())
+		err := queryBuilder.addNewDynamicTagFilter(prepareSqliteFilter.getTableKey(), prepareSqliteFilter.getTag())
+		if err != nil {
+			return "", fmt.Errorf("illegal tag name: %s", r.Tag)
+		}
+	} else {
+		if field, ok := sqliteFieldsMap[r.Tag]; ok {
+			queryBuilder.addField(field)
+		} else {
+			return "", fmt.Errorf("illegal tag name: %s", r.Tag)
+		}
+	}
+	queryParams, err := queryBuilder.buildQueryParams()
+	if err != nil {
+		return "", fmt.Errorf("failed to build query params: %v", err)
+	}
+	if queryParams.filters != "" { // add WHERE clause if there are filters
+		queryParams.filters = fmt.Sprintf("WHERE %s", queryParams.filters)
+	}
+
+	targetResults := ""
+	for _, statistic := range r.DesiredStatistics {
+		if targetResults != "" {
+			targetResults += ","
+		}
+		switch statistic {
+		case tagsquery.Min:
+			targetResults += fmt.Sprintf("MIN(%s) as min", r.Tag)
+		case tagsquery.Max:
+			targetResults += fmt.Sprintf("MAX(%s) as max", r.Tag)
+		case tagsquery.Avg:
+			targetResults += fmt.Sprintf("AVG(%s) as avg", r.Tag)
+		}
+	}
+
+	return fmt.Sprintf("SELECT %s FROM %s %s", targetResults, queryParams.tables, queryParams.filters), nil
+}
+
 func buildDynamicTagsQuery() string {
 	var queries []string
 	for tableKey, table := range sqliteTableNameMap {
