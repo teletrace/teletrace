@@ -166,97 +166,77 @@ func extractNextToken(orders []spansquery.Sort, nextToken spansquery.Continuatio
 }
 
 func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, error) {
-	prepareSqliteFilter, err := newSqliteFilter(tag)
-	if err != nil {
-		return "", fmt.Errorf("illegal tag name: %s", tag)
-	}
-	queryBuilder := newQueryBuilder()
-	var filters []model.SearchFilter
-	if r.Timeframe != nil {
-		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
-	}
-	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
-	err = queryBuilder.addFilters(filters)
+	queryParams, err := getQueryParams(tag, r.Timeframe, r.SearchFilters)
 	if err != nil {
 		return "", err
 	}
-	queryBuilder.addTable(prepareSqliteFilter.getTableName())
-	if prepareSqliteFilter.isDynamicTable() {
-		queryBuilder.addDynamicTagValueField(prepareSqliteFilter.getTableName())
-		err := queryBuilder.addNewDynamicTagFilter(prepareSqliteFilter.getTableKey(), prepareSqliteFilter.getTag())
-		if err != nil {
-			return "", fmt.Errorf("illegal tag name: %s", tag)
-		}
-	} else {
-		if field, ok := sqliteFieldsMap[tag]; ok {
-			queryBuilder.addField(field)
-		} else {
-			return "", fmt.Errorf("illegal tag name: %s", tag)
-		}
-	}
-	queryParams, err := queryBuilder.buildQueryParams()
-	if err != nil {
-		return "", fmt.Errorf("failed to build query params: %v", err)
-	}
-	if queryParams.filters != "" { // add WHERE clause if there are filters
-		queryParams.filters = fmt.Sprintf("WHERE %s", queryParams.filters)
-	}
-	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s %s GROUP BY %s", queryParams.fields, queryParams.tables, queryParams.filters, queryParams.fields), nil
+
+	return fmt.Sprintf(
+		"SELECT %s, COUNT(*) FROM %s %s GROUP BY %s",
+		queryParams.fields, queryParams.tables, queryParams.filters, queryParams.fields,
+	), nil
 }
 
 func buildTagStatisticsQuery(r tagsquery.TagStatisticsRequest) (string, error) {
-	tag := r.Tag
-	if _, ok := sqliteFieldsMap[r.Tag]; ok {
-		tag = sqliteFieldsMap[r.Tag]
+	queryParams, err := getQueryParams(r.Tag, r.Timeframe, r.SearchFilters)
+	if err != nil {
+		return "", err
+	}
+
+	selectedStatistics := ""
+	for _, statistic := range r.DesiredStatistics {
+		if statistic != tagsquery.P99 && selectedStatistics != "" {
+			selectedStatistics += ", "
+		}
+		switch statistic {
+		case tagsquery.Min:
+			selectedStatistics += fmt.Sprintf("MIN(%s) as min", queryParams.fields)
+		case tagsquery.Max:
+			selectedStatistics += fmt.Sprintf("MAX(%s) as max", queryParams.fields)
+		case tagsquery.Avg:
+			selectedStatistics += fmt.Sprintf("AVG(%s) as avg", queryParams.fields)
+		}
+	}
+
+	return fmt.Sprintf("SELECT %s FROM %s %s", selectedStatistics, queryParams.tables, queryParams.filters), nil
+}
+
+func getQueryParams(tag string, tf *model.Timeframe, sf []model.SearchFilter) (*SqliteQueryParamsResponse, error) {
+	if _, ok := sqliteFieldsMap[tag]; ok {
+		tag = sqliteFieldsMap[tag]
 	}
 	prepareSqliteFilter, err := newSqliteFilter(tag)
 	if err != nil {
-		return "", fmt.Errorf("illegal tag name: %s", r.Tag)
+		return nil, fmt.Errorf("illegal tag name: %s", tag)
 	}
 	queryBuilder := newQueryBuilder()
 	var filters []model.SearchFilter
-	if r.Timeframe != nil {
-		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
+	if tf != nil {
+		filters = append(filters, createTimeframeFilters(*tf)...)
 	}
-	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
+	filters = append(filters, convertFiltersValues(sf)...)
 	err = queryBuilder.addFilters(filters)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	queryBuilder.addTable(prepareSqliteFilter.getTableName())
 	if prepareSqliteFilter.isDynamicTable() {
 		queryBuilder.addDynamicTagValueField(prepareSqliteFilter.getTableName())
 		err := queryBuilder.addNewDynamicTagFilter(prepareSqliteFilter.getTableKey(), prepareSqliteFilter.getTag())
 		if err != nil {
-			return "", fmt.Errorf("illegal tag name: %s", prepareSqliteFilter.getTag())
+			return nil, fmt.Errorf("illegal tag name: %s", tag)
 		}
 	} else {
-		queryBuilder.addField(prepareSqliteFilter.getTag())
+		queryBuilder.addField(tag)
 	}
 	queryParams, err := queryBuilder.buildQueryParams()
 	if err != nil {
-		return "", fmt.Errorf("failed to build query params: %v", err)
+		return nil, fmt.Errorf("failed to build query params: %v", err)
 	}
 	if queryParams.filters != "" { // add WHERE clause if there are filters
 		queryParams.filters = fmt.Sprintf("WHERE %s", queryParams.filters)
 	}
-
-	targetResults := ""
-	for _, statistic := range r.DesiredStatistics {
-		if statistic != tagsquery.P99 && targetResults != "" {
-			targetResults += ", "
-		}
-		switch statistic {
-		case tagsquery.Min:
-			targetResults += fmt.Sprintf("MIN(%s) as min", queryParams.fields)
-		case tagsquery.Max:
-			targetResults += fmt.Sprintf("MAX(%s) as max", queryParams.fields)
-		case tagsquery.Avg:
-			targetResults += fmt.Sprintf("AVG(%s) as avg", queryParams.fields)
-		}
-	}
-
-	return fmt.Sprintf("SELECT %s FROM %s %s", targetResults, queryParams.tables, queryParams.filters), nil
+	return queryParams, nil
 }
 
 func buildDynamicTagsQuery() string {
