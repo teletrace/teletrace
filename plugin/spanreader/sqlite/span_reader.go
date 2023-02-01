@@ -209,6 +209,10 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStat
 	res := tagsquery.TagStatisticsResponse{Statistics: map[tagsquery.TagStatistic]float64{}}
 
 	tx, err := sr.client.db.Begin()
+	if err != nil {
+		sr.logger.Error("failed to begin tag statistics transaction", zap.Error(err))
+		return nil, err
+	}
 
 	queryParams, err := getQueryParams(r.Tag, r.Timeframe, r.SearchFilters)
 	for _, statistic := range r.DesiredStatistics {
@@ -242,7 +246,7 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStat
 	}
 
 	if err := tx.Commit(); err != nil {
-		sr.logger.Error(fmt.Sprintf("failed to commit tag statistics transaction"), zap.Error(err))
+		sr.logger.Error("failed to commit tag statistics transaction", zap.Error(err))
 		return nil, err
 	}
 
