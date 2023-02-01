@@ -26,7 +26,7 @@ import (
 )
 
 func newClient(logger *zap.Logger, cfg *Config) (*opensearch.Client, error) {
-	esConfig, err := opensearch.NewClient(opensearch.Config{
+	osConfig, err := opensearch.NewClient(opensearch.Config{
 
 		// basic connection setup
 		Addresses: cfg.Endpoints,
@@ -38,7 +38,7 @@ func newClient(logger *zap.Logger, cfg *Config) (*opensearch.Client, error) {
 		return nil, fmt.Errorf("error creating OpenSearch Client: %+v", err)
 	}
 
-	return esConfig, nil
+	return osConfig, nil
 }
 
 func newBulkIndexer(logger *zap.Logger, client *opensearch.Client, cfg *Config) (opensearchutil.BulkIndexer, error) {

@@ -19,7 +19,7 @@ package opensearchexporter
 import (
 	"context"
 	"fmt"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/internal/modeltranslator"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter/internal/modeltranslator"
 	"github.com/opensearch-project/opensearch-go"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
@@ -39,7 +39,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*opensearchTracesExport
 		return nil, err
 	}
 
-	esClient, err := newClient(logger, cfg)
+	osClient, err := newClient(logger, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create client: %+v", err)
 	}
@@ -52,7 +52,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*opensearchTracesExport
 	return &opensearchTracesExporter{
 		logger:     logger,
 		cfg:        cfg,
-		client:     esClient,
+		client:     osClient,
 		maxRetries: maxRetries,
 	}, nil
 }

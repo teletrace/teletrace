@@ -23,7 +23,7 @@ import (
 )
 
 // TranslateOTLPToInternalSpans converts traces from the OLTP format
-// to the InternalSpan model used by the Elasticsearch / OpenSearch exporters.
+// to the InternalSpan model used by the OpenSearch exporters.
 func TranslateOTLPToInternalSpans(td ptrace.Traces) <-chan *internalspanv1.InternalSpan {
 	ch := make(chan *internalspanv1.InternalSpan)
 	go func() {

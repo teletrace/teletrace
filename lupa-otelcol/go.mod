@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333
-	github.com/epsagon/lupa/lupa-otelcol/exporter/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.64.0
@@ -97,5 +96,3 @@ replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => .
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./exporter/opensearchexporter
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter
-
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/internal/modeltranslator => ./exporter/internal/modeltranslator
