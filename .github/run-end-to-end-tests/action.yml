@@ -1,5 +1,5 @@
-name: Run E2E tests per DB
-description: Run E2E tests per DB
+name: Run E2E tests per spans storage DB
+description: Run E2E tests per spans storage DB
 
 inputs:
   db:
@@ -9,10 +9,16 @@ inputs:
 runs:
   using: composite
   steps:
-    - id: docker-compose-up-per-db
-      shell: bash
+    - name: get output
       run: |
-        if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
-          cd ./deploy/docker-compose
-          docker-compose up -d
-        fi
+        echo ::set-output name=db::\
+        $(echo '{ "ElasticSearch": "i386", "64": "x86_64" }' | jq -r 'to_entries[] | select(.key=="${{ matrix.db }}") | .value')
+    - name: Test arch var
+        run: echo "Testing ${{ steps.vars.outputs.db }}"
+    # - id: run-lupa
+    #   shell: bash
+    #   run: |
+    #     if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
+    #       cd ./deploy/docker-compose
+    #       docker-compose up -d
+    #     fi
