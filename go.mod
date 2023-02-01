@@ -33,6 +33,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
+	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
@@ -57,6 +58,7 @@ require (
 	github.com/mostynb/go-grpc-compression v1.1.17 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal v0.64.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.64.0 // indirect
+	github.com/opensearch-project/opensearch-go v1.1.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/prometheus/client_golang v1.13.1 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -134,6 +136,8 @@ replace github.com/epsagon/lupa/model => ./model
 replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./lupa-otelcol/exporter/elasticsearchexporter
+
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./lupa-otelcol/exporter/opensearchexporter
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./lupa-otelcol/exporter/sqliteexporter
 

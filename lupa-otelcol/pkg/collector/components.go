@@ -18,6 +18,7 @@ package collector
 
 import (
 	"fmt"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter"
 
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
@@ -45,6 +46,7 @@ func components() (component.Factories, error) {
 
 	exporters, err := component.MakeExporterFactoryMap(
 		elasticsearchexporter.NewFactory(),
+		opensearchexporter.NewFactory(),
 		sqliteexporter.NewFactory(),
 	)
 	if err != nil {

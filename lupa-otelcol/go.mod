@@ -4,8 +4,9 @@ go 1.19
 
 require (
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333
-	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	github.com/epsagon/lupa/lupa-otelcol/exporter/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
+	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000
+	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.64.0
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/processor/batchprocessor v0.64.1
@@ -49,6 +50,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mostynb/go-grpc-compression v1.1.17 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal v0.64.0 // indirect
+	github.com/opensearch-project/opensearch-go v1.1.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/prometheus/client_golang v1.13.1 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -91,6 +93,8 @@ require (
 replace github.com/epsagon/lupa/model => ../model
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./exporter/elasticsearchexporter
+
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./exporter/opensearchexporter
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter
 
