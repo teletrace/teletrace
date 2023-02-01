@@ -26,7 +26,6 @@ export enum TagStatistic {
 export type TagStatisticsRequest = {
   filters: SearchFilter[];
   timeframe: Timeframe;
-  tag: string;
   desiredStatistics: TagStatistic[];
 };
 

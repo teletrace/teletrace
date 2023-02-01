@@ -28,27 +28,29 @@ import {
  */
 
 export const fetchTagStatistics = (
+  tag: string,
   tagStatisticsRequest: TagStatisticsRequest
 ): Promise<TagStatisticsResponse> => {
-  return axiosClient.post("/v1/tags/statistics", tagStatisticsRequest);
+  return axiosClient.post(`/v1/tags/${tag}/statistics`, tagStatisticsRequest);
 };
 
 /**
  * react hook to fetch tag statistics
  */
 export const useTagStatistics = (
+  tag: string,
   tagStatisticsRequest: TagStatisticsRequest
 ) => {
   return useQuery({
     queryKey: [
       "tagStatistics",
-      tagStatisticsRequest.tag,
+      tag,
       tagStatisticsRequest.desiredStatistics,
       tagStatisticsRequest.filters,
       tagStatisticsRequest.timeframe.endTimeUnixNanoSec,
       tagStatisticsRequest.timeframe.startTimeUnixNanoSec,
     ],
     keepPreviousData: true,
-    queryFn: () => fetchTagStatistics(tagStatisticsRequest),
+    queryFn: () => fetchTagStatistics(tag, tagStatisticsRequest),
   });
 };

@@ -54,8 +54,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
 
-  const { data, isFetching, isError } = useTagStatistics({
-    tag: tag,
+  const { data, isFetching, isError } = useTagStatistics(tag, {
     filters: filtersState.filters,
     timeframe: timeframeState.currentTimeframe,
     desiredStatistics: [TagStatistic.Min, TagStatistic.Max],
