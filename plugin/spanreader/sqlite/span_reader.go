@@ -205,7 +205,15 @@ func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesReq
 	}, nil
 }
 
-func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
+func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
+	return nil, fmt.Errorf("Not implemented method")
+}
+
+func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
+	return nil, fmt.Errorf("Not implemented method")
+}
+
+func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error) {
 	res := tagsquery.TagStatisticsResponse{Statistics: map[tagsquery.TagStatistic]float64{}}
 
 	tx, err := sr.client.db.Begin()
@@ -253,13 +261,6 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStat
 	return &res, err
 }
 
-func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
-	return nil, fmt.Errorf("Not implemented method")
-}
-
-func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
-	return nil, fmt.Errorf("not implemented method")
-}
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
 	client, err := newSqliteClient(logger, cfg)

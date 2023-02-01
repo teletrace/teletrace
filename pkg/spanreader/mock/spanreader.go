@@ -74,7 +74,7 @@ func (sr spanReader) GetTagsValues(
 	return res, nil
 }
 
-func (sr spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
+func (sr spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error) {
 	return &tagsquery.TagStatisticsResponse{
 		Statistics: map[tagsquery.TagStatistic]float64{
 			"min": 0.0,

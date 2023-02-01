@@ -29,5 +29,5 @@ type TagsController interface {
 	GetTagsValues(ctx context.Context, request tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
 
 	// Get statistics for numeric tag values
-	GetTagsStatistics(ctx context.Context, req tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error)
+	GetTagsStatistics(ctx context.Context, req tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error)
 }

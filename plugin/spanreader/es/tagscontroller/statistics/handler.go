@@ -24,25 +24,25 @@ import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
-var TagStatisticToResolver = map[tagsquery.TagStatistic]StatisticResolver{
-	tagsquery.Min: &minResolver{},
-	tagsquery.Max: &maxResolver{},
-	tagsquery.Avg: &avgResolver{},
-	tagsquery.P99: &p99Resolver{},
+var TagStatisticToHandler = map[tagsquery.TagStatistic]StatisticHandler{
+	tagsquery.Min: &minHandler{},
+	tagsquery.Max: &maxHandler{},
+	tagsquery.Avg: &avgHandler{},
+	tagsquery.P99: &p99Handler{},
 }
 
-type StatisticResolver interface {
+type StatisticHandler interface {
 	AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder)
 	GetValue(tag string, aggs map[string]any) (float64, bool)
 }
 
-type minResolver struct{}
+type minHandler struct{}
 
-func (s *minResolver) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
+func (h *minHandler) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
 	aggs["min"] = types.NewAggregationContainerBuilder().Min(types.NewMinAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *minResolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *minHandler) GetValue(tag string, aggs map[string]any) (float64, bool) {
 	value := aggs["min"].(map[string]any)["value"]
 	if value == nil {
 		return -1, false
@@ -55,13 +55,13 @@ func (s *minResolver) GetValue(tag string, aggs map[string]any) (float64, bool) 
 	return value.(float64), true
 }
 
-type maxResolver struct{}
+type maxHandler struct{}
 
-func (s *maxResolver) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
+func (h *maxHandler) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
 	aggs["max"] = types.NewAggregationContainerBuilder().Max(types.NewMaxAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *maxResolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *maxHandler) GetValue(tag string, aggs map[string]any) (float64, bool) {
 	value := aggs["max"].(map[string]any)["value"]
 	if value == nil {
 		return -1, false
@@ -74,13 +74,13 @@ func (s *maxResolver) GetValue(tag string, aggs map[string]any) (float64, bool) 
 	return value.(float64), true
 }
 
-type avgResolver struct{}
+type avgHandler struct{}
 
-func (s *avgResolver) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
+func (h *avgHandler) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
 	aggs["avg"] = types.NewAggregationContainerBuilder().Avg(types.NewAverageAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *avgResolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *avgHandler) GetValue(tag string, aggs map[string]any) (float64, bool) {
 	value := aggs["avg"].(map[string]any)["value"]
 	if value == nil {
 		return -1, false
@@ -93,13 +93,13 @@ func (s *avgResolver) GetValue(tag string, aggs map[string]any) (float64, bool) 
 	return value.(float64), true
 }
 
-type p99Resolver struct{}
+type p99Handler struct{}
 
-func (s *p99Resolver) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
+func (h *p99Handler) AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder) {
 	aggs["percentiles"] = types.NewAggregationContainerBuilder().Percentiles(types.NewPercentilesAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (s *p99Resolver) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *p99Handler) GetValue(tag string, aggs map[string]any) (float64, bool) {
 	value := aggs["percentiles"].(map[string]any)["values"].(map[string]any)["99.0"]
 	if value == nil {
 		return -1, false

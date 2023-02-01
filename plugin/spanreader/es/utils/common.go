@@ -24,6 +24,8 @@ import (
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
@@ -93,12 +95,7 @@ func DecodeResponse(res *http.Response) (map[string]any, error) {
 }
 
 func IsConvertedTimestamp(key model.FilterKey) bool {
-	for _, ctk := range convertedTimestampKeys {
-		if ctk == key {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(convertedTimestampKeys, key)
 }
 
 func MilliToNanoFloat64(millis float64) float64 {
