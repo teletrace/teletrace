@@ -5,12 +5,18 @@ on:
       - main
 jobs:
   test:
-    name: Validate License Header
+    name: Playwright tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: validate license headers
-        run: make update-license-headers && [[ -z `git status -s` ]]
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
     # strategy:
     #   matrix:
     #     db: [ElasticSearch]
@@ -20,8 +26,8 @@ jobs:
     # steps:
     #   - uses: actions/checkout@v3
     #   - uses: actions/setup-node@v3
-    #     with:
-    #       node-version: 18
+    # with:
+    # node-version: 18
     #   - name: Install dependencies
     #     run: npm ci
     #   - name: Install Playwright Browsers
