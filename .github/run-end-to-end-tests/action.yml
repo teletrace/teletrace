@@ -14,5 +14,5 @@ runs:
       run: |
         if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
           cd ./deploy/docker-compose
-          docker-compose up
+          docker-compose up -d
         fi
