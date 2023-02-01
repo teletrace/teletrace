@@ -16,7 +16,7 @@
 
 import Elk, { ElkNode } from "elkjs";
 import { ElkExtendedEdge } from "elkjs/lib/elk-api";
-import { Edge, MarkerType, Node, Position } from "reactflow";
+import { Edge, MarkerType, Node } from "reactflow";
 
 import { InternalSpan, StatusCode } from "@/types/span";
 import { formatDurationAsMs } from "@/utils/format";
