@@ -9,6 +9,9 @@ inputs:
 runs:
   using: composite
   steps:
-    - id: run-tests-per-db
+    - id: docker-compose-up-per-db
       shell: bash
-      run: echo "bla"
+      run: |
+        if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
+          docker-compose -f deploy/docker-compose/docker-compose.yml up
+        fi

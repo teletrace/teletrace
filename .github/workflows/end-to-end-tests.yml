@@ -25,13 +25,14 @@ jobs:
       - name: Install Playwright Browsers
         working-directory: ./tests/e2e/playwright
         run: npx playwright install --with-deps
-      - name: Run Playwright tests
+      - name: Docker Up
         uses: ./.github/run-tests
-        id: run-tests-per-db
+        id: docker-compose-up-per-db
         with:
           db: ${{ matrix.db }}
-        # working-directory: ./tests/e2e/playwright
-        # run: npx playwright test
+      - name: Run Playwright tests
+        working-directory: ./tests/e2e/playwright
+        run: npx playwright test
       - uses: actions/upload-artifact@v3
         if: always()
         with:
