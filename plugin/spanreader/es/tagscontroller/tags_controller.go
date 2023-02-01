@@ -150,6 +150,8 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 			h := statistics.TagStatisticToHandler[d]
 			if v, exists := h.GetValue(tag, aggregations); exists {
 				result.Statistics[d] = v
+			} else {
+				return nil, fmt.Errorf("failed to get %s statistic for %s", d, tag)
 			}
 		}
 	}
