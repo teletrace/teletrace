@@ -7,7 +7,7 @@ inputs:
     description: db name
 
 runs:
-  using: "composite"
+  using: composite
   steps:
     - id: run-tests-per-db
       shell: bash
