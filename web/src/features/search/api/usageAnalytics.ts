@@ -15,11 +15,12 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { CloudEvent, emitterFor, httpTransport } from "cloudevents";
+import { HTTP, CloudEvent, emitterFor, httpTransport } from "cloudevents";
 
 import { axiosClient } from "@/libs/axios";
 
 import { SystemIdResponse } from "../types/usageAnalyitcs";
+import { AxiosRequestHeaders } from "axios";
 
 const fetchSystemId = async (): Promise<SystemIdResponse> =>
   await axiosClient.get("/v1/system-id");
@@ -33,12 +34,18 @@ export const useSystemId = () =>
     },
   });
 
-export const sendEvent = () => {
-  const emit = emitterFor(
-    httpTransport(
-      "https://x7e6byq3xd.execute-api.us-east-1.amazonaws.com/prod/"
-    )
+export const sendEvent = (systemId: string) => {
+  const ce = new CloudEvent({
+    type: "lupa.spans_table_viewed",
+    source: systemId,
+    data: {},
+  });
+  const message = HTTP.binary(ce);
+  axiosClient.post(
+    "https://x7e6byq3xd.execute-api.us-east-1.amazonaws.com/prod/",
+    message.body,
+    {
+      headers: message.headers as AxiosRequestHeaders,
+    }
   );
-  const ce = new CloudEvent({ type: "1", source: "2", data: {} });
-  emit(ce);
 };

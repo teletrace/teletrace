@@ -20,5 +20,13 @@ module.exports = {
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
+    configure: {
+      resolve: {
+        fallback: {
+          http: false,
+          https: false,
+        },
+      },
+    },
   },
 };

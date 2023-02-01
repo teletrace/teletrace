@@ -64,9 +64,9 @@ export function SpanTable() {
 
   useEffect(() => {
     if (systemId) {
-      sendEvent();
+      sendEvent(systemId);
     }
-  }, []);
+  }, [systemId]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);

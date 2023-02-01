@@ -5847,7 +5847,7 @@ clone-deep@^4.0.1:
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
 
-cloudevents@6.0.3:
+cloudevents@^6.0.3:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/cloudevents/-/cloudevents-6.0.3.tgz#e406ab904289edb59586ae14f22656a8bbda87f8"
   integrity sha512-ADEHAv2KShH/cDIy2GP+npFz3R6Fu/UCsUO/j4kYA9VqN4yhGdF+Zg6wmjeq6qlUvlaKdrVBwgZuH/w57IsyGQ==
