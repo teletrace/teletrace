@@ -177,28 +177,22 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, erro
 	), nil
 }
 
-func buildTagStatisticsQuery(r tagsquery.TagStatisticsRequest) (string, error) {
-	queryParams, err := getQueryParams(r.Tag, r.Timeframe, r.SearchFilters)
-	if err != nil {
-		return "", err
+func buildTagStatisticQuery(s tagsquery.TagStatistic, qp *SqliteQueryParamsResponse) (string, error) {
+	switch s {
+	case tagsquery.Min:
+		return fmt.Sprintf("SELECT MIN(%s) as min FROM %s %s", qp.fields, qp.tables, qp.filters), nil
+	case tagsquery.Max:
+		return fmt.Sprintf("SELECT MAX(%s) as max FROM %s %s", qp.fields, qp.tables, qp.filters), nil
+	case tagsquery.Avg:
+		return fmt.Sprintf("SELECT AVG(%s) as avg FROM %s %s", qp.fields, qp.tables, qp.filters), nil
+	case tagsquery.P99:
+		return fmt.Sprintf(`
+			WITH CTE AS (SELECT %s, NTILE(100) OVER (ORDER BY %s) AS tile FROM %s)
+			SELECT (SELECT %s FROM CTE WHERE tile = 99) AS p99 FROM %s %s
+		`, qp.fields, qp.fields, qp.tables, qp.fields, qp.tables, qp.filters), nil
 	}
 
-	selectedStatistics := ""
-	for _, statistic := range r.DesiredStatistics {
-		if statistic != tagsquery.P99 && selectedStatistics != "" {
-			selectedStatistics += ", "
-		}
-		switch statistic {
-		case tagsquery.Min:
-			selectedStatistics += fmt.Sprintf("MIN(%s) as min", queryParams.fields)
-		case tagsquery.Max:
-			selectedStatistics += fmt.Sprintf("MAX(%s) as max", queryParams.fields)
-		case tagsquery.Avg:
-			selectedStatistics += fmt.Sprintf("AVG(%s) as avg", queryParams.fields)
-		}
-	}
-
-	return fmt.Sprintf("SELECT %s FROM %s %s", selectedStatistics, queryParams.tables, queryParams.filters), nil
+	return "", fmt.Errorf("could not build query for statistic: %s", s)
 }
 
 func getQueryParams(tag string, tf *model.Timeframe, sf []model.SearchFilter) (*SqliteQueryParamsResponse, error) {

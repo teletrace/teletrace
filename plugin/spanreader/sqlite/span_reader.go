@@ -205,18 +205,56 @@ func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesReq
 	}, nil
 }
 
+func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
+	res := tagsquery.TagStatisticsResponse{Statistics: map[tagsquery.TagStatistic]float64{}}
+
+	tx, err := sr.client.db.Begin()
+
+	queryParams, err := getQueryParams(r.Tag, r.Timeframe, r.SearchFilters)
+	for _, statistic := range r.DesiredStatistics {
+		query, err := buildTagStatisticQuery(statistic, queryParams)
+		if err != nil {
+			sr.logger.Error("failed to build tag statistics query for: "+r.Tag, zap.Error(err))
+			return nil, err
+		}
+
+		stmt, err := tx.Prepare(query)
+		if err != nil {
+			sr.logger.Error("failed to prepare query: "+query, zap.Error(err))
+			return nil, err
+		}
+
+		rows, err := stmt.Query()
+		if err != nil {
+			return nil, fmt.Errorf("could not execute statement: %v\n", err)
+		}
+
+		defer rows.Close()
+		for rows.Next() {
+			var value float64
+			if err = rows.Scan(&value); err != nil {
+				sr.logger.Error(fmt.Sprintf("failed to extract statistic: %s", statistic), zap.Error(err))
+				continue
+			}
+
+			res.Statistics[statistic] = value
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		sr.logger.Error(fmt.Sprintf("failed to commit tag statistics transaction"), zap.Error(err))
+		return nil, err
+	}
+
+	return &res, err
+}
+
 func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
 	return nil, fmt.Errorf("Not implemented method")
 }
 
 func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
-	return nil, fmt.Errorf("Not implemented method")
-}
-
-func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
-	query, err := buildTagStatisticsQuery(r)
-	fmt.Printf("query:\t%s\n", query)
-	return nil, err
+	return nil, fmt.Errorf("not implemented method")
 }
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
