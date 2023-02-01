@@ -222,11 +222,11 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStat
 		return nil, err
 	}
 
-	queryParams, err := getQueryParams(r.Tag, r.Timeframe, r.SearchFilters)
+	queryParams, err := getQueryParams(tag, r.Timeframe, r.SearchFilters)
 	for _, statistic := range r.DesiredStatistics {
 		query, err := buildTagStatisticQuery(statistic, queryParams)
 		if err != nil {
-			sr.logger.Error("failed to build tag statistics query for: "+r.Tag, zap.Error(err))
+			sr.logger.Error("failed to build tag statistics query for: "+tag, zap.Error(err))
 			return nil, err
 		}
 
@@ -260,7 +260,6 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStat
 
 	return &res, err
 }
-
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
 	client, err := newSqliteClient(logger, cfg)
