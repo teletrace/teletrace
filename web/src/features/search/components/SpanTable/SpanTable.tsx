@@ -25,12 +25,9 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
+import { eventType, sendEvent, useSystemId } from "@/features/usageAnalytics";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
-import {
-  sendEvent,
-  useSystemId,
-} from "../../../usageAnalytics/api/usageAnalytics";
 import { useSpansQuery } from "../../api/spanQuery";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { TableSpan, columns, sizeLimitedColumns } from "./columns";
@@ -67,7 +64,7 @@ export function SpanTable() {
 
   useEffect(() => {
     if (systemId) {
-      sendEvent(systemId, "lupa.spans_table_viewed");
+      sendEvent(systemId, eventType.spans_table_viewed);
     }
   }, [systemId]);
 

@@ -14,13 +14,5 @@
  * limitations under the License.
  */
 
-/** types used to send usage analytics to lupa backend */
-
-export const eventType: Record<string, string> = {
-  spans_table_viewed: "lupa.spans_table_viewed",
-  trace_viewed: "lupa.trace_viewed",
-};
-
-export type SystemIdResponse = {
-  value: string;
-};
+export * from "./api/usageAnalytics";
+export * from "./types/usageAnalyitcs";

@@ -21,12 +21,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
+import { eventType, sendEvent, useSystemId } from "@/features/usageAnalytics";
 import { InternalSpan } from "@/types/span";
 
-import {
-  sendEvent,
-  useSystemId,
-} from "../../../usageAnalytics/api/usageAnalytics";
 import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
 import { TraceGraph } from "../../components/TraceGraph";
@@ -57,7 +54,7 @@ export const TraceView = () => {
 
   useEffect(() => {
     if (systemId) {
-      sendEvent(systemId, "lupa.trace_viewed", { traceId });
+      sendEvent(systemId, eventType.trace_viewed, { traceId });
     }
   }, [systemId]);
 

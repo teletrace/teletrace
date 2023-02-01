@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AxiosRequestHeaders } from "axios";
 import { CloudEvent, HTTP } from "cloudevents";
 
+import { USAGE_ANALYTICS_URL } from "@/config";
 import { axiosClient } from "@/libs/axios";
 
 import { SystemIdResponse } from "../types/usageAnalyitcs";
@@ -45,11 +46,7 @@ export const sendEvent = (
     data,
   });
   const message = HTTP.binary(ce);
-  axiosClient.post(
-    "https://x7e6byq3xd.execute-api.us-east-1.amazonaws.com/prod/",
-    message.body,
-    {
-      headers: message.headers as AxiosRequestHeaders,
-    }
-  );
+  axiosClient.post(USAGE_ANALYTICS_URL, message.body, {
+    headers: message.headers as AxiosRequestHeaders,
+  });
 };
