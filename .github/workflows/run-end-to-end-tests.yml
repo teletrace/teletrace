@@ -32,6 +32,7 @@ jobs:
         working-directory: ./tests/e2e/playwright
         run: npx playwright test
       - uses: actions/upload-artifact@v3
+        working-directory: ./tests/e2e/playwright
         if: always()
         with:
           name: playwright-report
