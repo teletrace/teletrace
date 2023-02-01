@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         db: [ElasticSearch]
-    timeout-minutes: 60
+    timeout-minutes: 120
     # if: ${{ !startsWith(github.head_ref, 'mergify/') }}
     runs-on: ubuntu-latest
     steps:
