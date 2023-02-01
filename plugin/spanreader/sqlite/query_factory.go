@@ -52,13 +52,9 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 	if err != nil {
 		return nil, fmt.Errorf("failed to add filters: %v", err)
 	}
-	err = subQueryBuilder.buildSubQuery()
+	subQuery, err := subQueryBuilder.buildSubQuery()
 	if err != nil {
-		return nil, fmt.Errorf("failed to intersect queries: %v", err)
-	}
-	subQuery, err := subQueryBuilder.getSubQuery()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get sub query: %v", err)
+		return nil, fmt.Errorf("failed to build sub query: %v", err)
 	}
 	searchQueryResponse.query = getSearchQuery(subQuery, order)
 	return searchQueryResponse, nil
@@ -132,13 +128,9 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (*tagValueQue
 	if err != nil {
 		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
 	}
-	err = subQueryBuilder.buildSubQuery()
+	subQuery, err := subQueryBuilder.buildSubQuery()
 	if err != nil {
-		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
-	}
-	subQuery, err := subQueryBuilder.getSubQuery()
-	if err != nil {
-		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
+		return nil, fmt.Errorf("buildTagValuesQuery failed to build sub query: %w", err)
 	}
 	mainTableName := subQueryBuilder.getMainTableName()
 	tableKey := tableJoinKeyMap[mainTableName]

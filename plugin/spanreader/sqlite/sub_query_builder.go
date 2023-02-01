@@ -23,24 +23,20 @@ import (
 )
 
 type subQueryBuilder struct {
-	tableQueryMap         map[string][]string
-	intersectedQueriesMap map[string]string
-	joinedQueriesMap      map[string]string
-	mainTableName         string
-	mainField             string
-	mainCondition         string
-	mainTableJoinKey      string
+	tableQueryMap    map[string][]string
+	mainTableName    string
+	mainField        string
+	mainCondition    string
+	mainTableJoinKey string
 }
 
 func newSubQueryBuilder(mainTableName string) *subQueryBuilder {
 	return &subQueryBuilder{
-		mainTableName:         mainTableName,
-		tableQueryMap:         make(map[string][]string),
-		intersectedQueriesMap: make(map[string]string),
-		joinedQueriesMap:      make(map[string]string),
-		mainField:             "*",
-		mainCondition:         "",
-		mainTableJoinKey:      "*",
+		mainTableName:    mainTableName,
+		tableQueryMap:    make(map[string][]string),
+		mainField:        "*",
+		mainCondition:    "",
+		mainTableJoinKey: "*",
 	}
 }
 
@@ -102,34 +98,18 @@ func (sqb *subQueryBuilder) addFiltersToSubQuery(filters []model.SearchFilter) e
 	return nil
 }
 
-func (sqb *subQueryBuilder) buildSubQuery() error {
-	if err := sqb.intersectQueriesMap(); err != nil {
-		return err
-	}
-	if err := sqb.joinQueriesMap(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (sqb *subQueryBuilder) intersectQueriesMap() error {
+func (sqb *subQueryBuilder) buildSubQuery() (string, error) {
+	intersectedQueriesMap := make(map[string]string)
+	joinedQueriesMap := make(map[string]string)
 	for tableName, queries := range sqb.tableQueryMap {
-		sqb.intersectedQueriesMap[tableName] = strings.Join(queries, " INTERSECT ")
+		intersectedQueriesMap[tableName] = strings.Join(queries, " INTERSECT ")
 	}
-	return nil
-}
-
-func (sqb *subQueryBuilder) joinQueriesMap() error {
-	for tableName, query := range sqb.intersectedQueriesMap {
+	for tableName, query := range intersectedQueriesMap {
 		sq := innerJoinRelatedTables(tableName, query)
-		sqb.joinedQueriesMap[tableName] = sq
+		joinedQueriesMap[tableName] = sq
 	}
-	return nil
-}
-
-func (sqb *subQueryBuilder) getSubQuery() (string, error) {
-	subQuery := fmt.Sprintf("SELECT %s FROM (%s) %s", sqb.mainTableJoinKey, sqb.joinedQueriesMap[sqb.mainTableName], sqb.mainTableName)
-	for tableName, joinQuery := range sqb.joinedQueriesMap {
+	subQuery := fmt.Sprintf("SELECT %s FROM (%s) %s", sqb.mainTableJoinKey, joinedQueriesMap[sqb.mainTableName], sqb.mainTableName)
+	for tableName, joinQuery := range joinedQueriesMap {
 		if tableName == sqb.mainTableName {
 			continue
 		}
