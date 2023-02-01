@@ -14,28 +14,27 @@
 * limitations under the License.
  */
 
-package elasticsearchexporter
+package opensearchexporter
 
 import (
 	"context"
 	"fmt"
+	"github.com/epsagon/lupa/lupa-otelcol/exporter/internal/modeltranslator"
+	"github.com/opensearch-project/opensearch-go"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
-
-	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/internal/modeltranslator"
 )
 
-type elasticsearchTracesExporter struct {
+type opensearchTracesExporter struct {
 	logger     *zap.Logger
 	cfg        *Config
-	client     *elasticsearch.Client
+	client     *opensearch.Client
 	maxRetries int
 }
 
-func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExporter, error) {
+func newTracesExporter(logger *zap.Logger, cfg *Config) (*opensearchTracesExporter, error) {
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
@@ -50,7 +49,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExp
 		maxRetries = cfg.Retry.MaxRetries
 	}
 
-	return &elasticsearchTracesExporter{
+	return &opensearchTracesExporter{
 		logger:     logger,
 		cfg:        cfg,
 		client:     esClient,
@@ -58,11 +57,11 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExp
 	}, nil
 }
 
-func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
+func (e *opensearchTracesExporter) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
+func (e *opensearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
 	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
 
 	indexer, err := newBulkIndexer(e.logger, e.client, e.cfg)
