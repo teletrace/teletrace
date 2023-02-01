@@ -26,7 +26,7 @@ jobs:
         working-directory: ./tests/e2e/playwright
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-        uses: ./.github/actions/run-tests
+        uses: ./.github/run-tests
         id: run-tests-per-db
         with:
           db: ${{ matrix.db }}
