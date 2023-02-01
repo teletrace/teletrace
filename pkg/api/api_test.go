@@ -239,7 +239,6 @@ func TestTagsStatistics(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
 	body := tagsquery.TagStatisticsRequest{
-		Tag:               "someNumber",
 		DesiredStatistics: []tagsquery.TagStatistic{"min", "max", "avg", "p99"},
 		Timeframe: &model.Timeframe{
 			StartTime: 0,
@@ -247,7 +246,7 @@ func TestTagsStatistics(t *testing.T) {
 		},
 	}
 	jsonBody, _ := json.Marshal(&body)
-	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/tags/statistics"), bytes.NewReader(jsonBody))
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/tags/someNumber/statistics"), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	srMock, _ := spanreader.NewSpanReaderMock()
 

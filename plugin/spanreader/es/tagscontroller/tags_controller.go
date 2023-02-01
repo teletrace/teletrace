@@ -115,15 +115,18 @@ func (r *tagsController) GetTagsValues(
 	return r.parseGetTagsValuesResponseBody(body)
 }
 
-func (r *tagsController) GetTagsStatistics(ctx context.Context, req tagsquery.TagStatisticsRequest) (*tagsquery.TagStatisticsResponse, error) {
-	return r.performGetTagsStatisticsRequest(ctx, req)
+func (r *tagsController) GetTagsStatistics(
+	ctx context.Context, req tagsquery.TagStatisticsRequest, tag string,
+) (*tagsquery.TagStatisticsResponse, error) {
+	return r.performGetTagsStatisticsRequest(ctx, req, tag)
 }
 
 func (r *tagsController) performGetTagsStatisticsRequest(
 	ctx context.Context,
 	request tagsquery.TagStatisticsRequest,
+	tag string,
 ) (*tagsquery.TagStatisticsResponse, error) {
-	req, err := buildTagsStatisticsRequest(request)
+	req, err := buildTagsStatisticsRequest(request, tag)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query: %s", err)
 	}
@@ -145,7 +148,7 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 	if aggregations, ok := body["aggregations"].(map[string]any); ok {
 		for _, d := range request.DesiredStatistics {
 			r := statistics.TagStatisticToResolver[d]
-			if v, exists := r.GetValue(request.Tag, aggregations); exists {
+			if v, exists := r.GetValue(tag, aggregations); exists {
 				result.Statistics[d] = v
 			}
 		}
@@ -153,7 +156,7 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 	return result, nil
 }
 
-func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search.Request, error) {
+func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest, tag string) (*search.Request, error) {
 	builder := search.NewRequestBuilder()
 	timeframeFilters := spanreaderes.CreateTimeframeFilters(request.Timeframe)
 	filters := append(request.SearchFilters, timeframeFilters...)
@@ -167,7 +170,7 @@ func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest) (*search
 
 	for _, d := range request.DesiredStatistics {
 		r := statistics.TagStatisticToResolver[d]
-		r.AddAggregationContainerBuilder(request.Tag, aggs)
+		r.AddAggregationContainerBuilder(tag, aggs)
 	}
 
 	return builder.Aggregations(aggs).Build(), nil

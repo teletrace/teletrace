@@ -116,7 +116,9 @@ func (api *API) tagsStatistics(c *gin.Context) {
 	}
 	handleTimeframe(req.Timeframe)
 
-	res, err := (*api.spanReader).GetTagsStatistics(c, req)
+	tag := c.Param("tag")
+
+	res, err := (*api.spanReader).GetTagsStatistics(c, req, tag)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
