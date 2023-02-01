@@ -24,8 +24,8 @@ jobs:
       - name: Run Playwright tests
         uses: ./.github/actions/run-tests
         id: run-tests-per-db
-          with:
-            db: ${{ matrix.db }}
+        with:
+          db: ${{ matrix.db }}
         run: npx playwright test
       - uses: actions/upload-artifact@v3
         if: always()
@@ -33,4 +33,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-
