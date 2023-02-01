@@ -19,9 +19,11 @@ for index in "${!GO_MODULES[@]}"; do
 
     cd $module_dir
     mkdir -p coverage
+    rm -rf coverage/*
     go test -coverprofile=coverage/$coverage_filename.out ./...
     go tool cover -html=coverage/$coverage_filename.out -o coverage/$coverage_filename.html
     if [ $module_dir != $ROOT_DIR ]; then
         mv coverage/* $ROOT_DIR/coverage/
+        rm -rf coverage
     fi
 done
