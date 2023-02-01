@@ -1,11 +1,11 @@
 name: E2E Tests
 on:
-  push:
+  pull_request:
     branches:
       - main
 jobs:
   test:
-    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
+    # if: ${{ !startsWith(github.head_ref, 'mergify/') }}
     name: Playwright tests
     runs-on: ubuntu-latest
     strategy:
