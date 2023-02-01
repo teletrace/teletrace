@@ -1,17 +1,17 @@
 name: E2E Tests
 on:
-  pull_request:
+  push:
     branches:
       - main
 jobs:
   test:
-    # if: ${{ !startsWith(github.head_ref, 'mergify/') }}
+    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
     name: Playwright tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
         db: [ElasticSearch]
-    timeout-minutes: 180
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
