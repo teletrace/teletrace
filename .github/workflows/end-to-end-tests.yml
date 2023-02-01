@@ -13,8 +13,10 @@ jobs:
         with:
           node-version: 18
       - name: Install dependencies
+        working-directory: ./tests/e2e/playwright
         run: npm install
       - name: Install Playwright Browsers
+        working-directory: ./tests/e2e/playwright
         run: npx playwright install --with-deps
       - name: Run Playwright tests
         # uses: ./.github/actions/run-tests
