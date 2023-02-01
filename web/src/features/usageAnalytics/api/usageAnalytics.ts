@@ -20,7 +20,7 @@ import { CloudEvent, HTTP } from "cloudevents";
 
 import { axiosClient } from "@/libs/axios";
 
-import { SystemIdResponse } from "../features/search/types/usageAnalyitcs";
+import { SystemIdResponse } from "../types/usageAnalyitcs";
 
 const fetchSystemId = async (): Promise<SystemIdResponse> =>
   await axiosClient.get("/v1/system-id");

@@ -27,7 +27,10 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
-import { sendEvent, useSystemId } from "../../../../hooks/usageAnalytics";
+import {
+  sendEvent,
+  useSystemId,
+} from "../../../usageAnalytics/api/usageAnalytics";
 import { useSpansQuery } from "../../api/spanQuery";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { TableSpan, columns, sizeLimitedColumns } from "./columns";
