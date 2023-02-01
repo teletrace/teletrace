@@ -16,7 +16,6 @@ rm -rf coverage/*
 for index in "${!GO_MODULES[@]}"; do
     module_dir="${GO_MODULES[index]}"
     coverage_filename=$index-$(basename $module_dir)
-
     cd $module_dir
     mkdir -p coverage
     rm -rf coverage/*
