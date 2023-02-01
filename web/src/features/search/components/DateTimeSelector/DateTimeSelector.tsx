@@ -24,6 +24,7 @@ import {
   FormLabel,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -106,6 +107,27 @@ export const DateTimeSelector = ({
     }
   };
 
+  const padToTwoDigits = (num: number): string => {
+    return num.toString().padStart(2, "0");
+  };
+
+  const getFormattedTimezone = (
+    totalMinutes: number,
+    islocalTimeAhead: boolean
+  ): string => {
+    totalMinutes = Math.abs(totalMinutes);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const UTC_sign = islocalTimeAhead ? "+" : "-";
+    return `${UTC_sign}${padToTwoDigits(hours)}:${padToTwoDigits(minutes)}`;
+  };
+
+  const getTimezone = () => {
+    const offset = new Date().getTimezoneOffset();
+    const islocalTimeAhead = offset < 0;
+    return `UTC${getFormattedTimezone(offset, islocalTimeAhead)}`;
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DialogContent sx={{ width: "350px" }}>
@@ -181,7 +203,8 @@ export const DateTimeSelector = ({
         </Stack>
       </DialogContent>
       <Divider sx={{ borderBottomWidth: 2, backgroundColor: "black" }} />
-      <DialogActions>
+      <DialogActions flex-direction="row">
+        <Typography sx={styles.timezone_typography}>{getTimezone()}</Typography>
         <Button onClick={onCancel}>Cancel</Button>
         <Button onClick={handleApply} variant="contained">
           Apply
