@@ -22,13 +22,15 @@ import (
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
-	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 	"strings"
+
+	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
+	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
 )
@@ -38,6 +40,18 @@ type tagsController struct {
 	rawClient *elasticsearch.Client
 	client    *elasticsearch.TypedClient
 	idx       string
+}
+
+var tagsValueTypeMap = map[string]pcommon.ValueType{
+	"text":    pcommon.ValueTypeStr,
+	"keyword": pcommon.ValueTypeStr,
+	"long":    pcommon.ValueTypeInt,
+	"integer": pcommon.ValueTypeInt,
+	"byte":    pcommon.ValueTypeInt,
+	"short":   pcommon.ValueTypeInt,
+	"float":   pcommon.ValueTypeDouble,
+	"double":  pcommon.ValueTypeDouble,
+	"boolean": pcommon.ValueTypeBool,
 }
 
 func NewTagsController(logger *zap.Logger, rawClient *elasticsearch.Client, client *elasticsearch.TypedClient, idx string) (TagsController, error) {
@@ -152,7 +166,7 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 				if _, ok := tagsMap[fieldName]; !ok {
 					tagsMap[fieldName] = tagsquery.TagInfo{
 						Name: fieldName,
-						Type: valueData.(map[string]any)["type"].(string),
+						Type: tagsValueTypeMap[valueData.(map[string]any)["type"].(string)].String(),
 					}
 				}
 			}
@@ -172,7 +186,7 @@ func buildAggregations(builder *search.RequestBuilder, tagsMappings []tagsquery.
 	for _, mapping := range tagsMappings {
 		aggregationKey := mapping.Name
 		aggregationField := aggregationKey
-		if mapping.Type == "text" {
+		if mapping.Type == "Str" {
 			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
 		}
 		aggs[aggregationKey] = types.NewAggregationContainerBuilder()
