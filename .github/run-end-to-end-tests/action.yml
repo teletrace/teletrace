@@ -9,16 +9,9 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: get output
+    - id: run-lupa
       shell: bash
       run: |
-        echo ::set-output name=db::\
-        $(echo '{ "ElasticSearch": "i386", "64": "x86_64" }' | jq -r 'to_entries[] | select(.key=="${{ matrix.db }}") | .value')
-    - name: Test arch var
-        run: echo "Testing ${{ steps.vars.outputs.db }}"
-    # - id: run-lupa
-    #   shell: bash
-    #   run: |
-    #     if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
-    #       docker-compose -f deploy/docker-compose/docker-compose.yml  up -d
-    #     fi
+        if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
+          docker-compose -f deploy/docker-compose/docker-compose.yml up -d
+        fi
