@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: bash test
         shell: bash
-        run: ls web
+        run: ls -R .github
       - uses: actions/setup-node@v3
         with:
           node-version: 18
