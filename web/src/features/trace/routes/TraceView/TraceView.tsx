@@ -21,9 +21,9 @@ import { useCallback, useEffect, useState } from "react";
 import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
-import { sendEvent, useSystemId } from "@/features/search/api/usageAnalytics";
 import { InternalSpan } from "@/types/span";
 
+import { sendEvent, useSystemId } from "../../../../hooks/usageAnalytics";
 import { useTraceQuery } from "../../api/traceQuery";
 import { SpanDetailsList } from "../../components/SpanDetailsList";
 import { TraceGraph } from "../../components/TraceGraph";

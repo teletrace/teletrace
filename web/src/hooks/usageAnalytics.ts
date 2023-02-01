@@ -16,11 +16,11 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { AxiosRequestHeaders } from "axios";
-import { CloudEvent, HTTP, emitterFor, httpTransport } from "cloudevents";
+import { CloudEvent, HTTP } from "cloudevents";
 
 import { axiosClient } from "@/libs/axios";
 
-import { SystemIdResponse } from "../types/usageAnalyitcs";
+import { SystemIdResponse } from "../features/search/types/usageAnalyitcs";
 
 const fetchSystemId = async (): Promise<SystemIdResponse> =>
   await axiosClient.get("/v1/system-id");
@@ -34,7 +34,11 @@ export const useSystemId = () =>
     },
   });
 
-export const sendEvent = (systemId: string, eventType: string, data?: {}) => {
+export const sendEvent = (
+  systemId: string,
+  eventType: string,
+  data?: Record<string, unknown>
+) => {
   const ce = new CloudEvent({
     type: eventType,
     source: systemId,

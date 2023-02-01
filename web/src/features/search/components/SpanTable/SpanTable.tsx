@@ -27,8 +27,8 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
+import { sendEvent, useSystemId } from "../../../../hooks/usageAnalytics";
 import { useSpansQuery } from "../../api/spanQuery";
-import { sendEvent, useSystemId } from "../../api/usageAnalytics";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { TableSpan, columns, sizeLimitedColumns } from "./columns";
 import { ReactComponent as NoResultsFoundIcon } from "./no_results_found.svg";
