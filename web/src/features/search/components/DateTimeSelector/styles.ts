@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { theme } from "@/styles";
 
 export const styles = {
   timeInput: {
@@ -30,5 +31,10 @@ export const styles = {
     backgroundColor: "rgba(239, 88, 84, 0.12)",
     fontWeight: 400,
     letterSpacing: 0.15,
+  },
+  timezone_typography: {
+    flex: "auto",
+    color: theme.palette.grey[300],
+    fontSize: "14px",
   },
 };
