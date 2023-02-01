@@ -64,7 +64,7 @@ export function SpanTable() {
 
   useEffect(() => {
     if (systemId) {
-      sendEvent(systemId);
+      sendEvent(systemId, "lupa.spans_table_viewed");
     }
   }, [systemId]);
 
