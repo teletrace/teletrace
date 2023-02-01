@@ -184,7 +184,6 @@ export function SpanTable() {
   return (
     <div style={styles.container}>
       {isRefetching && <LinearProgress sx={styles.progress} />}
-      <div>{`${systemId}`}</div>
       <MaterialReactTable
         columns={columns}
         data={tableSpans}
