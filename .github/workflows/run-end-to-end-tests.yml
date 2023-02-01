@@ -14,9 +14,6 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
-      - name: bash test
-        shell: bash
-        run: ls -R .github
       - uses: actions/setup-node@v3
         with:
           node-version: 18

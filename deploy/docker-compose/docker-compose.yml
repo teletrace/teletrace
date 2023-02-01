@@ -30,6 +30,8 @@ services:
       - xpack.security.enabled=false
     volumes:
       - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
     expose:
       - "9200"
     networks:
