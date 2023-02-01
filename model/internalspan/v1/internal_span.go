@@ -61,9 +61,9 @@ type Span struct {
 	EndTimeUnixNano        uint64       `json:"endTimeUnixNano"`
 	Attributes             Attributes   `json:"attributes"`
 	DroppedAttributesCount uint32       `json:"droppedAttributesCount"`
-	Events                 []*SpanEvent `json:"events"`
+	Events                 []*SpanEvent `json:"-"`
 	DroppedEventsCount     uint32       `json:"droppedEventsCount"`
-	Links                  []*SpanLink  `json:"links"`
+	Links                  []*SpanLink  `json:"-"`
 	DroppedLinksCount      uint32       `json:"droppedLinksCount"`
 	Status                 *SpanStatus  `json:"status"`
 }
