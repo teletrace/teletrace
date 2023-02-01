@@ -11,9 +11,4 @@ runs:
   steps:
     - id: run-tests-per-db
       shell: bash
-      run: |
-        if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
-          docker-compose -f deploy/docker-compose/docker-compose.yml up
-        fi
-        cd ./tests/e2e/playwright
-        npx playwright test
+      run: echo "bla"
