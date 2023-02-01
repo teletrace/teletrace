@@ -10,6 +10,7 @@ runs:
   using: composite
   steps:
     - name: get output
+      shell: bash
       run: |
         echo ::set-output name=db::\
         $(echo '{ "ElasticSearch": "i386", "64": "x86_64" }' | jq -r 'to_entries[] | select(.key=="${{ matrix.db }}") | .value')
@@ -19,6 +20,5 @@ runs:
     #   shell: bash
     #   run: |
     #     if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
-    #       cd ./deploy/docker-compose
-    #       docker-compose up -d
+    #       docker-compose -f deploy/docker-compose/docker-compose.yml  up -d
     #     fi
