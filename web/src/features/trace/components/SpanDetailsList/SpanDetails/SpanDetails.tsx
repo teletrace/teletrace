@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-import { ArrowForwardIosSharp } from "@mui/icons-material";
+import { ArrowForwardIosSharp, Link } from "@mui/icons-material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
+  IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useMemo, useRef } from "react";
+import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, StatusCode } from "@/types/span";
@@ -58,10 +60,21 @@ function getBasicAttributes(span: InternalSpan): Attributes {
 }
 
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
+  const [isCopyTooltipVisible, setIsCopyTooltipVisible] = useState(false);
+
   const accordionRef = useRef<HTMLDivElement>(null);
   const basicAttributes = useMemo(() => getBasicAttributes(span), [span]);
   const X_DIVIDER = "|";
   const hasError: boolean = span.span.status.code === StatusCode.Error;
+
+  const handleURLCopy = (event: MouseEvent): void => {
+    event.stopPropagation();
+    const spanIdRegexExpr = /(spanId=)[^&|^?]+/;
+    const location = window.location.href;
+    navigator.clipboard
+      .writeText(location.replace(spanIdRegexExpr, `$1${span.span.spanId}`))
+      .then(() => setIsCopyTooltipVisible(true));
+  };
 
   useEffect(() => {
     if (expanded && accordionRef.current) {
@@ -110,6 +123,23 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
               {basicAttributes.start_time}
             </Typography>
           </Stack>
+
+          <Tooltip
+            title="Copied!"
+            placement="top"
+            open={isCopyTooltipVisible}
+            onOpen={() =>
+              setTimeout(() => setIsCopyTooltipVisible(false), 1500)
+            }
+          >
+            <IconButton
+              className="span-copy-button"
+              sx={styles.spanURLCopyIcon}
+              onClick={(event) => handleURLCopy(event as MouseEvent)}
+            >
+              <Link />
+            </IconButton>
+          </Tooltip>
         </AccordionSummary>
         <AccordionDetails sx={styles.accordionDetails}>
           {hasError && (
