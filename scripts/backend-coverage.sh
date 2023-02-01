@@ -24,7 +24,7 @@ for index in "${!GO_MODULES[@]}"; do
 
     echo "Package coverage for module \"$module_name\" ($module_dir):"
     echo "--------------"
-    go test -coverprofile=coverage/$coverage_filename.out ./...
+    go test -cover ./...
     echo "--------------"
 
     module_packages=$(go list ./...)
