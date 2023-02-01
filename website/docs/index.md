@@ -12,4 +12,4 @@ It helps to pinpoint issues in your application, and identify performance bottle
 - Visualize and compare latency and error trends (Coming Soon)
 - Advanced latency analysis tools (Coming Soon)
 
-<!---%%Insert GIF Here%%--->
+![](images/demo.gif)
