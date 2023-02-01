@@ -56,7 +56,6 @@ const (
 type TagStatisticsRequest struct {
 	Timeframe         *model.Timeframe     `json:"timeframe"`
 	SearchFilters     []model.SearchFilter `json:"filters"`
-	Tag               string               `json:"tag"`
 	DesiredStatistics []TagStatistic       `json:"desiredStatistics"`
 }
 
