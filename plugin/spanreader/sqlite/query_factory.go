@@ -42,8 +42,8 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 		}
 		order = fmt.Sprintf(" ORDER BY %s %s ", extractedNextToken.getSortTag(), extractedNextToken.getSortBy())
 		orderFilter := extractedNextToken.getFilter()
-		if orderFilter.KeyValueFilter != nil {
-			filters = append(filters, orderFilter)
+		if orderFilter != nil {
+			filters = append(filters, *orderFilter)
 		}
 	}
 	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
@@ -52,14 +52,9 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 	if err != nil {
 		return nil, fmt.Errorf("failed to add filters: %v", err)
 	}
-	err = subQueryBuilder.intersectQueriesMap()
+	err = subQueryBuilder.buildSubQuery()
 	if err != nil {
 		return nil, fmt.Errorf("failed to intersect queries: %v", err)
-	}
-
-	err = subQueryBuilder.joinQueriesMap()
-	if err != nil {
-		return nil, fmt.Errorf("failed to join queries: %v", err)
 	}
 	subQuery, err := subQueryBuilder.getSubQuery()
 	if err != nil {
@@ -118,12 +113,12 @@ func getSearchQuery(subQuery string, orders string) string {
 }
 
 func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (*tagValueQueryResponse, error) {
-	prepareSqliteFilter, err := newSqliteFilter(tag)
+	sqliteFilter, err := newSqliteFilter(tag)
 	if err != nil {
 		return nil, fmt.Errorf("buildTagValuesQuery: illegal tag name: %s", tag)
 	}
-	subQueryBuilder := newSubQueryBuilder(prepareSqliteFilter.getTableName())
-	err = subQueryBuilder.initTagsQuery(prepareSqliteFilter, tag)
+	subQueryBuilder := newSubQueryBuilder(sqliteFilter.getTableName())
+	err = subQueryBuilder.initTagsQuery(sqliteFilter, tag)
 	if err != nil {
 		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
 	}
@@ -137,11 +132,7 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (*tagValueQue
 	if err != nil {
 		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
 	}
-	err = subQueryBuilder.intersectQueriesMap()
-	if err != nil {
-		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
-	}
-	err = subQueryBuilder.joinQueriesMap()
+	err = subQueryBuilder.buildSubQuery()
 	if err != nil {
 		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
 	}

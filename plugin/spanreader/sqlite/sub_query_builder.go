@@ -79,31 +79,35 @@ func (sqb *subQueryBuilder) initTagsQuery(prepareSqliteFilter *sqliteFilter, tag
 }
 
 func (sqb *subQueryBuilder) addFiltersToSubQuery(filters []model.SearchFilter) error {
-	if len(filters) > 0 {
-		for _, filter := range filters {
-			prepareSqliteFilter, err := newSqliteFilter(string(filter.KeyValueFilter.Key))
-			if err != nil {
-				return fmt.Errorf("illegal tag name: %s", filter.KeyValueFilter.Key)
-			}
-			tableName := prepareSqliteFilter.getTableName()
-			var subQuery string
-			if prepareSqliteFilter.isDynamicTable() {
-				key := fmt.Sprintf("%s.%s", prepareSqliteFilter.getTableName(), prepareSqliteFilter.getTag())
-				operator := filter.KeyValueFilter.Operator
-				value := filter.KeyValueFilter.Value
-				subQuery = fmt.Sprintf("SELECT DISTINCT %s FROM %s WHERE %s", getTableJoinKey(tableName), tableName, covertFilterToSqliteQueryCondition(newSearchFilter(key, operator, value)))
-			} else {
-				key := sqliteFieldsMap[string(filter.KeyValueFilter.Key)]
-				operator := filter.KeyValueFilter.Operator
-				value := filter.KeyValueFilter.Value
-				subQuery = fmt.Sprintf("SELECT DISTINCT %s FROM %s WHERE %s", getTableJoinKey(tableName), tableName, covertFilterToSqliteQueryCondition(newSearchFilter(key, operator, value)))
-			}
-			if value, ok := sqb.tableQueryMap[tableName]; ok {
-				sqb.tableQueryMap[tableName] = append(value, subQuery)
-			} else {
-				sqb.tableQueryMap[tableName] = []string{subQuery}
-			}
+	for _, filter := range filters {
+		sqliteFilter, err := newSqliteFilter(string(filter.KeyValueFilter.Key))
+		if err != nil {
+			return fmt.Errorf("illegal tag name: %s", filter.KeyValueFilter.Key)
 		}
+		tableName := sqliteFilter.getTableName()
+		var subQuery string
+		if sqliteFilter.isDynamicTable() {
+			key := fmt.Sprintf("%s.%s", sqliteFilter.getTableName(), sqliteFilter.getTag())
+			subQuery = fmt.Sprintf("SELECT DISTINCT %s FROM %s WHERE %s", getTableJoinKey(tableName), tableName, covertFilterToSqliteQueryCondition(newSearchFilter(key, filter.KeyValueFilter.Operator, filter.KeyValueFilter.Value)))
+		} else {
+			key := sqliteFieldsMap[string(filter.KeyValueFilter.Key)]
+			subQuery = fmt.Sprintf("SELECT DISTINCT %s FROM %s WHERE %s", getTableJoinKey(tableName), tableName, covertFilterToSqliteQueryCondition(newSearchFilter(key, filter.KeyValueFilter.Operator, filter.KeyValueFilter.Value)))
+		}
+		if value, ok := sqb.tableQueryMap[tableName]; ok {
+			sqb.tableQueryMap[tableName] = append(value, subQuery)
+		} else {
+			sqb.tableQueryMap[tableName] = []string{subQuery}
+		}
+	}
+	return nil
+}
+
+func (sqb *subQueryBuilder) buildSubQuery() error {
+	if err := sqb.intersectQueriesMap(); err != nil {
+		return err
+	}
+	if err := sqb.joinQueriesMap(); err != nil {
+		return err
 	}
 	return nil
 }

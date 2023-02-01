@@ -24,12 +24,12 @@ import (
 )
 
 type extractOrderResponse struct {
-	filter  model.SearchFilter
+	filter  *model.SearchFilter
 	sortTag string
 	sortBy  string
 }
 
-func (er *extractOrderResponse) getFilter() model.SearchFilter {
+func (er *extractOrderResponse) getFilter() *model.SearchFilter {
 	return er.filter
 }
 
@@ -50,8 +50,8 @@ func extractNextToken(orders []spansquery.Sort, nextToken spansquery.Continuatio
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse order: %v", err)
 	}
-	var filter model.SearchFilter
 	if (nextToken) != "" {
+		var filter model.SearchFilter
 		switch sqliteOrder.orderBy {
 		case "DESC":
 			filter = newSearchFilter(fmt.Sprintf("%s.%s", sqliteOrder.getTableKey(), sqliteOrder.getTag()), spansquery.OPERATOR_LT, nextToken)
@@ -61,12 +61,14 @@ func extractNextToken(orders []spansquery.Sort, nextToken spansquery.Continuatio
 		if filter.KeyValueFilter == nil {
 			return nil, fmt.Errorf("failed to create filter from order: %v", order)
 		}
-	}
-	if err != nil {
-		return nil, fmt.Errorf("illegal tag name: %s", filter.KeyValueFilter.Key)
+		return &extractOrderResponse{
+			filter:  &filter,
+			sortTag: sqliteFieldsMap[fmt.Sprintf("%s.%s", sqliteOrder.getTableKey(), sqliteOrder.getTag())],
+			sortBy:  sqliteOrder.getOrderBy(),
+		}, nil
 	}
 	return &extractOrderResponse{
-		filter:  filter,
+		filter:  nil,
 		sortTag: sqliteFieldsMap[fmt.Sprintf("%s.%s", sqliteOrder.getTableKey(), sqliteOrder.getTag())],
 		sortBy:  sqliteOrder.getOrderBy(),
 	}, nil
