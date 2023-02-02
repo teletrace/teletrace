@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { theme } from "@/styles";
 
-export const styles = {
-  timeInput: {
-    width: "141px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  dateInput: {
-    width: "155px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  alert: {
-    paddingRight: "12px",
-    paddingLeft: "12px",
-    alignItems: "center",
-    backgroundColor: "rgba(239, 88, 84, 0.12)",
-    fontWeight: 400,
-    letterSpacing: 0.15,
-  },
-  timezone_typography: {
-    flex: "auto",
-    color: theme.palette.grey[300],
-    fontSize: "14px",
-  },
-};
+package statistics
+
+import (
+	"oss-tracing/pkg/model"
+	"oss-tracing/pkg/model/tagsquery/v1"
+	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+)
+
+type TagStatisticParseOption func(string, map[tagsquery.TagStatistic]float64, tagsquery.TagStatistic)
+
+func WithMilliSecTimestampAsNanoSec(tag string, statistics map[tagsquery.TagStatistic]float64, s tagsquery.TagStatistic) {
+	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
+		statistics[s] = spanreaderes.MilliToNanoFloat64(statistics[s])
+	}
+}

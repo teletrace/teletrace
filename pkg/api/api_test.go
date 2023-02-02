@@ -266,9 +266,9 @@ func TestTagsStatistics(t *testing.T) {
 	expectedMax := 10.0
 	expectedAverage := 5.0
 	expectedP99 := 9.0
-	assert.Equal(t, expectedMin, resBody.Statistics[tagsquery.Min])
-	assert.Equal(t, expectedMax, resBody.Statistics[tagsquery.Max])
-	assert.Equal(t, expectedAverage, resBody.Statistics[tagsquery.Avg])
+	assert.Equal(t, expectedMin, resBody.Statistics[tagsquery.MIN])
+	assert.Equal(t, expectedMax, resBody.Statistics[tagsquery.MAX])
+	assert.Equal(t, expectedAverage, resBody.Statistics[tagsquery.AVG])
 	assert.Equal(t, expectedP99, resBody.Statistics[tagsquery.P99])
 }
 
