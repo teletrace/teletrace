@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/run-end-to-end-tests
         id: run-lupa
         with:
-          db: ${{ matrix.spans_storage_db_type }}
+          spans_storage_db_type: ${{ matrix.spans_storage_db_type }}
       - name: Run Playwright tests
         working-directory: ./tests/e2e/playwright
         run: npx playwright test
