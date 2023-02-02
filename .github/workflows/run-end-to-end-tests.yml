@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        db: [ElasticSearch]
+        spans_storage_db_type: [ElasticSearch]
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
         uses: ./.github/run-end-to-end-tests
         id: run-lupa
         with:
-          db: ${{ matrix.db }}
+          db: ${{ matrix.spans_storage_db_type }}
       - name: Run Playwright tests
         working-directory: ./tests/e2e/playwright
         run: npx playwright test

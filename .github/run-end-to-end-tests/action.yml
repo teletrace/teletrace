@@ -2,9 +2,9 @@ name: Run E2E tests per spans storage DB
 description: Run E2E tests per spans storage DB
 
 inputs:
-  db:
+  spans_storage_db_type:
     required: true
-    description: db name
+    description: spans storage DB type
 
 runs:
   using: composite
@@ -13,9 +13,5 @@ runs:
       shell: bash
       run: |
         export DOCKER_COMPOSE_PATH=\
-        $(echo '{ "ElasticSearch": "deploy/docker-compose/docker-compose.yml" }' | jq -r 'to_entries[] | select(.key=="${{ inputs.db }}") | .value')
-        echo $DOCKER_COMPOSE_PATH
+        $(echo '{ "ElasticSearch": "deploy/docker-compose/docker-compose.yml" }' | jq -r 'to_entries[] | select(.key=="${{ inputs.spans_storage_db_type }}") | .value')
         docker-compose -f $DOCKER_COMPOSE_PATH up -d
-
-        # docker-compose -f ${{ steps.vars.outputs.docker_compose_path }} up -d
-        # echo ::set-output name=docker_compose_path::\
