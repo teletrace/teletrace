@@ -38,23 +38,20 @@ var orderSqliteFieldsMap = map[string]string{
 func newSqliteOrder(order spansquery.Sort) (sqliteOrder, error) {
 	var so sqliteOrder
 	orderField := fmt.Sprintf("%v", order.Field)
+	if sqlField, ok := orderSqliteFieldsMap[orderField]; ok {
+		orderField = sqlField
+	}
 	for _, tableKey := range filterTablesNames {
 		if strings.HasPrefix(orderField, tableKey) {
-			if sqlField, ok := orderSqliteFieldsMap[orderField]; ok {
-				tableName := sqliteTableNameMap[tableKey]
-				so.tableName = tableName
-				so.tableKey = tableKey
-				so.tag = removeTablePrefixFromStaticTag(sqlField)
-				so.orderBy = orderType(order)
-				return so, nil
-			}
+			tableName := sqliteTableNameMap[tableKey]
+			so.tableName = tableName
+			so.tableKey = tableKey
+			so.tag = removeTablePrefixFromStaticTag(orderField)
+			so.orderBy = orderType(order)
+			return so, nil
 		}
 	}
 	return so, fmt.Errorf("invalid order field: %s", order.Field)
-}
-
-func (so *sqliteOrder) getTableName() string {
-	return so.tableName
 }
 
 func (so *sqliteOrder) getTableKey() string {

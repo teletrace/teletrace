@@ -22,6 +22,7 @@ import (
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
@@ -38,6 +39,7 @@ func components() (component.Factories, error) {
 	processors, err := component.MakeProcessorFactoryMap(
 		batchprocessor.NewFactory(),
 		attributesprocessor.NewFactory(),
+		transformprocessor.NewFactory(),
 	)
 	if err != nil {
 		return component.Factories{}, fmt.Errorf("failed to make processor factory map: %w", err)

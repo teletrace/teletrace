@@ -24,21 +24,6 @@ import (
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 )
 
-var sqliteOperatorMap = map[string]string{
-	spansquery.OPERATOR_EQUALS:       "=",
-	spansquery.OPERATOR_NOT_EQUALS:   "!=",
-	spansquery.OPERATOR_CONTAINS:     "LIKE",
-	spansquery.OPERATOR_NOT_CONTAINS: "NOT LIKE",
-	spansquery.OPERATOR_EXISTS:       "IS NOT NULL",
-	spansquery.OPERATOR_NOT_EXISTS:   "IS NULL",
-	spansquery.OPERATOR_IN:           "IN",
-	spansquery.OPERATOR_NOT_IN:       "NOT IN",
-	spansquery.OPERATOR_GT:           ">",
-	spansquery.OPERATOR_GTE:          ">=",
-	spansquery.OPERATOR_LT:           "<",
-	spansquery.OPERATOR_LTE:          "<=",
-}
-
 var sqliteFieldsMap = map[string]string{
 	"span.events.name":                    "events.name",
 	"span.events.droppedAttributesCount":  "events.dropped_attributes_count",
@@ -83,6 +68,18 @@ var sqliteTableNameMap = map[string]string{
 var existenceCheckFiltersMap = map[model.FilterOperator]model.FilterOperator{
 	spansquery.OPERATOR_EXISTS:     spansquery.OPERATOR_EQUALS,
 	spansquery.OPERATOR_NOT_EXISTS: spansquery.OPERATOR_NOT_EQUALS,
+}
+
+var tableJoinKeyMap = map[string]string{
+	"events_attributes":   "event_id",
+	"events":              "id",
+	"links_attributes":    "link_id",
+	"links":               "id",
+	"resource_attributes": "resource_id",
+	"scope_attributes":    "scope_id",
+	"scopes":              "id",
+	"span_attributes":     "span_id",
+	"spans":               "span_id",
 }
 
 // should be ordered, regular map is not option
@@ -152,23 +149,6 @@ func removeTablePrefixFromStaticTag(tag string) string {
 	return strings.Split(tag, ".")[1]
 }
 
-func isValidFilter(filter model.SearchFilter) bool {
-	if filter.KeyValueFilter == nil {
-		return false
-	}
-	if filter.KeyValueFilter.Key == "" {
-		return false
-	}
-	if op, ok := sqliteOperatorMap[string(filter.KeyValueFilter.Operator)]; ok {
-		if op != "IS NOT NULL" && op != "IS NULL" && filter.KeyValueFilter.Value == "" {
-			return false
-		}
-	} else {
-		return false
-	}
-	return true
-}
-
 func newSearchFilter(filterKey string, filterOperator model.FilterOperator, filterValue model.FilterValue) model.SearchFilter {
 	return model.SearchFilter{
 		KeyValueFilter: &model.KeyValueFilter{
@@ -195,5 +175,70 @@ func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
 				Value:    tf.EndTime,
 			},
 		},
+	}
+}
+
+func getTableJoinKey(tableName string) string {
+	if key, ok := tableJoinKeyMap[tableName]; ok {
+		return fmt.Sprintf("%s.%s", tableName, key)
+	}
+	return "*"
+}
+
+func innerJoinRelatedTables(tableName string, query string) string {
+	switch tableName {
+	case "event_attributes":
+		return fmt.Sprintf("SELECT * FROM events JOIN (%s) event_attributes on events.id = event_attributes.event_id GROUP BY events.id", query)
+	case "events":
+		return fmt.Sprintf("SELECT * FROM events JOIN (%s) e on events.id = e.id GROUP BY events.id", query)
+	case "link_attributes":
+		return fmt.Sprintf("SELECT * FROM links JOIN (%s) link_attributes on links.id = link_attributes.link_id GROUP BY links.id", query)
+	case "links":
+		return fmt.Sprintf("SELECT * FROM links JOIN (%s) l on links.id = l.id GROUP BY links.id", query)
+	case "resource_attributes":
+		return fmt.Sprintf("SELECT * FROM spans JOIN span_resource_attributes on spans.span_id = span_resource_attributes.span_id JOIN (%s) resource_attributes on span_resource_attributes.resource_attribute_id = resource_attributes.resource_id GROUP BY spans.span_id", query)
+	case "scope_attributes":
+		return fmt.Sprintf("SELECT * FROM spans JOIN scopes on spans.instrumentation_scope_id = scopes.id JOIN (%s) scope_attributes on scopes.id = scope_attributes.scope_id GROUP BY scopes.id", query)
+	case "scopes":
+		return fmt.Sprintf("SELECT * FROM spans JOIN (%s) scopes on spans.instrumentation_scope_id = scopes.id GROUP BY scopes.id", query)
+	case "span_attributes":
+		return fmt.Sprintf("SELECT * FROM spans JOIN (%s) span_attributes on spans.span_id = span_attributes.span_id GROUP BY spans.span_id", query)
+	case "spans":
+		return fmt.Sprintf("SELECT DISTINCT * FROM spans JOIN (%s) s on spans.span_id = s.span_id GROUP BY spans.span_id", query)
+	default:
+		return query
+	}
+}
+
+func covertFilterToSqliteQueryCondition(filter model.SearchFilter) string {
+	filterKey := fmt.Sprintf("%v", filter.KeyValueFilter.Key)
+	value := fmt.Sprintf("%v", filter.KeyValueFilter.Value)
+	switch filter.KeyValueFilter.Operator {
+	case spansquery.OPERATOR_EQUALS:
+		return fmt.Sprintf("%s = %s", filterKey, value)
+	case spansquery.OPERATOR_NOT_EQUALS:
+		return fmt.Sprintf("%s != %s", filterKey, value)
+	case spansquery.OPERATOR_GT:
+		return fmt.Sprintf("%s > %s", filterKey, value)
+	case spansquery.OPERATOR_GTE:
+		return fmt.Sprintf("%s >= %s", filterKey, value)
+	case spansquery.OPERATOR_LT:
+		return fmt.Sprintf("%s < %s", filterKey, value)
+	case spansquery.OPERATOR_LTE:
+		return fmt.Sprintf("%s <= %s", filterKey, value)
+	case spansquery.OPERATOR_EXISTS:
+		return fmt.Sprintf("%s IS NOT NULL", filterKey)
+	case spansquery.OPERATOR_NOT_EXISTS:
+		return fmt.Sprintf("%s IS NULL", filterKey)
+	case spansquery.OPERATOR_CONTAINS:
+		return fmt.Sprintf("%s LIKE '%%%s%%'", filterKey, value)
+	case spansquery.OPERATOR_NOT_CONTAINS:
+		return fmt.Sprintf("%s NOT LIKE '%%%s%%' OR %s IS NULL", filterKey, value, filterKey)
+	case spansquery.OPERATOR_IN:
+		return fmt.Sprintf("%s IN (%s)", filterKey, value)
+	case spansquery.OPERATOR_NOT_IN:
+		return fmt.Sprintf("%s NOT IN (%s) OR %s IS NULL", filterKey, value, filterKey)
+	default:
+		return ""
 	}
 }
