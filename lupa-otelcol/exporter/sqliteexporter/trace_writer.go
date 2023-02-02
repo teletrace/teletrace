@@ -108,7 +108,6 @@ func (exporter *sqliteTracesExporter) writeSpanEvents(
 	if spanEventSlice.Len() > 0 {
 		for i := 0; i < spanEventSlice.Len(); i++ {
 			spanEvent := spanEventSlice.At(i)
-			exporter.logger.Info("Writing span")
 			eventId, err := insertEvent(tx, spanEvent, spanId)
 			if err != nil || eventId == 0 {
 				exporter.logger.Error("could not insert event", zap.NamedError("reason", err))
