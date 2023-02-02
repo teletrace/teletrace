@@ -13,5 +13,5 @@ runs:
       shell: bash
       run: |
         echo ::set-output name=docker_compose_path::\
-        $(echo '{ "ElasticSearch": "deploy/docker-compose/docker-compose.yml",}' | jq -r 'to_entries[] | select(.key=="${{ inputs.db }}") | .value')
+        $(echo '{ "ElasticSearch": "deploy/docker-compose/docker-compose.yml"}' | jq -r 'to_entries[] | select(.key=="${{ inputs.db }}") | .value')
         docker-compose -f ${{ steps.vars.outputs.docker_compose_path }} up -d
