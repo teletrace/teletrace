@@ -12,8 +12,6 @@ runs:
     - id: run-lupa
       shell: bash
       run: |
-        echo  ${{ inputs.db }}
-        docker-compose -f ${{ fromJson('{ "ElasticSearch": "deploy/docker-compose/docker-compose.yml"}')[ ${{ inputs.db }} ] }} up -d
-        # if [[ ${{ inputs.db }} == "ElasticSearch" ]]; then
-        #   docker-compose -f deploy/docker-compose/docker-compose.yml up -d
-        # fi
+        echo ::set-output name=docker_compose_path::\
+        $(echo '{ "ElasticSearch": "deploy/docker-compose/docker-compose.yml",}' | jq -r 'to_entries[] | select(.key=="${{ inputs.db }}") | .value')
+        docker-compose -f ${{ steps.vars.outputs.docker_compose_path }} up -d
