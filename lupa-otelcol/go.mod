@@ -22,6 +22,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.1.0 // indirect
 	github.com/elastic/go-elasticsearch/v8 v8.4.0 // indirect
+	github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
@@ -96,6 +97,8 @@ require (
 )
 
 replace github.com/epsagon/lupa/model => ../model
+
+replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ./internal/modeltranslator
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./exporter/elasticsearchexporter
 

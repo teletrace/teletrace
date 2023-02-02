@@ -19,13 +19,13 @@ package elasticsearchexporter
 import (
 	"context"
 	"fmt"
+	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter/internal/modeltranslator"
 )
 
 type elasticsearchTracesExporter struct {

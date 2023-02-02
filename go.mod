@@ -35,6 +35,7 @@ require (
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000 // indirect
+	github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
@@ -138,6 +139,8 @@ require (
 replace github.com/epsagon/lupa/model => ./model
 
 replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
+
+replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ./lupa-otelcol/internal/modeltranslator
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./lupa-otelcol/exporter/elasticsearchexporter
 

@@ -19,7 +19,7 @@ package opensearchexporter
 import (
 	"context"
 	"fmt"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter/internal/modeltranslator"
+	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
 	"github.com/opensearch-project/opensearch-go"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
