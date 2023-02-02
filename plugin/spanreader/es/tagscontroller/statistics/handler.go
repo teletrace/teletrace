@@ -17,23 +17,20 @@
 package statistics
 
 import (
-	"oss-tracing/pkg/model"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
-
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
+	"oss-tracing/pkg/model/tagsquery/v1"
 )
 
 var TagStatisticToHandler = map[tagsquery.TagStatistic]StatisticHandler{
-	tagsquery.Min: &minHandler{},
-	tagsquery.Max: &maxHandler{},
-	tagsquery.Avg: &avgHandler{},
+	tagsquery.MIN: &minHandler{},
+	tagsquery.MAX: &maxHandler{},
+	tagsquery.AVG: &avgHandler{},
 	tagsquery.P99: &p99Handler{},
 }
 
 type StatisticHandler interface {
 	AddAggregationContainerBuilder(tag string, aggs map[string]*types.AggregationContainerBuilder)
-	GetValue(tag string, aggs map[string]any) (float64, bool)
+	GetValue(aggs map[string]any) (float64, bool)
 }
 
 type minHandler struct{}
@@ -42,14 +39,10 @@ func (h *minHandler) AddAggregationContainerBuilder(tag string, aggs map[string]
 	aggs["min"] = types.NewAggregationContainerBuilder().Min(types.NewMinAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (h *minHandler) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *minHandler) GetValue(aggs map[string]any) (float64, bool) {
 	value := aggs["min"].(map[string]any)["value"]
 	if value == nil {
 		return -1, false
-	}
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value.(float64))
 	}
 
 	return value.(float64), true
@@ -61,14 +54,10 @@ func (h *maxHandler) AddAggregationContainerBuilder(tag string, aggs map[string]
 	aggs["max"] = types.NewAggregationContainerBuilder().Max(types.NewMaxAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (h *maxHandler) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *maxHandler) GetValue(aggs map[string]any) (float64, bool) {
 	value := aggs["max"].(map[string]any)["value"]
 	if value == nil {
 		return -1, false
-	}
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value.(float64))
 	}
 
 	return value.(float64), true
@@ -80,14 +69,10 @@ func (h *avgHandler) AddAggregationContainerBuilder(tag string, aggs map[string]
 	aggs["avg"] = types.NewAggregationContainerBuilder().Avg(types.NewAverageAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (h *avgHandler) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *avgHandler) GetValue(aggs map[string]any) (float64, bool) {
 	value := aggs["avg"].(map[string]any)["value"]
 	if value == nil {
 		return -1, false
-	}
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value.(float64))
 	}
 
 	return value.(float64), true
@@ -99,14 +84,10 @@ func (h *p99Handler) AddAggregationContainerBuilder(tag string, aggs map[string]
 	aggs["percentiles"] = types.NewAggregationContainerBuilder().Percentiles(types.NewPercentilesAggregationBuilder().Field(types.Field(tag)))
 }
 
-func (h *p99Handler) GetValue(tag string, aggs map[string]any) (float64, bool) {
+func (h *p99Handler) GetValue(aggs map[string]any) (float64, bool) {
 	value := aggs["percentiles"].(map[string]any)["values"].(map[string]any)["99.0"]
 	if value == nil {
 		return -1, false
-	}
-
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		value = spanreaderes.MilliToNanoFloat64(value.(float64))
 	}
 
 	return value.(float64), true

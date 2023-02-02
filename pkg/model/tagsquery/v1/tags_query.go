@@ -47,9 +47,9 @@ type TagValuesResponse struct {
 type TagStatistic string
 
 const (
-	Min TagStatistic = "min"
-	Max TagStatistic = "max"
-	Avg TagStatistic = "avg"
+	MIN TagStatistic = "min"
+	MAX TagStatistic = "max"
+	AVG TagStatistic = "avg"
 	P99 TagStatistic = "p99"
 )
 
