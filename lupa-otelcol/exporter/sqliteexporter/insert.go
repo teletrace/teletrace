@@ -139,6 +139,43 @@ func insertEvent(tx *sql.Tx, event ptrace.SpanEvent, spanId string) (int64, erro
 	)
 }
 
+func insertEmptyEvent(tx *sql.Tx, spanId string) (int64, error) {
+	return performInsert(
+		tx,
+		"INSERT INTO events (span_id, name, time_unix_nano, dropped_attributes_count) VALUES (?, ?, ?, ?)",
+		spanId, nil, nil, nil,
+	)
+}
+
+func insertEmptyLink(tx *sql.Tx, spanId string) (int64, error) {
+	return performInsert(tx,
+		"INSERT INTO links (span_id, trace_state, dropped_attributes_count) VALUES (?, ?, ?)",
+		spanId, nil, nil,
+	)
+}
+
+func insertEmptyAttribute(tx *sql.Tx, attributeKind AttributeKind, id any) error {
+	var table string
+	var idColumn string
+	switch attributeKind {
+	case Event:
+		table = "event_attributes"
+		idColumn = "event_id"
+	case Link:
+		table = "link_attributes"
+		idColumn = "link_id"
+	default:
+		return fmt.Errorf("cannot insert empty attribute for given attribute kind")
+	}
+
+	_, err := performInsert(tx,
+		fmt.Sprintf("INSERT INTO %s (%s, key, value, type) VALUES (?, ?, ?, ?)", table, idColumn),
+		id, nil, nil, nil,
+	)
+
+	return err
+}
+
 func insertScope(tx *sql.Tx, scope pcommon.InstrumentationScope) (int64, error) {
 	return performInsert(tx,
 		"INSERT INTO scopes (name, version, dropped_attributes_count) VALUES (?, ?, ?)",
