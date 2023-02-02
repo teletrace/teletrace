@@ -118,7 +118,6 @@ func (r *tagsController) GetTagsValues(
 func (r *tagsController) GetTagsStatistics(
 	ctx context.Context, req tagsquery.TagStatisticsRequest, tag string,
 ) (*tagsquery.TagStatisticsResponse, error) {
-
 	return r.performGetTagsStatisticsRequest(ctx, req, tag, statistics.WithMilliSecTimestampAsNanoSec)
 }
 
@@ -149,7 +148,6 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 func (r *tagsController) parseTagStatisticsResponseBody(
 	body map[string]any, request tagsquery.TagStatisticsRequest, tag string, opts []statistics.TagStatisticParseOption,
 ) (*tagsquery.TagStatisticsResponse, error) {
-
 	result := &tagsquery.TagStatisticsResponse{
 		Statistics: make(map[tagsquery.TagStatistic]float64),
 	}

@@ -17,8 +17,9 @@
 package statistics
 
 import (
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"oss-tracing/pkg/model/tagsquery/v1"
+
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
 
 var TagStatisticToHandler = map[tagsquery.TagStatistic]StatisticHandler{
