@@ -233,11 +233,11 @@ func covertFilterToSqliteQueryCondition(filter model.SearchFilter) string {
 	case spansquery.OPERATOR_CONTAINS:
 		return fmt.Sprintf("%s LIKE '%%%s%%'", filterKey, value)
 	case spansquery.OPERATOR_NOT_CONTAINS:
-		return fmt.Sprintf("%s NOT LIKE '%%%s%%'", filterKey, value)
+		return fmt.Sprintf("%s NOT LIKE '%%%s%%' OR %s IS NULL", filterKey, value, filterKey)
 	case spansquery.OPERATOR_IN:
 		return fmt.Sprintf("%s IN (%s)", filterKey, value)
 	case spansquery.OPERATOR_NOT_IN:
-		return fmt.Sprintf("%s NOT IN (%s)", filterKey, value)
+		return fmt.Sprintf("%s NOT IN (%s) OR %s IS NULL", filterKey, value, filterKey)
 	default:
 		return ""
 	}
