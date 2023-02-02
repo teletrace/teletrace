@@ -165,7 +165,7 @@ func (r *tagsController) parseTagStatisticsResponseBody(
 		}
 	}
 
-	for k, _ := range result.Statistics {
+	for k := range result.Statistics {
 		for _, opt := range opts {
 			opt(tag, result.Statistics, k)
 		}
