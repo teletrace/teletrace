@@ -48,7 +48,7 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	stmt, err := sr.client.db.PrepareContext(ctx, searchQueryResponse.query)
+	stmt, err := sr.client.db.PrepareContext(ctx, searchQueryResponse.getQuery())
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare query: %v", err)
 	}
@@ -103,7 +103,7 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 		lastInternalSpanIndex := len(result.Spans) - 1
 		lastInternalSpan := result.Spans[lastInternalSpanIndex]
 		if lastInternalSpan != nil {
-			switch searchQueryResponse.sort {
+			switch searchQueryResponse.getSort() {
 			case "duration":
 				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.ExternalFields.DurationNano))
 			default:
@@ -166,14 +166,14 @@ func (sr *spanReader) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRe
 
 func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesRequest, tag string) (*tagsquery.TagValuesResponse, error) {
 	var currentTagValues []tagsquery.TagValueInfo
-	query, err := buildTagValuesQuery(r, tag)
+	tagValueQueryResponse, err := buildTagValuesQuery(r, tag)
 	if err != nil {
 		sr.logger.Error("failed to build tag values query for: "+tag, zap.Error(err))
 		return nil, err
 	}
-	stmt, err := sr.client.db.PrepareContext(ctx, query)
+	stmt, err := sr.client.db.PrepareContext(ctx, tagValueQueryResponse.getQuery())
 	if err != nil {
-		sr.logger.Error("failed to prepare query: "+query, zap.Error(err))
+		sr.logger.Error("failed to prepare query: "+tagValueQueryResponse.getQuery(), zap.Error(err))
 		return nil, err
 	}
 	defer stmt.Close()
