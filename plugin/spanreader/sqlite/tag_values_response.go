@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { theme } from "@/styles";
 
-export const styles = {
-  timeInput: {
-    width: "141px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  dateInput: {
-    width: "155px",
-    "& .MuiSvgIcon-root": { width: "16px", height: "16px" },
-  },
-  alert: {
-    paddingRight: "12px",
-    paddingLeft: "12px",
-    alignItems: "center",
-    backgroundColor: "rgba(239, 88, 84, 0.12)",
-    fontWeight: 400,
-    letterSpacing: 0.15,
-  },
-  timezone_typography: {
-    flex: "auto",
-    color: theme.palette.grey[300],
-    fontSize: "14px",
-  },
-};
+package sqlitespanreader
+
+type tagValueQueryResponse struct {
+	query string
+}
+
+func (tqr *tagValueQueryResponse) getQuery() string {
+	return tqr.query
+}
+
+func newTagValueQueryResponse(query string) *tagValueQueryResponse {
+	return &tagValueQueryResponse{
+		query: query,
+	}
+}

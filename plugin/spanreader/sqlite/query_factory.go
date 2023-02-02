@@ -29,71 +29,39 @@ const (
 	LimitOfSpanRecords = 200
 )
 
-type searchQueryResponse struct {
-	query string
-	sort  string
-}
-
-func newSearchQueryResponse() *searchQueryResponse {
-	return &searchQueryResponse{
-		query: "",
-		sort:  "",
-	}
-}
-
-type extractOrderResponse struct {
-	filter  model.SearchFilter
-	sortTag string
-}
-
-func (er *extractOrderResponse) getFilter() model.SearchFilter {
-	return er.filter
-}
-
-func (er *extractOrderResponse) getSortTag() string {
-	return er.sortTag
-}
-
 func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) { // create a query string from the request
+	var order string
+	var err error
+	var extractedNextToken *extractOrderResponse
 	searchQueryResponse := newSearchQueryResponse()
 	filters := createTimeframeFilters(r.Timeframe)
+	if r.Sort != nil {
+		extractedNextToken, err = extractNextToken(r.Sort, r.Metadata.NextToken)
+		if err != nil {
+			return nil, fmt.Errorf("failed to extract next token: %v", err)
+		}
+		order = fmt.Sprintf(" ORDER BY %s %s ", extractedNextToken.getSortTag(), extractedNextToken.getSortBy())
+		orderFilter := extractedNextToken.getFilter()
+		if orderFilter != nil {
+			filters = append(filters, *orderFilter)
+		}
+	}
 	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
-
-	queryBuilder := newQueryBuilder()
-	err := queryBuilder.addFilters(filters)
+	subQueryBuilder := newSubQueryBuilder("spans")
+	err = subQueryBuilder.addFiltersToSubQuery(filters)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add filters: %v", err)
 	}
-	queryBuilder.addOrders(r.Sort)
+	subQuery, err := subQueryBuilder.buildSubQuery()
 	if err != nil {
-		return nil, fmt.Errorf("failed to add orders: %v", err)
+		return nil, fmt.Errorf("failed to build sub query: %v", err)
 	}
-	sort, err := queryBuilder.getOrderFromRequest(r)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get order from request: %v", err)
-	}
-	searchQueryResponse.sort = sort
-	queryParams, err := queryBuilder.buildQueryParams()
-	if err != nil {
-		return nil, fmt.Errorf("failed to build query params: %v", err)
-	}
-
-	err = queryBuilder.addJoinConditions()
-	if err != nil {
-		return nil, fmt.Errorf("failed to add join conditions: %v", err)
-	}
-	if queryParams.filters != "" { // add WHERE clause if there are filters
-		queryParams.filters = fmt.Sprintf("WHERE %s", queryParams.filters)
-	}
-	if queryParams.orders != "" { // add ORDER BY clause if there are order by fields
-		queryParams.orders = fmt.Sprintf("ORDER BY %s", queryParams.orders)
-	}
-	searchQueryResponse.query = getSearchQuery(queryBuilder.buildTables(), queryParams.filters, queryParams.orders)
+	searchQueryResponse.query = getSearchQuery(subQuery, order)
 	return searchQueryResponse, nil
 }
 
-func getSearchQuery(tables string, filters string, orders string) string {
-	spanIdentifiersQuery := fmt.Sprintf("WITH initial_query as (SELECT spans.span_id, spans.instrumentation_scope_id FROM %s %s)", tables, filters) // base query for search query
+func getSearchQuery(subQuery string, orders string) string {
+	spanIdentifiersQuery := fmt.Sprintf("WITH initial_query as (%s)", subQuery) // base query for search query
 	internalSpanParamsQuery := " SELECT iq.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, " +
 		"spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, " +
 		"spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, " +
@@ -140,68 +108,37 @@ func getSearchQuery(tables string, filters string, orders string) string {
 	return spanIdentifiersQuery + internalSpanParamsQuery + spanSchemaJoinQuery + resourceAttributesJoinQuery + spanAttributesJoinQuery + scopesJoinQuery + eventsJoinQuery + LinksJoinQuery + groupQuery + orders + limitQuery
 }
 
-func extractNextToken(orders []spansquery.Sort, nextToken spansquery.ContinuationToken) (*extractOrderResponse, error) {
-	if len(orders) > 1 {
-		return nil, fmt.Errorf("expected a single sort field, but found: %v", len(orders))
-	}
-	order := orders[0]
-	sqliteOrder, err := newSqliteOrder(order)
+func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (*tagValueQueryResponse, error) {
+	sqliteFilter, err := newSqliteFilter(tag)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse order: %v", err)
+		return nil, fmt.Errorf("buildTagValuesQuery: illegal tag name: %s", tag)
 	}
-	var filter model.SearchFilter
-	switch sqliteOrder.orderBy {
-	case "DESC":
-		filter = newSearchFilter(fmt.Sprintf("%s.%s", sqliteOrder.getTableKey(), sqliteOrder.getTag()), spansquery.OPERATOR_LT, nextToken)
-	case "ASC":
-		filter = newSearchFilter(fmt.Sprintf("%s.%s", sqliteOrder.getTableKey(), sqliteOrder.getTag()), spansquery.OPERATOR_GT, nextToken)
-	}
-	if filter.KeyValueFilter == nil {
-		return nil, fmt.Errorf("failed to create filter from order: %v", order)
-	}
-	return &extractOrderResponse{
-		filter:  filter,
-		sortTag: sqliteOrder.getTag(),
-	}, nil
-}
-
-func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (string, error) {
-	prepareSqliteFilter, err := newSqliteFilter(tag)
+	subQueryBuilder := newSubQueryBuilder(sqliteFilter.getTableName())
+	err = subQueryBuilder.initTagsQuery(sqliteFilter, tag)
 	if err != nil {
-		return "", fmt.Errorf("illegal tag name: %s", tag)
+		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
 	}
-	queryBuilder := newQueryBuilder()
 	var filters []model.SearchFilter
 	if r.Timeframe != nil {
 		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
 	}
 	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
-	err = queryBuilder.addFilters(filters)
+
+	err = subQueryBuilder.addFiltersToSubQuery(filters)
 	if err != nil {
-		return "", err
+		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
 	}
-	queryBuilder.addTable(prepareSqliteFilter.getTableName())
-	if prepareSqliteFilter.isDynamicTable() {
-		queryBuilder.addDynamicTagValueField(prepareSqliteFilter.getTableName())
-		err := queryBuilder.addNewDynamicTagFilter(prepareSqliteFilter.getTableKey(), prepareSqliteFilter.getTag())
-		if err != nil {
-			return "", fmt.Errorf("illegal tag name: %s", tag)
-		}
-	} else {
-		if field, ok := sqliteFieldsMap[tag]; ok {
-			queryBuilder.addField(field)
-		} else {
-			return "", fmt.Errorf("illegal tag name: %s", tag)
-		}
-	}
-	queryParams, err := queryBuilder.buildQueryParams()
+	subQuery, err := subQueryBuilder.buildSubQuery()
 	if err != nil {
-		return "", fmt.Errorf("failed to build query params: %v", err)
+		return nil, fmt.Errorf("buildTagValuesQuery failed to build sub query: %w", err)
 	}
-	if queryParams.filters != "" { // add WHERE clause if there are filters
-		queryParams.filters = fmt.Sprintf("WHERE %s", queryParams.filters)
-	}
-	return fmt.Sprintf("SELECT %s, COUNT(*) FROM %s %s GROUP BY %s", queryParams.fields, queryParams.tables, queryParams.filters, queryParams.fields), nil
+	mainTableName := subQueryBuilder.getMainTableName()
+	tableKey := tableJoinKeyMap[mainTableName]
+	mainField := subQueryBuilder.getMainField()
+	mainCondition := subQueryBuilder.getMainCondition()
+	query := fmt.Sprintf("WITH subQuery AS (%s) SELECT %s, COUNT(*) FROM %s JOIN subQuery ON %s.%s = subQuery.%s %s GROUP BY %s", subQuery, mainField, mainTableName, mainTableName, tableKey, tableKey, mainCondition, mainField)
+	tagValueQueryResponse := newTagValueQueryResponse(query)
+	return tagValueQueryResponse, nil
 }
 
 func buildDynamicTagsQuery() string {
