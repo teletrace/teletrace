@@ -25,3 +25,5 @@ export const LUPA_SLACK_INVITE_LINK =
 
 export const LUPA_BUILD_INFO =
   process.env.REACT_APP_BUILD_INFO ?? "v0.0.0-devel";
+
+export const USAGE_ANALYTICS_URL = "https://analytics.lupaproject.io/";
