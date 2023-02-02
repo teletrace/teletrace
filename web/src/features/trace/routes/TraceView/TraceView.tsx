@@ -21,6 +21,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Params, useParams, useSearchParams } from "react-router-dom";
 
 import { Head } from "@/components/Head";
+import { eventType, sendEvent, useSystemId } from "@/features/usageAnalytics";
 import { InternalSpan } from "@/types/span";
 
 import { useTraceQuery } from "../../api/traceQuery";
@@ -42,7 +43,7 @@ function getRootSpan(spans: InternalSpan[]) {
 export const TraceView = () => {
   const { traceId } = useParams() as TraceViewUrlParams;
   const { isLoading, isError, data: trace } = useTraceQuery(traceId);
-
+  const { data: systemId } = useSystemId();
   const [initiallyFocusedSpanId, setInitiallyFocusedSpanId] = useState<
     string | null
   >(null);
@@ -50,6 +51,12 @@ export const TraceView = () => {
   const [selectedSpanId, setSelectedSpanId] = useState<string | null>(null);
 
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (systemId) {
+      sendEvent(systemId, eventType.trace_viewed, { traceId });
+    }
+  }, [systemId]);
 
   useEffect(() => {
     if (initiallyFocusedSpanId) {
