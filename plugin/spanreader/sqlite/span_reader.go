@@ -138,14 +138,14 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 	}
 	defer rows.Close()
 	for rows.Next() {
-		var tableKey, tagName, tagType string
-		err = rows.Scan(&tableKey, &tagName, &tagType)
+		sqliteTag := newSqliteTag()
+		err = rows.Scan(&sqliteTag.tableKey, &sqliteTag.tagName, &sqliteTag.tagType)
 		if err != nil {
 			sr.logger.Error("failed to get tag value", zap.Error(err))
 			continue
 		}
-		tag.Name = fmt.Sprintf("%s.%s", tableKey, tagName)
-		tag.Type = tagType
+		tag.Name = fmt.Sprintf("%s.%s", sqliteTag.getTableKey(), sqliteTag.getTagName())
+		tag.Type = sqliteTag.getTagType()
 		tags.Tags = append(tags.Tags, tag)
 	}
 	return &tags, nil
