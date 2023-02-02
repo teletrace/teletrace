@@ -127,6 +127,7 @@ func (api *API) tagsStatistics(c *gin.Context) {
 
 	if len(res.Statistics) != len(req.DesiredStatistics) {
 		respondWithError(http.StatusInternalServerError, fmt.Errorf("failed to get statistics for: %s", tag), c)
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
