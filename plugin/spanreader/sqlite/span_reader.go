@@ -19,6 +19,7 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
+
 	"oss-tracing/pkg/model/metadata/v1"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/pkg/spanreader"
@@ -142,6 +143,9 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 		err = rows.Scan(&sqliteTag.tableKey, &sqliteTag.tagName, &sqliteTag.tagType)
 		if err != nil {
 			sr.logger.Error("failed to get tag value", zap.Error(err))
+			continue
+		}
+		if sqliteTag.getTableKey() == "" || sqliteTag.getTagName() == "" { // skip null values tags
 			continue
 		}
 		tag.Name = fmt.Sprintf("%s.%s", sqliteTag.getTableKey(), sqliteTag.getTagName())
