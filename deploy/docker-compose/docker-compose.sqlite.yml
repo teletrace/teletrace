@@ -1,0 +1,27 @@
+version: "3"
+services:
+  lupa-api:
+    ports:
+      - "8080:8080"
+      - "4317:4317"
+      - "4318:4318"
+    command: ["--config=/etc/lupa-collector-config.yaml"]
+    image: epsagon/lupa:latest
+    build:
+      dockerfile: cmd/all-in-one/Dockerfile
+      context: ../../
+    volumes:
+      - ./all-in-one-config.yaml:/etc/lupa-collector-config.yaml
+    environment:
+      - SPANS_STORAGE_PLUGIN=sqlite
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+    networks:
+      - lupa
+
+networks:
+  lupa:
+    internal: false

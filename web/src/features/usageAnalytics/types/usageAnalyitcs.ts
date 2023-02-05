@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-const path = require("path");
-module.exports = {
-  webpack: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-    configure: {
-      resolve: {
-        fallback: {
-          http: false,
-          https: false,
-        },
-      },
-    },
-  },
+/** types used to send usage analytics to lupa backend */
+
+export const eventType: Record<string, string> = {
+  spans_table_viewed: "lupa.spans_table_viewed",
+  trace_viewed: "lupa.trace_viewed",
+};
+
+export type SystemIdResponse = {
+  value: string;
 };
