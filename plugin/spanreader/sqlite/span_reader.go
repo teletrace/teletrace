@@ -144,6 +144,9 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 			sr.logger.Error("failed to get tag value", zap.Error(err))
 			continue
 		}
+		if sqliteTag.getTableKey() == "" || sqliteTag.getTagName() == "" { // skip null values tags
+			continue
+		}
 		tag.Name = fmt.Sprintf("%s.%s", sqliteTag.getTableKey(), sqliteTag.getTagName())
 		tag.Type = sqliteTag.getTagType()
 		tags.Tags = append(tags.Tags, tag)
