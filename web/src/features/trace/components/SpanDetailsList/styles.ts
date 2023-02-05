@@ -19,4 +19,7 @@ export const styles = {
     width: "40%",
     overflow: "auto",
   },
+  skeleton: {
+    height: "60px",
+  },
 };

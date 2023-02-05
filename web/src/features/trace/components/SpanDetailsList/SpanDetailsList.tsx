@@ -58,9 +58,8 @@ export const SpanDetailsList = ({
   if (spanDetailsIsLoading) {
     return (
       <Box sx={styles.container}>
-        <Skeleton />
-        <Skeleton />
-        <Skeleton />
+        {spans &&
+          spans.map((_, i) => <Skeleton key={i} sx={styles.skeleton} />)}
       </Box>
     );
   }
