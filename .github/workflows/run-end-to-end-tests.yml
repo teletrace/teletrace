@@ -1,12 +1,12 @@
 name: E2E Tests
 on:
-  push:
+  pull_request:
     branches:
       - main
 jobs:
-  test:
-    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
-    name: Playwright tests
+  e2e-tests:
+    if: ${{ startsWith(github.head_ref, 'mergify/') }}
+    name: Run E2E tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,3 +37,16 @@ jobs:
           name: playwright-report
           path: ./tests/e2e/playwright/playwright-report/
           retention-days: 30
+
+  wait-e2e-tests:
+    name: Wait E2E Tests
+    if: ${{ startsWith(github.head_ref, 'mergify/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait E2E Tests
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          running-workflow-name: "Wait E2E Tests"
+          check-regexp: ^Run E2E tests.*$
