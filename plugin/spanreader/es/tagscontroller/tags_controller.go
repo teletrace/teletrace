@@ -22,14 +22,14 @@ import (
 	"fmt"
 	"oss-tracing/pkg/model/tagsquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
+	"oss-tracing/plugin/spanreader/es/tagscontroller/statistics"
 	"strings"
 
 	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
-	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
-
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
+	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
@@ -113,6 +113,83 @@ func (r *tagsController) GetTagsValues(
 	}
 
 	return r.parseGetTagsValuesResponseBody(body)
+}
+
+func (r *tagsController) GetTagsStatistics(
+	ctx context.Context, req tagsquery.TagStatisticsRequest, tag string,
+) (*tagsquery.TagStatisticsResponse, error) {
+	return r.performGetTagsStatisticsRequest(ctx, req, tag, statistics.WithMilliSecTimestampAsNanoSec())
+}
+
+func (r *tagsController) performGetTagsStatisticsRequest(
+	ctx context.Context,
+	request tagsquery.TagStatisticsRequest,
+	tag string,
+	opts ...statistics.TagStatisticParseOption,
+) (*tagsquery.TagStatisticsResponse, error) {
+	req, err := buildTagsStatisticsRequest(request, tag)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build query: %s", err)
+	}
+
+	res, err := r.client.API.Search().Request(req).Index(r.idx).Do(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to perform search: %s", err)
+	}
+
+	var body map[string]any
+	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
+	}
+
+	return r.parseTagStatisticsResponseBody(body, request, tag, opts)
+}
+
+func (r *tagsController) parseTagStatisticsResponseBody(
+	body map[string]any, request tagsquery.TagStatisticsRequest, tag string, opts []statistics.TagStatisticParseOption,
+) (*tagsquery.TagStatisticsResponse, error) {
+	result := &tagsquery.TagStatisticsResponse{
+		Statistics: make(map[tagsquery.TagStatistic]float64),
+	}
+
+	if aggregations, ok := body["aggregations"].(map[string]any); ok {
+		for _, ds := range request.DesiredStatistics {
+			h := statistics.TagStatisticToHandler[ds]
+			if v, exists := h.GetValue(aggregations); exists {
+				result.Statistics[ds] = v
+			} else {
+				return nil, fmt.Errorf("failed to get %s statistic for %s", ds, tag)
+			}
+		}
+	}
+
+	for k := range result.Statistics {
+		for _, opt := range opts {
+			opt(tag, result.Statistics, k)
+		}
+	}
+
+	return result, nil
+}
+
+func buildTagsStatisticsRequest(request tagsquery.TagStatisticsRequest, tag string) (*search.Request, error) {
+	builder := search.NewRequestBuilder()
+	timeframeFilters := spanreaderes.CreateTimeframeFilters(request.Timeframe)
+	filters := append(request.SearchFilters, timeframeFilters...)
+	_, err := spanreaderes.BuildQuery(builder, filters...)
+	if err != nil {
+		return nil, err
+	}
+	builder.Size(0)
+
+	aggs := make(map[string]*types.AggregationContainerBuilder)
+
+	for _, d := range request.DesiredStatistics {
+		h := statistics.TagStatisticToHandler[d]
+		h.AddAggregationContainerBuilder(tag, aggs)
+	}
+
+	return builder.Aggregations(aggs).Build(), nil
 }
 
 // Get elasticsearch mappings for specific tags

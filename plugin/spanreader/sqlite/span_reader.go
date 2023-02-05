@@ -213,6 +213,12 @@ func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdReq
 	return nil, fmt.Errorf("Not implemented method")
 }
 
+func (sr *spanReader) GetTagsStatistics(
+	ctx context.Context, r tagsquery.TagStatisticsRequest, tag string,
+) (*tagsquery.TagStatisticsResponse, error) {
+	return nil, fmt.Errorf("GetTagsStatistics is not yet implemented for sqlite plugin")
+}
+
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
 	client, err := newSqliteClient(logger, cfg)
 	if err != nil {

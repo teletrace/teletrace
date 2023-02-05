@@ -17,6 +17,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/metadata/v1"
@@ -37,9 +38,8 @@ func (api *API) search(c *gin.Context) {
 	if isValidationError {
 		return
 	}
-	if req.Timeframe.EndTime == 0 {
-		req.Timeframe.EndTime = uint64(time.Now().UnixNano())
-	}
+	handleTimeframe(&req.Timeframe)
+
 	res, err := (*api.spanReader).Search(c, req)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
@@ -91,15 +91,10 @@ func (api *API) tagsValues(c *gin.Context) {
 	if isValidationError {
 		return
 	}
+	handleTimeframe(req.Timeframe)
+
 	tag := c.Param("tag")
-	if req.Timeframe != nil {
-		if (req.Timeframe).EndTime == 0 {
-			req.Timeframe = &model.Timeframe{
-				StartTime: req.Timeframe.StartTime,
-				EndTime:   uint64(time.Now().UnixNano()),
-			}
-		}
-	}
+
 	res, err := (*api.spanReader).GetTagsValues(c, req, []string{tag})
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
@@ -112,6 +107,38 @@ func (api *API) tagsValues(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, tagValues)
+}
+
+func (api *API) tagsStatistics(c *gin.Context) {
+	var req tagsquery.TagStatisticsRequest
+	isValidationError := api.validateRequestBody(&req, c)
+	if isValidationError {
+		return
+	}
+	handleTimeframe(req.Timeframe)
+
+	tag := c.Param("tag")
+
+	res, err := (*api.spanReader).GetTagsStatistics(c, req, tag)
+	if err != nil {
+		respondWithError(http.StatusInternalServerError, err, c)
+		return
+	}
+
+	if len(res.Statistics) != len(req.DesiredStatistics) {
+		respondWithError(http.StatusInternalServerError, fmt.Errorf("failed to get statistics for tag: '%s'", tag), c)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func handleTimeframe(t *model.Timeframe) {
+	if t != nil {
+		if t.EndTime == 0 {
+			t.EndTime = uint64(time.Now().UnixNano())
+		}
+	}
 }
 
 func (api *API) getSystemId(c *gin.Context) {

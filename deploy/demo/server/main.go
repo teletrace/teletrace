@@ -130,7 +130,7 @@ func main() {
 		bag := baggage.FromContext(ctx)
 
 		// Sdding errors generation
-		if counter % errorProb == 0 {
+		if counter%errorProb == 0 {
 			defer span.End()
 			serverErr := fmt.Errorf("Internal Server Error - Randomized for Sampling")
 			http.Error(w, serverErr.Error(), http.StatusInternalServerError)
