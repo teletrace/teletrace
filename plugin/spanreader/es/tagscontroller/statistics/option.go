@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package tagscontroller
+package statistics
 
 import (
-	"context"
+	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/tagsquery/v1"
+	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 )
 
-type TagsController interface {
-	// Get all available tags
-	GetAvailableTags(ctx context.Context, request tagsquery.GetAvailableTagsRequest) (tagsquery.GetAvailableTagsResponse, error)
+type TagStatisticParseOption func(string, map[tagsquery.TagStatistic]float64, tagsquery.TagStatistic)
 
-	// Get the values and appearance count of all tags as specified by request.Tags
-	GetTagsValues(ctx context.Context, request tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
-
-	// Get statistics for numeric tag values
-	GetTagsStatistics(ctx context.Context, req tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error)
+func WithMilliSecTimestampAsNanoSec() TagStatisticParseOption {
+	return func(tag string, statistics map[tagsquery.TagStatistic]float64, s tagsquery.TagStatistic) {
+		if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
+			statistics[s] = spanreaderes.MilliToNanoFloat64(statistics[s])
+		}
+	}
 }
