@@ -30,5 +30,4 @@ func WithMilliSecTimestampAsNanoSec() TagStatisticParseOption {
 			statistics[s] = spanreaderes.MilliToNanoFloat64(statistics[s])
 		}
 	}
-
 }
