@@ -14,19 +14,5 @@
  * limitations under the License.
  */
 
-const path = require("path");
-module.exports = {
-  webpack: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-    configure: {
-      resolve: {
-        fallback: {
-          http: false,
-          https: false,
-        },
-      },
-    },
-  },
-};
+export * from "./api/usageAnalytics";
+export * from "./types/usageAnalyitcs";

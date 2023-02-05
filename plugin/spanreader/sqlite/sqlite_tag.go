@@ -14,19 +14,35 @@
  * limitations under the License.
  */
 
-const path = require("path");
-module.exports = {
-  webpack: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-    },
-    configure: {
-      resolve: {
-        fallback: {
-          http: false,
-          https: false,
-        },
-      },
-    },
-  },
-};
+package sqlitespanreader
+
+import "database/sql"
+
+type sqliteTag struct {
+	tableKey, tagName, tagType sql.NullString
+}
+
+func newSqliteTag() *sqliteTag {
+	return &sqliteTag{}
+}
+
+func (t *sqliteTag) getTableKey() string {
+	if t.tagType.Valid {
+		return t.tableKey.String
+	}
+	return ""
+}
+
+func (t *sqliteTag) getTagName() string {
+	if t.tagType.Valid {
+		return t.tagName.String
+	}
+	return ""
+}
+
+func (t *sqliteTag) getTagType() string {
+	if t.tagType.Valid {
+		return t.tagType.String
+	}
+	return ""
+}

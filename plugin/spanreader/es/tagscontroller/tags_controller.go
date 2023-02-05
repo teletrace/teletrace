@@ -118,7 +118,7 @@ func (r *tagsController) GetTagsValues(
 func (r *tagsController) GetTagsStatistics(
 	ctx context.Context, req tagsquery.TagStatisticsRequest, tag string,
 ) (*tagsquery.TagStatisticsResponse, error) {
-	return r.performGetTagsStatisticsRequest(ctx, req, tag, statistics.WithMilliSecTimestampAsNanoSec)
+	return r.performGetTagsStatisticsRequest(ctx, req, tag, statistics.WithMilliSecTimestampAsNanoSec())
 }
 
 func (r *tagsController) performGetTagsStatisticsRequest(

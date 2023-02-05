@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS events (
     span_id TEXT NOT NULL,
     time_unix_nano INTEGER,
     name TEXT,
-    dropped_attributes_count INTEGER NOT NULL,
+    dropped_attributes_count INTEGER,
     FOREIGN KEY(span_id) REFERENCES spans(span_id)
 );
 
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS links (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     span_id TEXT NOT NULL,
     trace_state TEXT,
-    dropped_attributes_count INTEGER NOT NULL,
+    dropped_attributes_count INTEGER,
     FOREIGN KEY(span_id) REFERENCES spans(span_id)
 );
 
@@ -71,17 +71,17 @@ CREATE TABLE IF NOT EXISTS resource_attributes (
 
 CREATE TABLE IF NOT EXISTS event_attributes (
     event_id INTEGER NOT NULL,
-    key TEXT NOT NULL,
+    key TEXT,
     value BLOB,
-    type TEXT NOT NULL,
+    type TEXT,
     FOREIGN KEY(event_id) REFERENCES events(id)
 );
 
 CREATE TABLE IF NOT EXISTS link_attributes (
     link_id INTEGER NOT NULL,
-    key TEXT NOT NULL,
+    key TEXT,
     value BLOB,
-    type TEXT NOT NULL,
+    type TEXT,
     FOREIGN KEY(link_id) REFERENCES links(id)
 );
 

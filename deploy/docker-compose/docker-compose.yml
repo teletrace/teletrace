@@ -30,8 +30,8 @@ services:
       - xpack.security.enabled=false
     volumes:
       - es_data:/usr/share/elasticsearch/data
-    expose:
-      - "9200"
+    ports:
+      - "9200:9200"
     networks:
       - lupa
     healthcheck:
