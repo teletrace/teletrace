@@ -26,7 +26,6 @@ interface SpanDetailsListProps {
   spans?: InternalSpan[];
   selectedSpanId: string | null;
   setSelectedSpanId: React.Dispatch<React.SetStateAction<string | null>>;
-
   spanDetailsIsLoading: boolean;
   setSpanDetailsIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -55,11 +54,12 @@ export const SpanDetailsList = ({
     const nextSelectedSpanId = expanded ? spanId : null;
     setSelectedSpanId(nextSelectedSpanId);
   };
+
   if (spanDetailsIsLoading) {
     return (
       <Box sx={styles.container}>
-        {spans &&
-          spans.map((_, i) => <Skeleton key={i} sx={styles.skeleton} />)}
+        {sortedSpans &&
+          sortedSpans.map((_, i) => <Skeleton key={i} sx={styles.skeleton} />)}
       </Box>
     );
   }
