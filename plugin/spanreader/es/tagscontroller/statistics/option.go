@@ -24,8 +24,11 @@ import (
 
 type TagStatisticParseOption func(string, map[tagsquery.TagStatistic]float64, tagsquery.TagStatistic)
 
-func WithMilliSecTimestampAsNanoSec(tag string, statistics map[tagsquery.TagStatistic]float64, s tagsquery.TagStatistic) {
-	if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
-		statistics[s] = spanreaderes.MilliToNanoFloat64(statistics[s])
+func WithMilliSecTimestampAsNanoSec() TagStatisticParseOption {
+	return func(tag string, statistics map[tagsquery.TagStatistic]float64, s tagsquery.TagStatistic) {
+		if spanreaderes.IsConvertedTimestamp(model.FilterKey(tag)) {
+			statistics[s] = spanreaderes.MilliToNanoFloat64(statistics[s])
+		}
 	}
+
 }
