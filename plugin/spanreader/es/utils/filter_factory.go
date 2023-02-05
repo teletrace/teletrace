@@ -115,11 +115,14 @@ func BuildFilters(b *types.QueryContainerBuilder, fs []model.KeyValueFilter, opt
 	), nil
 }
 
-func WithMiliSecTimestampAsNanoSec() FilterParseOption {
+func WithMilliSecTimestampAsNanoSec() FilterParseOption {
 	return func(f *model.KeyValueFilter) {
-		if f.Key == "span.startTimeUnixNano" || f.Key == "span.endTimeUnixNano" || f.Key == "externalFields.durationNano" {
-			if v, ok := (f.Value).(uint64); ok {
-				f.Value = v / (1000 * 1000)
+		if IsConvertedTimestamp(f.Key) {
+			switch castValue := f.Value.(type) {
+			case float64:
+				f.Value = NanoToMilliFloat64(castValue)
+			case uint64:
+				f.Value = NanoToMilliUint64(castValue)
 			}
 		}
 	}

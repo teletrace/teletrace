@@ -44,6 +44,33 @@ type TagValuesResponse struct {
 	Values   []TagValueInfo  `json:"values"`
 }
 
+type TagStatistic string
+
+const (
+	MIN TagStatistic = "min"
+	MAX TagStatistic = "max"
+	AVG TagStatistic = "avg"
+	P99 TagStatistic = "p99"
+)
+
+type TagStatisticsRequest struct {
+	Timeframe         *model.Timeframe     `json:"timeframe"`
+	SearchFilters     []model.SearchFilter `json:"filters"`
+	DesiredStatistics []TagStatistic       `json:"desiredStatistics"`
+}
+
+func (r *TagStatisticsRequest) Validate() error {
+	if r.Timeframe != nil && r.Timeframe.EndTime < r.Timeframe.StartTime && r.Timeframe.EndTime != 0 {
+		return fmt.Errorf("endTime cannot be smaller than startTime")
+	}
+
+	return nil
+}
+
+type TagStatisticsResponse struct {
+	Statistics map[TagStatistic]float64 `json:"statistics"`
+}
+
 type GetAvailableTagsRequest struct{}
 
 type GetAvailableTagsResponse struct {

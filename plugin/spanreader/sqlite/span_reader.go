@@ -144,6 +144,9 @@ func (sr *spanReader) GetAvailableTags(ctx context.Context, r tagsquery.GetAvail
 			sr.logger.Error("failed to get tag value", zap.Error(err))
 			continue
 		}
+		if sqliteTag.getTableKey() == "" || sqliteTag.getTagName() == "" { // skip null values tags
+			continue
+		}
 		tag.Name = fmt.Sprintf("%s.%s", sqliteTag.getTableKey(), sqliteTag.getTagName())
 		tag.Type = sqliteTag.getTagType()
 		tags.Tags = append(tags.Tags, tag)
@@ -211,6 +214,12 @@ func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdReq
 
 func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
 	return nil, fmt.Errorf("Not implemented method")
+}
+
+func (sr *spanReader) GetTagsStatistics(
+	ctx context.Context, r tagsquery.TagStatisticsRequest, tag string,
+) (*tagsquery.TagStatisticsResponse, error) {
+	return nil, fmt.Errorf("GetTagsStatistics is not yet implemented for sqlite plugin")
 }
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {

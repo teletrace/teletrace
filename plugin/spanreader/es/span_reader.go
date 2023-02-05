@@ -88,6 +88,15 @@ func (sr *spanReader) GetTagsValues(
 	return res, nil
 }
 
+func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error) {
+	res, err := sr.tagsController.GetTagsStatistics(ctx, r, tag)
+	if err != nil {
+		return nil, fmt.Errorf("GetTagsStatistics failed with error: %+v", err)
+	}
+
+	return res, nil
+}
+
 func (sr *spanReader) convertFilterKeysToKeywords(filters []model.SearchFilter) {
 	// Converting every filter key to Elasticsearch 'keyword' which guarantees that the string will be a single token
 	for _, f := range filters {
