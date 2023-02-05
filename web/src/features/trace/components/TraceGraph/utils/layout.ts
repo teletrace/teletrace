@@ -16,7 +16,7 @@
 
 import Elk, { ElkNode } from "elkjs";
 import { ElkExtendedEdge } from "elkjs/lib/elk-api";
-import { Edge, MarkerType, Node, Position } from "reactflow";
+import { Edge, MarkerType, Node } from "reactflow";
 
 import { InternalSpan, StatusCode } from "@/types/span";
 import { formatDurationAsMs } from "@/utils/format";
@@ -38,19 +38,14 @@ import {
   POSITION,
 } from "./global";
 
+const elk = new Elk();
+
 export const createGraphLayout = async (
   nodes: Node<NodeData>[],
   edges: Edge<EdgeData>[]
 ) => {
   const layerNodes: ElkNode[] = [];
   const layerEdges: ElkExtendedEdge[] = [];
-
-  const elk = new Elk({
-    defaultLayoutOptions: {
-      "elk.algorithm": "mrtree",
-      "elk.direction": "DOWN",
-    },
-  });
 
   nodes.forEach((node: Node<NodeData>) => {
     layerNodes.push({
@@ -67,16 +62,21 @@ export const createGraphLayout = async (
     });
   });
 
-  const newGraph = await elk.layout({
+  const graph = {
     id: "root",
+    layoutOptions: {
+      "elk.algorithm": "layered",
+      "elk.direction": "DOWN",
+      "considerModelOrder.strategy": "NODES_AND_EDGES",
+      "nodePlacement.strategy": "LINEAR_SEGMENTS",
+    },
     children: layerNodes,
     edges: layerEdges,
-  });
+  };
+  const newGraph = await elk.layout(graph);
 
   nodes.map((el: Node<NodeData>) => {
     const node = newGraph.children?.find((n) => n.id === el.id);
-    el.sourcePosition = Position.Top;
-    el.targetPosition = Position.Bottom;
     if (node?.x && node?.y && node?.width && node?.height) {
       el.position = {
         x: node.x - node.width / 2,
