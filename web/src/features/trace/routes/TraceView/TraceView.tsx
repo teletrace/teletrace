@@ -50,6 +50,8 @@ export const TraceView = () => {
   const [selectedSpanId, setSelectedSpanId] = useState<string | null>(null);
 
   const [searchParams] = useSearchParams();
+  const [spanDetailsIsLoading, setSpanDetailsIsLoading] =
+    useState<boolean>(true);
 
   useEffect(() => {
     if (initiallyFocusedSpanId) {
@@ -76,6 +78,7 @@ export const TraceView = () => {
   }, []);
 
   const handleGraphNodeClick = useCallback((node: GraphNode) => {
+    setSpanDetailsIsLoading(true);
     setSelectedNode(node);
     setSelectedSpanId(null);
   }, []);
@@ -133,6 +136,8 @@ export const TraceView = () => {
                 spans={selectedNode?.spans}
                 selectedSpanId={selectedSpanId}
                 setSelectedSpanId={setSelectedSpanId}
+                spanDetailsIsLoading={spanDetailsIsLoading}
+                setSpanDetailsIsLoading={setSpanDetailsIsLoading}
               />
             </Stack>
           </Stack>

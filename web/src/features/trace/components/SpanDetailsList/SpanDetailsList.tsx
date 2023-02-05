@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Box } from "@mui/material";
-import { useMemo } from "react";
+import { Box, Skeleton } from "@mui/material";
+import { useEffect, useMemo } from "react";
 
 import { InternalSpan } from "@/types/span";
 
@@ -26,6 +26,9 @@ interface SpanDetailsListProps {
   spans?: InternalSpan[];
   selectedSpanId: string | null;
   setSelectedSpanId: React.Dispatch<React.SetStateAction<string | null>>;
+
+  spanDetailsIsLoading: boolean;
+  setSpanDetailsIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function sortSpansByStartTime(spans: InternalSpan[]) {
@@ -38,16 +41,29 @@ export const SpanDetailsList = ({
   spans,
   selectedSpanId,
   setSelectedSpanId,
+  spanDetailsIsLoading,
+  setSpanDetailsIsLoading,
 }: SpanDetailsListProps) => {
   const sortedSpans = useMemo(
     () => spans && sortSpansByStartTime(spans),
     [spans]
   );
 
+  useEffect(() => setSpanDetailsIsLoading(false), [sortedSpans]);
+
   const handleChange = (spanId: string, expanded: boolean) => {
     const nextSelectedSpanId = expanded ? spanId : null;
     setSelectedSpanId(nextSelectedSpanId);
   };
+  if (spanDetailsIsLoading) {
+    return (
+      <Box sx={styles.container}>
+        <Skeleton />
+        <Skeleton />
+        <Skeleton />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={styles.container}>
