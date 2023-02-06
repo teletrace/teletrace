@@ -8,6 +8,7 @@ jobs:
     if: ${{ !startsWith(github.head_ref, 'mergify/') }}
     name: Run E2E tests
     runs-on: ubuntu-latest
+    needs: [wait-pr-ci]
     strategy:
       matrix:
         spans_storage_db_type: [ElasticSearch]
