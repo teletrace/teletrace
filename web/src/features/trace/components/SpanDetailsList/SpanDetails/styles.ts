@@ -22,10 +22,11 @@ export const styles = {
   accordionSummary: {
     flexDirection: "row-reverse",
     height: "60px",
-    padding: "8px 8px 8px 25px",
+    padding: "8px 25px",
     borderRadius: "8px",
     backgroundColor: "#1B1C21",
     "& .MuiAccordionSummary-content": {
+      width: "100%",
       margin: 0,
       alignItems: "center",
     },
@@ -77,6 +78,9 @@ export const styles = {
     width: "22px",
     height: "22px",
     margin: "0 17px 0 23px",
+  },
+  spanSummaryContainer: {
+    overflow: "hidden",
   },
   spanName: {
     fontWeight: "700",

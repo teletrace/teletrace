@@ -28,6 +28,7 @@ import {
 } from "@mui/material";
 import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 
+import { MiddleTruncatedTypography } from "@/components/Elements/MiddleTruncatedTypography";
 import { ResourceIcon } from "@/components/Elements/ResourceIcon";
 import { Attributes, InternalSpan, StatusCode } from "@/types/span";
 import { formatDurationAsMs, formatNanoAsMsDateTime } from "@/utils/format";
@@ -113,8 +114,11 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
             name={getSpanResourceType(span)}
             style={styles.spanIcon}
           />
-          <Stack>
-            <Typography sx={styles.spanName}>{span.span.name}</Typography>
+          <Stack sx={styles.spanSummaryContainer}>
+            <MiddleTruncatedTypography
+              sx={styles.spanName}
+              text={span.span.name}
+            />
             <Typography sx={styles.spanTimes}>
               {basicAttributes.duration}{" "}
               <Box component={"span"} sx={styles.spanTimesDivider}>
