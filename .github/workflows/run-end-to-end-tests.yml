@@ -23,7 +23,7 @@ jobs:
         run: npm install
       - name: Install apt dependencies
         run: |
-          # this step is required in order to successfully install the 
+          # this step is required in order to successfully install the
           # playwright browsers. For more information, see here:
           # https://github.com/actions/runner-images/issues/675#issuecomment-610483420
           sudo sed -i 's/azure\.//' /etc/apt/sources.list
