@@ -24,7 +24,8 @@ jobs:
       - name: Install apt dependencies
         run: |
           sudo sed -i 's/azure\.//' /etc/apt/sources.list
-          sudo apt-get update
+          sudo apt-get -o Acquire::Retries=30 update -q
+          sudo apt-get -o Acquire::Retries=30 install ocaml-findlib $COQ_PACKAGE -y --allow-unauthenticated
       - name: Install Playwright Browsers
         working-directory: ./tests/e2e/playwright
         run: npx playwright install --with-deps
