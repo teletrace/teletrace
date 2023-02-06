@@ -114,7 +114,6 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (*tagValueQue
 		return nil, fmt.Errorf("buildTagValuesQuery: illegal tag name: %s", tag)
 	}
 	subQueryBuilder := newSubQueryBuilder(sqliteFilter.getTableName())
-	err = subQueryBuilder.initTagsQuery(sqliteFilter, tag)
 	if err != nil {
 		return nil, fmt.Errorf("buildTagValuesQuery: %w", err)
 	}
@@ -139,6 +138,56 @@ func buildTagValuesQuery(r tagsquery.TagValuesRequest, tag string) (*tagValueQue
 	query := fmt.Sprintf("WITH subQuery AS (%s) SELECT %s, COUNT(*) FROM %s JOIN subQuery ON %s.%s = subQuery.%s %s GROUP BY %s", subQuery, mainField, mainTableName, mainTableName, tableKey, tableKey, mainCondition, mainField)
 	tagValueQueryResponse := newTagValueQueryResponse(query)
 	return tagValueQueryResponse, nil
+}
+
+func buildTagStatisticSubQuery(r tagsquery.TagStatisticsRequest, tag string) (*string, error) {
+	if _, ok := sqliteFieldsMap[tag]; ok {
+		tag = sqliteFieldsMap[tag]
+	}
+	sqliteFilter, err := newSqliteFilter(tag)
+	if err != nil {
+		return nil, fmt.Errorf("buildTagStatisticQuery: illegal tag name: %s", tag)
+	}
+	subQueryBuilder := newSubQueryBuilder(sqliteFilter.getTableName())
+	var filters []model.SearchFilter
+	if r.Timeframe != nil {
+		filters = append(filters, createTimeframeFilters(*r.Timeframe)...)
+	}
+	filters = append(filters, convertFiltersValues(r.SearchFilters)...)
+
+	err = subQueryBuilder.addFiltersToSubQuery(filters)
+	if err != nil {
+		return nil, fmt.Errorf("buildTagStatisticQuery: %w", err)
+	}
+
+	return nil, nil
+}
+
+func buildTagStatisticQuery(
+	s tagsquery.TagStatistic, column string, table string, condition string) (*tagStatisticsQueryResponse, error) {
+	switch s {
+	case tagsquery.MIN:
+		return newTagStatisticsQueryResponse(
+			fmt.Sprintf("SELECT MIN(%s) as min FROM %s %s", column, table, condition),
+		), nil
+	case tagsquery.MAX:
+		return newTagStatisticsQueryResponse(
+			fmt.Sprintf("SELECT MAX(%s) as max FROM %s %s", column, table, condition),
+		), nil
+	case tagsquery.AVG:
+		return newTagStatisticsQueryResponse(
+			fmt.Sprintf("WITH subQuery AS (%s) SELECT AVG(%s) as avg FROM %s %s", column, table, condition),
+		), nil
+	case tagsquery.P99:
+		return newTagStatisticsQueryResponse(
+			fmt.Sprintf(`
+				WITH CTE AS (SELECT %s, NTILE(100) OVER (ORDER BY %s) AS tile FROM %s)
+				SELECT (SELECT %s FRx§OM CTE WHERE tile = 99) AS p99 FROM %s %s
+			`, column, column, table, column, table, condition),
+		), nil
+	}
+
+	return nil, fmt.Errorf("could not build query for statistic: %s", s)
 }
 
 func buildDynamicTagsQuery() string {

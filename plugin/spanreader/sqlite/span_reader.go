@@ -216,10 +216,52 @@ func (sr *spanReader) SetSystemId(ctx context.Context, r metadata.SetSystemIdReq
 	return nil, fmt.Errorf("Not implemented method")
 }
 
-func (sr *spanReader) GetTagsStatistics(
-	ctx context.Context, r tagsquery.TagStatisticsRequest, tag string,
-) (*tagsquery.TagStatisticsResponse, error) {
-	return nil, fmt.Errorf("GetTagsStatistics is not yet implemented for sqlite plugin")
+func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error) {
+	res := tagsquery.TagStatisticsResponse{Statistics: map[tagsquery.TagStatistic]float64{}}
+
+	tx, err := sr.client.db.Begin()
+	if err != nil {
+		sr.logger.Error("failed to begin tag statistics transaction", zap.Error(err))
+		return nil, err
+	}
+
+	sq, err := buildTagStatisticSubQuery(r, tag)
+	for _, statistic := range r.DesiredStatistics {
+		query, err := buildTagStatisticQuery(statistic, sq.mainField, sq.mainTableName, sq.mainCondition)
+		if err != nil {
+			sr.logger.Error("failed to build tag statistics query for: "+tag, zap.Error(err))
+			return nil, err
+		}
+
+		stmt, err := tx.Prepare(query.getQuery())
+		if err != nil {
+			sr.logger.Error("failed to prepare query: "+query.getQuery(), zap.Error(err))
+			return nil, err
+		}
+
+		rows, err := stmt.Query()
+		if err != nil {
+			return nil, fmt.Errorf("could not execute statement: %v\n", err)
+		}
+
+		defer rows.Close()
+		for rows.Next() {
+			var value float64
+			if err = rows.Scan(&value); err != nil {
+				sr.logger.Error(fmt.Sprintf("failed to extract statistic: %s", statistic), zap.Error(err))
+				continue
+			}
+
+			res.Statistics[statistic] = value
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		sr.logger.Error("failed to commit tag statistics transaction", zap.Error(err))
+		return nil, err
+	}
+
+	return &res, err
 }
 
 func NewSqliteSpanReader(ctx context.Context, logger *zap.Logger, cfg SqliteConfig) (spanreader.SpanReader, error) {
