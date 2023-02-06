@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   e2e-tests:
-    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
+    if: ${{ startsWith(github.head_ref, 'mergify/') }}
     name: Run E2E tests
     runs-on: ubuntu-latest
     strategy:
@@ -40,7 +40,7 @@ jobs:
 
   wait-e2e-tests:
     name: Wait E2E Tests
-    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
+    if: ${{ startsWith(github.head_ref, 'mergify/') }}
     runs-on: ubuntu-latest
     steps:
       - name: Wait E2E Tests
