@@ -8,7 +8,7 @@ on:
 jobs:
   wait-pr-ci:
     name: Wait for CI
-    if: !startsWith(github.head_ref, 'mergify/')
+    if: ${{ !startsWith(github.head_ref, 'mergify/') }}
     runs-on: ubuntu-latest
     steps:
       - name: Wait PR CI to finish
