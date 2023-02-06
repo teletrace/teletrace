@@ -127,7 +127,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
   };
 
   const handleFilters = () => {
-    if (absoluteMin && absoluteMax) {
+    if (absoluteMin !== undefined && absoluteMax !== undefined) {
       if (sliderValues[0] < absoluteMin || sliderValues[0] > absoluteMax) {
         setSliderValues([absoluteMin, sliderValues[1]]);
         deleteGteIfExists();
@@ -144,6 +144,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
         if (sliderValues[0] === absoluteMin) {
           deleteGteIfExists();
         } else {
+          console.log("Creating gte")
           filtersState.createOrUpdateFilter({
             keyValueFilter: {
               key: tag,
@@ -156,6 +157,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
         if (sliderValues[1] === absoluteMax) {
           deleteLteIfExists();
         } else {
+          console.log("Creating lte")
           filtersState.createOrUpdateFilter({
             keyValueFilter: {
               key: tag,
