@@ -8,7 +8,7 @@ on:
 jobs:
   wait-pr-ci:
     name: Wait for CI
-    if: startsWith(github.head_ref, 'mergify/')
+    if: !startsWith(github.head_ref, 'mergify/')
     runs-on: ubuntu-latest
     steps:
       - name: Wait PR CI to finish
@@ -18,4 +18,4 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           running-workflow-name: "Wait PR CI"
           # Captures required CI job names, including dynamic matrix jobs
-          check-regexp: ^Validate PR Title$|^Lint$
+          check-regexp: ^Lint$|^Golang Lint$|^Validate (PR Title|License Header|pre-commit hooks)$|^Golang Unit Tests.*$
