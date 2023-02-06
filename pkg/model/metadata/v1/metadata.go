@@ -27,3 +27,8 @@ type SetSystemIdRequest struct {
 }
 
 type SetSystemIdResponse struct{}
+
+type GetSystemInfoResponse struct {
+	SystemId              string `json:"systemId"`
+	UsageReportingEnabled bool   `json:"usageReportingEnabled"`
+}
