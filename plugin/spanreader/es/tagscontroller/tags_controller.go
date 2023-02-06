@@ -157,8 +157,6 @@ func (r *tagsController) parseTagStatisticsResponseBody(
 			h := statistics.TagStatisticToHandler[ds]
 			if v, exists := h.GetValue(aggregations); exists {
 				result.Statistics[ds] = v
-			} else {
-				return nil, fmt.Errorf("failed to get %s statistic for %s", ds, tag)
 			}
 		}
 	}

@@ -17,7 +17,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/metadata/v1"
@@ -122,11 +121,6 @@ func (api *API) tagsStatistics(c *gin.Context) {
 	res, err := (*api.spanReader).GetTagsStatistics(c, req, tag)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
-		return
-	}
-
-	if len(res.Statistics) != len(req.DesiredStatistics) {
-		respondWithError(http.StatusInternalServerError, fmt.Errorf("failed to get statistics for tag: '%s'", tag), c)
 		return
 	}
 
