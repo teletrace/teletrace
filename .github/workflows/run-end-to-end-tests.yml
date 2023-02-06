@@ -21,6 +21,13 @@ jobs:
       - name: Install dependencies
         working-directory: ./tests/e2e/playwright
         run: npm install
+      - name: Install apt dependencies
+        # this step is required in order to successfully install the
+        # playwright browsers. For more information, see here:
+        # https://github.com/actions/runner-images/issues/675#issuecomment-610483420
+        run: |
+          sudo sed -i 's/azure\.//' /etc/apt/sources.list
+          sudo apt-get -o Acquire::Retries=30 update -q
       - name: Install Playwright Browsers
         working-directory: ./tests/e2e/playwright
         run: npx playwright install --with-deps
