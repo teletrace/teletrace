@@ -143,3 +143,16 @@ func (api *API) getSystemId(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res)
 }
+
+func (api *API) getSystemInfo(c *gin.Context) {
+	res, err := (*api.spanReader).GetSystemId(c, metadata.GetSystemIdRequest{})
+	if err != nil {
+		respondWithError(http.StatusInternalServerError, err, c)
+		return
+	}
+
+	c.JSON(http.StatusOK, metadata.GetSystemInfoResponse{
+		SystemId:              res.Value,
+		UsageReportingEnabled: api.config.AllowUsageReporting,
+	})
+}
