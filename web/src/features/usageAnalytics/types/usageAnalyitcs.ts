@@ -21,7 +21,7 @@ export const eventType: Record<string, string> = {
   trace_viewed: "lupa.trace_viewed",
 };
 
-export type SystemIdResponse = {
+export type SystemInfoResponse = {
   systemId: string;
   usageReportingEnabled: boolean;
 };

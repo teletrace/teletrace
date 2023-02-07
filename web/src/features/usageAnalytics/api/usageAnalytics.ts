@@ -21,9 +21,9 @@ import { CloudEvent, HTTP } from "cloudevents";
 import { USAGE_ANALYTICS_URL } from "@/config";
 import { axiosClient } from "@/libs/axios";
 
-import { SystemIdResponse } from "../types/usageAnalyitcs";
+import { SystemInfoResponse } from "../types/usageAnalyitcs";
 
-const fetchSystemInfo = async (): Promise<SystemIdResponse> =>
+const fetchSystemInfo = async (): Promise<SystemInfoResponse> =>
   await axiosClient.get("/v1/system-info");
 
 export const useSystemInfo = () =>
