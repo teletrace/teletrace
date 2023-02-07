@@ -400,6 +400,9 @@ theme = createTheme(theme, {
       styleOverrides: {
         arrow: {
           color: theme.palette.grey[800],
+          "&::before": {
+            border: "1px solid #0B0B0D",
+          },
         },
         tooltip: {
           fontSize: "0.75rem",
@@ -407,6 +410,9 @@ theme = createTheme(theme, {
           borderRadius: "4px",
           color: theme.palette.grey[300],
           padding: "16px",
+          border: "1px solid #0B0B0D",
+          boxShadow:
+            "0px 11px 15px rgba(0, 0, 0, 0.2), 0px 9px 46px rgba(0, 0, 0, 0.12), 0px 24px 38px rgba(0, 0, 0, 0.14)",
         },
       },
     },
