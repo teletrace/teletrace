@@ -21,17 +21,17 @@ import { CloudEvent, HTTP } from "cloudevents";
 import { USAGE_ANALYTICS_URL } from "@/config";
 import { axiosClient } from "@/libs/axios";
 
-import { SystemIdResponse } from "../types/usageAnalyitcs";
+import { SystemInfoResponse } from "../types/usageAnalyitcs";
 
-const fetchSystemId = async (): Promise<SystemIdResponse> =>
-  await axiosClient.get("/v1/system-id");
+const fetchSystemInfo = async (): Promise<SystemInfoResponse> =>
+  await axiosClient.get("/v1/system-info");
 
-export const useSystemId = () =>
+export const useSystemInfo = () =>
   useQuery({
-    queryKey: ["systemId"],
+    queryKey: ["systemInfo"],
     queryFn: async () => {
-      const data = await fetchSystemId();
-      return data?.value;
+      const data = await fetchSystemInfo();
+      return data;
     },
   });
 
