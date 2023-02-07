@@ -22,5 +22,6 @@ export const eventType: Record<string, string> = {
 };
 
 export type SystemIdResponse = {
-  value: string;
+  systemId: string;
+  usageReportingEnabled: boolean;
 };
