@@ -72,9 +72,9 @@ export const TagSidebar = () => {
     },
   ];
 
-  const rangeSliderSupported = window.localStorage.getItem("rangeSliderSupported") === "true";
-  if (!rangeSliderSupported) {
-    tags = tags.filter(tagOption => tagOption.selectorType === SelectorType.RangeSlider);
+  const tagStatisticsSupported = window.localStorage.getItem("tagStatisticsSupported") === "true";
+  if (!tagStatisticsSupported) {
+    tags = tags.filter(tagOption => tagOption.selectorType !== SelectorType.RangeSlider);
   }
 
   return (
