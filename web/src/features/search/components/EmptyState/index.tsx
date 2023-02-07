@@ -1,0 +1,123 @@
+import { Info, Refresh } from "@mui/icons-material";
+import {
+  Alert,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+
+import { useHasSpans } from "../../api/spanQuery";
+import { LinkButton } from "./LinkButton";
+import { ReactComponent as RocketIcon } from "./rocket_icon.svg";
+
+export const EmptyState = () => {
+  const { refetch } = useHasSpans();
+
+  return (
+    <Stack style={{ width: "100%" }} spacing="20px">
+      <Stack direction="row" spacing={1}>
+        <Paper
+          variant="outlined"
+          sx={{
+            height: 56,
+            width: 56,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <RocketIcon />
+        </Paper>
+
+        <div>
+          <Typography
+            sx={{
+              fontSize: 20,
+              lineHeight: "28px",
+              fontWeight: 600,
+              marginBottom: "4px",
+            }}
+          >
+            Start sending data to Lupa
+          </Typography>
+          <Typography color="text.secondary">
+            Lupa is leveraging OpenTelemetry as an open-source standard for
+            collecting high-quality telemetry data from microservices.
+          </Typography>
+        </div>
+      </Stack>
+
+      <Stack direction="row" spacing={3}>
+        <Card variant="outlined" sx={{ flex: 1 }}>
+          <CardContent sx={{ padding: "20px", paddingBottom: 0 }}>
+            <Typography variant="h5" sx={{ fontSize: 16, fontWeight: 600 }}>
+              Already using OpenTelemetry?
+            </Typography>
+            <Typography color="text.secondary">
+              If you already have OpenTelemetry setup on your applications, you
+              can configure it to send data to Lupa.
+            </Typography>
+          </CardContent>
+
+          <CardActions sx={{ padding: "20px", paddingTop: "16px" }}>
+            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry%20Collector">
+              OpenTelemetry Collector
+            </LinkButton>
+          </CardActions>
+        </Card>
+
+        <Card variant="outlined" sx={{ flex: 1 }}>
+          <CardContent sx={{ padding: "20px", paddingBottom: 0 }}>
+            <Typography variant="h5" sx={{ fontSize: 16, fontWeight: 600 }}>
+              Don’t have OpenTelemetry yet?
+            </Typography>
+            <Typography color="text.secondary">
+              You can send traces to Lupa directly from your code using an OTLP
+              Trace Exporter.
+            </Typography>
+          </CardContent>
+
+          <CardActions sx={{ padding: "20px", paddingTop: "16px" }}>
+            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/Java/">
+              Java
+            </LinkButton>
+            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/JavaScript/">
+              JavaScript
+            </LinkButton>
+            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/Python/">
+              Python
+            </LinkButton>
+            <LinkButton href="https://opentelemetry.io/docs/instrumentation/go/">
+              Go
+            </LinkButton>
+            <LinkButton href="https://opentelemetry.io/docs/instrumentation/">
+              Other
+            </LinkButton>
+          </CardActions>
+        </Card>
+      </Stack>
+
+      <Alert
+        severity="info"
+        variant="outlined"
+        icon={<Info />}
+        action={
+          <Button onClick={() => refetch()} startIcon={<Refresh />}>
+            Refresh
+          </Button>
+        }
+        sx={{
+          color: "white",
+          borderColor: "#548CFF",
+          backgroundColor: "rgba(84, 140, 255, 0.12)",
+        }}
+      >
+        Once you will finish, please refresh the page to see your spans
+      </Alert>
+    </Stack>
+  );
+};
