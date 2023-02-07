@@ -33,7 +33,7 @@ export enum SelectorType {
 }
 
 export const TagSidebar = () => {
-  const tags: Array<TagOptions> = [
+  let tags: Array<TagOptions> = [
     {
       title: "Status",
       tag: "span.status.code",
@@ -71,6 +71,11 @@ export const TagSidebar = () => {
       selectorType: SelectorType.ValuesSelector,
     },
   ];
+
+  const rangeSliderSupported = window.localStorage.getItem("rangeSliderSupported") === "true";
+  if (!rangeSliderSupported) {
+    tags = tags.filter(tagOption => tagOption.selectorType === SelectorType.RangeSlider);
+  }
 
   return (
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
