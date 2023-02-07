@@ -57,14 +57,14 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
   const { data, isFetching, isError } = useTagStatistics(tag, {
     filters: filtersState.filters,
     timeframe: timeframeState.currentTimeframe,
-    desiredStatistics: [TagStatistic.Min, TagStatistic.Max],
+    desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
   });
 
   const initializeSliderValues = () => {
     if (sliderValues.length === 0 && data) {
       if (Object.keys(data.statistics).length !== 0) {
-        const min = data?.statistics[TagStatistic.Min];
-        const max = data?.statistics[TagStatistic.Max];
+        const min = data?.statistics[TagStatistic.MIN];
+        const max = data?.statistics[TagStatistic.MAX];
         setSliderValues([min, max]);
         setAbsoluteMin(min);
         setAbsoluteMax(max);
@@ -75,8 +75,8 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
 
   const discoverNewAbsoluteMinMax = () => {
     if (data) {
-      const min = data?.statistics[TagStatistic.Min];
-      const max = data?.statistics[TagStatistic.Max];
+      const min = data?.statistics[TagStatistic.MIN];
+      const max = data?.statistics[TagStatistic.MAX];
       if (absoluteMin && min < absoluteMin) {
         setAbsoluteMin(min);
       }

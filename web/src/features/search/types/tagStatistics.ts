@@ -17,9 +17,9 @@
 import { SearchFilter, Timeframe } from "./common";
 
 export enum TagStatistic {
-  Min = "min",
-  Max = "max",
-  Avg = "avg",
+  MIN = "min",
+  MAX = "max",
+  AVG = "avg",
   P99 = "p99",
 }
 
