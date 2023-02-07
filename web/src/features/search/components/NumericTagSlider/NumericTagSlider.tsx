@@ -144,7 +144,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
         if (sliderValues[0] === absoluteMin) {
           deleteGteIfExists();
         } else {
-          console.log("Creating gte")
+          console.log("Creating gte");
           filtersState.createOrUpdateFilter({
             keyValueFilter: {
               key: tag,
@@ -157,7 +157,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
         if (sliderValues[1] === absoluteMax) {
           deleteLteIfExists();
         } else {
-          console.log("Creating lte")
+          console.log("Creating lte");
           filtersState.createOrUpdateFilter({
             keyValueFilter: {
               key: tag,
