@@ -53,12 +53,13 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
 
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState)
 
   const { data, isFetching, isError } = useTagStatistics(tag, {
     filters: filtersState.filters,
     timeframe: timeframeState.currentTimeframe,
     desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
-  });
+  }, liveSpansState.intervalInMillis);
 
   const initializeSliderValues = () => {
     if (sliderValues.length === 0 && data) {
@@ -175,6 +176,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
   const getTextBoxValue = (v: number) =>
     sliderValues.length > 0 ? convertDisplayValue(v, nanoToMs) : "-";
 
+  const disableSlider = !liveSpansState.isOn && (sliderValues.length === 0 || isFetching);
   return (
     <div>
       <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
@@ -220,7 +222,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
                   <TextField
                     sx={styles.rangeInput}
                     value={getTextBoxValue(sliderValues[0])}
-                    disabled={sliderValues.length === 0 || isFetching}
+                    disabled={disableSlider}
                     onChange={(event) => {
                       if (isNumeric(event.target.value)) {
                         setSliderValues([
@@ -258,7 +260,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
                   <TextField
                     sx={styles.rangeInput}
                     value={getTextBoxValue(sliderValues[1])}
-                    disabled={sliderValues.length === 0 || isFetching}
+                    disabled={disableSlider}
                     onChange={(event) => {
                       if (isNumeric(event.target.value)) {
                         setSliderValues([
@@ -294,7 +296,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
                     ? undefined
                     : convertDisplayValue(absoluteMax, nanoToMs)
                 }
-                disabled={sliderValues.length === 0 || isFetching}
+                disabled={disableSlider}
                 onChange={(_, newSliderValue: number | number[]) => {
                   const sliderValuesAsNano = (newSliderValue as number[]).map(
                     (v) => convertDisplayValue(v, msToNano)
