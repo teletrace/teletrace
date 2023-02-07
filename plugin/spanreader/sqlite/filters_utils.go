@@ -114,6 +114,8 @@ func convertFiltersValues(filters []model.SearchFilter) []model.SearchFilter {
 			} else {
 				newFilterValue = fmt.Sprintf("'%s'", str)
 			}
+		} else if value, ok := filter.KeyValueFilter.Value.(float64); ok {
+			newFilterValue = fmt.Sprintf("%v", value)
 		} else {
 			continue
 		}
