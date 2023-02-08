@@ -91,7 +91,7 @@ export function RefreshButton() {
     <Stack direction="row" sx={styles.container}>
       <Stack direction="row" sx={styles.iconWrapper}>
         {liveSpansState.isOn ? (
-          <Icon>
+          <Icon sx={styles.liveSpansIconWrapper}>
             <Brightness1 sx={styles.liveSpansIcon} />
           </Icon>
         ) : isRefreshing ? (
@@ -99,7 +99,7 @@ export function RefreshButton() {
             <CircularProgress sx={styles.refreshingIcon} />
           </Icon>
         ) : (
-          <IconButton onClick={handleRefresh}>
+          <IconButton onClick={handleRefresh} sx={styles.refreshIcon}>
             <Refresh />
           </IconButton>
         )}
