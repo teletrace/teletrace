@@ -85,8 +85,12 @@ export const TraceView = () => {
   }, []);
 
   const handleGraphNodeClick = useCallback((node: GraphNode) => {
-    setSpanDetailsIsLoading(true);
-    setSelectedNode(node);
+    setSelectedNode((prevState) => {
+      if (prevState?.id !== node.id) {
+        setSpanDetailsIsLoading(true);
+      }
+      return node;
+    });
     setSelectedSpanId(null);
   }, []);
 
@@ -144,8 +148,8 @@ export const TraceView = () => {
                 spans={selectedNode?.spans}
                 selectedSpanId={selectedSpanId}
                 setSelectedSpanId={setSelectedSpanId}
-                spanDetailsIsLoading={spanDetailsIsLoading}
-                setSpanDetailsIsLoading={setSpanDetailsIsLoading}
+                isLoading={spanDetailsIsLoading}
+                setIsLoading={setSpanDetailsIsLoading}
               />
             </Stack>
           </Stack>

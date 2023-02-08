@@ -26,8 +26,8 @@ interface SpanDetailsListProps {
   spans?: InternalSpan[];
   selectedSpanId: string | null;
   setSelectedSpanId: React.Dispatch<React.SetStateAction<string | null>>;
-  spanDetailsIsLoading: boolean;
-  setSpanDetailsIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function sortSpansByStartTime(spans: InternalSpan[]) {
@@ -40,26 +40,34 @@ export const SpanDetailsList = ({
   spans,
   selectedSpanId,
   setSelectedSpanId,
-  spanDetailsIsLoading,
-  setSpanDetailsIsLoading,
+  isLoading,
+  setIsLoading,
 }: SpanDetailsListProps) => {
   const sortedSpans = useMemo(
     () => spans && sortSpansByStartTime(spans),
     [spans]
   );
 
-  useEffect(() => setSpanDetailsIsLoading(false), [sortedSpans]);
+  useEffect(() => {
+    setIsLoading(false);
+  }, [sortedSpans, setIsLoading]);
 
   const handleChange = (spanId: string, expanded: boolean) => {
     const nextSelectedSpanId = expanded ? spanId : null;
     setSelectedSpanId(nextSelectedSpanId);
   };
 
-  if (spanDetailsIsLoading) {
+  if (isLoading) {
     return (
       <Box sx={styles.container}>
         {sortedSpans &&
-          sortedSpans.map((_, i) => <Skeleton key={i} sx={styles.skeleton} />)}
+          sortedSpans.map((_, i) => {
+            return (
+              <Box key={i} sx={styles.spanMainContainer}>
+                <Skeleton variant="rounded" key={i} sx={styles.skeleton} />
+              </Box>
+            );
+          })}
       </Box>
     );
   }
