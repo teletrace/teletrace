@@ -67,7 +67,7 @@ export const SpanSearch = () => {
           variant="h5"
           fontWeight="600"
           style={{
-            marginRight: "10px",
+            marginRight: "20px",
             alignSelf: "center",
             paddingBottom: "3px",
           }}
