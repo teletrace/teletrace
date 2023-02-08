@@ -15,11 +15,7 @@
  */
 
 import { LinearProgress, Typography } from "@mui/material";
-import {
-  ColumnFiltersState,
-  SortingState,
-  Updater,
-} from "@tanstack/react-table";
+import { SortingState, Updater } from "@tanstack/react-table";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -30,7 +26,13 @@ import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { TableSpan, columns, sizeLimitedColumns } from "./columns";
+import { ColumnsList } from "../ColumnsList";
+import {
+  TableSpan,
+  columns,
+  columnsControlColumnId,
+  sizeLimitedColumns,
+} from "./columns";
 import { ReactComponent as NoResultsFoundIcon } from "./no_results_found.svg";
 import styles from "./styles";
 import { calcNewSpans } from "./utils";
@@ -39,13 +41,17 @@ export function SpanTable() {
   const tableWrapperRef = useRef<HTMLDivElement>(null);
   const virtualizerInstanceRef =
     useRef<Virtualizer<HTMLDivElement, HTMLTableRowElement>>(null);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>();
   const [tableSpans, setTableSpans] = useState<TableSpan[]>([]);
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
   const sortState = useSpanSearchStore((state) => state.sortState);
+  // const [columnVisibility, setColumnsVisibility] = useState<Record<string, boolean>>({});
+  const [columnOrder, setColumnsOrder] = useState<Array<string>>(
+    columns
+      .filter((col) => col.id != columnsControlColumnId)
+      .map((col) => col.id || "")
+  );
   const { data: systemInfo } = useSystemInfo();
 
   const searchRequest = useMemo(
@@ -158,6 +164,18 @@ export function SpanTable() {
     desc: !sort.ascending,
   }));
 
+  const columnVisibility = useMemo(() => {
+    const res: Record<string, boolean> = {};
+    for (const col of columns) {
+      if (col.id === undefined) {
+        continue;
+      }
+      res[col.id] = columnOrder.includes(col.id);
+    }
+    res[columnsControlColumnId] = true;
+    return res;
+  }, [columnOrder]);
+
   const updateSortingState = (updater: Updater<SortingState>) =>
     typeof updater === "function" &&
     sortState.setSort(
@@ -180,6 +198,9 @@ export function SpanTable() {
       </td>
     </tr>
   );
+  const onSelectedColumnsChange = (selectedColumns: string[]) => {
+    setColumnsOrder([...selectedColumns, columnsControlColumnId]);
+  };
 
   return (
     <div style={styles.container}>
@@ -191,6 +212,10 @@ export function SpanTable() {
         data={tableSpans}
         enablePagination={false}
         enableColumnActions={false}
+        enableColumnOrdering={true}
+        enableColumnResizing={true}
+        columnResizeMode={"onChange"}
+        enableHiding={false}
         enableRowNumbers={false}
         enableTopToolbar={false}
         enableBottomToolbar={false}
@@ -208,15 +233,14 @@ export function SpanTable() {
               }
             : undefined
         }
-        onColumnFiltersChange={setColumnFilters}
-        onGlobalFilterChange={setGlobalFilter}
         onSortingChange={updateSortingState}
         state={{
-          columnFilters,
-          globalFilter,
           isLoading,
+          columnVisibility,
+          columnOrder,
           showAlertBanner: isError,
           sorting: sortingState,
+          columnPinning: { right: [columnsControlColumnId] },
         }}
         rowVirtualizerInstanceRef={virtualizerInstanceRef}
         muiTableContainerProps={{
@@ -247,6 +271,27 @@ export function SpanTable() {
             ? { children: emptyState, sx: { height: "unset" } }
             : undefined
         }
+        // layoutMode="grid"
+        renderColumnActionsMenuItems={() => [
+          <ColumnsList
+            key={1}
+            selectedOptionsIds={columnOrder.filter(
+              (colId) => colId != columnsControlColumnId
+            )}
+            options={columns
+              .filter(
+                (col) =>
+                  col.id !== undefined && col.id !== columnsControlColumnId
+              )
+              .map((col) => ({
+                name: col.header,
+                id: col.id || "",
+                isAlwaysSelected: false,
+              }))}
+            maxSelected={10}
+            onSelectedColumnsChange={onSelectedColumnsChange}
+          />,
+        ]}
       />
     </div>
   );

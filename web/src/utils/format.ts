@@ -15,6 +15,10 @@
  */
 
 import format from "date-fns/format";
+const numberFormat = Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
 
 export const formatNanoToTimeString = (time: number): string => {
   const ms = nanoToMs(time);
@@ -31,11 +35,7 @@ export const formatDateAsDateTime = (
   return format(date, pattern);
 };
 
-export const formatNumber = (n: number) =>
-  Intl.NumberFormat("en-US", {
-    notation: "compact",
-    maximumFractionDigits: 1,
-  }).format(n);
+export const formatNumber = (n: number) => numberFormat.format(n);
 
 export const nanoToMs = (nanoSec: number) => {
   return nanoSec / (1000 * 1000);
