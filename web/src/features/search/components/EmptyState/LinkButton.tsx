@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-/** types used to send usage analytics to lupa backend */
+import { ArticleOutlined } from "@mui/icons-material";
+import { Button } from "@mui/material";
+import { ReactNode } from "react";
 
-export const eventType: Record<string, string> = {
-  spans_table_viewed: "lupa.spans_table_viewed",
-  trace_viewed: "lupa.trace_viewed",
+export type LinkButtonProps = {
+  href: string;
+  children: ReactNode;
 };
 
-export type SystemInfoResponse = {
-  systemId: string;
-  usageReportingEnabled: boolean;
-};
+export const LinkButton = ({ href, children }: LinkButtonProps) => (
+  <Button
+    href={href}
+    target="_blank"
+    variant="contained"
+    startIcon={<ArticleOutlined />}
+  >
+    {children}
+  </Button>
+);

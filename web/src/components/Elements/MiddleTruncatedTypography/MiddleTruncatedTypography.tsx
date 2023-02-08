@@ -85,7 +85,7 @@ export const MiddleTruncatedTypography = ({
   }, [text, fitStringByTruncMiddle]);
 
   return (
-    <Tooltip title={tooltipTitle} followCursor={true} placement={"top"}>
+    <Tooltip arrow title={tooltipTitle} followCursor={true} placement={"top"}>
       <Typography {...other} ref={typographyRef} sx={styles} component="span">
         {text}
       </Typography>

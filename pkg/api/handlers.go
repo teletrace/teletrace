@@ -17,7 +17,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"oss-tracing/pkg/model"
 	"oss-tracing/pkg/model/metadata/v1"
@@ -125,11 +124,6 @@ func (api *API) tagsStatistics(c *gin.Context) {
 		return
 	}
 
-	if len(res.Statistics) != len(req.DesiredStatistics) {
-		respondWithError(http.StatusInternalServerError, fmt.Errorf("failed to get statistics for tag: '%s'", tag), c)
-		return
-	}
-
 	c.JSON(http.StatusOK, res)
 }
 
@@ -141,11 +135,15 @@ func handleTimeframe(t *model.Timeframe) {
 	}
 }
 
-func (api *API) getSystemId(c *gin.Context) {
+func (api *API) getSystemInfo(c *gin.Context) {
 	res, err := (*api.spanReader).GetSystemId(c, metadata.GetSystemIdRequest{})
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
 	}
-	c.JSON(http.StatusOK, res)
+
+	c.JSON(http.StatusOK, metadata.GetSystemInfoResponse{
+		SystemId:              res.Value,
+		UsageReportingEnabled: api.config.AllowUsageReporting,
+	})
 }

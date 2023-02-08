@@ -12,6 +12,10 @@ queue_rules:
     conditions:
       - base=main
       - check-success=Wait for CI
+      - or: &E2ETests
+          - check-success=Wait E2E Tests
+          - check-neutral=Wait E2E Tests
+          - check-skipped=Wait E2E Tests
     batch_size: 5
     allow_inplace_checks: false
 

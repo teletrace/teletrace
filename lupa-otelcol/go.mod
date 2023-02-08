@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333
+	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.64.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.64.0
@@ -21,6 +22,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.1.0 // indirect
 	github.com/elastic/go-elasticsearch/v8 v8.4.0 // indirect
+	github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
@@ -53,6 +55,7 @@ require (
 	github.com/mostynb/go-grpc-compression v1.1.17 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal v0.64.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl v0.64.0 // indirect
+	github.com/opensearch-project/opensearch-go v1.1.0 // indirect
 	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
 	github.com/prometheus/client_golang v1.13.1 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
@@ -68,7 +71,7 @@ require (
 	github.com/tklauser/numcpus v0.4.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	go.opentelemetry.io/collector/pdata v0.64.1 // indirect
+	go.opentelemetry.io/collector/pdata v0.66.0 // indirect
 	go.opentelemetry.io/collector/semconv v0.64.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.36.4 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.36.4 // indirect
@@ -84,10 +87,10 @@ require (
 	go.uber.org/zap v1.23.0 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect
-	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20221027153422-115e99e71e1c // indirect
-	google.golang.org/grpc v1.50.1 // indirect
+	google.golang.org/grpc v1.51.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
@@ -95,6 +98,10 @@ require (
 
 replace github.com/epsagon/lupa/model => ../model
 
+replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ./internal/modeltranslator
+
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./exporter/elasticsearchexporter
+
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./exporter/opensearchexporter
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter
