@@ -20,6 +20,7 @@ import {
   memo,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import {
@@ -69,6 +70,7 @@ const TraceGraphImpl = ({
   onAutoSelectedNodeChange,
   onGraphNodeClick,
 }: TraceGraphProps) => {
+  const activelyDraggedNode = useRef<Readonly<Node<NodeData>> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
@@ -167,7 +169,7 @@ const TraceGraphImpl = ({
     applyNodeStyle: (node: Node<NodeData>) => Node<NodeData>,
     applyEdgeStyle: (edge: Edge<EdgeData>) => Edge<EdgeData>
   ) => {
-    if (isSelectedNode(node)) {
+    if (isSelectedNode(node) || activelyDraggedNode.current) {
       return;
     }
     const eventNodeEdges = getConnectedEdges([node], edges);
@@ -189,6 +191,14 @@ const TraceGraphImpl = ({
     applyNodeMouseEventStyles(node, applyNormalNodeStyle, applyNormalEdgeStyle);
   };
 
+  const handleNodeDragStart = (_: ReactMouseEvent, node: Node<NodeData>) => {
+    activelyDraggedNode.current = node;
+  };
+
+  const handleNodeDragStop = () => {
+    activelyDraggedNode.current = null;
+  };
+
   return (
     <Box sx={{ flex: 1, "& .react-flow__attribution": { display: "none" } }}>
       {isLoading ? (
@@ -206,6 +216,8 @@ const TraceGraphImpl = ({
           onNodeClick={onNodeClick}
           onNodeMouseEnter={handleNodeMouseEnter}
           onNodeMouseLeave={handleNodeMouseLeave}
+          onNodeDragStart={handleNodeDragStart}
+          onNodeDragStop={handleNodeDragStop}
           selectNodesOnDrag={false}
           fitView
         >
