@@ -53,13 +53,17 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
 
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
-  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState)
+  const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
 
-  const { data, isFetching, isError } = useTagStatistics(tag, {
-    filters: filtersState.filters,
-    timeframe: timeframeState.currentTimeframe,
-    desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
-  }, liveSpansState.intervalInMillis);
+  const { data, isFetching, isError } = useTagStatistics(
+    tag,
+    {
+      filters: filtersState.filters,
+      timeframe: timeframeState.currentTimeframe,
+      desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
+    },
+    liveSpansState.intervalInMillis
+  );
 
   const initializeSliderValues = () => {
     if (sliderValues.length === 0 && data) {
@@ -176,7 +180,8 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
   const getTextBoxValue = (v: number) =>
     sliderValues.length > 0 ? convertDisplayValue(v, nanoToMs) : "-";
 
-  const disableSlider = !liveSpansState.isOn && (sliderValues.length === 0 || isFetching);
+  const disableSlider =
+    !liveSpansState.isOn && (sliderValues.length === 0 || isFetching);
   return (
     <div>
       <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
