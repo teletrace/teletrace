@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-const util = require('util');
+const util = require("util");
 import { exec } from "child_process";
 import { Connector } from ".";
 
 const dockerExecCommandPrefix = "docker exec ";
 const sqliteQueryCommandPrefix = "sqlite3 embedded_spans.db ";
-const deleteTableRecordsPrefix = "DELETE FROM "
+const deleteTableRecordsPrefix = "DELETE FROM ";
 const asyncExec = util.promisify(exec);
 
 export class SQLiteConnector extends Connector {
@@ -33,7 +33,7 @@ export class SQLiteConnector extends Connector {
   }
 
   private deleteAllRecords = (): Promise<{}> => {
-    const tables:string[] = [
+    const tables: string[] = [
       "spans",
       "scopes",
       "events",
@@ -45,23 +45,28 @@ export class SQLiteConnector extends Connector {
       "link_attributes",
       "span_resource_attributes",
     ];
-    var cleanPromises:Promise<{}>[] = [];
-    tables.forEach( (table) => {
+    var cleanPromises: Promise<{}>[] = [];
+    tables.forEach((table) => {
       const deleteQuery = "'" + deleteTableRecordsPrefix + table + "'";
       cleanPromises.push(
         asyncExec(
           dockerExecCommandPrefix + 
-          this.containerName + 
-          " " + 
-          sqliteQueryCommandPrefix + 
-          deleteQuery
-      ))
+            this.containerName +
+            " " + 
+            sqliteQueryCommandPrefix + 
+            deleteQuery
+        )
+      );
     });
     return Promise.all(cleanPromises);
   };
 
   private installSqliteCLI = (): Promise<{}> => {
-    return asyncExec(dockerExecCommandPrefix + this.containerName + " apk add --no-cache sqlite")
+    return asyncExec(
+      dockerExecCommandPrefix + 
+        this.containerName + 
+        " apk add --no-cache sqlite"
+    );
   };
 
   async clean(): Promise<void> {
