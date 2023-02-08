@@ -24,7 +24,6 @@ const deleteTableRecordsPrefix = "DELETE FROM ";
 const asyncExec = util.promisify(exec);
 
 export class SQLiteConnector extends Connector {
-
   private containerName: string;
 
   constructor(containerName: string = "docker-compose-lupa-api-1") {
@@ -50,10 +49,10 @@ export class SQLiteConnector extends Connector {
       const deleteQuery = "'" + deleteTableRecordsPrefix + table + "'";
       cleanPromises.push(
         asyncExec(
-          dockerExecCommandPrefix + 
+          dockerExecCommandPrefix +
             this.containerName +
-            " " + 
-            sqliteQueryCommandPrefix + 
+            " " +
+            sqliteQueryCommandPrefix +
             deleteQuery
         )
       );
@@ -63,8 +62,8 @@ export class SQLiteConnector extends Connector {
 
   private installSqliteCLI = (): Promise<{}> => {
     return asyncExec(
-      dockerExecCommandPrefix + 
-        this.containerName + 
+      dockerExecCommandPrefix +
+        this.containerName +
         " apk add --no-cache sqlite"
     );
   };
