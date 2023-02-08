@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { CustomControls } from "@/features/trace/components/TraceGraph/CustomControls";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import {
   MouseEvent as ReactMouseEvent,
@@ -23,7 +24,6 @@ import {
   useState,
 } from "react";
 import {
-  Controls,
   Edge,
   Node,
   ReactFlow,
@@ -209,7 +209,7 @@ const TraceGraphImpl = ({
           selectNodesOnDrag={false}
           fitView
         >
-          <Controls />
+          <CustomControls />
         </ReactFlow>
       )}
     </Box>
