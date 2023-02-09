@@ -17,11 +17,20 @@
 export const MinusIcon = () => {
   return (
     <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 5 45 35"
-      fill={"#ffffff"}
     >
-      <path d="M10 25.5v-3h28v3Z" />
+      <g clipPath="url(#clip0_1819_241)">
+        <path d="M19 13H5V11H19V13Z" fill="white" />
+      </g>
+      <defs>
+        <clipPath id="clip0_1819_241">
+          <rect width="24" height="24" fill="white" />
+        </clipPath>
+      </defs>
     </svg>
   );
 };

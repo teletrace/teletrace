@@ -14,13 +14,6 @@
  * limitations under the License.
  */
 
-import {
-  FitViewIcon,
-  LockIcon,
-  MinusIcon,
-  PlusIcon,
-  UnlockIcon,
-} from "@/features/trace/components/TraceGraph/CustomControls/Icons";
 import { memo, useEffect, useState } from "react";
 import type { FC, PropsWithChildren } from "react";
 import {
@@ -31,6 +24,14 @@ import {
   useStoreApi,
 } from "reactflow";
 import type { ReactFlowState } from "reactflow";
+
+import {
+  FitViewIcon,
+  LockIcon,
+  MinusIcon,
+  PlusIcon,
+  UnlockIcon,
+} from "./Icons";
 import type { ControlProps } from "./types";
 import "./styles.css";
 

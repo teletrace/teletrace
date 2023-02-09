@@ -17,11 +17,23 @@
 export const FitViewIcon = () => {
   return (
     <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 5 45 40"
-      fill={"#ffffff"}
     >
-      <path d="M9 42q-1.2 0-2.1-.9Q6 40.2 6 39v-8.6h3V39h8.6v3Zm21.4 0v-3H39v-8.6h3V39q0 1.2-.9 2.1-.9.9-2.1.9ZM6 17.6V9q0-1.2.9-2.1Q7.8 6 9 6h8.6v3H9v8.6Zm33 0V9h-8.6V6H39q1.2 0 2.1.9.9.9.9 2.1v8.6Z" />
+      <g clipPath="url(#clip0_1819_244)">
+        <path
+          d="M3 3V9H5V5H9V3H3ZM5 15H3V21H9V19H5V15ZM19 19H15V21H21V15H19V19ZM21 3H15V5H19V9H21V3Z"
+          fill="white"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_1819_244">
+          <rect width="24" height="24" fill="white" />
+        </clipPath>
+      </defs>
     </svg>
   );
 };

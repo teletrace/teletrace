@@ -17,8 +17,8 @@
 /*overwrite reactflow classes*/
 
 .react-flow__controls-button {
-  width: 100% !important;
-  height: 35px !important;
+  width: 25px !important;
+  height: 25px !important;
   background: #2b2d32 !important;
   border-bottom: 1px solid #3b3c42 !important;
 }
@@ -36,8 +36,8 @@
 }
 
 .react-flow__controls-button svg {
-  max-width: 60% !important;
-  max-height: 60% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
 }
 
 .react-flow__panel.bottom.left {
