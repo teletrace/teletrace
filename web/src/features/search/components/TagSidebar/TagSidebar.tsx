@@ -34,7 +34,7 @@ export enum SelectorType {
 
 export const TagSidebar = () => {
   const tagStatisticsSupported =
-      window.localStorage.getItem("tagStatisticsSupported") === "true"
+    window.localStorage.getItem("tagStatisticsSupported") === "true";
 
   const tags: Array<TagOptions> = [
     {
@@ -43,18 +43,16 @@ export const TagSidebar = () => {
       isSearchable: false,
       selectorType: SelectorType.ValuesSelector,
     },
-    ...
-    (
-        tagStatisticsSupported ?
-            [{
-              title: "Duration (ms)",
-              tag: "externalFields.durationNano",
-              isSearchable: false,
-              selectorType: SelectorType.RangeSlider,
-            }]
-            :
-            []
-    ),
+    ...(tagStatisticsSupported
+      ? [
+          {
+            title: "Duration (ms)",
+            tag: "externalFields.durationNano",
+            isSearchable: false,
+            selectorType: SelectorType.RangeSlider,
+          },
+        ]
+      : []),
     {
       title: "Service name",
       tag: "resource.attributes.service.name",
