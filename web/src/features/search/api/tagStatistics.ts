@@ -41,7 +41,7 @@ export const useTagStatistics = (
   tag: string,
   tagStatisticsRequest: TagStatisticsRequest,
   onSuccess: (req: TagStatisticsResponse) => void,
-  intervalInMilli?: number,
+  intervalInMilli?: number
 ) => {
   return useQuery({
     queryKey: [

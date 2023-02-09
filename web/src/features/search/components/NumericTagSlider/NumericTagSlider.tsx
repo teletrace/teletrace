@@ -92,7 +92,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
       desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
     },
     updateSliderState,
-      liveSpansState.isOn ? liveSpansState.intervalInMillis : undefined,
+    liveSpansState.isOn ? liveSpansState.intervalInMillis : undefined
   );
 
   const gteFilterExists = () =>
