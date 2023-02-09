@@ -33,19 +33,28 @@ export enum SelectorType {
 }
 
 export const TagSidebar = () => {
-  let tags: Array<TagOptions> = [
+  const tagStatisticsSupported =
+      window.localStorage.getItem("tagStatisticsSupported") === "true"
+
+  const tags: Array<TagOptions> = [
     {
       title: "Status",
       tag: "span.status.code",
       isSearchable: false,
       selectorType: SelectorType.ValuesSelector,
     },
-    {
-      title: "Duration (ms)",
-      tag: "externalFields.durationNano",
-      isSearchable: false,
-      selectorType: SelectorType.RangeSlider,
-    },
+    ...
+    (
+        tagStatisticsSupported ?
+            [{
+              title: "Duration (ms)",
+              tag: "externalFields.durationNano",
+              isSearchable: false,
+              selectorType: SelectorType.RangeSlider,
+            }]
+            :
+            []
+    ),
     {
       title: "Service name",
       tag: "resource.attributes.service.name",
@@ -71,14 +80,6 @@ export const TagSidebar = () => {
       selectorType: SelectorType.ValuesSelector,
     },
   ];
-
-  const tagStatisticsSupported =
-    window.localStorage.getItem("tagStatisticsSupported") === "true";
-  if (!tagStatisticsSupported) {
-    tags = tags.filter(
-      (tagOption) => tagOption.selectorType !== SelectorType.RangeSlider
-    );
-  }
 
   return (
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
