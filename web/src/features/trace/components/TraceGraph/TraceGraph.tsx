@@ -20,6 +20,7 @@ import {
   memo,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import {
@@ -51,6 +52,7 @@ import "reactflow/dist/style.css";
 
 export interface TraceGraphProps {
   spans: InternalSpan[];
+  selectedNode: GraphNode | null;
   selectedSpanId: string | null;
   initiallyFocusedSpanId: string | null;
   onAutoSelectedNodeChange: (node: GraphNode) => void;
@@ -62,11 +64,13 @@ const edgeTypes = { basicEdge: BasicEdge };
 
 const TraceGraphImpl = ({
   spans,
+  selectedNode,
   selectedSpanId,
   initiallyFocusedSpanId,
   onAutoSelectedNodeChange,
   onGraphNodeClick,
 }: TraceGraphProps) => {
+  const activelyDraggedNode = useRef<Readonly<Node<NodeData>> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [nodes, setNodes, onNodesChange] = useNodesState<NodeData>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<EdgeData>([]);
@@ -151,40 +155,48 @@ const TraceGraphImpl = ({
     onGraphNodeClick(node.data.graphNode);
   };
 
-  const onNodeMouseEnter = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    if (!node.selected) {
-      const connectedEdges = getConnectedEdges([node], edges);
-      setNodes(
-        nodes.map((n: Node<NodeData>) =>
-          n.id === node.id ? applyHoveredNodeStyle(n) : n
-        )
-      );
-      setEdges(
-        edges.map((e: Edge<EdgeData>) =>
-          !e.selected && connectedEdges.includes(e) ? applyHoverEdgeStyle(e) : e
-        )
-      );
-    }
+  const isSelectedNode = (node: Node<NodeData>) => {
+    return node.data.graphNode.id === selectedNode?.id;
   };
 
-  const onNodeMouseLeave = (event: ReactMouseEvent, node: Node<NodeData>) => {
-    event.stopPropagation();
-    if (!node.selected) {
-      const connectedEdges = getConnectedEdges([node], edges);
-      setNodes(
-        nodes.map((n: Node<NodeData>) =>
-          n.id === node.id ? applyNormalNodeStyle(n) : n
-        )
-      );
-      setEdges(
-        edges.map((e: Edge<EdgeData>) =>
-          !e.selected && connectedEdges.includes(e)
-            ? applyNormalEdgeStyle(e)
-            : e
-        )
-      );
+  const getSelectedNodeEdges = () => {
+    const node = nodes.find(isSelectedNode);
+    return node ? getConnectedEdges([node], edges) : [];
+  };
+
+  const applyNodeMouseEventStyles = (
+    node: Node<NodeData>,
+    applyNodeStyle: (node: Node<NodeData>) => Node<NodeData>,
+    applyEdgeStyle: (edge: Edge<EdgeData>) => Edge<EdgeData>
+  ) => {
+    if (isSelectedNode(node) || activelyDraggedNode.current) {
+      return;
     }
+    const eventNodeEdges = getConnectedEdges([node], edges);
+    const selectedNodeEdges = getSelectedNodeEdges();
+    const affectedEdges = eventNodeEdges.filter(
+      (e) => !selectedNodeEdges.includes(e)
+    );
+    setEdges(
+      edges.map((e) => (affectedEdges.includes(e) ? applyEdgeStyle(e) : e))
+    );
+    setNodes(nodes.map((n) => (n.id === node.id ? applyNodeStyle(n) : n)));
+  };
+
+  const handleNodeMouseEnter = (_: ReactMouseEvent, node: Node<NodeData>) => {
+    applyNodeMouseEventStyles(node, applyHoveredNodeStyle, applyHoverEdgeStyle);
+  };
+
+  const handleNodeMouseLeave = (_: ReactMouseEvent, node: Node<NodeData>) => {
+    applyNodeMouseEventStyles(node, applyNormalNodeStyle, applyNormalEdgeStyle);
+  };
+
+  const handleNodeDragStart = (_: ReactMouseEvent, node: Node<NodeData>) => {
+    activelyDraggedNode.current = node;
+  };
+
+  const handleNodeDragStop = () => {
+    activelyDraggedNode.current = null;
   };
 
   return (
@@ -202,8 +214,10 @@ const TraceGraphImpl = ({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
-          onNodeMouseEnter={onNodeMouseEnter}
-          onNodeMouseLeave={onNodeMouseLeave}
+          onNodeMouseEnter={handleNodeMouseEnter}
+          onNodeMouseLeave={handleNodeMouseLeave}
+          onNodeDragStart={handleNodeDragStart}
+          onNodeDragStop={handleNodeDragStop}
           selectNodesOnDrag={false}
           fitView
         >

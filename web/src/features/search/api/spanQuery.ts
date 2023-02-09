@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 import { axiosClient } from "@/libs/axios";
 
@@ -52,5 +52,26 @@ export const useSpansQuery = (
     getNextPageParam: (lastPage) => lastPage?.metadata?.nextToken,
     refetchInterval: refetchInterval,
     cacheTime: refetchInterval ? refetchInterval : 5000,
+  });
+};
+
+export const useHasSpans = () => {
+  const searchRequest: SearchRequest = {
+    timeframe: {
+      startTimeUnixNanoSec: 0,
+      endTimeUnixNanoSec: 0,
+    },
+  };
+
+  return useQuery({
+    queryKey: ["has-spans"],
+    queryFn: async () => {
+      try {
+        const { spans } = await fetchSpans({ searchRequest, pageParam: "" });
+        return spans?.length > 0;
+      } catch {
+        return false;
+      }
+    },
   });
 };

@@ -19,6 +19,8 @@ import { useEffect } from "react";
 
 import { Head } from "@/components/Head";
 
+import { useHasSpans } from "../api/spanQuery";
+import { EmptyState } from "../components/EmptyState";
 import { LiveSpanSwitch } from "../components/LiveSpansSwitch";
 import { RefreshButton } from "../components/RefreshButton";
 import { SearchBar } from "../components/SearchBar";
@@ -30,6 +32,17 @@ import { useSpanSearchStore } from "../stores//spanSearchStore";
 export const SpanSearch = () => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
+
+  const { isLoading, data: hasSpans, refetch } = useHasSpans();
+
+  useEffect(() => {
+    const onRefresh = () => refetch();
+    document.addEventListener("refresh", onRefresh);
+
+    return () => {
+      document.removeEventListener("refresh", onRefresh);
+    };
+  }, []);
 
   useEffect(() => {
     if (liveSpansState.isOn) {
@@ -54,7 +67,7 @@ export const SpanSearch = () => {
           variant="h5"
           fontWeight="600"
           style={{
-            marginRight: "10px",
+            marginRight: "20px",
             alignSelf: "center",
             paddingBottom: "3px",
           }}
@@ -80,15 +93,19 @@ export const SpanSearch = () => {
           <TagSidebar />
         </aside>
 
-        <Stack
-          direction="column"
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={1}
-          sx={{ height: "100%", width: "100%", minWidth: 0 }}
-        >
-          <SearchBar />
-          <SpanTable />
-        </Stack>
+        {isLoading || hasSpans ? (
+          <Stack
+            direction="column"
+            divider={<Divider orientation="vertical" flexItem />}
+            spacing={1}
+            sx={{ height: "100%", width: "100%", minWidth: 0 }}
+          >
+            <SearchBar />
+            <SpanTable />
+          </Stack>
+        ) : (
+          <EmptyState />
+        )}
       </Stack>
     </Stack>
   );

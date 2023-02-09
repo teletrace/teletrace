@@ -25,7 +25,7 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { eventType, sendEvent, useSystemId } from "@/features/usageAnalytics";
+import { eventType, sendEvent, useSystemInfo } from "@/features/usageAnalytics";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
@@ -46,7 +46,7 @@ export function SpanTable() {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
   const sortState = useSpanSearchStore((state) => state.sortState);
-  const { data: systemId } = useSystemId();
+  const { data: systemInfo } = useSystemInfo();
 
   const searchRequest = useMemo(
     () => ({
@@ -63,10 +63,10 @@ export function SpanTable() {
   );
 
   useEffect(() => {
-    if (systemId) {
-      sendEvent(systemId, eventType.spans_table_viewed);
+    if (systemInfo?.systemId && systemInfo?.usageReportingEnabled) {
+      sendEvent(systemInfo.systemId, eventType.spans_table_viewed);
     }
-  }, [systemId]);
+  }, [systemInfo?.systemId, systemInfo?.usageReportingEnabled]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
@@ -183,7 +183,9 @@ export function SpanTable() {
 
   return (
     <div style={styles.container}>
-      {isRefetching && <LinearProgress sx={styles.progress} />}
+      {isRefetching && !liveSpansState.isOn && (
+        <LinearProgress sx={styles.progress} />
+      )}
       <MaterialReactTable
         columns={columns}
         data={tableSpans}
