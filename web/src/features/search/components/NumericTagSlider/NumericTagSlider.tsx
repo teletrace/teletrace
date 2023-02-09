@@ -38,7 +38,7 @@ import {
   isFiltersStructureEqual,
   useSpanSearchStore,
 } from "../../stores/spanSearchStore";
-import { TagStatistic } from "../../types/tagStatistics";
+import {TagStatistic, TagStatisticsRequest, TagStatisticsResponse} from "../../types/tagStatistics";
 import { isConvertedTimestamp } from "../../utils/tagsUtils";
 import { styles } from "./styles";
 
@@ -55,43 +55,42 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
   const filtersState = useSpanSearchStore((state) => state.filtersState);
   const liveSpansState = useSpanSearchStore((state) => state.liveSpansState);
 
-  const { data, isFetching, isError } = useTagStatistics(
+  const initializeSliderValues = (res: TagStatisticsResponse) => {
+    if (sliderValues.length === 0) {
+      if (Object.keys(res.statistics).length !== 0) {
+        const min = res.statistics[TagStatistic.MIN];
+        const max = res.statistics[TagStatistic.MAX];
+        setSliderValues([min, max]);
+        setAbsoluteMin(min);
+        setAbsoluteMax(max);
+      }
+    }
+  }
+
+  const updateMinMax = (min: number, max: number) => {
+    if (absoluteMin && min < absoluteMin) {
+      setAbsoluteMin(min);
+    }
+
+    if (absoluteMax && max > absoluteMax) {
+      setAbsoluteMax(max);
+    }
+  }
+  const updateSliderState = (res: TagStatisticsResponse) => {
+    initializeSliderValues(res);
+    updateMinMax(res.statistics[TagStatistic.MIN], res.statistics[TagStatistic.MAX])
+  };
+
+  const { isFetching, isError } = useTagStatistics(
     tag,
     {
       filters: filtersState.filters,
       timeframe: timeframeState.currentTimeframe,
       desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
     },
-    liveSpansState.intervalInMillis
+    liveSpansState.intervalInMillis,
+    updateSliderState,
   );
-
-  const initializeSliderValues = () => {
-    if (sliderValues.length === 0 && data) {
-      if (Object.keys(data.statistics).length !== 0) {
-        const min = data?.statistics[TagStatistic.MIN];
-        const max = data?.statistics[TagStatistic.MAX];
-        setSliderValues([min, max]);
-        setAbsoluteMin(min);
-        setAbsoluteMax(max);
-      }
-    }
-  };
-  useEffect(initializeSliderValues, [data?.statistics]);
-
-  const discoverNewAbsoluteMinMax = () => {
-    if (data) {
-      const min = data?.statistics[TagStatistic.MIN];
-      const max = data?.statistics[TagStatistic.MAX];
-      if (absoluteMin && min < absoluteMin) {
-        setAbsoluteMin(min);
-      }
-
-      if (absoluteMax && max > absoluteMax) {
-        setAbsoluteMax(max);
-      }
-    }
-  };
-  useEffect(discoverNewAbsoluteMinMax, [timeframeState.currentTimeframe]);
 
   const gteFilterExists = () =>
     filtersState.filters.find((filter) =>

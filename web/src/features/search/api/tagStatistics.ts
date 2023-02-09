@@ -40,7 +40,8 @@ export const fetchTagStatistics = (
 export const useTagStatistics = (
   tag: string,
   tagStatisticsRequest: TagStatisticsRequest,
-  intervalInMilli: number
+  intervalInMilli: number,
+  onSuccess: (req: TagStatisticsResponse) => void,
 ) => {
   return useQuery({
     queryKey: [
@@ -54,5 +55,6 @@ export const useTagStatistics = (
     keepPreviousData: true,
     queryFn: () => fetchTagStatistics(tag, tagStatisticsRequest),
     refetchInterval: intervalInMilli || false,
+    onSuccess: onSuccess,
   });
 };
