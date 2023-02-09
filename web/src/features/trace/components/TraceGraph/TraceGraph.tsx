@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CustomControls } from "@/features/trace/components/TraceGraph/CustomControls";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import {
   MouseEvent as ReactMouseEvent,
@@ -36,6 +35,7 @@ import { InternalSpan } from "@/types/span";
 
 import { BasicEdge } from "./BasicEdge";
 import { BasicNode } from "./BasicNode";
+import { CustomControls } from "./CustomControls";
 import { EdgeData, GraphNode, NodeData, TraceData } from "./types";
 import { createGraphLayout, spansToGraphData } from "./utils/layout";
 import {
