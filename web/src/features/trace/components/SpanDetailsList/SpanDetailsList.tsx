@@ -63,7 +63,7 @@ export const SpanDetailsList = ({
         {sortedSpans &&
           sortedSpans.map((_, i) => {
             return (
-              <Box key={i} sx={styles.spanMainContainer}>
+              <Box key={i} sx={styles.skeletonWrapper}>
                 <Skeleton variant="rounded" key={i} sx={styles.skeleton} />
               </Box>
             );

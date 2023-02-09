@@ -23,7 +23,7 @@ export const styles = {
     height: "100%",
     width: "100%",
   },
-  spanMainContainer: {
+  skeletonWrapper: {
     marginLeft: "36px",
     marginBottom: "8px",
     height: "60px",
