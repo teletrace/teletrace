@@ -19,4 +19,14 @@ export const styles = {
     width: "40%",
     overflow: "auto",
   },
+  skeleton: {
+    height: "100%",
+    width: "100%",
+  },
+  skeletonWrapper: {
+    marginLeft: "36px",
+    marginBottom: "8px",
+    height: "60px",
+    width: "100%",
+  },
 };
