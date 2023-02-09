@@ -44,7 +44,7 @@ export class SQLiteConnector extends Connector {
       "link_attributes",
       "span_resource_attributes",
     ];
-    var cleanPromises: Promise<{}>[] = [];
+    let cleanPromises: Promise<{}>[] = [];
     tables.forEach((table) => {
       const deleteQuery = "'" + deleteTableRecordsPrefix + table + "'";
       cleanPromises.push(
