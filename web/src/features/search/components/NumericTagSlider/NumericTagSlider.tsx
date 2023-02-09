@@ -91,8 +91,8 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
       timeframe: timeframeState.currentTimeframe,
       desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
     },
-    liveSpansState.intervalInMillis,
-    updateSliderState
+    updateSliderState,
+      liveSpansState.isOn ? liveSpansState.intervalInMillis : undefined,
   );
 
   const gteFilterExists = () =>
