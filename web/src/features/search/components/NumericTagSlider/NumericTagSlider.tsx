@@ -38,7 +38,7 @@ import {
   isFiltersStructureEqual,
   useSpanSearchStore,
 } from "../../stores/spanSearchStore";
-import {TagStatistic, TagStatisticsRequest, TagStatisticsResponse} from "../../types/tagStatistics";
+import { TagStatistic, TagStatisticsResponse } from "../../types/tagStatistics";
 import { isConvertedTimestamp } from "../../utils/tagsUtils";
 import { styles } from "./styles";
 
@@ -65,7 +65,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
         setAbsoluteMax(max);
       }
     }
-  }
+  };
 
   const updateMinMax = (min: number, max: number) => {
     if (absoluteMin && min < absoluteMin) {
@@ -75,10 +75,13 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
     if (absoluteMax && max > absoluteMax) {
       setAbsoluteMax(max);
     }
-  }
+  };
   const updateSliderState = (res: TagStatisticsResponse) => {
     initializeSliderValues(res);
-    updateMinMax(res.statistics[TagStatistic.MIN], res.statistics[TagStatistic.MAX])
+    updateMinMax(
+      res.statistics[TagStatistic.MIN],
+      res.statistics[TagStatistic.MAX]
+    );
   };
 
   const { isFetching, isError } = useTagStatistics(
@@ -89,7 +92,7 @@ export const NumericTagSlider = ({ title, tag }: NumericTagSliderProps) => {
       desiredStatistics: [TagStatistic.MIN, TagStatistic.MAX],
     },
     liveSpansState.intervalInMillis,
-    updateSliderState,
+    updateSliderState
   );
 
   const gteFilterExists = () =>
