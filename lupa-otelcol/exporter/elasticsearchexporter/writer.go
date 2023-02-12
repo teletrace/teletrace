@@ -62,7 +62,7 @@ func writeSpans(ctx context.Context, logger *zap.Logger, c *elasticsearch.Client
 		meta := []byte(fmt.Sprintf(`{ "index" : { "_id" : "%s" } }%s`, span.Span.SpanId, "\n"))
 		data, err := json.Marshal(span)
 		if err != nil {
-			errs = append(errs, (fmt.Errorf("Cannot encode span with id %v: %v", span.Span.SpanId, err)))
+			errs = append(errs, (fmt.Errorf("Cannot encode span with id %v: %w", span.Span.SpanId, err)))
 		}
 
 		data = append(data, "\n"...)
@@ -72,13 +72,13 @@ func writeSpans(ctx context.Context, logger *zap.Logger, c *elasticsearch.Client
 	}
 	res, err := c.Bulk(bytes.NewReader(buf.Bytes()), c.Bulk.WithIndex(index))
 	if err != nil { // handle errs from runtime
-		errs = append(errs, fmt.Errorf("Failure indexing %d spans: %s", numItems, err))
+		errs = append(errs, fmt.Errorf("Failure indexing %d spans: %w", numItems, err))
 	}
 	if res.IsError() { // handle errs from es
 		if err := json.NewDecoder(res.Body).Decode(&raw); err != nil {
-			errs = append(errs, fmt.Errorf("Failure to parse response body: %v", err))
+			errs = append(errs, fmt.Errorf("Failure to parse response body: %w", err))
 		} else {
-			errs = append(errs, fmt.Errorf("Failure indexing %d spans: %s", numItems, err))
+			errs = append(errs, fmt.Errorf("Failure indexing %d spans: %w", numItems, err))
 			errs = append(errs, fmt.Errorf("  Error: [%d] %s: %s",
 				res.StatusCode,
 				raw["error"].(map[string]interface{})["type"],
@@ -87,7 +87,7 @@ func writeSpans(ctx context.Context, logger *zap.Logger, c *elasticsearch.Client
 		}
 	} else { // handle errs from single spans in bulk
 		if err := json.NewDecoder(res.Body).Decode(&blk); err != nil {
-			errs = append(errs, fmt.Errorf("Failure to parse response body: %v", err))
+			errs = append(errs, fmt.Errorf("Failure to parse response body: %w", err))
 		} else {
 			for _, d := range blk.Items {
 				if d.Index.Status > 201 {
