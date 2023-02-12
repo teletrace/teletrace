@@ -17,7 +17,7 @@
 import { Chip, Tooltip, Typography } from "@mui/material";
 import { useState } from "react";
 
-import { replaceWithEmptyString } from "@/utils/format";
+import { formatStringValue } from "@/utils/format";
 
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
@@ -60,9 +60,13 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
   };
 
   const getTooltipForArray = (arrValue: (number | string)[]) => {
-    return arrValue.map((value: number | string) => (
-      <Typography key={value}> • {value}</Typography>
-    ));
+    return arrValue.map((value: number | string) =>
+      typeof value === "string" ? (
+        <Typography key={value}> • {formatStringValue(value)}</Typography>
+      ) : (
+        <Typography key={value}> • {value}</Typography>
+      )
+    );
   };
 
   const getTooltipTitle = () => {
@@ -81,15 +85,18 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
     );
   };
 
-  const formatStrValue = (value: string, filterLength: number) => {
-    value = replaceWithEmptyString(value).toString();
+  const formatStrValueDisplay = (value: string, filterLength: number) => {
+    value = formatStringValue(value).toString();
     if (filterLength > MAX_FILTER_LENGTH) {
       value = `${value.substring(0, MAX_FILTER_LENGTH)}...`;
     }
     return `"${value}"`;
   };
 
-  const formatArrayValue = (value: (string | number)[], filterLen: number) => {
+  const formatArrayValueDisplay = (
+    value: (string | number)[],
+    filterLen: number
+  ) => {
     const arrLen = value.length;
     let newValue;
     if (value.length === 0) {
@@ -99,7 +106,7 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
       if (arrLen > 1) {
         newValue = `["${value[0]}"...+${arrLen - 1}]`;
       } else {
-        newValue = formatStrValue(value[0], filterLen);
+        newValue = formatStrValueDisplay(value[0], filterLen);
       }
     } else {
       if (arrLen > 1) {
@@ -114,9 +121,9 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
   const formatFilterValue = (value: FilterValueTypes) => {
     const filterLen = getFilterLength();
     if (typeof value === "string") {
-      return formatStrValue(value, filterLen);
+      return formatStrValueDisplay(value, filterLen);
     } else if (Array.isArray(value)) {
-      return formatArrayValue(value, filterLen);
+      return formatArrayValueDisplay(value, filterLen);
     } else {
       return value;
     }

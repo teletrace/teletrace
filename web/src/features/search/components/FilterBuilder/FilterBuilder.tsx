@@ -24,7 +24,7 @@ import {
 import { Stack } from "@mui/system";
 import React, { useEffect, useState } from "react";
 
-import { replaceWithEmptyString } from "@/utils/format";
+import { formatStringValue } from "@/utils/format";
 
 import { useAvailableTags } from "../../api/availableTags";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
@@ -175,7 +175,7 @@ export const FilterBuilderDialog = ({
       return v;
     }
     if (tagType === "string") {
-      return replaceWithEmptyString(v.toString());
+      return formatStringValue(v);
     }
     if (tagType === "long" || tagType == "float") {
       return Number(v);

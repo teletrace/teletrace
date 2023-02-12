@@ -18,9 +18,7 @@ import format from "date-fns/format";
 
 export const EMPTY_STRING = "Empty Value";
 
-export const replaceWithEmptyString = (
-  val: string | number
-): string | number => {
+export const formatStringValue = (val: string | number): string | number => {
   return val == "" ? EMPTY_STRING : val;
 };
 

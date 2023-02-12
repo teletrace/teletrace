@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 
-import { replaceWithEmptyString } from "@/utils/format";
+import { formatStringValue } from "@/utils/format";
 
 import { FilterValueTypes, ValueInputMode } from "../../types/common";
 import { TagValuesRequest } from "../../types/tagValues";
@@ -55,7 +55,7 @@ export const ValueSelector = ({
   };
 
   const valueArr = (Array.isArray(value) ? value : [value]).map((val) =>
-    replaceWithEmptyString(val)
+    formatStringValue(val)
   );
 
   return (

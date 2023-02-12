@@ -25,7 +25,7 @@ import { useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
-import { formatNumber, replaceWithEmptyString } from "@/utils/format";
+import { EMPTY_STRING, formatNumber, formatStringValue } from "@/utils/format";
 
 import { useTagValuesWithAll } from "../../api/tagValues";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
@@ -54,14 +54,20 @@ const useGetTagOptions = (
       filters,
       liveSpansState.isOn ? liveSpansState.intervalInMillis : 0
     );
-  // add selected options to options (if missing). Since we don't show them (due to filterSelectedOptions prop) the selected the count doesn't matter
+
   if (searchTagValues) {
+    searchTagValues.map((tagValue) =>
+      tagValue.value === "" ? (tagValue.value = EMPTY_STRING) : null
+    );
+
+    // add selected options to options (if missing). Since we don't show them (due to filterSelectedOptions prop) the selected the count doesn't matter
     selectedOptions.forEach((item) => {
       if (!searchTagValues.find((e) => e.value === item)) {
         searchTagValues?.push({ value: item, count: 0 });
       }
     });
   }
+
   return { tagOptions: searchTagValues, isLoading: isFetchingSearch };
 };
 
@@ -100,6 +106,7 @@ export const AutoCompleteValueSelector = ({
       ) || []
     );
   };
+
   return (
     <Autocomplete
       autoHighlight={true}
@@ -140,7 +147,7 @@ export const AutoCompleteValueSelector = ({
               highlightClassName="valueLabelHighlight"
               searchWords={state.inputValue.toLowerCase().split(" ")}
               autoEscape={true}
-              textToHighlight={replaceWithEmptyString(option.value).toString()}
+              textToHighlight={option.value.toString()}
             />
             <Typography>{formatNumber(option.count)}</Typography>
           </Stack>
