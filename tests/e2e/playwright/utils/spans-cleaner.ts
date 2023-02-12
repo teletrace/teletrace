@@ -20,7 +20,7 @@ type SpansStorageType = "ElasticSearch" | "SQLite";
 
 export async function cleanSpans(): Promise<void> {
   let connector: Connector = spansConnectorFactory("ElasticSearch");
-  await connector.clean()
+  await connector.clean();
 }
 
 function spansConnectorFactory(spansStorageType: SpansStorageType): Connector {
