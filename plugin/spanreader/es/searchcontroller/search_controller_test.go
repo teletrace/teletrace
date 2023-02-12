@@ -111,7 +111,7 @@ func getSearchRequestMock(fs ...model.SearchFilter) (spansquery.SearchRequest, e
 	}
 
 	sort := spansquery.Sort{
-		Field:     "TimestampMilli",
+		Field:     "TimestampUnixMilli",
 		Ascending: false,
 	}
 
