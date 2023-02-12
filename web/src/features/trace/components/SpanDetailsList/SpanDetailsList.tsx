@@ -56,7 +56,8 @@ export const SpanDetailsList = ({
   );
 
   useEffect(() => {
-    setIsLoading(false);
+    const timer = setTimeout(() => setIsLoading(false), 250);
+    return () => clearTimeout(timer);
   }, [sortedSpans, setIsLoading]);
 
   const handleChange = (spanId: string, expanded: boolean) => {
