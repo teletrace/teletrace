@@ -37,9 +37,14 @@ test.beforeAll(async () => {
   const result = createAndSendMultipleTraces(traces);
 
   expect(result.length > 0).toBeTruthy();
-  
   traceId = result[0].span.spanContext().traceId;
   spanId = result[0].span.spanContext().spanId;
+  /**
+   * Expecting spans to be ingested completely after that
+   * We must have sort of a waiting/polling mechanism, as the ingestion API
+   * return status code just means that spans have been recieved and not
+   * necessarily ingested successfully.
+   */
   await delay(3000)
 });
 

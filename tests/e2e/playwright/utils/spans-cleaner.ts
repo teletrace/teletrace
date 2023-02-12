@@ -32,5 +32,4 @@ function spansConnectorFactory(spansStorageType: SpansStorageType): Connector {
             throw new TypeError("Invalid spans storage type");
         }
     }
-
 }
