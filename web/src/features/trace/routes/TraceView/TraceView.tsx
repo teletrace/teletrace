@@ -51,6 +51,8 @@ export const TraceView = () => {
   const [selectedSpanId, setSelectedSpanId] = useState<string | null>(null);
 
   const [searchParams] = useSearchParams();
+  const [spanDetailsIsLoading, setSpanDetailsIsLoading] =
+    useState<boolean>(true);
 
   useEffect(() => {
     if (systemInfo?.systemId && systemInfo?.usageReportingEnabled) {
@@ -83,7 +85,12 @@ export const TraceView = () => {
   }, []);
 
   const handleGraphNodeClick = useCallback((node: GraphNode) => {
-    setSelectedNode(node);
+    setSelectedNode((prevState) => {
+      if (prevState?.id !== node.id) {
+        setSpanDetailsIsLoading(true);
+      }
+      return node;
+    });
     setSelectedSpanId(null);
   }, []);
 
@@ -141,6 +148,8 @@ export const TraceView = () => {
                 spans={selectedNode?.spans}
                 selectedSpanId={selectedSpanId}
                 setSelectedSpanId={setSelectedSpanId}
+                isLoading={spanDetailsIsLoading}
+                setIsLoading={setSpanDetailsIsLoading}
               />
             </Stack>
           </Stack>
