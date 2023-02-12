@@ -106,12 +106,12 @@ func getSearchResponseMock() (map[string]any, error) {
 
 func getSearchRequestMock(fs ...model.SearchFilter) (spansquery.SearchRequest, error) {
 	tf := model.Timeframe{
-		StartTime: uint64(time.Unix(0, 0).UnixNano()),
-		EndTime:   uint64(time.Now().UnixNano()),
+		StartTime: uint64(time.Unix(0, 0).UnixMilli()),
+		EndTime:   uint64(time.Now().UnixMilli()),
 	}
 
 	sort := spansquery.Sort{
-		Field:     "TimestampNano",
+		Field:     "TimestampMilli",
 		Ascending: false,
 	}
 

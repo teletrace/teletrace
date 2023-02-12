@@ -68,16 +68,16 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 			&sqliteSpan.parentSpanId,
 			&sqliteSpan.spanName,
 			&sqliteSpan.spanKind,
-			&sqliteSpan.startTimeUnixNano,
-			&sqliteSpan.endTimeUnixNano,
+			&sqliteSpan.startTimeUnixMilli,
+			&sqliteSpan.endTimeUnixMilli,
 			&sqliteSpan.droppedSpanAttributesCount,
 			&sqliteSpan.statusMessage,
 			&sqliteSpan.statusCode,
 			&sqliteSpan.resourceDroppedAttributesCount,
 			&sqliteSpan.droppedEventsCount,
 			&sqliteSpan.droppedLinksCount,
-			&sqliteSpan.durationNano,
-			&sqliteSpan.ingestionTimeUnixNano,
+			&sqliteSpan.durationUnixMilli,
+			&sqliteSpan.ingestionTimeUnixMilli,
 			&sqliteSpan.spanAttributes,
 			&sqliteSpan.scopeName,
 			&sqliteSpan.scopeVersion,
@@ -104,7 +104,7 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 		lastInternalSpan := result.Spans[lastInternalSpanIndex]
 		if lastInternalSpan != nil {
 			switch searchQueryResponse.getSort() {
-			case "duration":
+			case "duration_unix_milli":
 				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.ExternalFields.DurationUnixMilli))
 			default:
 				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.Span.StartTimeUnixMilli))

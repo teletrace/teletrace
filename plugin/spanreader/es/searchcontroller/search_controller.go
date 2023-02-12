@@ -72,7 +72,7 @@ func (sc *searchController) Search(ctx context.Context, r spansquery.SearchReque
 		}
 	}
 
-	searchResp, err := parseSpansResponse(body, withMiliSecTimestampAsNanoSec())
+	searchResp, err := parseSpansResponse(body)
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
 	}

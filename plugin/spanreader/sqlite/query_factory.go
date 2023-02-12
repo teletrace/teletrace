@@ -62,9 +62,9 @@ func buildSearchQuery(r spansquery.SearchRequest) (*searchQueryResponse, error) 
 
 func getSearchQuery(subQuery string, orders string) string {
 	spanIdentifiersQuery := fmt.Sprintf("WITH initial_query as (%s)", subQuery) // base query for search query
-	internalSpanParamsQuery := " SELECT iq.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_nano, " +
-		"spans.end_time_unix_nano, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, " +
-		"spans.dropped_events_count, spans.dropped_links_count, spans.duration, spans.ingestion_time_unix_nano, " +
+	internalSpanParamsQuery := " SELECT iq.span_id, spans.trace_id, spans.trace_state, spans.parent_span_id, spans.name, spans.kind, spans.start_time_unix_milli, " +
+		"spans.end_time_unix_milli, spans.dropped_span_attributes_count, spans.span_status_message, spans.span_status_code, spans.dropped_resource_attributes_count, " +
+		"spans.dropped_events_count, spans.dropped_links_count, spans.duration_unix_milli, spans.ingestion_time_unix_milli, " +
 		"span_attributes ,scopes.name, scopes.version, scopes.dropped_attributes_count, scope_attributes, events, links, resources FROM initial_query AS iq " // query for internal span params
 	spanSchemaJoinQuery := " JOIN spans ON spans.span_id = iq.span_id " // join spans table for internal span params
 	resourceAttributesJoinQuery := " LEFT JOIN " +
@@ -87,10 +87,10 @@ func getSearchQuery(subQuery string, orders string) string {
 		"AS scope_attributes GROUP BY scope_attributes.id) " +
 		"AS scopes ON scopes.id = iq.instrumentation_scope_id " // join between new scopes sub-table and their spans.
 	eventsJoinQuery := " LEFT JOIN " +
-		"(SELECT events.span_id, json_group_array(json_object('time_unix_nano', events.time_unix_nano, 'name', events.name, 'dropped_attributes_count', events.dropped_attributes_count, 'event_attributes', events.event_attributes)) " +
+		"(SELECT events.span_id, json_group_array(json_object('time_unix_milli', events.time_unix_milli, 'name', events.name, 'dropped_attributes_count', events.dropped_attributes_count, 'event_attributes', events.event_attributes)) " +
 		"AS events " +
 		"FROM " +
-		"(SELECT events.span_id, events.time_unix_nano, events.name, events.dropped_attributes_count, json_group_array(json_object('key', ea.key, 'value', ea.value)) " +
+		"(SELECT events.span_id, events.time_unix_milli, events.name, events.dropped_attributes_count, json_group_array(json_object('key', ea.key, 'value', ea.value)) " +
 		"AS event_attributes FROM events " +
 		"JOIN event_attributes ea ON events.id = ea.event_id GROUP BY events.id) " + // join between events and event attributes for map between event and theirs attributes
 		"AS events GROUP BY events.span_id) " +

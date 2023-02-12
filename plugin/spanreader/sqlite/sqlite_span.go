@@ -40,14 +40,14 @@ type sqliteSpan struct {
 	eventsAttributes               sql.NullString
 	linksAttributes                sql.NullString
 	resourceAttributes             sql.NullString
-	startTimeUnixNano              sql.NullInt64
-	endTimeUnixNano                sql.NullInt64
+	startTimeUnixMilli             sql.NullInt64
+	endTimeUnixMilli               sql.NullInt64
 	droppedSpanAttributesCount     sql.NullInt64
 	resourceDroppedAttributesCount sql.NullInt64
 	droppedEventsCount             sql.NullInt64
 	droppedLinksCount              sql.NullInt64
-	durationNano                   sql.NullInt64
-	ingestionTimeUnixNano          sql.NullInt64
+	durationUnixMilli              sql.NullInt64
+	ingestionTimeUnixMilli         sql.NullInt64
 	scopeDroppedAttributesCount    sql.NullInt64
 }
 
@@ -97,16 +97,16 @@ func (sq *sqliteSpan) getInternalSpanKind() string {
 	return ""
 }
 
-func (sq *sqliteSpan) getInternalStartTimeUnixNano() uint64 {
-	if sq.startTimeUnixNano.Valid {
-		return uint64(sq.startTimeUnixNano.Int64)
+func (sq *sqliteSpan) getInternalStartTimeUnixMilli() uint64 {
+	if sq.startTimeUnixMilli.Valid {
+		return uint64(sq.startTimeUnixMilli.Int64)
 	}
 	return 0
 }
 
-func (sq *sqliteSpan) getInternalEndTimeUnixNano() uint64 {
-	if sq.endTimeUnixNano.Valid {
-		return uint64(sq.endTimeUnixNano.Int64)
+func (sq *sqliteSpan) getInternalEndTimeUnixMilli() uint64 {
+	if sq.endTimeUnixMilli.Valid {
+		return uint64(sq.endTimeUnixMilli.Int64)
 	}
 	return 0
 }
@@ -139,16 +139,16 @@ func (sq *sqliteSpan) getInternalDroppedLinksCount() uint32 {
 	return 0
 }
 
-func (sq *sqliteSpan) getInternalDurationNano() uint64 {
-	if sq.durationNano.Valid {
-		return uint64(sq.durationNano.Int64)
+func (sq *sqliteSpan) getInternalDurationUnixMilli() uint64 {
+	if sq.durationUnixMilli.Valid {
+		return uint64(sq.durationUnixMilli.Int64)
 	}
 	return 0
 }
 
-func (sq *sqliteSpan) getInternalIngestionTimeUnixNano() uint64 {
-	if sq.ingestionTimeUnixNano.Valid {
-		return uint64(sq.ingestionTimeUnixNano.Int64)
+func (sq *sqliteSpan) getInternalIngestionTimeUnixMilli() uint64 {
+	if sq.ingestionTimeUnixMilli.Valid {
+		return uint64(sq.ingestionTimeUnixMilli.Int64)
 	}
 	return 0
 }
@@ -257,8 +257,8 @@ func (sq *sqliteSpan) toInternalSpan() (*internalspan.InternalSpan, error) {
 			ParentSpanId:           sq.getInternalParentSpanId(),
 			Name:                   sq.getInternalSpanName(),
 			Kind:                   sq.getInternalSpanKind(),
-			StartTimeUnixMilli:     sq.getInternalStartTimeUnixNano(),
-			EndTimeUnixMilli:       sq.getInternalEndTimeUnixNano(),
+			StartTimeUnixMilli:     sq.getInternalStartTimeUnixMilli(),
+			EndTimeUnixMilli:       sq.getInternalEndTimeUnixMilli(),
 			Attributes:             spanAttributes,
 			DroppedAttributesCount: sq.getInternalDroppedSpanAttributesCount(),
 			Events:                 events,
@@ -271,9 +271,9 @@ func (sq *sqliteSpan) toInternalSpan() (*internalspan.InternalSpan, error) {
 			},
 		},
 		ExternalFields: &internalspan.ExternalFields{
-			DurationUnixMilli: sq.getInternalDurationNano(),
+			DurationUnixMilli: sq.getInternalDurationUnixMilli(),
 		},
-		IngestionTimeUnixMilli: sq.getInternalIngestionTimeUnixNano(),
+		IngestionTimeUnixMilli: sq.getInternalIngestionTimeUnixMilli(),
 	}, nil
 }
 
@@ -347,7 +347,7 @@ func parseEvents(jsonString string) ([]*internalspan.SpanEvent, error) {
 		if !ok {
 			continue
 		}
-		timeUnixNano, ok := eventMap["time_unix_nano"].(float64)
+		timeUnixMilli, ok := eventMap["time_unix_milli"].(float64)
 		if !ok {
 			continue
 		}
@@ -368,7 +368,7 @@ func parseEvents(jsonString string) ([]*internalspan.SpanEvent, error) {
 			return nil, err
 		}
 		internalEvent := internalspan.SpanEvent{
-			TimeUnixMilli:          uint64(timeUnixNano),
+			TimeUnixMilli:          uint64(timeUnixMilli),
 			Name:                   name,
 			DroppedAttributesCount: uint32(droppedAttributesCount),
 			Attributes:             eventAttributes,

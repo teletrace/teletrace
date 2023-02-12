@@ -227,14 +227,14 @@ func Test_BuildTagsValuesRequest_sanity(t *testing.T) {
     },
     {
  	"range": {
- 	 "span.startTimeUnixNano": {
+ 	 "span.startTimeUnixMilli": {
  	  "gte": 1669194382741
  	 }
  	}
     },
     {
  	"range": {
- 	 "span.endTimeUnixNano": {
+ 	 "span.endTimeUnixMilli": {
  	  "lte": 1669799182741
  	 }
  	}

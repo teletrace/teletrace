@@ -118,14 +118,13 @@ func (r *tagsController) GetTagsValues(
 func (r *tagsController) GetTagsStatistics(
 	ctx context.Context, req tagsquery.TagStatisticsRequest, tag string,
 ) (*tagsquery.TagStatisticsResponse, error) {
-	return r.performGetTagsStatisticsRequest(ctx, req, tag, statistics.WithMilliSecTimestampAsNanoSec())
+	return r.performGetTagsStatisticsRequest(ctx, req, tag)
 }
 
 func (r *tagsController) performGetTagsStatisticsRequest(
 	ctx context.Context,
 	request tagsquery.TagStatisticsRequest,
 	tag string,
-	opts ...statistics.TagStatisticParseOption,
 ) (*tagsquery.TagStatisticsResponse, error) {
 	req, err := buildTagsStatisticsRequest(request, tag)
 	if err != nil {
@@ -142,11 +141,11 @@ func (r *tagsController) performGetTagsStatisticsRequest(
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
-	return r.parseTagStatisticsResponseBody(body, request, tag, opts)
+	return r.parseTagStatisticsResponseBody(body, request, tag)
 }
 
 func (r *tagsController) parseTagStatisticsResponseBody(
-	body map[string]any, request tagsquery.TagStatisticsRequest, tag string, opts []statistics.TagStatisticParseOption,
+	body map[string]any, request tagsquery.TagStatisticsRequest, tag string,
 ) (*tagsquery.TagStatisticsResponse, error) {
 	result := &tagsquery.TagStatisticsResponse{
 		Statistics: make(map[tagsquery.TagStatistic]float64),
@@ -158,12 +157,6 @@ func (r *tagsController) parseTagStatisticsResponseBody(
 			if v, exists := h.GetValue(aggregations); exists {
 				result.Statistics[ds] = v
 			}
-		}
-	}
-
-	for k := range result.Statistics {
-		for _, opt := range opts {
-			opt(tag, result.Statistics, k)
 		}
 	}
 

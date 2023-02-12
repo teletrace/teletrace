@@ -39,15 +39,15 @@ var staticTagTypeMap = map[string]string{
 	"span.parentSpanId":                   TextType,
 	"span.name":                           TextType,
 	"span.kind":                           NumberType,
-	"span.startTimeUnixNano":              NumberType,
-	"span.endTimeUnixNano":                NumberType,
+	"span.startTimeUnixMilli":             NumberType,
+	"span.endTimeUnixMilli":               NumberType,
 	"span.droppedAttributesCount":         NumberType,
 	"span.status.message":                 TextType,
 	"span.status.code":                    NumberType,
 	"span.droppedResourceAttributesCount": NumberType,
 	"span.droppedEventsCount":             NumberType,
 	"span.droppedLinksCount":              NumberType,
-	"externalFields.durationNano":         NumberType,
+	"externalFields.durationUnixMilli":    NumberType,
 }
 
 var tablesTypeMap = map[string]bool{

@@ -31,8 +31,8 @@ type sqliteOrder struct {
 }
 
 var orderSqliteFieldsMap = map[string]string{
-	"externalFields.durationNano": "span.duration",
-	"span.startTimeUnixNano":      "span.startTimeUnixNano",
+	"externalFields.durationUnixMilli": "span.durationUnixMilli",
+	"span.startTimeUnixMilli":          "span.startTimeUnixMilli",
 }
 
 func newSqliteOrder(order spansquery.Sort) (sqliteOrder, error) {

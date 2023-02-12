@@ -27,7 +27,7 @@ import (
 
 type SpanParseOption func(*internalspan.InternalSpan)
 
-func parseSpansResponse(body map[string]any, opts ...SpanParseOption) (*spansquery.SearchResponse, error) {
+func parseSpansResponse(body map[string]any) (*spansquery.SearchResponse, error) {
 	var err error
 
 	hits := body["hits"].(map[string]any)["hits"].([]any)
@@ -37,9 +37,6 @@ func parseSpansResponse(body map[string]any, opts ...SpanParseOption) (*spansque
 		hit := h.(map[string]any)["_source"].(map[string]any)
 		var s internalspan.InternalSpan
 		err = mapstructure.Decode(hit, &s)
-		for _, opt := range opts {
-			opt(&s)
-		}
 		if err != nil {
 			return nil, fmt.Errorf("Could not decode response hit from elasticsearch: %+v", err)
 		}
@@ -78,17 +75,4 @@ func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
 
 	}
 	return nil
-}
-
-func withMiliSecTimestampAsNanoSec() SpanParseOption {
-	return func(s *internalspan.InternalSpan) {
-		s.Span.StartTimeUnixMilli = s.Span.StartTimeUnixMilli * 1000 * 1000
-		s.Span.EndTimeUnixMilli = s.Span.EndTimeUnixMilli * 1000 * 1000
-
-		for _, e := range s.Span.Events {
-			e.TimeUnixMilli = e.TimeUnixMilli * 1000 * 1000
-		}
-
-		s.ExternalFields.DurationUnixMilli = s.ExternalFields.DurationUnixMilli * 1000 * 1000
-	}
 }

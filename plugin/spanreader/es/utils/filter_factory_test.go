@@ -74,7 +74,7 @@ func TestMustAndMustNotFilters(t *testing.T) {
 		},
 	}
 
-	query, err := BuildFilters(query, kvFilters, WithMilliSecTimestampAsNanoSec())
+	query, err := BuildFilters(query, kvFilters)
 	assert.Nil(t, err)
 	queryJson, err := json.Marshal(query.Build())
 	assert.Nil(t, err)
@@ -94,7 +94,7 @@ func TestMustAndMustNotFilters(t *testing.T) {
 		},
 	}
 
-	query2, err = BuildFilters(query2, kvFilters2, WithMilliSecTimestampAsNanoSec())
+	query2, err = BuildFilters(query2, kvFilters2)
 	assert.Nil(t, err)
 	queryJson2, err := json.Marshal(query2.Build())
 	assert.Nil(t, err)
@@ -148,7 +148,7 @@ func TestMultiMustNotFilters(t *testing.T) {
 		},
 	}
 
-	query, err := BuildFilters(query, kvFilters, WithMilliSecTimestampAsNanoSec())
+	query, err := BuildFilters(query, kvFilters)
 	assert.Nil(t, err)
 	queryJson, err := json.Marshal(query.Build())
 	assert.Nil(t, err)

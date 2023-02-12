@@ -24,13 +24,9 @@ import (
 	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"oss-tracing/plugin/spanreader/es/errors"
 
-	"golang.org/x/exp/slices"
-
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )
-
-var convertedTimestampKeys = []model.FilterKey{"span.startTimeUnixNano", "span.endTimeUnixNano", "externalFields.durationNano"}
 
 func CreateTimeframeFilters(tf *model.Timeframe) []model.SearchFilter {
 	if tf == nil {
@@ -39,14 +35,14 @@ func CreateTimeframeFilters(tf *model.Timeframe) []model.SearchFilter {
 	return []model.SearchFilter{
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.startTimeUnixNano",
+				Key:      "span.startTimeUnixMilli",
 				Operator: spansquery.OPERATOR_GTE,
 				Value:    tf.StartTime,
 			},
 		},
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.endTimeUnixNano",
+				Key:      "span.endTimeUnixMilli",
 				Operator: spansquery.OPERATOR_LTE,
 				Value:    tf.EndTime,
 			},
@@ -65,7 +61,7 @@ func BuildQuery(b *search.RequestBuilder, fs ...model.SearchFilter) (*search.Req
 			kvFilters = append(kvFilters, *f.KeyValueFilter)
 		}
 	}
-	query, err = BuildFilters(query, kvFilters, WithMilliSecTimestampAsNanoSec())
+	query, err = BuildFilters(query, kvFilters)
 
 	if err != nil {
 		return nil, fmt.Errorf("Could not build filters: %+v", err)
@@ -92,20 +88,4 @@ func DecodeResponse(res *http.Response) (map[string]any, error) {
 		return nil, esError
 	}
 	return body, nil
-}
-
-func IsConvertedTimestamp(key model.FilterKey) bool {
-	return slices.Contains(convertedTimestampKeys, key)
-}
-
-func MilliToNanoFloat64(millis float64) float64 {
-	return millis * 1e6
-}
-
-func NanoToMilliUint64(nanos uint64) uint64 {
-	return nanos / 1e6
-}
-
-func NanoToMilliFloat64(nanos float64) float64 {
-	return nanos / 1e6
 }

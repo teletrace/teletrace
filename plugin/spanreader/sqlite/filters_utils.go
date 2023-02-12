@@ -40,16 +40,16 @@ var sqliteFieldsMap = map[string]string{
 	"span.parentSpanId":                   "spans.parent_span_id",
 	"span.name":                           "spans.name",
 	"span.kind":                           "spans.kind",
-	"span.startTimeUnixNano":              "spans.start_time_unix_nano",
-	"span.endTimeUnixNano":                "spans.end_time_unix_nano",
-	"span.duration":                       "spans.duration",
+	"span.startTimeUnixMilli":             "spans.start_time_unix_milli",
+	"span.endTimeUnixMilli":               "spans.end_time_unix_milli",
+	"span.durationUnixMilli":              "spans.duration_unix_milli",
 	"span.droppedAttributesCount":         "spans.dropped_attributes_count",
 	"span.status.message":                 "spans.status_message",
 	"span.status.code":                    "spans.span_status_code",
 	"span.droppedResourceAttributesCount": "spans.dropped_resource_attributes_count",
 	"span.droppedEventsCount":             "spans.dropped_events_count",
 	"span.droppedLinksCount":              "spans.dropped_links_count",
-	"externalFields.durationNano":         "spans.duration",
+	"externalFields.durationUnixMilli":    "spans.duration_unix_milli",
 }
 
 var sqliteTableNameMap = map[string]string{
@@ -165,14 +165,14 @@ func createTimeframeFilters(tf model.Timeframe) []model.SearchFilter {
 	return []model.SearchFilter{
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.startTimeUnixNano",
+				Key:      "span.startTimeUnixMilli",
 				Operator: spansquery.OPERATOR_GTE,
 				Value:    tf.StartTime,
 			},
 		},
 		{
 			KeyValueFilter: &model.KeyValueFilter{
-				Key:      "span.endTimeUnixNano",
+				Key:      "span.endTimeUnixMilli",
 				Operator: spansquery.OPERATOR_LTE,
 				Value:    tf.EndTime,
 			},
