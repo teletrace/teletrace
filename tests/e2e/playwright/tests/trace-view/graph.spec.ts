@@ -42,7 +42,7 @@ test.beforeAll(async () => {
   /**
    * Expecting spans to be ingested completely after that
    * We must have sort of a waiting/polling mechanism, as the ingestion API
-   * return status code just means that spans have been recieved and not
+   * return status code just means that spans have been received and not
    * necessarily ingested successfully.
    */
   await delay(3000);
