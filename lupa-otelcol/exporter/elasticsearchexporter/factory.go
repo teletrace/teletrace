@@ -43,16 +43,6 @@ func createDefaultConfig() component.ExporterConfig {
 	return &Config{
 		ExporterSettings: config.NewExporterSettings(component.NewID(typeStr)),
 		Index:            defaultIndex,
-		WorkersCount:     1,
-		Flush: FlushSettings{
-			Interval: 30,
-			// 5MB, the default in elastic's library
-			Bytes: 5 * 1024 * 1024,
-		},
-		Retry: RetrySettings{
-			Enabled:    true,
-			MaxRetries: 3,
-		},
 	}
 }
 
@@ -71,7 +61,9 @@ func createTracesExporter(
 		exporter.pushTracesData,
 		exporterhelper.WithShutdown(exporter.Shutdown),
 		exporterhelper.WithRetry(exporterhelper.RetrySettings{
-			Enabled: true,
+			Enabled:        true,
+			MaxInterval:    3,
+			MaxElapsedTime: 10,
 		}),
 	)
 }
