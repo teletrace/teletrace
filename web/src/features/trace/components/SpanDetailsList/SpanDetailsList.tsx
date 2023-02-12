@@ -44,10 +44,6 @@ export const SpanDetailsList = ({
   isLoading,
   setIsLoading,
 }: SpanDetailsListProps) => {
-  if (!selectedNode) {
-    return <></>;
-  }
-
   const spans = selectedNode ? selectedNode.spans : [];
 
   const sortedSpans = useMemo(
@@ -64,6 +60,10 @@ export const SpanDetailsList = ({
     const nextSelectedSpanId = expanded ? spanId : null;
     setSelectedSpanId(nextSelectedSpanId);
   };
+
+  if (!selectedNode) {
+    return null;
+  }
 
   if (isLoading) {
     return (
