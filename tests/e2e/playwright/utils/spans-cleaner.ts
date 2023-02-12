@@ -24,7 +24,7 @@ export async function cleanSpans(): Promise<void> {
 }
 
 function spansConnectorFactory(spansStorageType: SpansStorageType): Connector {
-  switch(spansStorageType) {
+  switch (spansStorageType) {
     case "ElasticSearch": {
       return new ElasticConnector();
     }
