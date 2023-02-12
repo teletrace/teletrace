@@ -32,7 +32,7 @@ func newClient(logger *zap.Logger, cfg *Config) (*opensearch.Client, error) {
 		Password:  cfg.Password,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error creating Opensearch Client: %+v", err)
+		return nil, fmt.Errorf("error creating OpenSearch Client: %+v", err)
 	}
 
 	return osConfig, nil
