@@ -101,7 +101,7 @@ func insertSpan(
 	startTime := NanoToMilli(uint64(span.StartTimestamp()))
 	endTime := NanoToMilli(uint64(span.EndTimestamp()))
 	duration := endTime - startTime
-	ingestionTimeUnixMilli := NanoToMilli(uint64(time.Now().UTC().Nanosecond()))
+	ingestionTimeUnixMilli := uint64(time.Now().UTC().UnixMilli())
 
 	_, err := performInsert(tx, `
 		INSERT INTO spans (

@@ -38,7 +38,7 @@ func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[st
 			TraceState:       "state",
 			Name:             "span_name",
 			Kind:             "INTERNAL",
-			EndTimeUnixMilli: uint64(time.Now().UTC().Nanosecond()),
+			EndTimeUnixMilli: uint64(time.Now().UTC().UnixMilli()),
 			Attributes:       s_attr,
 			Status: &internalspanv1.SpanStatus{
 				Message: "STATUS_MESSAGE",
