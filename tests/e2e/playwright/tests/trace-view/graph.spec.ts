@@ -36,9 +36,9 @@ test.beforeAll(async () => {
   spanId = result[0].span.spanContext().spanId;
 });
 
-test.afterAll(async () => {
-  await new ElasticConnector().clean();
-});
+// test.afterAll(async () => {
+//   await new ElasticConnector().clean();
+// });
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`http://localhost:8080/trace/${traceId}?spanId=${spanId}`);
