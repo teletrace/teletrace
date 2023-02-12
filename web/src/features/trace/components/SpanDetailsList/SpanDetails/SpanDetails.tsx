@@ -83,6 +83,10 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
     }
   }, [expanded]);
 
+  const errorMessage: string = span.span.attributes["grpc.error_message"]
+    ? span.span.attributes["grpc.error_message"].toString()
+    : span.span.status.message;
+
   return (
     <Box
       sx={{
@@ -146,9 +150,7 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
           </Tooltip>
         </AccordionSummary>
         <AccordionDetails sx={styles.accordionDetails}>
-          {hasError && (
-            <SpanErrorDetails errorMessage={span.span.status.message} />
-          )}
+          {hasError && <SpanErrorDetails errorMessage={errorMessage} />}
           <SpanAttributesGroup
             title="Basic"
             attributes={basicAttributes}
