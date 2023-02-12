@@ -160,19 +160,3 @@ func WithMiliSec() TranslationOption {
 		}
 	}
 }
-
-func WithSortAttributes() TranslationOption {
-	return func(s *internalspanv1.InternalSpan) {
-		s.Span.Attributes = sortAttributes(s.Span.Attributes)
-		s.Resource.Attributes = sortAttributes(s.Resource.Attributes)
-		s.Scope.Attributes = sortAttributes(s.Scope.Attributes)
-	}
-}
-
-func WithDedupAttributes() TranslationOption {
-	return func(s *internalspanv1.InternalSpan) {
-		s.Span.Attributes = dedupSortedAttributes(s.Span.Attributes)
-		s.Resource.Attributes = dedupSortedAttributes(s.Resource.Attributes)
-		s.Scope.Attributes = dedupSortedAttributes(s.Scope.Attributes)
-	}
-}

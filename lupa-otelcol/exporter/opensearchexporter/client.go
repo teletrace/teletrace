@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package elasticsearchexporter
+package opensearchexporter
 
 import (
 	"fmt"
 
-	"go.uber.org/zap"
+	"github.com/opensearch-project/opensearch-go"
 
-	"github.com/elastic/go-elasticsearch/v8"
+	"go.uber.org/zap"
 )
 
-func newClient(logger *zap.Logger, cfg *Config) (*elasticsearch.Client, error) {
-	esConfig, err := elasticsearch.NewClient(elasticsearch.Config{
+func newClient(logger *zap.Logger, cfg *Config) (*opensearch.Client, error) {
+	osConfig, err := opensearch.NewClient(opensearch.Config{
 		// basic connection setup
 		Addresses: cfg.Endpoints,
 		Username:  cfg.Username,
 		Password:  cfg.Password,
-		APIKey:    cfg.APIKey,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error creating Elasticsearch Client: %+v", err)
+		return nil, fmt.Errorf("error creating Opensearch Client: %+v", err)
 	}
 
-	return esConfig, nil
+	return osConfig, nil
 }

@@ -20,11 +20,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
+
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
 )
 
 type elasticsearchTracesExporter struct {
@@ -58,8 +59,6 @@ func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptr
 	internalSpans := modeltranslator.TranslateOTLPToInternalModel(
 		td,
 		modeltranslator.WithMiliSec(),
-		modeltranslator.WithSortAttributes(),
-		modeltranslator.WithDedupAttributes(),
 	)
 
 	return writeSpans(ctx, e.logger, e.client, e.cfg.Index, internalSpans...)

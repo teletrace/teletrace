@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package elasticsearchexporter
+package opensearchexporter
 
 import (
 	"context"
@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	typeStr      = "elasticsearch"
+	typeStr      = "opensearch"
 	stability    = component.StabilityLevelInDevelopment
 	defaultIndex = "lupa-traces"
 )
@@ -62,8 +62,8 @@ func createTracesExporter(
 		exporterhelper.WithShutdown(exporter.Shutdown),
 		exporterhelper.WithRetry(exporterhelper.RetrySettings{
 			Enabled:        true,
-			MaxInterval:    3,
-			MaxElapsedTime: 10,
+			MaxInterval:    3,  // TODO add to lupa config
+			MaxElapsedTime: 10, // TODO add to lupa config
 		}),
 	)
 }

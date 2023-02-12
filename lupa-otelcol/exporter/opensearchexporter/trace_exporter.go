@@ -14,7 +14,7 @@
 * limitations under the License.
  */
 
-package elasticsearchexporter
+package opensearchexporter
 
 import (
 	"context"
@@ -23,43 +23,41 @@ import (
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 
-	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
+	"github.com/opensearch-project/opensearch-go"
 )
 
-type elasticsearchTracesExporter struct {
+type opensearchTracesExporter struct {
 	logger *zap.Logger
 	cfg    *Config
-	client *elasticsearch.Client
+	client *opensearch.Client
 }
 
-func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExporter, error) {
+func newTracesExporter(logger *zap.Logger, cfg *Config) (*opensearchTracesExporter, error) {
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
 
-	esClient, err := newClient(logger, cfg)
+	osClient, err := newClient(logger, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create client: %+v", err)
 	}
 
-	return &elasticsearchTracesExporter{
+	return &opensearchTracesExporter{
 		logger: logger,
 		cfg:    cfg,
-		client: esClient,
+		client: osClient,
 	}, nil
 }
 
-func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
+func (e *opensearchTracesExporter) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
+func (e *opensearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
 	internalSpans := modeltranslator.TranslateOTLPToInternalModel(
 		td,
 		modeltranslator.WithMiliSec(),
-		modeltranslator.WithSortAttributes(),
-		modeltranslator.WithDedupAttributes(),
 	)
 
 	return writeSpans(ctx, e.logger, e.client, e.cfg.Index, internalSpans...)
