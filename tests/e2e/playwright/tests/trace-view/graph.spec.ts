@@ -22,23 +22,27 @@ import {
   TraceProps,
 } from "../../utils/spans-generator/spans-generator";
 import { ElasticConnector } from "../../utils/connectors/elastic-connector";
+import { cleanSpans } from "../../utils/spans-cleaner";
 
 let traceId: string;
 let spanId: string;
 
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 test.beforeAll(async () => {
+  await cleanSpans();
   const traces = createDynamicSpansAndServices(2, 1);
   const result = createAndSendMultipleTraces(traces);
 
   expect(result.length > 0).toBeTruthy();
-
+  
   traceId = result[0].span.spanContext().traceId;
   spanId = result[0].span.spanContext().spanId;
+  await delay(3000)
 });
 
-test.afterAll(async () => {
-  await new ElasticConnector().clean();
-});
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`http://localhost:8080/trace/${traceId}?spanId=${spanId}`);
