@@ -28,7 +28,7 @@ let traceId: string;
 let spanId: string;
 
 function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 test.beforeAll(async () => {
@@ -47,7 +47,6 @@ test.beforeAll(async () => {
    */
   await delay(3000);
 });
-
 
 test.beforeEach(async ({ page }) => {
   await page.goto(`http://localhost:8080/trace/${traceId}?spanId=${spanId}`);
