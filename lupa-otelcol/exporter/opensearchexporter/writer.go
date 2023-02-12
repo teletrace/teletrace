@@ -65,9 +65,6 @@ func writeSpans(ctx context.Context, logger *zap.Logger, c *opensearch.Client, i
 			errs = append(errs, (fmt.Errorf("Cannot encode span with id %v: %v", span.Span.SpanId, err)))
 		}
 
-		s := string(data)
-		fmt.Print(s)
-
 		data = append(data, "\n"...)
 		buf.Grow(len(meta) + len(data))
 		buf.Write(meta)
