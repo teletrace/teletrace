@@ -33,20 +33,20 @@ func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[st
 			Attributes: i_attr,
 		},
 		Span: &internalspanv1.Span{
-			TraceId:         "1234567887654321",
-			SpanId:          "12345678",
-			TraceState:      "state",
-			Name:            "span_name",
-			Kind:            "INTERNAL",
-			EndTimeUnixNano: uint64(time.Now().UTC().Nanosecond()),
-			Attributes:      s_attr,
+			TraceId:          "1234567887654321",
+			SpanId:           "12345678",
+			TraceState:       "state",
+			Name:             "span_name",
+			Kind:             "INTERNAL",
+			EndTimeUnixMilli: uint64(time.Now().UTC().Nanosecond()),
+			Attributes:       s_attr,
 			Status: &internalspanv1.SpanStatus{
 				Message: "STATUS_MESSAGE",
 				Code:    "OK",
 			},
 		},
 		ExternalFields: &internalspanv1.ExternalFields{
-			DurationNano: 1000000000,
+			DurationUnixMilli: 1000000000,
 		},
 	}
 }

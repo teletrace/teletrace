@@ -18,9 +18,27 @@ package modeltranslator
 
 import (
 	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
-
 	"go.opentelemetry.io/collector/pdata/ptrace"
 )
+
+func SpanWithTimestampsAsMilli() internalspanv1.SpanOption {
+	return func(span *internalspanv1.Span) {
+		span.StartTimeUnixMilli /= 1e6
+		span.EndTimeUnixMilli /= 1e6
+	}
+}
+
+func SpanEventWithTimestampsAsMilli() internalspanv1.SpanEventOption {
+	return func(spanEvent *internalspanv1.SpanEvent) {
+		spanEvent.TimeUnixMilli /= 1e6
+	}
+}
+
+func ExternalFieldsWithTimestampsAsMilli() internalspanv1.ExternalFieldsOption {
+	return func(externalFields *internalspanv1.ExternalFields) {
+		externalFields.DurationUnixMilli /= 1e6
+	}
+}
 
 // TranslateOTLPToInternalSpans converts traces from the OLTP format
 // to the InternalSpan model used by the Elasticsearch exporters.
@@ -40,8 +58,8 @@ func TranslateOTLPToInternalSpans(td ptrace.Traces) <-chan *internalspanv1.Inter
 				spanSlice := scopeSpans.Spans()
 				for k := 0; k < spanSlice.Len(); k++ {
 					span := spanSlice.At(k)
-					internalSpan := getInternalSpan(span)
-					internalSpanExternalFields := getInternalSpanExternalFields(span)
+					internalSpan := getInternalSpan(span, SpanWithTimestampsAsMilli())
+					internalSpanExternalFields := getInternalSpanExternalFields(span, ExternalFieldsWithTimestampsAsMilli())
 
 					ch <- &internalspanv1.InternalSpan{
 						Resource:       internalSpanResource,
@@ -76,20 +94,20 @@ func getInternalSpanScope(scopeSpans ptrace.ScopeSpans) *internalspanv1.Instrume
 	}
 }
 
-func getInternalSpan(span ptrace.Span) *internalspanv1.Span {
-	events := getInternalSpanEvents(span)
+func getInternalSpan(span ptrace.Span, options ...internalspanv1.SpanOption) *internalspanv1.Span {
+	events := getInternalSpanEvents(span, SpanEventWithTimestampsAsMilli())
 	links := getInternalSpanLinks(span)
 	status := getInternalSpanStatus(span)
 
-	return &internalspanv1.Span{
+	internalSpan := &internalspanv1.Span{
 		TraceId:                span.TraceID().HexString(),
 		SpanId:                 span.SpanID().HexString(),
 		TraceState:             span.TraceState().AsRaw(),
 		ParentSpanId:           span.ParentSpanID().HexString(),
 		Name:                   span.Name(),
 		Kind:                   span.Kind().String(),
-		StartTimeUnixNano:      uint64(span.StartTimestamp() / (1000 * 1000)), // convert to MS
-		EndTimeUnixNano:        uint64(span.EndTimestamp() / (1000 * 1000)),   // convert to MS
+		StartTimeUnixMilli:     uint64(span.StartTimestamp()),
+		EndTimeUnixMilli:       uint64(span.EndTimestamp()),
 		Attributes:             span.Attributes().AsRaw(),
 		DroppedAttributesCount: span.DroppedAttributesCount(),
 		Events:                 events,
@@ -98,21 +116,34 @@ func getInternalSpan(span ptrace.Span) *internalspanv1.Span {
 		DroppedLinksCount:      span.DroppedLinksCount(),
 		Status:                 status,
 	}
+
+	for _, option := range options {
+		option(internalSpan)
+	}
+
+	return internalSpan
 }
 
-func getInternalSpanEvents(span ptrace.Span) []*internalspanv1.SpanEvent {
+func getInternalSpanEvents(span ptrace.Span, options ...internalspanv1.SpanEventOption) []*internalspanv1.SpanEvent {
 	var internalSpanEvents []*internalspanv1.SpanEvent
 	spanEventSlice := span.Events()
 	for i := 0; i < spanEventSlice.Len(); i++ {
 		spanEvent := spanEventSlice.At(i)
-		internalSpanEvents = append(internalSpanEvents,
-			&internalspanv1.SpanEvent{
-				Name:                   spanEvent.Name(),
-				Attributes:             spanEvent.Attributes().AsRaw(),
-				TimeUnixNano:           uint64(spanEvent.Timestamp() / (1000 * 1000)), // convert to MS
-				DroppedAttributesCount: spanEvent.DroppedAttributesCount(),
-			})
+
+		internalSpanEvent := &internalspanv1.SpanEvent{
+			Name:                   spanEvent.Name(),
+			Attributes:             spanEvent.Attributes().AsRaw(),
+			TimeUnixMilli:          uint64(spanEvent.Timestamp()), // convert to MS
+			DroppedAttributesCount: spanEvent.DroppedAttributesCount(),
+		}
+
+		for _, option := range options {
+			option(internalSpanEvent)
+		}
+
+		internalSpanEvents = append(internalSpanEvents, internalSpanEvent)
 	}
+
 	return internalSpanEvents
 }
 
@@ -140,9 +171,14 @@ func getInternalSpanStatus(span ptrace.Span) *internalspanv1.SpanStatus {
 	}
 }
 
-func getInternalSpanExternalFields(span ptrace.Span) *internalspanv1.ExternalFields {
-	duration := span.EndTimestamp() - span.StartTimestamp()
-	return &internalspanv1.ExternalFields{
-		DurationNano: uint64(duration) / (1000 * 1000), // convert to MS
+func getInternalSpanExternalFields(span ptrace.Span, options ...internalspanv1.ExternalFieldsOption) *internalspanv1.ExternalFields {
+	externalFields := &internalspanv1.ExternalFields{
+		DurationUnixMilli: uint64(span.EndTimestamp() - span.StartTimestamp()), // convert to MS
 	}
+
+	for _, option := range options {
+		option(externalFields)
+	}
+
+	return externalFields
 }

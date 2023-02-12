@@ -16,10 +16,14 @@
 
 package internalspanv1
 
+type SpanEventOption func(spanEvent *SpanEvent)
+type SpanOption func(span *Span)
+type ExternalFieldsOption func(externalFields *ExternalFields)
+
 type Attributes map[string]any
 
 type SpanEvent struct {
-	TimeUnixNano           uint64     `json:"timeUnixNano"`
+	TimeUnixMilli          uint64     `json:"timeUnixMilli"`
 	Name                   string     `json:"name"`
 	Attributes             Attributes `json:"attributes"`
 	DroppedAttributesCount uint32     `json:"droppedAttributesCount"`
@@ -57,8 +61,8 @@ type Span struct {
 	ParentSpanId           string       `json:"parentSpanId"`
 	Name                   string       `json:"name"`
 	Kind                   string       `json:"kind"`
-	StartTimeUnixNano      uint64       `json:"startTimeUnixNano"`
-	EndTimeUnixNano        uint64       `json:"endTimeUnixNano"`
+	StartTimeUnixMilli     uint64       `json:"startTimeUnixMilli"`
+	EndTimeUnixMilli       uint64       `json:"endTimeUnixMilli"`
 	Attributes             Attributes   `json:"attributes"`
 	DroppedAttributesCount uint32       `json:"droppedAttributesCount"`
 	Events                 []*SpanEvent `json:"-"`
@@ -69,13 +73,13 @@ type Span struct {
 }
 
 type ExternalFields struct {
-	DurationNano uint64 `json:"durationNano"`
+	DurationUnixMilli uint64 `json:"DurationUnixMilli"`
 }
 
 type InternalSpan struct {
-	Resource              *Resource             `json:"resource"`
-	Scope                 *InstrumentationScope `json:"scope"`
-	Span                  *Span                 `json:"span"`
-	ExternalFields        *ExternalFields       `json:"externalFields"`
-	IngestionTimeUnixNano uint64                `json:"ingestionTimeUnixNano"`
+	Resource               *Resource             `json:"resource"`
+	Scope                  *InstrumentationScope `json:"scope"`
+	Span                   *Span                 `json:"span"`
+	ExternalFields         *ExternalFields       `json:"externalFields"`
+	IngestionTimeUnixMilli uint64                `json:"ingestionTimeUnixMilli"`
 }

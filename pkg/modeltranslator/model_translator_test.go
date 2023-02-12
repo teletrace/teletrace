@@ -98,8 +98,8 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 	var spanLinks []*internalspanv1.SpanLink
 	for i := 0; i < 2; i++ {
 		spanEvents = append(spanEvents, &internalspanv1.SpanEvent{
-			TimeUnixNano: 5,
-			Name:         fmt.Sprintf("[SpanEvent-%d]Name", i),
+			TimeUnixMilli: 5,
+			Name:          fmt.Sprintf("[SpanEvent-%d]Name", i),
 			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[SpanEvent-%d]attribute", i),
 			},
@@ -135,14 +135,14 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			DroppedAttributesCount: 2,
 		})
 		spans = append(spans, &internalspanv1.Span{
-			TraceId:           pcommon.TraceID([16]byte{1}).HexString(),
-			SpanId:            pcommon.SpanID([8]byte{2}).HexString(),
-			TraceState:        fmt.Sprintf("[Span-%d]TraceState", i),
-			ParentSpanId:      pcommon.SpanID([8]byte{3}).HexString(),
-			Name:              fmt.Sprintf("[Span-%d]Name", i),
-			Kind:              "Server",
-			StartTimeUnixNano: 0,
-			EndTimeUnixNano:   10,
+			TraceId:            pcommon.TraceID([16]byte{1}).HexString(),
+			SpanId:             pcommon.SpanID([8]byte{2}).HexString(),
+			TraceState:         fmt.Sprintf("[Span-%d]TraceState", i),
+			ParentSpanId:       pcommon.SpanID([8]byte{3}).HexString(),
+			Name:               fmt.Sprintf("[Span-%d]Name", i),
+			Kind:               "Server",
+			StartTimeUnixMilli: 0,
+			EndTimeUnixMilli:   10,
 			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[Span-%d]attribute", i),
 			},
@@ -159,7 +159,7 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 	}
 
 	externalFields := &internalspanv1.ExternalFields{
-		DurationNano: 10,
+		DurationUnixMilli: 10,
 	}
 
 	var internalSpans []*internalspanv1.InternalSpan

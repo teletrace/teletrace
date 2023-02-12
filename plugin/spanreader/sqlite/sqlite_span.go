@@ -257,8 +257,8 @@ func (sq *sqliteSpan) toInternalSpan() (*internalspan.InternalSpan, error) {
 			ParentSpanId:           sq.getInternalParentSpanId(),
 			Name:                   sq.getInternalSpanName(),
 			Kind:                   sq.getInternalSpanKind(),
-			StartTimeUnixNano:      sq.getInternalStartTimeUnixNano(),
-			EndTimeUnixNano:        sq.getInternalEndTimeUnixNano(),
+			StartTimeUnixMilli:     sq.getInternalStartTimeUnixNano(),
+			EndTimeUnixMilli:       sq.getInternalEndTimeUnixNano(),
 			Attributes:             spanAttributes,
 			DroppedAttributesCount: sq.getInternalDroppedSpanAttributesCount(),
 			Events:                 events,
@@ -271,9 +271,9 @@ func (sq *sqliteSpan) toInternalSpan() (*internalspan.InternalSpan, error) {
 			},
 		},
 		ExternalFields: &internalspan.ExternalFields{
-			DurationNano: sq.getInternalDurationNano(),
+			DurationUnixMilli: sq.getInternalDurationNano(),
 		},
-		IngestionTimeUnixNano: sq.getInternalIngestionTimeUnixNano(),
+		IngestionTimeUnixMilli: sq.getInternalIngestionTimeUnixNano(),
 	}, nil
 }
 
@@ -368,7 +368,7 @@ func parseEvents(jsonString string) ([]*internalspan.SpanEvent, error) {
 			return nil, err
 		}
 		internalEvent := internalspan.SpanEvent{
-			TimeUnixNano:           uint64(timeUnixNano),
+			TimeUnixMilli:          uint64(timeUnixNano),
 			Name:                   name,
 			DroppedAttributesCount: uint32(droppedAttributesCount),
 			Attributes:             eventAttributes,

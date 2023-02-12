@@ -35,6 +35,10 @@ const (
 	Link     AttributeKind = "link"
 )
 
+func NanoToMilli(nanos uint64) uint64 {
+	return nanos / 1e6
+}
+
 func performInsert(tx *sql.Tx, query string, data ...any) (int64, error) {
 	insertStmt, err := tx.Prepare(query)
 
@@ -94,23 +98,25 @@ func insertSpan(
 	tx *sql.Tx, span ptrace.Span, spanId string, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string,
 	scopeId int64,
 ) error {
-	duration := span.EndTimestamp() - span.StartTimestamp()
-	ingestionTimeUnixNano := uint64(time.Now().UTC().Nanosecond())
+	startTime := NanoToMilli(uint64(span.StartTimestamp()))
+	endTime := NanoToMilli(uint64(span.EndTimestamp()))
+	duration := endTime - startTime
+	ingestionTimeUnixMilli := NanoToMilli(uint64(time.Now().UTC().Nanosecond()))
 
 	_, err := performInsert(tx, `
 		INSERT INTO spans (
 			span_id, trace_id, trace_state,
-		    parent_span_id, name, kind, start_time_unix_nano,
-		    end_time_unix_nano, dropped_span_attributes_count, dropped_events_count, dropped_links_count,
-		    span_status_message, span_status_code, dropped_resource_attributes_count, duration,
-		    ingestion_time_unix_nano, instrumentation_scope_id
+		    parent_span_id, name, kind, start_time_unix_milli,
+		    end_time_unix_milli, dropped_span_attributes_count, dropped_events_count, dropped_links_count,
+		    span_status_message, span_status_code, dropped_resource_attributes_count, duration_unix_milli,
+		    ingestion_time_unix_milli, instrumentation_scope_id
 		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,	?, ?, ?)
 	`,
 		spanId, span.TraceID().HexString(), span.TraceState().AsRaw(),
-		span.ParentSpanID().HexString(), span.Name(), span.Kind().String(), uint64(span.StartTimestamp()),
-		uint64(span.EndTimestamp()), span.DroppedAttributesCount(), span.DroppedEventsCount(), span.DroppedLinksCount(),
+		span.ParentSpanID().HexString(), span.Name(), span.Kind().String(), startTime,
+		endTime, span.DroppedAttributesCount(), span.DroppedEventsCount(), span.DroppedLinksCount(),
 		span.Status().Message(), span.Status().Code().String(), droppedResourceAttributesCount, duration,
-		ingestionTimeUnixNano, scopeId,
+		ingestionTimeUnixMilli, scopeId,
 	)
 
 	// Insert resource id
@@ -134,15 +140,15 @@ func insertLink(tx *sql.Tx, link ptrace.SpanLink, spanId string) (int64, error) 
 func insertEvent(tx *sql.Tx, event ptrace.SpanEvent, spanId string) (int64, error) {
 	return performInsert(
 		tx,
-		"INSERT INTO events (span_id, name, time_unix_nano, dropped_attributes_count) VALUES (?, ?, ?, ?)",
-		spanId, event.Name(), uint64(event.Timestamp()), event.DroppedAttributesCount(),
+		"INSERT INTO events (span_id, name, time_unix_milli, dropped_attributes_count) VALUES (?, ?, ?, ?)",
+		spanId, event.Name(), NanoToMilli(uint64(event.Timestamp())), event.DroppedAttributesCount(),
 	)
 }
 
 func insertEmptyEvent(tx *sql.Tx, spanId string) (int64, error) {
 	return performInsert(
 		tx,
-		"INSERT INTO events (span_id, name, time_unix_nano, dropped_attributes_count) VALUES (?, ?, ?, ?)",
+		"INSERT INTO events (span_id, name, time_unix_milli, dropped_attributes_count) VALUES (?, ?, ?, ?)",
 		spanId, nil, nil, nil,
 	)
 }

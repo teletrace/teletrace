@@ -105,9 +105,9 @@ func (sr *spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*
 		if lastInternalSpan != nil {
 			switch searchQueryResponse.getSort() {
 			case "duration":
-				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.ExternalFields.DurationNano))
+				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.ExternalFields.DurationUnixMilli))
 			default:
-				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.Span.StartTimeUnixNano))
+				nextToken = spansquery.ContinuationToken(fmt.Sprintf("%d", lastInternalSpan.Span.StartTimeUnixMilli))
 			}
 			result.Metadata = &spansquery.Metadata{
 				NextToken: nextToken,

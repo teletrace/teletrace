@@ -15,16 +15,16 @@ CREATE TABLE IF NOT EXISTS spans (
      parent_span_id TEXT,
      name TEXT,
      kind TEXT,
-     start_time_unix_nano INTEGER NOT NULL,
-     end_time_unix_nano INTEGER NOT NULL,
+     start_time_unix_milli INTEGER NOT NULL,
+     end_time_unix_milli INTEGER NOT NULL,
      dropped_span_attributes_count INTEGER NOT NULL,
      span_status_message TEXT NOT NULL,
      span_status_code TEXT NOT NULL,
      dropped_resource_attributes_count INTEGER NOT NULL,
      dropped_events_count INTEGER NOT NULL,
      dropped_links_count INTEGER NOT NULL,
-     duration INTEGER NOT NULL,
-     ingestion_time_unix_nano INTEGER NOT NULL,
+     duration_unix_milli INTEGER NOT NULL,
+     ingestion_time_unix_milli INTEGER NOT NULL,
      instrumentation_scope_id INTEGER NOT NULL,
      FOREIGN KEY(instrumentation_scope_id) REFERENCES scopes(id)
 );
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS spans (
 CREATE TABLE IF NOT EXISTS events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     span_id TEXT NOT NULL,
-    time_unix_nano INTEGER,
+    time_unix_milli INTEGER,
     name TEXT,
     dropped_attributes_count INTEGER,
     FOREIGN KEY(span_id) REFERENCES spans(span_id)
@@ -94,10 +94,10 @@ CREATE TABLE IF NOT EXISTS span_resource_attributes (
 );
 
 CREATE INDEX IF NOT EXISTS start_time_index
-ON spans (start_time_unix_nano);
+ON spans (start_time_unix_milli);
 
 CREATE INDEX IF NOT EXISTS end_time_index
-ON spans (end_time_unix_nano);
+ON spans (end_time_unix_milli);
 
 CREATE INDEX IF NOT EXISTS duration_index
-ON spans (duration);
+ON spans (duration_unix_milli);

@@ -82,13 +82,13 @@ func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
 
 func withMiliSecTimestampAsNanoSec() SpanParseOption {
 	return func(s *internalspan.InternalSpan) {
-		s.Span.StartTimeUnixNano = s.Span.StartTimeUnixNano * 1000 * 1000
-		s.Span.EndTimeUnixNano = s.Span.EndTimeUnixNano * 1000 * 1000
+		s.Span.StartTimeUnixMilli = s.Span.StartTimeUnixMilli * 1000 * 1000
+		s.Span.EndTimeUnixMilli = s.Span.EndTimeUnixMilli * 1000 * 1000
 
 		for _, e := range s.Span.Events {
-			e.TimeUnixNano = e.TimeUnixNano * 1000 * 1000
+			e.TimeUnixMilli = e.TimeUnixMilli * 1000 * 1000
 		}
 
-		s.ExternalFields.DurationNano = s.ExternalFields.DurationNano * 1000 * 1000
+		s.ExternalFields.DurationUnixMilli = s.ExternalFields.DurationUnixMilli * 1000 * 1000
 	}
 }

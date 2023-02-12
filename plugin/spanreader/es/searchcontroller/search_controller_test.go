@@ -43,9 +43,9 @@ func getSearchResponseMock() (map[string]any, error) {
                 "_score":1,
                 "_source":{
                    "ExternalFields":{
-                      "DurationNano":1000000000
+                      "DurationUnixMilli":1000000000
                    },
-                   "IngestionTimeUnixNano":0,
+                   "IngestionTimeUnixMilli":0,
                    "Resource":{
                       "Attributes":{
                          "intValue":1666585293167,
@@ -70,14 +70,14 @@ func getSearchResponseMock() (map[string]any, error) {
                       "DroppedAttributesCount":0,
                       "DroppedEventsCount":0,
                       "DroppedLinksCount":0,
-                      "EndTimeUnixNano":167945000,
+                      "EndTimeUnixMilli":167945000,
                       "Events":null,
                       "Kind":"Internal",
                       "Links":null,
                       "Name":"span_name",
                       "ParentSpanId":"00000000",
                       "SpanId":"12345678",
-                      "StartTimeUnixNano":0,
+                      "StartTimeUnixMilli":0,
                       "Status":{
                          "Code":"Unset",
                          "Message":"STATUS_MESSAGE"

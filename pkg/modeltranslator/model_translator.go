@@ -86,8 +86,8 @@ func getInternalSpan(span ptrace.Span) *internalspanv1.Span {
 		ParentSpanId:           span.ParentSpanID().HexString(),
 		Name:                   span.Name(),
 		Kind:                   span.Kind().String(),
-		StartTimeUnixNano:      uint64(span.StartTimestamp()),
-		EndTimeUnixNano:        uint64(span.EndTimestamp()),
+		StartTimeUnixMilli:     uint64(span.StartTimestamp()),
+		EndTimeUnixMilli:       uint64(span.EndTimestamp()),
 		Attributes:             span.Attributes().AsRaw(),
 		DroppedAttributesCount: span.DroppedAttributesCount(),
 		Events:                 events,
@@ -107,7 +107,7 @@ func getInternalSpanEvents(span ptrace.Span) []*internalspanv1.SpanEvent {
 			&internalspanv1.SpanEvent{
 				Name:                   spanEvent.Name(),
 				Attributes:             spanEvent.Attributes().AsRaw(),
-				TimeUnixNano:           uint64(spanEvent.Timestamp()),
+				TimeUnixMilli:          uint64(spanEvent.Timestamp()),
 				DroppedAttributesCount: spanEvent.DroppedAttributesCount(),
 			})
 	}
@@ -141,6 +141,6 @@ func getInternalSpanStatus(span ptrace.Span) *internalspanv1.SpanStatus {
 func getInternalSpanExternalFields(span ptrace.Span) *internalspanv1.ExternalFields {
 	duration := span.EndTimestamp() - span.StartTimestamp()
 	return &internalspanv1.ExternalFields{
-		DurationNano: uint64(duration),
+		DurationUnixMilli: uint64(duration),
 	}
 }
