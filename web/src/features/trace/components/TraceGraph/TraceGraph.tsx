@@ -16,7 +16,9 @@
 
 import { Box, CircularProgress, Stack } from "@mui/material";
 import {
+  Dispatch,
   MouseEvent as ReactMouseEvent,
+  SetStateAction,
   memo,
   useCallback,
   useEffect,
@@ -53,6 +55,8 @@ import "reactflow/dist/style.css";
 export interface TraceGraphProps {
   spans: InternalSpan[];
   selectedNode: GraphNode | null;
+  setSelectedNode: Dispatch<SetStateAction<GraphNode | null>>;
+
   selectedSpanId: string | null;
   initiallyFocusedSpanId: string | null;
   onAutoSelectedNodeChange: (node: GraphNode) => void;
@@ -66,6 +70,7 @@ const TraceGraphImpl = ({
   spans,
   selectedNode,
   selectedSpanId,
+  setSelectedNode,
   initiallyFocusedSpanId,
   onAutoSelectedNodeChange,
   onGraphNodeClick,
@@ -199,6 +204,13 @@ const TraceGraphImpl = ({
     activelyDraggedNode.current = null;
   };
 
+  const onPaneClick = (event: ReactMouseEvent) => {
+    event.stopPropagation();
+    setSelectedNode(null);
+    setNodes(nodes.map((n: Node<NodeData>) => applyNormalNodeStyle(n)));
+    setEdges(edges.map((e: Edge<EdgeData>) => applyNormalEdgeStyle(e)));
+  };
+
   return (
     <Box sx={{ flex: 1, "& .react-flow__attribution": { display: "none" } }}>
       {isLoading ? (
@@ -214,6 +226,7 @@ const TraceGraphImpl = ({
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodeClick={onNodeClick}
+          onPaneClick={onPaneClick}
           onNodeMouseEnter={handleNodeMouseEnter}
           onNodeMouseLeave={handleNodeMouseLeave}
           onNodeDragStart={handleNodeDragStart}
