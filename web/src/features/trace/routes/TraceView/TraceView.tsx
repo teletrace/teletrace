@@ -139,13 +139,14 @@ export const TraceView = () => {
               <TraceGraph
                 spans={trace}
                 selectedNode={selectedNode}
+                setSelectedNode={setSelectedNode}
                 selectedSpanId={selectedSpanId}
                 initiallyFocusedSpanId={initiallyFocusedSpanId}
                 onAutoSelectedNodeChange={handleAutoSelectedNodeChange}
                 onGraphNodeClick={handleGraphNodeClick}
               />
               <SpanDetailsList
-                spans={selectedNode?.spans}
+                selectedNode={selectedNode}
                 selectedSpanId={selectedSpanId}
                 setSelectedSpanId={setSelectedSpanId}
                 isLoading={spanDetailsIsLoading}
