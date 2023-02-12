@@ -39,6 +39,10 @@ export class ElasticConnector extends Connector {
     return this.client.indices.delete({ index: "*" });
   };
 
+  private createSpansIndex = (): Promise<IndicesResponseBase> => {
+    return this.client.indices.create({ index: "lupa-traces" });
+  };
+
   private updateClientSettings = (): Promise<ClusterPutSettingsResponse> => {
     return this.client.cluster.putSettings({
       persistent: {
@@ -51,6 +55,7 @@ export class ElasticConnector extends Connector {
     try {
       await this.updateClientSettings();
       await this.deleteAllIndices();
+      //await this.createSpansIndex();
     } catch (err) {
       throw new Error(`Connector failed to clean ElasticSearch: ${err}`);
     }
