@@ -19,12 +19,11 @@ import { useEffect, useMemo } from "react";
 
 import { InternalSpan } from "@/types/span";
 
-import { GraphNode } from "../TraceGraph/types";
 import { SpanDetails } from "./SpanDetails/SpanDetails";
 import { styles } from "./styles";
 
 interface SpanDetailsListProps {
-  selectedNode: GraphNode | null;
+  spans?: InternalSpan[];
   selectedSpanId: string | null;
   setSelectedSpanId: React.Dispatch<React.SetStateAction<string | null>>;
   isLoading: boolean;
@@ -38,14 +37,12 @@ function sortSpansByStartTime(spans: InternalSpan[]) {
 }
 
 export const SpanDetailsList = ({
-  selectedNode,
+  spans,
   selectedSpanId,
   setSelectedSpanId,
   isLoading,
   setIsLoading,
 }: SpanDetailsListProps) => {
-  const spans = selectedNode ? selectedNode.spans : [];
-
   const sortedSpans = useMemo(
     () => spans && sortSpansByStartTime(spans),
     [spans]
@@ -60,10 +57,6 @@ export const SpanDetailsList = ({
     const nextSelectedSpanId = expanded ? spanId : null;
     setSelectedSpanId(nextSelectedSpanId);
   };
-
-  if (!selectedNode) {
-    return null;
-  }
 
   if (isLoading) {
     return (

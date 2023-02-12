@@ -145,13 +145,15 @@ export const TraceView = () => {
                 onAutoSelectedNodeChange={handleAutoSelectedNodeChange}
                 onGraphNodeClick={handleGraphNodeClick}
               />
-              <SpanDetailsList
-                selectedNode={selectedNode}
-                selectedSpanId={selectedSpanId}
-                setSelectedSpanId={setSelectedSpanId}
-                isLoading={spanDetailsIsLoading}
-                setIsLoading={setSpanDetailsIsLoading}
-              />
+              {selectedNode ? (
+                <SpanDetailsList
+                  spans={selectedNode?.spans}
+                  selectedSpanId={selectedSpanId}
+                  setSelectedSpanId={setSelectedSpanId}
+                  isLoading={spanDetailsIsLoading}
+                  setIsLoading={setSpanDetailsIsLoading}
+                />
+              ) : null}
             </Stack>
           </Stack>
         </ReactSplit>
