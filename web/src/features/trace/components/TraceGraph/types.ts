@@ -35,7 +35,6 @@ export interface GraphNodeData {
 }
 
 export interface EdgeData {
-  time: string;
   count: number;
   hasError: boolean;
 }
@@ -64,6 +63,5 @@ export type GraphNode = {
   systemType: string;
   image: string;
   hasError: boolean;
-  duration: number;
   spans: InternalSpan[];
 };
