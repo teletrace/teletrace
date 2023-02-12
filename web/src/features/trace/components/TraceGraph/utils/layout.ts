@@ -19,7 +19,6 @@ import { ElkExtendedEdge } from "elkjs/lib/elk-api";
 import { Edge, MarkerType, Node } from "reactflow";
 
 import { InternalSpan, StatusCode } from "@/types/span";
-import { formatDurationAsMs } from "@/utils/format";
 
 import {
   EdgeColor,
@@ -103,7 +102,6 @@ const createGraphNode = (
     systemType: nodeData.type,
     image: nodeData.image,
     hasError: internalSpan.span.status.code === StatusCode.Error,
-    duration: internalSpan.externalFields.durationNano,
     spans: [{ ...internalSpan }],
   };
 };
@@ -126,7 +124,6 @@ const updateGraphNode = (
 ): void => {
   g.spans.push({ ...internalSpan });
   g.hasError = g.hasError || internalSpan.span.status.code === StatusCode.Error;
-  g.duration = g.duration + internalSpan.externalFields.durationNano;
 };
 
 const getGraphNodeData = (s: Readonly<InternalSpan>): GraphNodeData => {
@@ -180,8 +177,7 @@ const createNode = (g: Readonly<GraphNode>): Node<NodeData> => {
 const createEdge = (
   node_id: string,
   parent_name: string,
-  hasError: boolean,
-  duration: number
+  hasError: boolean
 ): Edge<EdgeData> => {
   const edge_id = `${node_id}->${parent_name}`;
   return {
@@ -190,7 +186,6 @@ const createEdge = (
     source: parent_name,
     target: node_id,
     data: {
-      time: formatDurationAsMs(duration),
       count: 1,
       hasError,
     },
@@ -235,10 +230,7 @@ export const graphNodesToGraphTree = (graphNodes: Readonly<GraphNode[]>) => {
           const e = edges_map.get(edge_id);
           e
             ? updateEdge(e)
-            : edges_map.set(
-                edge_id,
-                createEdge(g.id, p.id, g.hasError, g.duration)
-              );
+            : edges_map.set(edge_id, createEdge(g.id, p.id, g.hasError));
         }
       }
     });
