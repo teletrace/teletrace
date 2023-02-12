@@ -14,69 +14,53 @@
 * limitations under the License.
  */
 
-package opensearchexporter
+package elasticsearchexporter
 
 import (
 	"context"
 	"fmt"
-	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
-	"github.com/opensearch-project/opensearch-go"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
+
+	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
 )
 
-type opensearchTracesExporter struct {
-	logger     *zap.Logger
-	cfg        *Config
-	client     *opensearch.Client
-	maxRetries int
+type elasticsearchTracesExporter struct {
+	logger *zap.Logger
+	cfg    *Config
+	client *elasticsearch.Client
 }
 
-func newTracesExporter(logger *zap.Logger, cfg *Config) (*opensearchTracesExporter, error) {
+func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExporter, error) {
 	if err := cfg.Validate(); err != nil {
 		return nil, err
 	}
 
-	osClient, err := newClient(logger, cfg)
+	esClient, err := newClient(logger, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create client: %+v", err)
 	}
 
-	maxRetries := 1
-	if cfg.Retry.Enabled {
-		maxRetries = cfg.Retry.MaxRetries
-	}
-
-	return &opensearchTracesExporter{
-		logger:     logger,
-		cfg:        cfg,
-		client:     osClient,
-		maxRetries: maxRetries,
+	return &elasticsearchTracesExporter{
+		logger: logger,
+		cfg:    cfg,
+		client: esClient,
 	}, nil
 }
 
-func (e *opensearchTracesExporter) Shutdown(ctx context.Context) error {
+func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func (e *opensearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
+func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
+	internalSpans := modeltranslator.TranslateOTLPToInternalModel(
+		td,
+		modeltranslator.WithMiliSec(),
+		modeltranslator.WithSortAttributes(),
+		modeltranslator.WithDedupAttributes(),
+	)
 
-	indexer, err := newBulkIndexer(e.logger, e.client, e.cfg)
-	if err != nil {
-		return fmt.Errorf("failed to create a new bulk indexer: %v", err)
-	}
-
-	defer indexer.Close(ctx)
-
-	errs := make([]error, 0, td.SpanCount())
-	for span := range internalSpans {
-		if err := writeSpan(ctx, e.logger, e.cfg.Index, indexer, span, e.maxRetries); err != nil {
-			errs = append(errs, err)
-		}
-	}
-
-	return multierr.Combine(errs...)
+	return writeSpans(ctx, e.logger, e.client, e.cfg.Index, internalSpans...)
 }

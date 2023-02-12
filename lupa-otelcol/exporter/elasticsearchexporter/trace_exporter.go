@@ -24,7 +24,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter/internal/modeltranslator"
+	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
 )
 
 type elasticsearchTracesExporter struct {
