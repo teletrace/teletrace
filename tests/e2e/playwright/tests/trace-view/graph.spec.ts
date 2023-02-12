@@ -28,7 +28,7 @@ let traceId: string;
 let spanId: string;
 
 function delay(ms: number) {
-  return new Promise( resolve => setTimeout(resolve, ms) );
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 test.beforeAll(async () => {
@@ -45,7 +45,7 @@ test.beforeAll(async () => {
    * return status code just means that spans have been recieved and not
    * necessarily ingested successfully.
    */
-  await delay(3000)
+  await delay(3000);
 });
 
 

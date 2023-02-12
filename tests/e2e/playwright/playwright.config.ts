@@ -51,7 +51,7 @@ const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* By default, test runs tests in parallel. Since we have only one instance 
+  /* By default, test runs tests in parallel. Since we have only one instance
    * of Lupa running (using docker compose),  we should have only one worker.
    */
   workers: 1,

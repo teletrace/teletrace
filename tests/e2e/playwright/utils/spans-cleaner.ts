@@ -19,17 +19,17 @@ import { Connector, ElasticConnector } from "./connectors";
 type SpansStorageType = "ElasticSearch" | "SQLite";
 
 export async function cleanSpans(): Promise<void> {
-    let connector: Connector = spansConnectorFactory("ElasticSearch");
-    await connector.clean()
-  }
+  let connector: Connector = spansConnectorFactory("ElasticSearch");
+  await connector.clean()
+}
 
 function spansConnectorFactory(spansStorageType: SpansStorageType): Connector {
-    switch(spansStorageType) {
-        case "ElasticSearch": {
-            return new ElasticConnector();
-        }
-        default: {
-            throw new TypeError("Invalid spans storage type");
-        }
+  switch(spansStorageType) {
+    case "ElasticSearch": {
+      return new ElasticConnector();
     }
+    default: {
+      throw new TypeError("Invalid spans storage type");
+    }
+  }
 }
