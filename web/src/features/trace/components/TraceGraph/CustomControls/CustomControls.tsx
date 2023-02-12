@@ -15,7 +15,6 @@
  */
 
 import { memo, useEffect, useState } from "react";
-import type { FC, PropsWithChildren } from "react";
 import {
   ControlButton,
   Panel,
@@ -37,7 +36,8 @@ import "./styles.css";
 
 const isInteractiveSelector = (s: ReactFlowState) =>
   s.nodesDraggable && s.nodesConnectable && s.elementsSelectable;
-const CustomControlsImpl: FC<PropsWithChildren<ControlProps>> = ({
+
+const CustomControlsImpl = ({
   showZoom = true,
   showFitView = true,
   showInteractive = true,
@@ -47,7 +47,7 @@ const CustomControlsImpl: FC<PropsWithChildren<ControlProps>> = ({
   onFitView,
   onInteractiveChange,
   position = "bottom-left",
-}) => {
+}: ControlProps) => {
   const store = useStoreApi();
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const isInteractive = useStore(isInteractiveSelector);
@@ -56,10 +56,6 @@ const CustomControlsImpl: FC<PropsWithChildren<ControlProps>> = ({
   useEffect(() => {
     setIsVisible(true);
   }, []);
-
-  if (!isVisible) {
-    return null;
-  }
 
   const onZoomInHandler = () => {
     zoomIn();
@@ -85,6 +81,10 @@ const CustomControlsImpl: FC<PropsWithChildren<ControlProps>> = ({
 
     onInteractiveChange?.(!isInteractive);
   };
+
+  if (!isVisible) {
+    return null;
+  }
 
   return (
     <Panel position={position}>

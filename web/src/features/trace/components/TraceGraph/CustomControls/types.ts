@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import type { ButtonHTMLAttributes, HTMLAttributes } from "react";
 import type { FitViewOptions, PanelPosition } from "reactflow";
 
-export type ControlProps = HTMLAttributes<HTMLDivElement> & {
+export type ControlProps = {
   showZoom?: boolean;
   showFitView?: boolean;
   showInteractive?: boolean;
@@ -28,5 +27,3 @@ export type ControlProps = HTMLAttributes<HTMLDivElement> & {
   onInteractiveChange?: (interactiveStatus: boolean) => void;
   position?: PanelPosition;
 };
-
-export type ControlButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;

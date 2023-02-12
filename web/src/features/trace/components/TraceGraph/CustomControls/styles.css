@@ -33,6 +33,7 @@
 
 .react-flow__panel > .react-flow__controls-button:last-child {
   border-radius: 0 0 8px 8px !important;
+  border-bottom: none !important;
 }
 
 .react-flow__controls-button svg {
