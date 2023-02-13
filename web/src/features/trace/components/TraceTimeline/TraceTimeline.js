@@ -11,13 +11,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
+import { Search } from "@mui/icons-material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import {
+  Box,
+  ButtonGroup,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useMemo, useState } from "react";
 
+import { styles } from "./styles";
 import TimelineViewer from "./TimelineViewer";
 import { transformTraceData } from "./utils/trace";
 
 export function TraceTimeline({ trace, selectedSpanId, setSelectedSpanId }) {
+  const [searchTerm, setSearchTerm] = useState("");
   const [traceState, setTraceState] = useState({
     childrenHiddenIDs: new Set(),
     detailStates: new Map(),
@@ -91,17 +103,64 @@ export function TraceTimeline({ trace, selectedSpanId, setSelectedSpanId }) {
   };
 
   return (
-    <TimelineViewer
-      trace={transformedTrace}
-      selectedSpanId={selectedSpanId}
-      setSelectedSpanId={setSelectedSpanId}
-      setColumnWidth={setColumnWidth}
-      removeHoverIndentGuideId={removeHoverIndentGuideId}
-      setTrace={setTrace}
-      removeJumpToSpan={removeJumpToSpan}
-      childrenToggle={childrenToggle}
-      traceState={traceState}
-      addHoverIndentGuideId={addHoverIndentGuideId}
-    />
+    <Box sx={styles.mainContainer}>
+      <Box sx={styles.titleRow}>
+        <Typography sx={styles.title} variant="h2">
+          Spans
+        </Typography>
+        <TextField
+          sx={styles.searchField}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search sx={styles.searchIcon} />
+              </InputAdornment>
+            ),
+            endAdornment: searchTerm && (
+              <Box sx={styles.searchFieldEndAdornment}>
+                <Box sx={styles.resultCountWrapper}>
+                  <span>0/{trace.length}</span>
+                </Box>
+                <ButtonGroup
+                  sx={styles.searchToggleBtnGroup}
+                  variant="outlined"
+                  aria-label="outlined button group"
+                >
+                  <IconButton
+                    sx={styles.searchToggleBtn}
+                    aria-label="search previous"
+                    size="medium"
+                  >
+                    <KeyboardArrowUpIcon />
+                  </IconButton>
+                  <IconButton
+                    sx={styles.searchToggleBtn}
+                    aria-label="search next"
+                    size="medium"
+                  >
+                    <KeyboardArrowDownIcon />
+                  </IconButton>
+                </ButtonGroup>
+              </Box>
+            ),
+          }}
+        />
+      </Box>
+      <TimelineViewer
+        trace={transformedTrace}
+        selectedSpanId={selectedSpanId}
+        setSelectedSpanId={setSelectedSpanId}
+        setColumnWidth={setColumnWidth}
+        removeHoverIndentGuideId={removeHoverIndentGuideId}
+        setTrace={setTrace}
+        removeJumpToSpan={removeJumpToSpan}
+        childrenToggle={childrenToggle}
+        traceState={traceState}
+        addHoverIndentGuideId={addHoverIndentGuideId}
+      />
+    </Box>
   );
 }
