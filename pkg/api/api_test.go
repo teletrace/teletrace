@@ -107,7 +107,7 @@ func TestPingRoute(t *testing.T) {
 func TestSearchRoute(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
-	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
+	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixMilli()))
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/search"), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	srMock, _ := spanreader.NewSpanReaderMock()
@@ -175,7 +175,7 @@ func TestTagsValues(t *testing.T) {
 	fakeLogger, _ := getLoggerObserver()
 	cfg := config.Config{Debug: false}
 	expectedTag := "span.attributes.custom-tag"
-	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixNano()))
+	jsonBody := []byte(fmt.Sprintf("{\"timeframe\": { \"startTime\": 0, \"endTime\": %v }}", time.Now().UnixMilli()))
 	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, fmt.Sprintf("/tags/%v", expectedTag)), bytes.NewReader(jsonBody))
 	resRecorder := httptest.NewRecorder()
 	srMock, _ := spanreader.NewSpanReaderMock()

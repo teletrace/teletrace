@@ -17,8 +17,8 @@
 package model
 
 type Timeframe struct {
-	StartTime uint64 `json:"startTimeUnixNanoSec"`
-	EndTime   uint64 `json:"endTimeUnixNanoSec"`
+	StartTime uint64 `json:"startTimeUnixMilli"`
+	EndTime   uint64 `json:"endTimeUnixMilli"`
 }
 
 type ContinuationToken string

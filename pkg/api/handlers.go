@@ -52,7 +52,7 @@ func (api *API) getTraceById(c *gin.Context) {
 	sr := &spansquery.SearchRequest{
 		Timeframe: model.Timeframe{
 			StartTime: 0,
-			EndTime:   uint64(time.Now().UnixNano()),
+			EndTime:   uint64(time.Now().UnixMilli()),
 		},
 		SearchFilters: []model.SearchFilter{
 			{
@@ -130,7 +130,7 @@ func (api *API) tagsStatistics(c *gin.Context) {
 func handleTimeframe(t *model.Timeframe) {
 	if t != nil {
 		if t.EndTime == 0 {
-			t.EndTime = uint64(time.Now().UnixNano())
+			t.EndTime = uint64(time.Now().UnixMilli())
 		}
 	}
 }
