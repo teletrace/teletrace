@@ -26,7 +26,6 @@ import {
   useState,
 } from "react";
 import {
-  Controls,
   Edge,
   Node,
   ReactFlow,
@@ -39,6 +38,7 @@ import { InternalSpan } from "@/types/span";
 
 import { BasicEdge } from "./BasicEdge";
 import { BasicNode } from "./BasicNode";
+import { CustomControls } from "./CustomControls";
 import { EdgeData, GraphNode, NodeData, TraceData } from "./types";
 import { createGraphLayout, spansToGraphData } from "./utils/layout";
 import {
@@ -234,7 +234,7 @@ const TraceGraphImpl = ({
           selectNodesOnDrag={false}
           fitView
         >
-          <Controls />
+          <CustomControls />
         </ReactFlow>
       )}
     </Box>
