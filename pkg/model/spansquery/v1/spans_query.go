@@ -21,7 +21,7 @@ import (
 
 	"github.com/teletrace/teletrace/pkg/model"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
 )
 
 const (

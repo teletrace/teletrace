@@ -17,11 +17,11 @@ require (
 require (
 	github.com/cloudevents/sdk-go/v2 v2.6.0
 	github.com/epsagon/lupa/lupa-otelcol v0.0.0-00010101000000-000000000000
-	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333
 	github.com/gin-contrib/cors v1.4.0
 	github.com/go-co-op/gocron v1.18.0
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.16
+	github.com/teletrace/teletrace/model v0.0.0-00010101000000-000000000000
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
 )
 
@@ -32,7 +32,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-20221116145245-cd3200414333 // indirect
+	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
@@ -136,7 +136,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/epsagon/lupa/model => ./model
+replace github.com/teletrace/teletrace/model => ./model
 
 replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
 

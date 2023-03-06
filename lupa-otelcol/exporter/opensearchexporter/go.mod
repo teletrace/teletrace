@@ -4,8 +4,8 @@ go 1.19
 
 require (
 	github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000
-	github.com/epsagon/lupa/model v0.0.0-20221116145245-cd3200414333
 	github.com/opensearch-project/opensearch-go v1.1.0
+	github.com/teletrace/teletrace/model v0.0.0-00010101000000-000000000000
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/pdata v0.66.0
 	go.uber.org/multierr v1.8.0
@@ -36,6 +36,6 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 )
 
-replace github.com/epsagon/lupa/model => ../../../model
+replace github.com/teletrace/teletrace/model => ../../../model
 
 replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ../../internal/modeltranslator

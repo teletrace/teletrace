@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"testing"
 
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/collector/pdata/pcommon"
