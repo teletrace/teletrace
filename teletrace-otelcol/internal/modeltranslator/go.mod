@@ -1,4 +1,4 @@
-module github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator
+module github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator
 
 go 1.19
 
