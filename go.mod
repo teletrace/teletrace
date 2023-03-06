@@ -16,12 +16,12 @@ require (
 
 require (
 	github.com/cloudevents/sdk-go/v2 v2.6.0
-	github.com/epsagon/lupa/lupa-otelcol v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.4.0
 	github.com/go-co-op/gocron v1.18.0
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.16
 	github.com/teletrace/teletrace/model v0.0.0-00010101000000-000000000000
+	github.com/teletrace/teletrace/teletrace-otelcol v0.0.0-00010101000000-000000000000
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
 )
 
@@ -138,12 +138,12 @@ require (
 
 replace github.com/teletrace/teletrace/model => ./model
 
-replace github.com/epsagon/lupa/lupa-otelcol => ./lupa-otelcol
+replace github.com/teletrace/teletrace/teletrace-otelcol => ./teletrace-otelcol
 
-replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ./lupa-otelcol/internal/modeltranslator
+replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ./teletrace-otelcol/internal/modeltranslator
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./lupa-otelcol/exporter/elasticsearchexporter
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./teletrace-otelcol/exporter/elasticsearchexporter
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./lupa-otelcol/exporter/opensearchexporter
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./teletrace-otelcol/exporter/opensearchexporter
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./lupa-otelcol/exporter/sqliteexporter
+replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./teletrace-otelcol/exporter/sqliteexporter

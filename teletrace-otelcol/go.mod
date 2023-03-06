@@ -1,4 +1,4 @@
-module github.com/epsagon/lupa/lupa-otelcol
+module github.com/teletrace/teletrace/teletrace-otelcol
 
 go 1.19
 
