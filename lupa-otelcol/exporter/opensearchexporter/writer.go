@@ -21,10 +21,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/opensearch-project/opensearch-go/opensearchutil"
 	"io"
 
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+	"github.com/opensearch-project/opensearch-go/opensearchutil"
+
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

@@ -24,7 +24,7 @@ import (
 	"io"
 
 	"github.com/elastic/go-elasticsearch/v8/esutil"
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

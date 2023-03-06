@@ -21,7 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
 )
 
 type sqliteSpan struct {

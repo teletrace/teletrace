@@ -34,7 +34,7 @@ import (
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 	spanreader "github.com/teletrace/teletrace/pkg/spanreader/mock"
 
-	spanformatutiltests "github.com/epsagon/lupa/model/internalspan/v1/util"
+	spanformatutiltests "github.com/teletrace/teletrace/model/internalspan/v1/util"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
