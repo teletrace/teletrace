@@ -18,8 +18,9 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
 	"testing"
+
+	"github.com/teletrace/teletrace/pkg/model"
 
 	"github.com/stretchr/testify/assert"
 )

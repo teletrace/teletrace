@@ -20,12 +20,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"oss-tracing/plugin/spanreader/es/errors"
-	"oss-tracing/plugin/spanreader/es/tagscontroller/statistics"
 	"strings"
 
-	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/tagscontroller/statistics"
+
+	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es/utils"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"

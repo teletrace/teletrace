@@ -18,7 +18,8 @@ package logs
 
 import (
 	"log"
-	"oss-tracing/pkg/config"
+
+	"github.com/teletrace/teletrace/pkg/config"
 
 	"go.uber.org/zap"
 )
