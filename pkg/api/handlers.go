@@ -18,11 +18,12 @@ package api
 
 import (
 	"net/http"
-	"oss-tracing/pkg/model"
-	"oss-tracing/pkg/model/metadata/v1"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
-	"oss-tracing/pkg/model/tagsquery/v1"
 	"time"
+
+	"github.com/teletrace/teletrace/pkg/model"
+	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 
 	"github.com/gin-gonic/gin"
 )

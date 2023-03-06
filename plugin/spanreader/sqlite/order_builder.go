@@ -18,9 +18,10 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
 
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/pkg/model"
+
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 )
 
 type extractOrderResponse struct {

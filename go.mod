@@ -1,4 +1,4 @@
-module oss-tracing
+module github.com/teletrace/teletrace
 
 go 1.19
 

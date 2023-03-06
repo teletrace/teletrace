@@ -20,9 +20,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/model"
-	"oss-tracing/pkg/model/tagsquery/v1"
 	"testing"
+
+	"github.com/teletrace/teletrace/pkg/model"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 
 	"github.com/stretchr/testify/assert"
 )
