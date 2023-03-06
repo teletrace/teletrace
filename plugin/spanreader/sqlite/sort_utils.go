@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 )
 
 type sqliteOrder struct {

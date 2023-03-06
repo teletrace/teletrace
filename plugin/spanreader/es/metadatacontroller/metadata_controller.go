@@ -18,8 +18,9 @@ package metadatacontroller
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/model/metadata/v1"
-	"oss-tracing/plugin/spanreader/es/utils"
+
+	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/utils"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types/enums/optype"

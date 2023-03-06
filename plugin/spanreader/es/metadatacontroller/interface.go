@@ -18,7 +18,8 @@ package metadatacontroller
 
 import (
 	"context"
-	"oss-tracing/pkg/model/metadata/v1"
+
+	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 )
 
 type MetadataController interface {

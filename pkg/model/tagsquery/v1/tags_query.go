@@ -18,7 +18,8 @@ package tagsquery
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
+
+	"github.com/teletrace/teletrace/pkg/model"
 )
 
 type TagValuesRequest struct {
