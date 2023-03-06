@@ -24,7 +24,7 @@ import (
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 	"github.com/teletrace/teletrace/pkg/spanreader"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
 
 	"go.uber.org/zap"
 

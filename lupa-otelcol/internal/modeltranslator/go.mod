@@ -2,11 +2,11 @@ module github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator
 
 go 1.19
 
-replace github.com/epsagon/lupa/model => ../../../model
+replace github.com/teletrace/teletrace/model => ../../../model
 
 require (
-	github.com/epsagon/lupa/model v0.0.0-00010101000000-000000000000
 	github.com/stretchr/testify v1.8.1
+	github.com/teletrace/teletrace/model v0.0.0-00010101000000-000000000000
 	go.opentelemetry.io/collector/pdata v0.66.0
 )
 
