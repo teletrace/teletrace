@@ -1,4 +1,4 @@
-site_name: Lupa
+site_name: Teletrace
 
 theme:
   homepage: https://epsagon.github.io/oss-tracing/
@@ -29,7 +29,7 @@ extra:
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/epsagon/lupa
-      name: Lupa on GithHub
+      name: Teletrace on GithHub
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
