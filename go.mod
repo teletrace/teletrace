@@ -32,7 +32,6 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
@@ -73,6 +72,7 @@ require (
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/shirou/gopsutil/v3 v3.22.10 // indirect
 	github.com/spf13/cobra v1.6.1 // indirect
+	github.com/teletrace/teletrace/teletrace-otelcol/exporter/elasticsearchexporter v0.0.0-00010101000000-000000000000 // indirect
 	github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/tklauser/numcpus v0.4.0 // indirect
@@ -142,7 +142,7 @@ replace github.com/teletrace/teletrace/teletrace-otelcol => ./teletrace-otelcol
 
 replace github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator => ./teletrace-otelcol/internal/modeltranslator
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./teletrace-otelcol/exporter/elasticsearchexporter
+replace github.com/teletrace/teletrace/teletrace-otelcol/exporter/elasticsearchexporter => ./teletrace-otelcol/exporter/elasticsearchexporter
 
 replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./teletrace-otelcol/exporter/opensearchexporter
 

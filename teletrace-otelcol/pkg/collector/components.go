@@ -18,12 +18,13 @@ package collector
 
 import (
 	"fmt"
+
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter"
 
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter"
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor"
+	"github.com/teletrace/teletrace/teletrace-otelcol/exporter/elasticsearchexporter"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/processor/batchprocessor"
 	"go.opentelemetry.io/collector/receiver/otlpreceiver"
