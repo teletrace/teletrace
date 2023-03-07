@@ -19,7 +19,7 @@ package collector
 import (
 	"fmt"
 
-	"github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter"
+	"github.com/teletrace/teletrace/teletrace-otelcol/exporter/opensearchexporter"
 
 	"github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"

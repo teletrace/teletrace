@@ -1,4 +1,4 @@
-module github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter
+module github.com/teletrace/teletrace/teletrace-otelcol/exporter/opensearchexporter
 
 go 1.19
 
