@@ -83,7 +83,7 @@ Alternatively, using docker CLI:
 ```sh
 docker build -f cmd/all-in-one/Dockerfile -t oss-tracing:latest .
 docker run \
-    -v $(pwd)/lupa-otelcol/config/default-config.yaml:/etc/config.yaml \
+    -v $(pwd)/teletrace-otelcol/config/default-config.yaml:/etc/config.yaml \
     -p 8080:8080 \
     -p 4317:4317 \
     -p 4318:4318 \
@@ -95,7 +95,7 @@ In case you want to run docker file with environment variables:
 
 ```sh
 docker run \
-    -v $(pwd)/lupa-otelcol/config/default-config.yaml:/etc/config.yaml \
+    -v $(pwd)/teletrace-otelcol/config/default-config.yaml:/etc/config.yaml \
     -p 9090:9090 \
     -p 4317:4317 \
     -p 4318:4318 \

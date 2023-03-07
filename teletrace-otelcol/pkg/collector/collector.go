@@ -36,8 +36,8 @@ func NewCollector() (*Collector, error) {
 	}
 
 	info := component.BuildInfo{
-		Command:     "lupa-otelcol",
-		Description: "Lupa OpenTelemetry Collector",
+		Command:     "teletrace-otelcol",
+		Description: "Teletrace OpenTelemetry Collector",
 		Version:     "0.0.0",
 	}
 
