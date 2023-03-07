@@ -3,11 +3,11 @@ module github.com/teletrace/teletrace/teletrace-otelcol
 go 1.19
 
 require (
-	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.64.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.64.0
 	github.com/teletrace/teletrace/teletrace-otelcol/exporter/elasticsearchexporter v0.0.0-00010101000000-000000000000
 	github.com/teletrace/teletrace/teletrace-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000
+	github.com/teletrace/teletrace/teletrace-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/processor/batchprocessor v0.64.1
 	go.opentelemetry.io/collector/receiver/otlpreceiver v0.64.1
@@ -104,4 +104,4 @@ replace github.com/teletrace/teletrace/teletrace-otelcol/exporter/elasticsearche
 
 replace github.com/teletrace/teletrace/teletrace-otelcol/exporter/opensearchexporter => ./exporter/opensearchexporter
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter
+replace github.com/teletrace/teletrace/teletrace-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter

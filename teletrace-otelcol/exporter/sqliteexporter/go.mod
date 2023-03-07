@@ -1,4 +1,4 @@
-module github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter
+module github.com/teletrace/teletrace/teletrace-otelcol/exporter/sqliteexporter
 
 go 1.19
 
