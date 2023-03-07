@@ -1,11 +1,11 @@
-module github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter
+module github.com/teletrace/teletrace/teletrace-otelcol/exporter/opensearchexporter
 
 go 1.19
 
 require (
-	github.com/elastic/go-elasticsearch/v8 v8.4.0
-	github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000
+	github.com/opensearch-project/opensearch-go v1.1.0
 	github.com/teletrace/teletrace/model v0.0.0-00010101000000-000000000000
+	github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/pdata v0.66.0
 	go.uber.org/multierr v1.8.0
@@ -14,7 +14,6 @@ require (
 
 require (
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
-	github.com/elastic/elastic-transport-go/v8 v8.1.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -39,4 +38,4 @@ require (
 
 replace github.com/teletrace/teletrace/model => ../../../model
 
-replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ../../internal/modeltranslator
+replace github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator => ../../internal/modeltranslator

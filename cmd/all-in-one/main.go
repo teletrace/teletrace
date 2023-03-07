@@ -33,7 +33,7 @@ import (
 	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es"
 	sqlite "github.com/teletrace/teletrace/plugin/spanreader/sqlite"
 
-	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
+	"github.com/teletrace/teletrace/teletrace-otelcol/pkg/collector"
 
 	"go.uber.org/zap"
 )

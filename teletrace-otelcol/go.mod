@@ -1,13 +1,13 @@
-module github.com/epsagon/lupa/lupa-otelcol
+module github.com/teletrace/teletrace/teletrace-otelcol
 
 go 1.19
 
 require (
-	github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter v0.0.0-00010101000000-000000000000
-	github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000
-	github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.64.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.64.0
+	github.com/teletrace/teletrace/teletrace-otelcol/exporter/elasticsearchexporter v0.0.0-00010101000000-000000000000
+	github.com/teletrace/teletrace/teletrace-otelcol/exporter/opensearchexporter v0.0.0-00010101000000-000000000000
+	github.com/teletrace/teletrace/teletrace-otelcol/exporter/sqliteexporter v0.0.0-00010101000000-000000000000
 	go.opentelemetry.io/collector v0.64.1
 	go.opentelemetry.io/collector/processor/batchprocessor v0.64.1
 	go.opentelemetry.io/collector/receiver/otlpreceiver v0.64.1
@@ -22,7 +22,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/elastic/elastic-transport-go/v8 v8.1.0 // indirect
 	github.com/elastic/go-elasticsearch/v8 v8.4.0 // indirect
-	github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
@@ -67,6 +66,7 @@ require (
 	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/teletrace/teletrace/model v0.0.0-00010101000000-000000000000 // indirect
+	github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator v0.0.0-00010101000000-000000000000 // indirect
 	github.com/tklauser/go-sysconf v0.3.10 // indirect
 	github.com/tklauser/numcpus v0.4.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
@@ -98,10 +98,10 @@ require (
 
 replace github.com/teletrace/teletrace/model => ../model
 
-replace github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator => ./internal/modeltranslator
+replace github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator => ./internal/modeltranslator
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/elasticsearchexporter => ./exporter/elasticsearchexporter
+replace github.com/teletrace/teletrace/teletrace-otelcol/exporter/elasticsearchexporter => ./exporter/elasticsearchexporter
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/opensearchexporter => ./exporter/opensearchexporter
+replace github.com/teletrace/teletrace/teletrace-otelcol/exporter/opensearchexporter => ./exporter/opensearchexporter
 
-replace github.com/epsagon/lupa/lupa-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter
+replace github.com/teletrace/teletrace/teletrace-otelcol/exporter/sqliteexporter => ./exporter/sqliteexporter
