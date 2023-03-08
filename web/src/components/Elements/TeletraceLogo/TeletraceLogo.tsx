@@ -14,4 +14,18 @@
  * limitations under the License.
  */
 
-export * from "./LupaLogo";
+import { Box, IconButton, Typography } from "@mui/material";
+
+import { styles } from "./styles";
+
+export const TeletraceLogo = () => {
+  return (
+    <Box sx={styles.logoContainer}>
+      <IconButton href="/" sx={styles.logoIconButton}>
+        <Typography variant="h6" color="inherit" noWrap>
+          Teletrace
+        </Typography>
+      </IconButton>
+    </Box>
+  );
+};
