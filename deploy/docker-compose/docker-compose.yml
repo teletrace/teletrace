@@ -1,13 +1,13 @@
 version: "3"
 services:
-  lupa-api:
+  teletrace-api:
     ports:
       - "8080:8080"
       - "4317:4317"
       - "4318:4318"
-    command: ["--config=/etc/lupa-collector-config.yaml"]
+    command: ["--config=/etc/teletrace-collector-config.yaml"]
     volumes:
-      - ./teletrace-otel-collector.yaml:/etc/lupa-collector-config.yaml
+      - ./teletrace-otel-collector.yaml:/etc/teletrace-collector-config.yaml
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
     image: epsagon/lupa:latest
@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - lupa
+      - teletrace
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -33,7 +33,7 @@ services:
     ports:
       - "9200:9200"
     networks:
-      - lupa
+      - teletrace
     healthcheck:
       test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
       interval: 3s
@@ -44,5 +44,5 @@ volumes:
   es_data:
     driver: local
 networks:
-  lupa:
+  teletrace:
     internal: false
