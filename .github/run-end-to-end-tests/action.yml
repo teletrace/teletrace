@@ -9,7 +9,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - id: run-lupa
+    - id: run-teletrace
       shell: bash
       run: |
         export DOCKER_COMPOSE_PATH=\
