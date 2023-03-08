@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-/** types used to send usage analytics to lupa backend */
+/** types used to send usage analytics to teletrace backend */
 
 export const eventType: Record<string, string> = {
-  spans_table_viewed: "lupa.spans_table_viewed",
-  trace_viewed: "lupa.trace_viewed",
+  spans_table_viewed: "teletrace.spans_table_viewed",
+  trace_viewed: "teletrace.trace_viewed",
 };
 
 export type SystemInfoResponse = {

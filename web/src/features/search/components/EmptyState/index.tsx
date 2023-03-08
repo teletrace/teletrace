@@ -58,10 +58,10 @@ export const EmptyState = () => {
               marginBottom: "4px",
             }}
           >
-            Start sending data to Lupa
+            Start sending data to Teletrace
           </Typography>
           <Typography color="text.secondary">
-            Lupa is leveraging OpenTelemetry as an open-source standard for
+            Teletrace is leveraging OpenTelemetry as an open-source standard for
             collecting high-quality telemetry data from microservices.
           </Typography>
         </div>
@@ -75,7 +75,7 @@ export const EmptyState = () => {
             </Typography>
             <Typography color="text.secondary">
               If you already have OpenTelemetry setup on your applications, you
-              can configure it to send data to Lupa.
+              can configure it to send data to Teletrace.
             </Typography>
           </CardContent>
 
@@ -92,7 +92,7 @@ export const EmptyState = () => {
               Don’t have OpenTelemetry yet?
             </Typography>
             <Typography color="text.secondary">
-              You can send traces to Lupa directly from your code using an OTLP
+              You can send traces to Teletrace directly from your code using an OTLP
               Trace Exporter.
             </Typography>
           </CardContent>
