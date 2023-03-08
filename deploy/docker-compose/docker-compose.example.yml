@@ -6,10 +6,10 @@ services:
     volumes:
       - ./otel-collector.yaml:/etc/otel-collector.yaml
     depends_on:
-      lupa-api:
+      teletrace-api:
         condition: service_healthy
     networks:
-      - lupa
+      - teletrace
 
   demo-client:
     build:
@@ -22,7 +22,7 @@ services:
     depends_on:
       - demo-server
     networks:
-      - lupa
+      - teletrace
 
   demo-server:
     build:
@@ -36,4 +36,4 @@ services:
     depends_on:
       - otel-collector
     networks:
-      - lupa
+      - teletrace

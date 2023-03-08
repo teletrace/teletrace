@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	SystemUp = "lupa.up"
+	SystemUp = "teletrace.up"
 )
 
 func CreateUpEvent(systemId string) cloudevents.Event {

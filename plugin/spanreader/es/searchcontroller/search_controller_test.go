@@ -40,7 +40,7 @@ func getSearchResponseMock() (map[string]any, error) {
           "hits":[
              {
                 "_id":"Q8A5CIQBo5OYxCntcabF",
-                "_index":"lupa-spans",
+                "_index":"teletrace-traces",
                 "_score":1,
                 "_source":{
                    "ExternalFields":{

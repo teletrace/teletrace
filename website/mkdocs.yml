@@ -1,7 +1,7 @@
 site_name: Teletrace
 
 theme:
-  homepage: https://epsagon.github.io/oss-tracing/
+  homepage: https://epsagon.github.io/lupa/
   font:
     text: Roboto
 

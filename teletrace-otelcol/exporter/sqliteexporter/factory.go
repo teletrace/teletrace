@@ -41,7 +41,7 @@ func NewFactory() component.ExporterFactory {
 func createDefaultConfig() component.ExporterConfig {
 	return &Config{
 		ExporterSettings: config.NewExporterSettings(component.NewID(typeStr)),
-		Path:             "lupa_embedded.db",
+		Path:             "teletrace_embedded.db",
 	}
 }
 

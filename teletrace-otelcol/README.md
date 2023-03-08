@@ -1,8 +1,8 @@
-# Lupa OpenTelemetry Collector
+# Teletrace OpenTelemetry Collector
 
 ## Running the collector
 
 ```sh
-cd cmd/lupacol
+cd cmd/teletracecol
 go run . --config ../../config/default-config.yaml
 ```

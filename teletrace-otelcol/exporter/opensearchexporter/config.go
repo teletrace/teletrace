@@ -33,7 +33,7 @@ type Config struct {
 	// WorkersCount sets the Indexer workers count
 	WorkersCount int `mapstructure:"workers_count"`
 
-	// Defaults to lupa_spans
+	// Defaults to teletrace-traces
 	Index string `mapstructure:"index"`
 
 	// Username is used to configure HTTP Basic Authentication.

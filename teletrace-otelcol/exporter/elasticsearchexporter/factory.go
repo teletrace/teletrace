@@ -28,7 +28,7 @@ import (
 const (
 	typeStr      = "elasticsearch"
 	stability    = component.StabilityLevelInDevelopment
-	defaultIndex = "lupa-traces"
+	defaultIndex = "teletrace-traces"
 )
 
 func NewFactory() component.ExporterFactory {
