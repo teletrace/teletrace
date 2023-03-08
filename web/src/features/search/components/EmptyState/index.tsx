@@ -92,8 +92,8 @@ export const EmptyState = () => {
               Don’t have OpenTelemetry yet?
             </Typography>
             <Typography color="text.secondary">
-              You can send traces to Teletrace directly from your code using an OTLP
-              Trace Exporter.
+              You can send traces to Teletrace directly from your code using an
+              OTLP Trace Exporter.
             </Typography>
           </CardContent>
 
