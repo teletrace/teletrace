@@ -220,7 +220,7 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 
 	// in case multiple indices are managed by a single alias (in rollover for example)
 	// we need to traverse all indices, not only r.idx.
-	// for example, we might have lupa-traces-000001 and lupa-traces-000002 aliased by lupa-traces,
+	// for example, we might have teletrace-traces-000001 and teletrace-traces-000002 aliased by teletrace-traces,
 	// so we need to traverse body[*] to acquire the information per index.
 
 	// _ is the index name
