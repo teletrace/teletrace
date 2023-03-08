@@ -66,7 +66,7 @@ backend-coverage:
 
 .PHONY: all-in-one
 all-in-one:
-	docker build --build-arg BUILD_INFO=$(git describe --tags) -f $(ROOT)/cmd/all-in-one/Dockerfile -t lupa-aio:latest .
+	docker build --build-arg BUILD_INFO=$(git describe --tags) -f $(ROOT)/cmd/all-in-one/Dockerfile -t teletrace-aio:latest .
 
 .PHONY: update-license-headers
 update-license-headers: bin/license-header-checker

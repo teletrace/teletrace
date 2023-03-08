@@ -26,7 +26,7 @@ import (
 func getSystemIdMock() (map[string]any, error) {
 	var res map[string]any
 	err := json.Unmarshal([]byte(`{
-	"_index": "meta-lupa-traces",
+	"_index": "meta-teletrace-traces",
 	"_id": "system-id",
 	"_version": 1,
 	"_seq_no": 0,

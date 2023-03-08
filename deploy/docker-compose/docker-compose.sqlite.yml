@@ -1,17 +1,17 @@
 version: "3"
 services:
-  lupa-api:
+  teletrace-api:
     ports:
       - "8080:8080"
       - "4317:4317"
       - "4318:4318"
-    command: ["--config=/etc/lupa-collector-config.yaml"]
+    command: ["--config=/etc/teletrace-collector-config.yaml"]
     image: epsagon/lupa:latest
     build:
       dockerfile: cmd/all-in-one/Dockerfile
       context: ../../
     volumes:
-      - ./all-in-one-config.yaml:/etc/lupa-collector-config.yaml
+      - ./all-in-one-config.yaml:/etc/teletrace-collector-config.yaml
     environment:
       - SPANS_STORAGE_PLUGIN=sqlite
     healthcheck:
@@ -20,8 +20,8 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - lupa
+      - teletrace
 
 networks:
-  lupa:
+  teletrace:
     internal: false
