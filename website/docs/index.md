@@ -24,9 +24,9 @@ Developer oriented [documentation](developer-guide/) is available for people int
 
 ## How Does It Work?
 
-Teletrace can be deployed in Kubernetes using helm chart.
+Teletrace can be deployed on Kubernetes using Helm chart.
 We provide a Helm chart that simplifies the deployment of Teletrace on Kubernetes.
-The chart deploys the Teletrace components as Kubernetes deployments and services, and it supports several storages, including Elasticsearch and in-memory storage.
+The chart deploys the Teletrace as Kubernetes deployment and service, and it supports several storages, including Elasticsearch and in-memory storage.
 Once Teletrace is deployed on Kubernetes, it can be used to monitor and troubleshoot microservices-based applications running on Kubernetes. Instrumented applications can send trace data to Teletrace using the Opentelemetry API, and the Jaeger components can store and analyze the trace data to provide insights into the performance and behavior of the application. The Teletrace UI can be accessed through a web browser, allowing users to search for traces, view trace details, and analyze trace data.
 
 ## Architecture
