@@ -27,7 +27,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         ORGANIZATION: ${{ inputs.organization }}
         TARGET_STATUS: ${{ inputs.target-status }}
-        PROJECT_NUMBER: ${{ inputs.project-number }} # oss-tracing project number
+        PROJECT_NUMBER: ${{ inputs.project-number }} # teletrace project number
       shell: bash
       run: |
         gh api graphql -f query='

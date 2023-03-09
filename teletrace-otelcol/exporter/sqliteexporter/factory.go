@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package opensearchexporter
+package sqliteexporter
 
 import (
 	"context"
@@ -26,9 +26,8 @@ import (
 )
 
 const (
-	typeStr      = "opensearch"
-	stability    = component.StabilityLevelInDevelopment
-	defaultIndex = "lupa-traces"
+	typeStr   = "sqlite"
+	stability = component.StabilityLevelInDevelopment
 )
 
 func NewFactory() component.ExporterFactory {
@@ -42,17 +41,7 @@ func NewFactory() component.ExporterFactory {
 func createDefaultConfig() component.ExporterConfig {
 	return &Config{
 		ExporterSettings: config.NewExporterSettings(component.NewID(typeStr)),
-		Index:            defaultIndex,
-		WorkersCount:     1,
-		Flush: FlushSettings{
-			Interval: 30,
-			// 5MB, the default in opensearch's library
-			Bytes: 5 * 1024 * 1024,
-		},
-		Retry: RetrySettings{
-			Enabled:    true,
-			MaxRetries: 3,
-		},
+		Path:             "teletrace_embedded.db",
 	}
 }
 
@@ -70,8 +59,5 @@ func createTracesExporter(
 		ctx, set, cfg,
 		exporter.pushTracesData,
 		exporterhelper.WithShutdown(exporter.Shutdown),
-		exporterhelper.WithRetry(exporterhelper.RetrySettings{
-			Enabled: true,
-		}),
 	)
 }

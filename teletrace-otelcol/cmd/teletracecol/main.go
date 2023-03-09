@@ -19,7 +19,7 @@ package main
 import (
 	"log"
 
-	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
+	"github.com/teletrace/teletrace/teletrace-otelcol/pkg/collector"
 )
 
 func main() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package elasticsearchexporter
+package opensearchexporter
 
 import (
 	"errors"
@@ -23,17 +23,17 @@ import (
 	"go.opentelemetry.io/collector/config"
 )
 
-// Config defines configuration for Elastic exporter.
+// Config defines configuration for OpenSearch exporter.
 type Config struct {
 	config.ExporterSettings `mapstructure:",squash"`
 
-	// Endpoints holds the Elasticsearch URLs the exporter sends InternalSpans to
+	// Endpoints holds the OpenSearch URLs the exporter sends InternalSpans to
 	Endpoints []string `mapstructure:"endpoints"`
 
 	// WorkersCount sets the Indexer workers count
 	WorkersCount int `mapstructure:"workers_count"`
 
-	// Defaults to lupa_spans
+	// Defaults to teletrace-traces
 	Index string `mapstructure:"index"`
 
 	// Username is used to configure HTTP Basic Authentication.
@@ -42,9 +42,6 @@ type Config struct {
 
 	// Password is used to configure HTTP Basic Authentication.
 	Password string `mapstructure:"password"`
-
-	// APIKey is used to configure ApiKey based Authentication.
-	APIKey string `mapstructure:"api_key"`
 
 	// Indexer flush settings, affects span buffer in memory.
 	Flush FlushSettings `mapstructure:"flush"`
@@ -72,7 +69,7 @@ var (
 	errConfigEmptyEndpoint = errors.New("endpoints must not include empty entries")
 )
 
-// Validate validates the elasticsearch server configuration.
+// Validate validates the OpenSearch server configuration.
 func (cfg *Config) Validate() error {
 	if len(cfg.Endpoints) == 0 {
 		return errConfigNoEndpoint
