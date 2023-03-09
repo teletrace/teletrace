@@ -47,29 +47,29 @@ jobs:
           path: ./tests/e2e/playwright/playwright-report/
           retention-days: 30
 
-  wait-pr-ci:
-    name: Wait PR CI
-    if: ${{ startsWith(github.head_ref, 'mergify/') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait PR CI to finish
-        uses: lewagon/wait-on-check-action@v1.0.0
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          running-workflow-name: "Wait PR CI"
-          check-regexp: ^Lint$|^Golang Lint$|^Validate (PR Title|License Header|pre-commit hooks)$|^Golang Unit Tests.*$
+  # wait-pr-ci:
+  #   name: Wait PR CI
+  #   if: ${{ startsWith(github.head_ref, 'mergify/') }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Wait PR CI to finish
+  #       uses: lewagon/wait-on-check-action@v1.0.0
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #         repo-token: ${{ secrets.GITHUB_TOKEN }}
+  #         running-workflow-name: "Wait PR CI"
+  #         check-regexp: ^Lint$|^Golang Lint$|^Validate (PR Title|License Header|pre-commit hooks)$|^Golang Unit Tests.*$
 
-  wait-e2e-tests:
-    name: Wait E2E Tests
-    if: ${{ startsWith(github.head_ref, 'mergify/') }}
-    runs-on: ubuntu-latest
-    needs: [wait-pr-ci]
-    steps:
-      - name: Wait E2E Tests
-        uses: lewagon/wait-on-check-action@v1.0.0
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          running-workflow-name: "Wait E2E Tests"
-          check-regexp: ^Run E2E tests.*$
+  # wait-e2e-tests:
+  #   name: Wait E2E Tests
+  #   if: ${{ startsWith(github.head_ref, 'mergify/') }}
+  #   runs-on: ubuntu-latest
+  #   needs: [wait-pr-ci]
+  #   steps:
+  #     - name: Wait E2E Tests
+  #       uses: lewagon/wait-on-check-action@v1.0.0
+  #       with:
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #         repo-token: ${{ secrets.GITHUB_TOKEN }}
+  #         running-workflow-name: "Wait E2E Tests"
+  #         check-regexp: ^Run E2E tests.*$
