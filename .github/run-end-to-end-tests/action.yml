@@ -13,5 +13,5 @@ runs:
       shell: bash
       run: |
         export DOCKER_COMPOSE_PATH=\
-        $(echo '{ "ElasticSearch": "deploy/docker-compose/docker-compose.yml" }' | jq -r 'to_entries[] | select(.key=="${{ inputs.spans_storage_db_type }}") | .value')
+        $(echo '{ "ElasticSearch": "deploy/docker-compose/docker-compose.e2e.yml" }' | jq -r 'to_entries[] | select(.key=="${{ inputs.spans_storage_db_type }}") | .value')
         docker-compose -f $DOCKER_COMPOSE_PATH up -d
