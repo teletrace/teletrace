@@ -6,7 +6,7 @@ Teletrace is an open-source troubleshooting tool based on traces, designed for c
 
 It helps to pinpoint issues in your application, and identify performance bottlenecks across the entire dev cycle using [OpenTelemetry](https://opentelemetry.io/) traces.
 
-![Teletrace UI](images/demo.gif)
+![Teletrace UI](assets/demo.gif)
 
 ## Why Teletrace?
 
@@ -31,7 +31,7 @@ Once Teletrace is deployed on Kubernetes, it can be used to monitor and troubles
 
 ## Architecture
 
-![Argo CD Architecture](images/teletrace.drawio.svg)
+![Teletrace Architecture](assets/teletrace.drawio.svg)
 
 ## Features
 
