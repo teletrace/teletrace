@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://docs.lupaproject.io/" target="_blank">
   <picture>
-    <img src="./website/docs/images/lupa_light.png" width="350" alt="Logo"/>
+    <img src="./website/docs/assets/lupa_light.png" width="350" alt="Logo"/>
   </picture>
   </a>
 </div>

@@ -1,6 +1,6 @@
 # Docker Compose Deployment
 
-This guide will walk you through the process of setting up Lupa using the provided Docker Compose configuration.
+This guide will walk you through the process of setting up Teletrace using the provided Docker Compose configuration.
 
 ## Prerequisites
 
