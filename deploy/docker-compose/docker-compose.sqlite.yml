@@ -6,7 +6,7 @@ services:
       - "4317:4317"
       - "4318:4318"
     command: ["--config=/etc/teletrace-collector-config.yaml"]
-    image: epsagon/lupa:latest
+    image: teletrace/teletrace:latest
     build:
       dockerfile: cmd/all-in-one/Dockerfile
       context: ../../
