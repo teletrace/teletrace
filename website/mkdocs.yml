@@ -4,11 +4,11 @@ theme:
   homepage: https://epsagon.github.io/lupa/
   font:
     text: Roboto
-
-  theme:
+  logo: assets/teletrace_icon.svg
   features:
     - navigation.sections
     - content.code.annotate
+    - content.code.copy
 
   name: material
   palette:
@@ -33,9 +33,14 @@ extra:
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - tables
 
 plugins:
   - search
@@ -47,17 +52,19 @@ nav:
   - Overview: index.md
   - understand_the_basics.md
   - Getting Started:
-      - Quick Start: getting-started/index.md
+      - Quick Start: user-guide/index.md
       - Deployment:
-          - Docker Compose: getting-started/deployment/docker_compose.md
-          - Helm Chart: getting-started/deployment/helm_chart.md
+          - Docker Compose: user-guide/deployment/docker_compose.md
+          - Helm Chart: user-guide/deployment/helm_chart.md
       - Sending Data:
-          - Introduction: getting-started/sending-data/introduction.md
-          - Open Telemetry Collector: getting-started/sending-data/open_telemetry_collector.md
+          - Introduction: user-guide/sending-data/introduction.md
+          - Open Telemetry Collector: user-guide/sending-data/open_telemetry_collector.md
           - Open Telemetry SDK:
-              - Java: getting-started/sending-data/open-telemetry-sdk/java.md
-              - Python: getting-started/sending-data/open-telemetry-sdk/python.md
-              - Javascript: getting-started/sending-data/open-telemetry-sdk/javascript.md
+              - Java: user-guide/sending-data/open-telemetry-sdk/java.md
+              - Python: user-guide/sending-data/open-telemetry-sdk/python.md
+              - Javascript: user-guide/sending-data/open-telemetry-sdk/javascript.md
   - Community:
-      - Contributing: contributing.md
+      - Contribution: contribution.md
+      - FAQs: faq.md
       - Support: support.md
+      - Releases ⧉: https://github.com/epsagon/lupa/releases
