@@ -23,7 +23,7 @@ services:
       - ./lupa-collector-config.yaml:/etc/lupa-collector-config.yaml
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
-    image: epsagon/lupa:v0.5
+    image: teletrace/teletrace:v0.5
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
       interval: 60s
