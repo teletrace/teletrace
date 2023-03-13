@@ -1,10 +1,12 @@
 # Getting Started
 
+<!-- prettier-ignore-start -->
 !!! tip
-This guide assumes you have a grounding in the concepts that Teletrace is based on. Please read [understanding the basics](understand_the_basics.md) to learn about these concepts.
+    This guide assumes you have a grounding in the concepts that Teletrace is based on. Please read [understanding the basics](understand_the_basics.md) to learn about these concepts.
 
 !!! warning
-To send tracing data to Teletrace, it is necessary to instrument your applications. We support the [OpenTelemetry](https://opentelemetry.io/) instrumentation and SDKs for this purpose.
+    To send tracing data to Teletrace, it is necessary to instrument your applications. We support the [OpenTelemetry](https://opentelemetry.io/) instrumentation and SDKs for this purpose.
+<!-- prettier-ignore-end -->
 
 ## All in One
 
