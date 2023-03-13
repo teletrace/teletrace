@@ -10,7 +10,7 @@
 
 <h3 align="center">
   <a href="https://docs.lupaproject.io/"><b>📝 Explore the docs</b></a> &bull;
-  <a href="https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ"><b>💬 Join Our Slack</b></a> &bull;
+  <a href="https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ"><b>💬 Join Our Slack</b></a> &bull;
   <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=bug_report.md&title="><b>🐛 Report Bug</b></a> &bull;
   <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=feature_request.md&title="><b>✨ Request Feature</b></a>
 </h3>
@@ -113,7 +113,7 @@ Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, t
 
 ## 💬 **Community**
 
-Join our [Slack](https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ) for questions, support and fun.
+Join our [Slack](https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ) for questions, support and fun.
 
 Start with our [Documentation](https://docs.lupaproject.io/) for quick tutorials and examples.
 
