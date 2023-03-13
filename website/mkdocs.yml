@@ -33,6 +33,8 @@ extra:
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
@@ -50,7 +52,7 @@ nav:
   - Overview: index.md
   - understand_the_basics.md
   - Getting Started:
-      - Quick Start: user-guide/index.md
+      - Quick Start: user-guide/quick_start.md
       - Deployment:
           - Docker Compose: user-guide/deployment/docker_compose.md
           - Helm Chart: user-guide/deployment/helm_chart.md

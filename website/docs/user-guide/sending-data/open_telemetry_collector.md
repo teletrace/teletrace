@@ -1,4 +1,4 @@
-If you are currently using your own [**OpenTelemetry Collector**](https://opentelemetry.io/docs/collector/getting-started/ "OpenTelemetry Collector") and are interested in leveraging that collector and emitting your spans and traces to Lupa, all you need to do is add a new otlphttp exporter or otlp exporter to your `collector.yaml` file.
+If you are currently using your own [**OpenTelemetry Collector**](https://opentelemetry.io/docs/collector/getting-started/ "OpenTelemetry Collector") and are interested in leveraging that collector and emitting your spans and traces to Teletrace, all you need to do is add a new otlphttp exporter or otlp exporter to your `collector.yaml` file.
 
 otlphttp configuration
 

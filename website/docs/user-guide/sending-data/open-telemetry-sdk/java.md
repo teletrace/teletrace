@@ -1,4 +1,4 @@
-Send traces to **Lupa** directly from your code using an OTLP Trace Exporter.
+Send traces to **Teletrace** directly from your code using an OTLP Trace Exporter.
 
 ### 1. Download the [latest version](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar).
 
@@ -33,6 +33,6 @@ java -javaagent:./opentelemetry_javaagent.jar \
 
 Make sure your updated code is running. Invoke the instrumented code.
 
-### 4. Visit Lupa's spans page
+### 4. Visit Teletrace's spans page
 
-You should be able to find the newly created span in Lupa's spans page. You can use filters to narrow down shown results to find the new spans more easily.
+You should be able to find the newly created span in Teletrace's spans page. You can use filters to narrow down shown results to find the new spans more easily.
