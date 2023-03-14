@@ -15,7 +15,7 @@ Currently Teletrace support All-in-one is an executable designed for quick local
 The simplest way to start the all-in-one is to use the pre-built image published to DockerHub (a single command line).
 
 ```sh title="docker run command"
-curl https://raw.githubusercontent.com/epsagon/lupa/main/teletrace-otelcol/config/all-in-one-config.yaml >> all-in-one-config.yaml && \
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/teletrace-otelcol/config/all-in-one-config.yaml >> all-in-one-config.yaml && \
 docker run \
     -v $(pwd)/all-in-one-config.yaml:/etc/config.yaml \
     -p 8080:8080 \
@@ -42,13 +42,15 @@ Send traces to **Teletrace** directly from your code using an OTLP Trace Exporte
 !!! example
 
     === "Java"
-        ### 1. Download `opentelemetry-javaagent` [latest version](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar).
+        ### Java
+
+        Download `opentelemetry-javaagent` [latest version](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar).
 
         This package includes the instrumentation agent as well as
         instrumentations for all supported libraries and all available data exporters.
         The package provides a completely automatic, out-of-the-box experience.
 
-        ### 2. Run the following code in your Terminal to initiate the SDK
+        Run the following code in your Terminal to initiate the SDK
 
         ```bash
         export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
@@ -71,17 +73,18 @@ Send traces to **Teletrace** directly from your code using an OTLP Trace Exporte
         -jar <myapp>.jar
         ```
 
-        ### 3. Redeploy and run your code
+        Redeploy and run your code
 
         Make sure your updated code is running. Invoke the instrumented code.
 
-        ### 4. Visit Lupa's spans page
+        Visit Teletrace's spans page
 
-        You should be able to find the newly created span in Lupa's spans page. You can use filters to narrow down shown results to find the new spans more easily.
+        You should be able to find the newly created span in Teletrace's spans page. You can use filters to narrow down shown results to find the new spans more easily.
 
     === "Python"
+        ### Python
 
-        ### 1. Insert the following code section into your application:
+        Insert the following code section into your application:
 
         ```python
         from opentelemetry import trace
@@ -104,29 +107,32 @@ Send traces to **Teletrace** directly from your code using an OTLP Trace Exporte
         provider.add_span_processor(processor)
         ```
 
-        ### 2. Redeploy and run your code
+        Redeploy and run your code
 
         Make sure your updated code is running. Invoke the instrumented code.
 
     === "Javascript"
-        ### 1. Insert the following code section into your application:
+        ### Javascript
+
+        Insert the following code section into your application:
 
         ```javascript
         const traceProvider = new NodeTracerProvider({
-        resource: Resource(),
+            resource: Resource(),
         });
         const collectorOptions = {
-        url: "your_endpoint",
+            url: "your_endpoint",
         };
         const httpExporter = new HTTPTraceExporter(collectorOptions);
         traceProvider.addSpanProcessor(new BatchSpanProcessor(httpExporter));
         ```
 
-        ### 2. Redeploy and run your code
+        Redeploy and run your code
 
         Make sure your updated code is running. Invoke the instrumented code.
 
     === "Open Telemetry Collector"
+        ### Open Telemetry Collector
 
         If you are currently using your own [**OpenTelemetry Collector**](https://opentelemetry.io/docs/collector/getting-started/ "OpenTelemetry Collector") and are interested in leveraging that collector and emitting your spans and traces to Teletrace, all you need to do is add a new otlphttp exporter or otlp exporter to your `collector.yaml` file.
 
@@ -159,7 +165,7 @@ Send traces to **Teletrace** directly from your code using an OTLP Trace Exporte
             exporters: [otlp]
         ```
 
-### Visit Teletrace's UI
+## Visit Teletrace's UI
 
 Navigate to `http://localhost:8080` to access the Teletrace UI.
 You should be able to find the newly created spans in Teletrace's spans page. You can use filters to narrow down shown results to find the new spans more easily.
