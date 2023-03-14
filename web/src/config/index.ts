@@ -21,7 +21,7 @@ export const API_URL = process.env.REACT_APP_API_URL ?? LOCAL_API_URL;
 export const TELETRACE_DOCS_URL = "https://docs.lupaproject.io/";
 export const TELETRACE_REPOSITORY_URL = "https://github.com/epsagon/lupa";
 export const TELETRACE_SLACK_INVITE_LINK =
-  "https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ";
+  "https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ";
 
 export const TELETRACE_BUILD_INFO =
   process.env.REACT_APP_BUILD_INFO ?? "v0.0.0-devel";
