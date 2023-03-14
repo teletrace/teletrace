@@ -19,7 +19,8 @@ const LOCAL_API_URL = "http://localhost:8080";
 export const API_URL = process.env.REACT_APP_API_URL ?? LOCAL_API_URL;
 
 export const TELETRACE_DOCS_URL = "https://docs.teletrace.io/";
-export const TELETRACE_REPOSITORY_URL = "https://github.com/teletrace/teletrace";
+export const TELETRACE_REPOSITORY_URL =
+  "https://github.com/teletrace/teletrace";
 export const TELETRACE_SLACK_INVITE_LINK =
   "https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ";
 
