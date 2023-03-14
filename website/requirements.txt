@@ -1,1 +1,4 @@
 mkdocs-awesome-pages-plugin
+mkdocs-material
+pymdown-extensions
+pygments

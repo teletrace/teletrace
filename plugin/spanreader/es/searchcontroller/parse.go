@@ -19,10 +19,11 @@ package searchcontroller
 import (
 	"encoding/json"
 	"fmt"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+
 	"github.com/mitchellh/mapstructure"
+	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
 )
 
 type SpanParseOption func(*internalspan.InternalSpan)

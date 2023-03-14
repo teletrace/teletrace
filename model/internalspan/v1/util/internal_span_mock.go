@@ -19,7 +19,7 @@ package internalspanv1util
 import (
 	"time"
 
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 )
 
 func GenInternalSpan(s_attr map[string]any, r_attr map[string]any, i_attr map[string]any) *internalspanv1.InternalSpan {

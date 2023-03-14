@@ -17,7 +17,7 @@
 package statistics
 
 import (
-	"oss-tracing/pkg/model/tagsquery/v1"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )

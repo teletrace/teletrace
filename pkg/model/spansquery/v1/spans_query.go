@@ -18,9 +18,10 @@ package model
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+	"github.com/teletrace/teletrace/pkg/model"
+
+	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
 )
 
 const (

@@ -17,9 +17,9 @@
 package statistics
 
 import (
-	"oss-tracing/pkg/model"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+	"github.com/teletrace/teletrace/pkg/model"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es/utils"
 )
 
 type TagStatisticParseOption func(string, map[tagsquery.TagStatistic]float64, tagsquery.TagStatistic)

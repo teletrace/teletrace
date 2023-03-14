@@ -19,9 +19,10 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/model"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"strconv"
+
+	"github.com/teletrace/teletrace/pkg/model"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 )

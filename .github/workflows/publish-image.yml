@@ -31,6 +31,6 @@ jobs:
         with:
           push: true
           file: ./cmd/all-in-one/Dockerfile
-          tags: epsagon/lupa:demo
+          tags: teletrace/teletrace:demo
           build-args: |
             BUILD_INFO

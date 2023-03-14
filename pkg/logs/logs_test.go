@@ -17,8 +17,9 @@
 package logs
 
 import (
-	"oss-tracing/pkg/config"
 	"testing"
+
+	"github.com/teletrace/teletrace/pkg/config"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"

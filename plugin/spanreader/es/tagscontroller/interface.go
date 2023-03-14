@@ -18,7 +18,8 @@ package tagscontroller
 
 import (
 	"context"
-	"oss-tracing/pkg/model/tagsquery/v1"
+
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 )
 
 type TagsController interface {
