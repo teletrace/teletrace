@@ -165,7 +165,7 @@ Send traces to **Teletrace** directly from your code using an OTLP Trace Exporte
             exporters: [otlp]
         ```
 
-## Visit Teletrace's UI
+## Visit Teletrace UI
 
 Navigate to `http://localhost:8080` to access the Teletrace UI.
 You should be able to find the newly created spans in Teletrace's spans page. You can use filters to narrow down shown results to find the new spans more easily.
