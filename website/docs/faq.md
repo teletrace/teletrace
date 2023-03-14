@@ -16,7 +16,7 @@ Overall, using OpenTelemetry with Teletrace can provide a powerful observability
 
 ## What are deployment types available for Teletrace?
 
-Teletrace can be deployed using [Helm](https://helm.sh/) which is a popular package manager for Kubernetes. The Teletrace [Helm chart](https://github.com/epsagon/lupa-helm-charts) provides a set of preconfigured templates for deploying Teletrace. Using Helm can simplify the deployment process and make it easier to manage and scale Teletrace.
+Teletrace can be deployed using [Helm](https://helm.sh/) which is a popular package manager for Kubernetes. The Teletrace [Helm chart](https://github.com/teletrace/teletrace-helm-charts) provides a set of preconfigured templates for deploying Teletrace. Using Helm can simplify the deployment process and make it easier to manage and scale Teletrace.
 In addition, Teletrace can be deployed using [Docker Compose](https://docs.docker.com/compose/), which is a tool for defining and running multi-container Docker applications. The Teletrace Docker Compose file provides a set of preconfigured services for deploying Teletrace, including the Teletrace API, and storage backend. Using Docker Compose can simplify the deployment process and make it easier to test and develop Teletrace locally.
 
 ## How can I set up a demo environment for Teletrace using OpenTelemetry?
