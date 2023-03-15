@@ -43,4 +43,4 @@ Once Teletrace is deployed on Kubernetes, it can be used to monitor and troubles
 
 ## Development Status
 
-Teletrace is being actively developed by the community. Our releases can be found [here](https://github.com/epsagon/lupa/releases).
+Teletrace is being actively developed by the community. Our releases can be found [here](https://github.com/teletrace/teletrace/releases).

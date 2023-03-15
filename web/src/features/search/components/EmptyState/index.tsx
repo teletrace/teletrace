@@ -80,7 +80,7 @@ export const EmptyState = () => {
           </CardContent>
 
           <CardActions sx={{ padding: "20px", paddingTop: "16px" }}>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry%20Collector">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open_telemetry_collector/">
               OpenTelemetry Collector
             </LinkButton>
           </CardActions>
@@ -98,13 +98,13 @@ export const EmptyState = () => {
           </CardContent>
 
           <CardActions sx={{ padding: "20px", paddingTop: "16px" }}>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/Java/">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open-telemetry-sdk/java/">
               Java
             </LinkButton>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/JavaScript/">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open-telemetry-sdk/javascript/">
               JavaScript
             </LinkButton>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/Python/">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open-telemetry-sdk/python/">
               Python
             </LinkButton>
             <LinkButton href="https://opentelemetry.io/docs/instrumentation/go/">
