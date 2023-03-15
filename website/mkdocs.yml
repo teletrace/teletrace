@@ -1,7 +1,7 @@
 site_name: Teletrace
 
 theme:
-  homepage: https://epsagon.github.io/lupa/
+  homepage: https://docs.teletrace.io/
   font:
     text: Roboto
   logo: assets/teletrace_icon.svg
@@ -28,7 +28,7 @@ extra:
   generator: true
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/epsagon/lupa
+      link: https://github.com/teletrace/teletrace
       name: Teletrace on GithHub
 markdown_extensions:
   - pymdownx.highlight:
@@ -46,8 +46,8 @@ plugins:
   - search
   - awesome-pages
 
-repo_name: epsagon/lupa
-repo_url: https://github.com/epsagon/lupa
+repo_name: teletrace/teletrace
+repo_url: https://github.com/teletrace/teletrace
 nav:
   - Overview: index.md
   - understand_the_basics.md
@@ -67,4 +67,4 @@ nav:
       - Contribution: contribution.md
       - FAQs: faq.md
       - Support: support.md
-      - Releases ⧉: https://github.com/epsagon/lupa/releases
+      - Releases ⧉: https://github.com/teletrace/teletrace/releases
