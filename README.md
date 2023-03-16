@@ -9,10 +9,10 @@
 <h1 align="center">The Open-Source Tracing Platform.</h1>
 
 <h3 align="center">
-  <a href="https://docs.lupaproject.io/"><b>📝 Explore the docs</b></a> &bull;
+  <a href="https://docs.teletrace.io/"><b>📝 Explore the docs</b></a> &bull;
   <a href="https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ"><b>💬 Join Our Slack</b></a> &bull;
-  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=bug_report.md&title="><b>🐛 Report Bug</b></a> &bull;
-  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=feature_request.md&title="><b>✨ Request Feature</b></a>
+  <a href="https://github.com/teletrace/teletrace/issues/new?assignees=&labels=&template=bug_report.md&title="><b>🐛 Report Bug</b></a> &bull;
+  <a href="https://github.com/teletrace/teletrace/issues/new?assignees=&labels=&template=feature_request.md&title="><b>✨ Request Feature</b></a>
 </h3>
 
 ## ⭐️ **Why Teletrace?**
