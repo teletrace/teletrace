@@ -23,7 +23,7 @@ services:
       - ./teletrace-collector-config.yaml:/etc/teletrace-collector-config.yaml
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
-    image: teletrace/teletrace:v0.5
+    image: teletrace/teletrace:v0.6
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
       interval: 60s
