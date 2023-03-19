@@ -17,7 +17,7 @@
 package modeltranslator
 
 import (
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
 )

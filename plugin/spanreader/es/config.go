@@ -18,7 +18,8 @@ package spanreaderes
 
 import (
 	"fmt"
-	"oss-tracing/pkg/config"
+
+	"github.com/teletrace/teletrace/pkg/config"
 )
 
 type ElasticConfig struct {

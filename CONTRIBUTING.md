@@ -9,13 +9,13 @@ there are a few different ways you can contribute to the community:
 - Contribute to the source code
 - Find and report bugs
 - Help other users by answering questions
-- Participate in product [discussions](https://github.com/epsagon/oss-tracing/discussions)
+- Participate in product [discussions](https://github.com/teletrace/teletrace/discussions)
 
 ### Reporting bugs
 
-Before opening a bug report, please make sure that no one has already reported the issue, and look through the [existing issues](https://github.com/epsagon/oss-tracing/issues?q=is%3Aopen+is%3Aissue+label%3Abug) for similar issues.
+Before opening a bug report, please make sure that no one has already reported the issue, and look through the [existing issues](https://github.com/teletrace/teletrace/issues?q=is:open+is:issue+label:bug) for similar issues.
 
-Report a bug by issuing a [bug report](https://github.com/epsagon/oss-tracing/issues/new?assignees=&labels=&template=bug_report.md&title=), when reporting a bug please try to:
+Report a bug by issuing a [bug report](https://github.com/teletrace/teletrace/issues/new?assignees=&labels=&template=bug_report.md&title=), when reporting a bug please try to:
 
 - Describe the problematic behavior (expected vs actual) in as much detail as possible
 - Steps to reproduce the issue
@@ -23,9 +23,9 @@ Report a bug by issuing a [bug report](https://github.com/epsagon/oss-tracing/is
 
 ### Requesting a feature
 
-Before requesting a feature, please make sure that the feature is not [already requested](https://github.com/epsagon/oss-tracing/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement), nor is it already on our [roadmap](https://github.com/orgs/epsagon/projects/3).
+Before requesting a feature, please make sure that the feature is not [already requested](https://github.com/teletrace/teletrace/issues?q=is:open+is:issue+label:enhancement).
 
-Request a feature by issuing a [feature request](https://github.com/epsagon/oss-tracing/issues/new?assignees=&labels=&template=feature_request.md&title=), when requesting a feature try to:
+Request a feature by issuing a [feature request](https://github.com/teletrace/teletrace/issues/new?assignees=&labels=&template=feature_request.md&title=), when requesting a feature try to:
 
 - Outline the issues you are trying to solve
 - Provide a detailed description of the solution you would like to see implemented
@@ -38,8 +38,8 @@ Request a feature by issuing a [feature request](https://github.com/epsagon/oss-
 
 Select a good issue from the links below:
 
-- [Good First Issue](https://github.com/epsagon/oss-tracing/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
-- [Help Wanted](https://github.com/epsagon/oss-tracing/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22)
+- [Good First Issue](https://github.com/teletrace/teletrace/issues?q=is:open+is:issue+label:%22good+first+issue%22)
+- [Help Wanted](https://github.com/teletrace/teletrace/issues?q=is:open+is:issue+label:%22help+wanted%22)
 
 Comment on the issue so that we can assign it to you and provide clarity if needed.
 
@@ -90,7 +90,7 @@ This project is following the [standard go project layout](https://github.com/go
 
 #### Testing
 
-We try to ensure that most functionality of OSS-tracing is well tested.ß
+We try to ensure that most functionality of Teletrace is well tested.
 
 - At the package level, we write unit tests to test the functionality of the code in isolation.
   Those can be found within each package/module as `*_test.go` files.

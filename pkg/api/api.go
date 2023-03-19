@@ -19,12 +19,13 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/model"
-	"oss-tracing/pkg/spanreader"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/teletrace/teletrace/pkg/config"
+	"github.com/teletrace/teletrace/pkg/model"
+	"github.com/teletrace/teletrace/pkg/spanreader"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/static"

@@ -19,15 +19,16 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/model/metadata/v1"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"oss-tracing/pkg/spanreader"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	"github.com/teletrace/teletrace/pkg/spanreader"
+
+	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
 
 	"go.uber.org/zap"
 
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 )
 
 type spanReader struct {

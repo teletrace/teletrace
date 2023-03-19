@@ -16,7 +16,7 @@
 
 package sqlitespanreader
 
-import "oss-tracing/pkg/config"
+import "github.com/teletrace/teletrace/pkg/config"
 
 type SqliteConfig struct {
 	Path string

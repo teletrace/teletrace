@@ -17,10 +17,11 @@ package usageReport
 
 import (
 	"context"
-	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/model/metadata/v1"
-	"oss-tracing/pkg/spanreader"
 	"time"
+
+	"github.com/teletrace/teletrace/pkg/config"
+	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
+	"github.com/teletrace/teletrace/pkg/spanreader"
 
 	"github.com/go-co-op/gocron"
 	"go.uber.org/zap"

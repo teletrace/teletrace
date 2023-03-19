@@ -1,14 +1,14 @@
-site_name: Lupa
+site_name: Teletrace
 
 theme:
-  homepage: https://epsagon.github.io/oss-tracing/
+  homepage: https://docs.teletrace.io/
   font:
     text: Roboto
-
-  theme:
+  logo: assets/teletrace_icon.svg
   features:
     - navigation.sections
     - content.code.annotate
+    - content.code.copy
 
   name: material
   palette:
@@ -28,18 +28,43 @@ extra:
   generator: true
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/epsagon/lupa
-      name: Lupa on GithHub
+      link: https://github.com/teletrace/teletrace
+      name: Teletrace on GithHub
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - tables
 
 plugins:
   - search
   - awesome-pages
 
-repo_name: epsagon/lupa
-repo_url: https://github.com/epsagon/lupa
+repo_name: teletrace/teletrace
+repo_url: https://github.com/teletrace/teletrace
+nav:
+  - Overview: index.md
+  - understand_the_basics.md
+  - Getting Started:
+      - Quick Start: user-guide/quick_start.md
+      - Deployment:
+          - Docker Compose: user-guide/deployment/docker_compose.md
+          - Helm Chart: user-guide/deployment/helm_chart.md
+      - Sending Data:
+          - Introduction: user-guide/sending-data/introduction.md
+          - Open Telemetry Collector: user-guide/sending-data/open_telemetry_collector.md
+          - Open Telemetry SDK:
+              - Java: user-guide/sending-data/open-telemetry-sdk/java.md
+              - Python: user-guide/sending-data/open-telemetry-sdk/python.md
+              - Javascript: user-guide/sending-data/open-telemetry-sdk/javascript.md
+  - Community:
+      - Contribution: contribution.md
+      - FAQs: faq.md
+      - Support: support.md
+      - Releases ⧉: https://github.com/teletrace/teletrace/releases

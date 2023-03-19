@@ -19,7 +19,8 @@ package tagscontroller
 import (
 	"encoding/json"
 	"fmt"
-	"oss-tracing/plugin/spanreader/es/errors"
+
+	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 )
