@@ -1,6 +1,6 @@
 exporters:
   otlp:
-    endpoint: lupa-api:4317
+    endpoint: teletrace-api:4317
     tls:
       insecure: true
 

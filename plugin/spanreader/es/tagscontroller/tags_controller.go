@@ -20,12 +20,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"oss-tracing/plugin/spanreader/es/errors"
-	"oss-tracing/plugin/spanreader/es/tagscontroller/statistics"
 	"strings"
 
-	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/tagscontroller/statistics"
+
+	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es/utils"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"
@@ -219,7 +220,7 @@ func (r *tagsController) getTagsMappings(ctx context.Context, tags []string) ([]
 
 	// in case multiple indices are managed by a single alias (in rollover for example)
 	// we need to traverse all indices, not only r.idx.
-	// for example, we might have lupa-traces-000001 and lupa-traces-000002 aliased by lupa-traces,
+	// for example, we might have teletrace-traces-000001 and teletrace-traces-000002 aliased by teletrace-traces,
 	// so we need to traverse body[*] to acquire the information per index.
 
 	// _ is the index name

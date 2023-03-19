@@ -19,15 +19,16 @@ package spanreaderes
 import (
 	"context"
 	"fmt"
-	"oss-tracing/pkg/model"
-	"oss-tracing/pkg/model/metadata/v1"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"oss-tracing/pkg/spanreader"
-	"oss-tracing/plugin/spanreader/es/metadatacontroller"
-	"oss-tracing/plugin/spanreader/es/searchcontroller"
-	"oss-tracing/plugin/spanreader/es/tagscontroller"
 
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/pkg/model"
+	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	"github.com/teletrace/teletrace/pkg/spanreader"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/metadatacontroller"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/searchcontroller"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/tagscontroller"
+
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 
 	"go.uber.org/zap"
 )

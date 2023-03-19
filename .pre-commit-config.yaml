@@ -19,7 +19,7 @@ repos:
       - id: codespell
         name: codespell
         description: Check for typos or spelling errors before commit.
-        entry: codespell --ignore-words=.spellignore --skip="*.sum,*.mod,*.lock,.vscode,node_modules,*.stories.tsx"
+        entry: codespell --ignore-words=.spellignore --skip="*.sum,*.mod,*.lock,.vscode,node_modules,*.stories.tsx,*.svg"
         types: [text]
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
     rev: v9.1.0

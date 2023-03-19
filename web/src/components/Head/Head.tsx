@@ -23,7 +23,7 @@ export type HeadProps = {
 
 export const Head = ({ title, description }: HeadProps) => {
   return (
-    <Helmet title={title && `${title} | Lupa`} defaultTitle="Lupa">
+    <Helmet title={title && `${title} | Teletrace`} defaultTitle="Teletrace">
       {description && <meta name="description" content={description} />}
     </Helmet>
   );

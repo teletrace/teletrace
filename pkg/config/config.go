@@ -55,7 +55,7 @@ const (
 	esForceCreateConfigDefault = false
 
 	esIndexEnvName = "ES_INDEX"
-	esIndexDefault = "lupa-traces"
+	esIndexDefault = "teletrace-traces"
 
 	esIndexerWorkersCountEnvName = "ES_INDEXER_WORKERS_COUNT"
 	esIndexerWorkersCountDefault = 5

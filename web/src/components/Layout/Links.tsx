@@ -19,10 +19,10 @@ import { Button, ListItemText, Menu, MenuItem, MenuList } from "@mui/material";
 import { Fragment, useState } from "react";
 
 import {
-  LUPA_BUILD_INFO,
-  LUPA_DOCS_URL,
-  LUPA_REPOSITORY_URL,
-  LUPA_SLACK_INVITE_LINK,
+  TELETRACE_BUILD_INFO,
+  TELETRACE_DOCS_URL,
+  TELETRACE_REPOSITORY_URL,
+  TELETRACE_SLACK_INVITE_LINK,
 } from "@/config";
 
 import { ResourceIcon } from "../Elements/ResourceIcon";
@@ -31,17 +31,17 @@ const links = [
   {
     icon: <ResourceIcon name="slack" />,
     label: "Slack",
-    link: LUPA_SLACK_INVITE_LINK,
+    link: TELETRACE_SLACK_INVITE_LINK,
   },
   {
     icon: <GitHub />,
     label: "Github",
-    link: LUPA_REPOSITORY_URL,
+    link: TELETRACE_REPOSITORY_URL,
   },
   {
     icon: <Article />,
     label: "Documentation",
-    link: LUPA_DOCS_URL,
+    link: TELETRACE_DOCS_URL,
   },
 ];
 
@@ -78,7 +78,7 @@ export const Links = () => {
       >
         <MenuList>
           <MenuItem disabled>
-            <ListItemText>Lupa {LUPA_BUILD_INFO}</ListItemText>
+            <ListItemText>Teletrace {TELETRACE_BUILD_INFO}</ListItemText>
           </MenuItem>
         </MenuList>
       </Menu>

@@ -20,10 +20,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"oss-tracing/plugin/spanreader/es/errors"
-	spanreaderes "oss-tracing/plugin/spanreader/es/utils"
 
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
+	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es/utils"
+
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"

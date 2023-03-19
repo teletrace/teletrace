@@ -22,17 +22,18 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"oss-tracing/pkg/api"
-	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/logs"
-	"oss-tracing/pkg/spanreader"
-	"oss-tracing/pkg/usageReport"
 	"syscall"
 
-	spanreaderes "oss-tracing/plugin/spanreader/es"
-	sqlite "oss-tracing/plugin/spanreader/sqlite"
+	"github.com/teletrace/teletrace/pkg/api"
+	"github.com/teletrace/teletrace/pkg/config"
+	"github.com/teletrace/teletrace/pkg/logs"
+	"github.com/teletrace/teletrace/pkg/spanreader"
+	"github.com/teletrace/teletrace/pkg/usageReport"
 
-	"github.com/epsagon/lupa/lupa-otelcol/pkg/collector"
+	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es"
+	sqlite "github.com/teletrace/teletrace/plugin/spanreader/sqlite"
+
+	"github.com/teletrace/teletrace/teletrace-otelcol/pkg/collector"
 
 	"go.uber.org/zap"
 )
