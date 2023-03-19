@@ -18,10 +18,11 @@ package searchcontroller
 
 import (
 	"encoding/json"
-	"oss-tracing/pkg/model"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
 	"testing"
 	"time"
+
+	"github.com/teletrace/teletrace/pkg/model"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -39,7 +40,7 @@ func getSearchResponseMock() (map[string]any, error) {
           "hits":[
              {
                 "_id":"Q8A5CIQBo5OYxCntcabF",
-                "_index":"lupa-spans",
+                "_index":"teletrace-traces",
                 "_score":1,
                 "_source":{
                    "ExternalFields":{

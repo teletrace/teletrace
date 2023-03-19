@@ -18,15 +18,16 @@ package mock
 
 import (
 	"context"
-	"oss-tracing/pkg/model/metadata/v1"
-	"oss-tracing/pkg/model/tagsquery/v1"
-	"oss-tracing/pkg/spanreader"
 
-	internalspan "github.com/epsagon/lupa/model/internalspan/v1"
+	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	"github.com/teletrace/teletrace/pkg/spanreader"
 
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
 
-	spanformatutiltests "github.com/epsagon/lupa/model/internalspan/v1/util"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+
+	spanformatutiltests "github.com/teletrace/teletrace/model/internalspan/v1/util"
 )
 
 type spanReader struct{}

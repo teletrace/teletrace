@@ -1,0 +1,50 @@
+version: "3"
+services:
+  teletrace-api:
+    ports:
+      - "8080:8080"
+      - "4317:4317"
+      - "4318:4318"
+    command: ["--config=/etc/teletrace-collector-config.yaml"]
+    build:
+      dockerfile: cmd/all-in-one/Dockerfile
+      context: ../../
+    volumes:
+      - ./teletrace-otel-collector.yaml:/etc/teletrace-collector-config.yaml
+    environment:
+      - ES_ENDPOINT=http://elasticsearch:9200
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+    networks:
+      - teletrace
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+  elasticsearch:
+    image: elasticsearch:8.4.2
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=false
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - teletrace
+    healthcheck:
+      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 50
+
+volumes:
+  es_data:
+    driver: local
+networks:
+  teletrace:
+    internal: false

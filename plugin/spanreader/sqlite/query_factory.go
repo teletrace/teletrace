@@ -18,11 +18,12 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
-	"oss-tracing/pkg/model/tagsquery/v1"
 	"strings"
 
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/pkg/model"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 )
 
 const (

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/** types used to query spans from the lupa backend */
+/** types used to query spans from the teletrace backend */
 
 import { InternalSpan } from "@/types/span";
 

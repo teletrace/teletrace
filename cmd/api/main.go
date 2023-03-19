@@ -19,11 +19,12 @@ package main
 import (
 	"context"
 	"log"
-	"oss-tracing/pkg/api"
-	"oss-tracing/pkg/config"
-	"oss-tracing/pkg/logs"
-	"oss-tracing/pkg/usageReport"
-	spanreaderes "oss-tracing/plugin/spanreader/es"
+
+	"github.com/teletrace/teletrace/pkg/api"
+	"github.com/teletrace/teletrace/pkg/config"
+	"github.com/teletrace/teletrace/pkg/logs"
+	"github.com/teletrace/teletrace/pkg/usageReport"
+	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es"
 
 	"go.uber.org/zap"
 )

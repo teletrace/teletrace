@@ -20,9 +20,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"oss-tracing/pkg/model"
-	spansquery "oss-tracing/pkg/model/spansquery/v1"
-	"oss-tracing/plugin/spanreader/es/errors"
+
+	"github.com/teletrace/teletrace/pkg/model"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
 
 	"golang.org/x/exp/slices"
 

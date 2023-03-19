@@ -1,4 +1,4 @@
-project_name: lupa
+project_name: teletrace
 before:
   hooks:
     - go mod tidy
@@ -16,15 +16,15 @@ builds:
       - 6
       - 7
     main: ./cmd/all-in-one/main.go
-    binary: lupa
-    id: lupa
+    binary: teletrace
+    id: teletrace
 
 dockers:
   - image_templates:
-      - "epsagon/lupa:{{ .Tag }}-amd64"
-      - "epsagon/lupa:v{{ .Major }}-amd64"
-      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-amd64"
-      - "epsagon/lupa:latest-amd64"
+      - "teletrace/teletrace:{{ .Tag }}-amd64"
+      - "teletrace/teletrace:v{{ .Major }}-amd64"
+      - "teletrace/teletrace:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "teletrace/teletrace:latest-amd64"
     dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
@@ -36,16 +36,16 @@ dockers:
       - "go.mod"
       - "go.sum"
       - "cmd"
-      - "lupa-otelcol"
+      - "teletrace-otelcol"
       - "model"
       - "web"
       - "pkg"
       - "plugin"
   - image_templates:
-      - "epsagon/lupa:{{ .Tag }}-arm64v8"
-      - "epsagon/lupa:v{{ .Major }}-arm64v8"
-      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-arm64v8"
-      - "epsagon/lupa:latest-arm64v8"
+      - "teletrace/teletrace:{{ .Tag }}-arm64v8"
+      - "teletrace/teletrace:v{{ .Major }}-arm64v8"
+      - "teletrace/teletrace:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "teletrace/teletrace:latest-arm64v8"
     dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
@@ -57,16 +57,16 @@ dockers:
       - "go.mod"
       - "go.sum"
       - "cmd"
-      - "lupa-otelcol"
+      - "teletrace-otelcol"
       - "model"
       - "web"
       - "pkg"
       - "plugin"
   - image_templates:
-      - "epsagon/lupa:{{ .Tag }}-armv7"
-      - "epsagon/lupa:v{{ .Major }}-armv7"
-      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-armv7"
-      - "epsagon/lupa:latest-armv7"
+      - "teletrace/teletrace:{{ .Tag }}-armv7"
+      - "teletrace/teletrace:v{{ .Major }}-armv7"
+      - "teletrace/teletrace:v{{ .Major }}.{{ .Minor }}-armv7"
+      - "teletrace/teletrace:latest-armv7"
     dockerfile: ./cmd/all-in-one/Dockerfile
     use: buildx
     build_flag_templates:
@@ -79,33 +79,33 @@ dockers:
       - "go.mod"
       - "go.sum"
       - "cmd"
-      - "lupa-otelcol"
+      - "teletrace-otelcol"
       - "model"
       - "web"
       - "pkg"
       - "plugin"
 
 docker_manifests:
-  - name_template: "epsagon/lupa:{{ .Tag }}"
+  - name_template: "teletrace/teletrace:{{ .Tag }}"
     image_templates:
-      - "epsagon/lupa:{{ .Tag }}-amd64"
-      - "epsagon/lupa:{{ .Tag }}-arm64v8"
-      - "epsagon/lupa:{{ .Tag }}-armv7"
-  - name_template: "epsagon/lupa:v{{ .Major }}"
+      - "teletrace/teletrace:{{ .Tag }}-amd64"
+      - "teletrace/teletrace:{{ .Tag }}-arm64v8"
+      - "teletrace/teletrace:{{ .Tag }}-armv7"
+  - name_template: "teletrace/teletrace:v{{ .Major }}"
     image_templates:
-      - "epsagon/lupa:v{{ .Major }}-amd64"
-      - "epsagon/lupa:v{{ .Major }}-arm64v8"
-      - "epsagon/lupa:v{{ .Major }}-armv7"
-  - name_template: "epsagon/lupa:v{{ .Major }}.{{ .Minor }}"
+      - "teletrace/teletrace:v{{ .Major }}-amd64"
+      - "teletrace/teletrace:v{{ .Major }}-arm64v8"
+      - "teletrace/teletrace:v{{ .Major }}-armv7"
+  - name_template: "teletrace/teletrace:v{{ .Major }}.{{ .Minor }}"
     image_templates:
-      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-amd64"
-      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-arm64v8"
-      - "epsagon/lupa:v{{ .Major }}.{{ .Minor }}-armv7"
-  - name_template: "epsagon/lupa:latest"
+      - "teletrace/teletrace:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "teletrace/teletrace:v{{ .Major }}.{{ .Minor }}-arm64v8"
+      - "teletrace/teletrace:v{{ .Major }}.{{ .Minor }}-armv7"
+  - name_template: "teletrace/teletrace:latest"
     image_templates:
-      - "epsagon/lupa:latest-amd64"
-      - "epsagon/lupa:latest-arm64v8"
-      - "epsagon/lupa:latest-armv7"
+      - "teletrace/teletrace:latest-amd64"
+      - "teletrace/teletrace:latest-arm64v8"
+      - "teletrace/teletrace:latest-armv7"
 
 archives:
   - replacements:

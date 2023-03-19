@@ -32,9 +32,9 @@ jobs:
       - name: Install Playwright Browsers
         working-directory: ./tests/e2e/playwright
         run: npx playwright install --with-deps
-      - name: Run Lupa
+      - name: Run Teletrace
         uses: ./.github/run-end-to-end-tests
-        id: run-lupa
+        id: run-teletrace
         with:
           spans_storage_db_type: ${{ matrix.spans_storage_db_type }}
       - name: Run Playwright tests

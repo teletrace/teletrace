@@ -18,8 +18,9 @@ package utils
 
 import (
 	"encoding/json"
-	"oss-tracing/pkg/model"
 	"testing"
+
+	"github.com/teletrace/teletrace/pkg/model"
 
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/stretchr/testify/assert"
