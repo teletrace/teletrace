@@ -6,8 +6,6 @@
   </a>
 </div>
 
-<!-- <h1 align="center">The Open-Source Tracing Platform.</h1> -->
-
 <h3 align="center">
   <a href="https://docs.teletrace.io/"><b>📝 Explore the docs</b></a> &bull;
   <a href="https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ"><b>💬 Join Our Slack</b></a> &bull;
