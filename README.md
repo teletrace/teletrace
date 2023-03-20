@@ -1,12 +1,10 @@
 <div align="center">
   <a href="https://docs.teletrace.io/" target="_blank">
   <picture>
-    <img src="./website/docs/assets/lupa_light.png" width="350" alt="Logo"/>
+    <img src="./website/docs/assets/teletrace.png" width="600" alt="Logo"/>
   </picture>
   </a>
 </div>
-
-<h1 align="center">The Open-Source Tracing Platform.</h1>
 
 <h3 align="center">
   <a href="https://docs.teletrace.io/"><b>📝 Explore the docs</b></a> &bull;
@@ -29,7 +27,7 @@ Teletrace is built from the ground up for modern applications. It is open-source
 
 ## 🖼 **Live Demo**
 
-<img src="./website/docs/images/demo.gif" min-width="100%" min-height="100%"/>
+<img src="./website/docs/assets/demo.gif" min-width="100%" min-height="100%"/>
 
 Take a look at our [demo](https://app.lupaproject.io) environment, with [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) data.
 
