@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-//nolint:all
 package modeltranslator
 
 import (
@@ -81,10 +80,10 @@ func getInternalSpan(span ptrace.Span) *internalspanv1.Span {
 	status := getInternalSpanStatus(span)
 
 	return &internalspanv1.Span{
-		TraceId:                span.TraceID().HexString(),
-		SpanId:                 span.SpanID().HexString(),
+		TraceId:                span.TraceID().String(),
+		SpanId:                 span.SpanID().String(),
 		TraceState:             span.TraceState().AsRaw(),
-		ParentSpanId:           span.ParentSpanID().HexString(),
+		ParentSpanId:           span.ParentSpanID().String(),
 		Name:                   span.Name(),
 		Kind:                   span.Kind().String(),
 		StartTimeUnixNano:      uint64(span.StartTimestamp()),
@@ -122,8 +121,8 @@ func getInternalSpanLinks(span ptrace.Span) []*internalspanv1.SpanLink {
 		spanLink := spanLinkSlice.At(i)
 		internalSpanLinks = append(internalSpanLinks,
 			&internalspanv1.SpanLink{
-				TraceId:                spanLink.TraceID().HexString(),
-				SpanId:                 spanLink.SpanID().HexString(),
+				TraceId:                spanLink.TraceID().String(),
+				SpanId:                 spanLink.SpanID().String(),
 				TraceState:             spanLink.TraceState().AsRaw(),
 				Attributes:             spanLink.Attributes().AsRaw(),
 				DroppedAttributesCount: spanLink.DroppedAttributesCount(),
