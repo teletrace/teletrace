@@ -68,6 +68,14 @@ docker run \
     --config /etc/config.yaml
 ```
 
+## 💬 **Community**
+
+Join our [Slack](https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ) for questions, support and fun.
+
+Start with our [Documentation](https://docs.teletrace.io/) for quick tutorials and examples.
+
+If you need direct support you can contact us at teletrace@cisco.com.
+
 ## 👨‍💻 **Contribution**
 
 Contributions are welcome!
@@ -77,14 +85,6 @@ Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, t
 [![Contributors](https://contrib.rocks/image?repo=teletrace/teletrace)](https://github.com/teletrace/teletrace/graphs/contributors)
 
 Thank you to all the people who already contributed to Teletrace ❤️
-
-## 💬 **Community**
-
-Join our [Slack](https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ) for questions, support and fun.
-
-Start with our [Documentation](https://docs.teletrace.io/) for quick tutorials and examples.
-
-If you need direct support you can contact us at teletrace@cisco.com.
 
 ## ❗ **Code of conduct**
 

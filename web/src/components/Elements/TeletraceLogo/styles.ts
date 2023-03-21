@@ -19,7 +19,12 @@ export const styles = {
     flex: 1,
   },
   logoIconButton: {
+    paddingLeft: "0px",
     borderRadius: 1,
-    marginLeft: -1,
+    gap: "5px",
+  },
+  logo: {
+    width: "40px",
+    height: "40px",
   },
 };
