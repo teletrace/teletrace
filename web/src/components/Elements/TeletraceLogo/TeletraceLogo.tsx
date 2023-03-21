@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Box, IconButton, Typography, SvgIcon } from "@mui/material";
+import { Box, IconButton, SvgIcon, Typography } from "@mui/material";
 
 import { styles } from "./styles";
 
