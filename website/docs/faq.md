@@ -19,10 +19,6 @@ Overall, using OpenTelemetry with Teletrace can provide a powerful observability
 Teletrace can be deployed using [Helm](https://helm.sh/) which is a popular package manager for Kubernetes. The Teletrace [Helm chart](https://github.com/teletrace/teletrace-helm-charts) provides a set of preconfigured templates for deploying Teletrace. Using Helm can simplify the deployment process and make it easier to manage and scale Teletrace.
 In addition, Teletrace can be deployed using [Docker Compose](https://docs.docker.com/compose/), which is a tool for defining and running multi-container Docker applications. The Teletrace Docker Compose file provides a set of preconfigured services for deploying Teletrace, including the Teletrace API, and storage backend. Using Docker Compose can simplify the deployment process and make it easier to test and develop Teletrace locally.
 
-## How can I set up a demo environment for Teletrace using OpenTelemetry?
-
-To set up a demo environment for Teletrace using OpenTelemetry, you can use the Teletrace repository on [GitHub](https://github.com/epsagon/lupa-opentelemetry-demo), which provides a set of demo application that is instrumented with OpenTelemetry. These demo applications include examples for different programming languages and frameworks, such as Node.js, Java, and Python. To set up the demo environment, you will need to clone the repository and follow the instructions in the README file to run the application and generate traces. Once the traces have been generated, you can view them in the Teletrace and explore the features and capabilities of Teletrace.
-
 ## How and where does Teletrace store data?
 
 Teletrace stores its tracing data in a backend storage, which can be one of the following: Elasticsearch or SQLite. The choice of storage system depends on the specific use case and requirements.
