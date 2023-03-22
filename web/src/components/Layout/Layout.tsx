@@ -35,7 +35,10 @@ export const Layout = ({ children }: LayoutProps) => {
       }}
     >
       <AppBar position="sticky">
-        <Toolbar>
+        <Toolbar
+          disableGutters
+          sx={{ paddingLeft: "16px", paddingRight: "16px" }}
+        >
           <TeletraceLogo />
           <Links />
         </Toolbar>
