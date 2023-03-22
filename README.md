@@ -25,14 +25,14 @@ Teletrace is built from the ground up for modern applications. It is open-source
 - Visualize and compare latency and error trends. (Coming Soon)
 - Advanced latency analysis tools. (Coming Soon)
 
-## 🖼 **Live Demo**
+## 🖼 **Demo**
 
 <img src="./website/docs/assets/demo.gif" min-width="100%" min-height="100%"/>
 
 ## 📚 **Table of contents**
 
 - [Features](#-features)
-- [Live Demo](#-live-demo)
+- [Demo](#-demo)
 - [Getting Started](#-getting-started)
 - [Contribution](#-contribution)
 - [Community](#-community)
