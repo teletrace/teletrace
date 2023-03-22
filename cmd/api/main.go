@@ -23,7 +23,6 @@ import (
 	"github.com/teletrace/teletrace/pkg/api"
 	"github.com/teletrace/teletrace/pkg/config"
 	"github.com/teletrace/teletrace/pkg/logs"
-	"github.com/teletrace/teletrace/pkg/usageReport"
 	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es"
 
 	"go.uber.org/zap"
@@ -44,12 +43,6 @@ func main() {
 	sr, err := spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg), spanreaderes.NewElasticMetaConfig(cfg))
 	if err != nil {
 		logger.Fatal("Failed to create Span Reader for Elasticsearch", zap.Error(err))
-	}
-	if cfg.AllowUsageReporting {
-		_, err = usageReport.InitializePeriodicalUsageReporting(sr, &cfg, logger)
-		if err != nil {
-			logger.Error("Failed to start usage reporting task", zap.Error(err))
-		}
 	}
 	api := api.NewAPI(logger, cfg, &sr)
 	if err := api.Start(); err != nil {
