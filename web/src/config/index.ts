@@ -26,4 +26,3 @@ export const TELETRACE_SLACK_INVITE_LINK =
 
 export const TELETRACE_BUILD_INFO =
   process.env.REACT_APP_BUILD_INFO ?? "v0.0.0-devel";
-
