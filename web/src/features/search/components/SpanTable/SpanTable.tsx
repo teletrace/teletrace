@@ -25,7 +25,6 @@ import MaterialReactTable, { MRT_Row as Row } from "material-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { eventType, sendEvent, useSystemInfo } from "@/features/usageAnalytics";
 import { formatNanoAsMsDateTime } from "@/utils/format";
 
 import { useSpansQuery } from "../../api/spanQuery";
@@ -46,7 +45,6 @@ export function SpanTable() {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
   const filtersState = useSpanSearchStore((state) => state.filtersState);
   const sortState = useSpanSearchStore((state) => state.sortState);
-  const { data: systemInfo } = useSystemInfo();
 
   const searchRequest = useMemo(
     () => ({
@@ -61,12 +59,6 @@ export function SpanTable() {
     }),
     [filtersState.filters, timeframeState, sortState.sort]
   );
-
-  useEffect(() => {
-    if (systemInfo?.systemId && systemInfo?.usageReportingEnabled) {
-      sendEvent(systemInfo.systemId, eventType.spans_table_viewed);
-    }
-  }, [systemInfo?.systemId, systemInfo?.usageReportingEnabled]);
 
   useEffect(() => {
     virtualizerInstanceRef.current?.scrollToIndex(0);
