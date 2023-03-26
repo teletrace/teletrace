@@ -58,10 +58,10 @@ export const EmptyState = () => {
               marginBottom: "4px",
             }}
           >
-            Start sending data to Lupa
+            Start sending data to Teletrace
           </Typography>
           <Typography color="text.secondary">
-            Lupa is leveraging OpenTelemetry as an open-source standard for
+            Teletrace is leveraging OpenTelemetry as an open-source standard for
             collecting high-quality telemetry data from microservices.
           </Typography>
         </div>
@@ -75,12 +75,12 @@ export const EmptyState = () => {
             </Typography>
             <Typography color="text.secondary">
               If you already have OpenTelemetry setup on your applications, you
-              can configure it to send data to Lupa.
+              can configure it to send data to Teletrace.
             </Typography>
           </CardContent>
 
           <CardActions sx={{ padding: "20px", paddingTop: "16px" }}>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry%20Collector">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open_telemetry_collector/">
               OpenTelemetry Collector
             </LinkButton>
           </CardActions>
@@ -92,19 +92,19 @@ export const EmptyState = () => {
               Don’t have OpenTelemetry yet?
             </Typography>
             <Typography color="text.secondary">
-              You can send traces to Lupa directly from your code using an OTLP
-              Trace Exporter.
+              You can send traces to Teletrace directly from your code using an
+              OTLP Trace Exporter.
             </Typography>
           </CardContent>
 
           <CardActions sx={{ padding: "20px", paddingTop: "16px" }}>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/Java/">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open-telemetry-sdk/java/">
               Java
             </LinkButton>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/JavaScript/">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open-telemetry-sdk/javascript/">
               JavaScript
             </LinkButton>
-            <LinkButton href="https://docs.lupaproject.io/Getting-Started/Sending-Data/OpenTelemetry-SDK/Python/">
+            <LinkButton href="https://docs.teletrace.io/user-guide/sending-data/open-telemetry-sdk/python/">
               Python
             </LinkButton>
             <LinkButton href="https://opentelemetry.io/docs/instrumentation/go/">

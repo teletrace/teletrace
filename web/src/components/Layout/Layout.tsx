@@ -16,7 +16,7 @@
 
 import { AppBar, Box, Toolbar } from "@mui/material";
 
-import { LupaLogo } from "@/components/Elements/LupaLogo";
+import { TeletraceLogo } from "@/components/Elements/TeletraceLogo";
 
 import { Links } from "./Links";
 
@@ -35,8 +35,11 @@ export const Layout = ({ children }: LayoutProps) => {
       }}
     >
       <AppBar position="sticky">
-        <Toolbar>
-          <LupaLogo />
+        <Toolbar
+          disableGutters
+          sx={{ paddingLeft: "16px", paddingRight: "16px" }}
+        >
+          <TeletraceLogo />
           <Links />
         </Toolbar>
       </AppBar>

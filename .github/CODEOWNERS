@@ -22,5 +22,5 @@ cmd/ @epsagon/team-zola
 deploy/ @epsagon/team-zola
 
 # Exporters
-lupa-otelcol/exporter/elasticsearchexporter/ @ophiryael @roybh1 @epsagon/lupa-managers
-lupa-otelcol/exporter/sqliteexporter/ @Tavh @tmishari @epsagon/lupa-managers
+teletrace-otelcol/exporter/elasticsearchexporter/ @ophiryael @roybh1 @epsagon/lupa-managers
+teletrace-otelcol/exporter/sqliteexporter/ @Tavh @tmishari @epsagon/lupa-managers

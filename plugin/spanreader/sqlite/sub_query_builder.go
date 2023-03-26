@@ -18,8 +18,9 @@ package sqlitespanreader
 
 import (
 	"fmt"
-	"oss-tracing/pkg/model"
 	"strings"
+
+	"github.com/teletrace/teletrace/pkg/model"
 )
 
 type subQueryBuilder struct {

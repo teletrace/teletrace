@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"testing"
 
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/collector/pdata/pcommon"
@@ -106,8 +106,8 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			DroppedAttributesCount: 6,
 		})
 		spanLinks = append(spanLinks, &internalspanv1.SpanLink{
-			TraceId:    pcommon.TraceID([16]byte{4}).HexString(),
-			SpanId:     pcommon.SpanID([8]byte{5}).HexString(),
+			TraceId:    pcommon.TraceID([16]byte{4}).String(),
+			SpanId:     pcommon.SpanID([8]byte{5}).String(),
 			TraceState: fmt.Sprintf("[SpanLink-%d]TraceState", i),
 			Attributes: internalspanv1.Attributes{
 				"attribute": fmt.Sprintf("[SpanLink-%d]attribute", i),
@@ -135,10 +135,10 @@ func createExpectedInternalSpans() []*internalspanv1.InternalSpan {
 			DroppedAttributesCount: 2,
 		})
 		spans = append(spans, &internalspanv1.Span{
-			TraceId:           pcommon.TraceID([16]byte{1}).HexString(),
-			SpanId:            pcommon.SpanID([8]byte{2}).HexString(),
+			TraceId:           pcommon.TraceID([16]byte{1}).String(),
+			SpanId:            pcommon.SpanID([8]byte{2}).String(),
 			TraceState:        fmt.Sprintf("[Span-%d]TraceState", i),
-			ParentSpanId:      pcommon.SpanID([8]byte{3}).HexString(),
+			ParentSpanId:      pcommon.SpanID([8]byte{3}).String(),
 			Name:              fmt.Sprintf("[Span-%d]Name", i),
 			Kind:              "Server",
 			StartTimeUnixNano: 0,

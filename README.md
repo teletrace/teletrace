@@ -1,23 +1,21 @@
 <div align="center">
-  <a href="https://docs.lupaproject.io/" target="_blank">
+  <a href="https://docs.teletrace.io/" target="_blank">
   <picture>
-    <img src="./website/docs/images/lupa_light.png" width="350" alt="Logo"/>
+    <img src="./website/docs/assets/teletrace.png" width="600" alt="Logo"/>
   </picture>
   </a>
 </div>
 
-<h1 align="center">The Open-Source Tracing Platform.</h1>
-
 <h3 align="center">
-  <a href="https://docs.lupaproject.io/"><b>📝 Explore the docs</b></a> &bull;
-  <a href="https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ"><b>💬 Join Our Slack</b></a> &bull;
-  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=bug_report.md&title="><b>🐛 Report Bug</b></a> &bull;
-  <a href="https://github.com/epsagon/lupa/issues/new?assignees=&labels=&template=feature_request.md&title="><b>✨ Request Feature</b></a>
+  <a href="https://docs.teletrace.io/"><b>📝 Explore the docs</b></a> &bull;
+  <a href="https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ"><b>💬 Join Our Slack</b></a> &bull;
+  <a href="https://github.com/teletrace/teletrace/issues/new?assignees=&labels=&template=bug_report.md&title="><b>🐛 Report Bug</b></a> &bull;
+  <a href="https://github.com/teletrace/teletrace/issues/new?assignees=&labels=&template=feature_request.md&title="><b>✨ Request Feature</b></a>
 </h3>
 
-## ⭐️ **Why Lupa?**
+## ⭐️ **Why Teletrace?**
 
-Lupa is built from the ground up for modern applications. It is open-source and relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
+Teletrace is built from the ground up for modern applications. It is open-source and relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
 
 ## ✨ **Features**
 
@@ -27,16 +25,14 @@ Lupa is built from the ground up for modern applications. It is open-source and 
 - Visualize and compare latency and error trends. (Coming Soon)
 - Advanced latency analysis tools. (Coming Soon)
 
-## 🖼 **Live Demo**
+## 🖼 **Demo**
 
-<img src="./website/docs/images/demo.gif" min-width="100%" min-height="100%"/>
-
-Take a look at our [demo](https://app.lupaproject.io) environment, with [Open Telemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) data.
+<img src="./website/docs/assets/demo.gif" min-width="100%" min-height="100%"/>
 
 ## 📚 **Table of contents**
 
 - [Features](#-features)
-- [Live Demo](#-live-demo)
+- [Demo](#-demo)
 - [Getting Started](#-getting-started)
 - [Contribution](#-contribution)
 - [Community](#-community)
@@ -51,73 +47,44 @@ Take a look at our [demo](https://app.lupaproject.io) environment, with [Open Te
 
 ### Using Docker
 
-> Currently, we do not have a public image, so all examples assume execution from the root directory
-
-Clone the project
-
-```sh
-git clone https://github.com/epsagon/lupa.git
-```
-
 Using docker-compose:
 
 ```sh
-docker-compose -f deploy/docker-compose/docker-compose.yml up
-```
-
-Using docker-compose for development purposes:
-
-```sh
-docker-compose -f deploy/docker-compose/docker-compose.dev.yml up
-```
-
-Using docker-compose with example data:
-
-```sh
-docker-compose -f deploy/docker-compose/docker-compose.yml -f deploy/docker-compose/docker-compose.example.yml up
-docker-compose -f deploy/docker-compose/docker-compose.dev.yml -f deploy/docker-compose/docker-compose.example.yml up
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/deploy/docker-compose/teletrace-otel-collector.yaml >> teletrace-otel-collector.yaml && \
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/deploy/docker-compose/docker-compose.yml >> docker-compose.yml && \
+docker-compose up
 ```
 
 Alternatively, using docker CLI:
 
 ```sh
-docker build -f cmd/all-in-one/Dockerfile -t oss-tracing:latest .
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/teletrace-otelcol/config/all-in-one-config.yaml >> all-in-one-config.yaml && \
 docker run \
-    -v $(pwd)/lupa-otelcol/config/default-config.yaml:/etc/config.yaml \
+    -v $(pwd)/all-in-one-config.yaml:/etc/config.yaml \
     -p 8080:8080 \
     -p 4317:4317 \
     -p 4318:4318 \
-    oss-tracing:latest \
+    teletrace:latest \
     --config /etc/config.yaml
 ```
 
-In case you want to run docker file with environment variables:
+## 💬 **Community**
 
-```sh
-docker run \
-    -v $(pwd)/lupa-otelcol/config/default-config.yaml:/etc/config.yaml \
-    -p 9090:9090 \
-    -p 4317:4317 \
-    -p 4318:4318 \
-    -e API_PORT=9090 \
-    -e DEBUG=false \
-    oss-tracing:latest \
-    --config /etc/config.yaml
-```
+Join our [Slack](https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ) for questions, support and fun.
+
+Start with our [Documentation](https://docs.teletrace.io/) for quick tutorials and examples.
+
+If you need direct support you can contact us at teletrace@cisco.com.
 
 ## 👨‍💻 **Contribution**
 
 Contributions are welcome!
 
-Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, take a look at a [good first issue](https://github.com/epsagon/lupa/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+Start by reviewing the [contribution guidelines](CONTRIBUTING.md). After that, take a look at a [good first issue](https://github.com/teletrace/teletrace/issues?q=is:issue+is:open+label:%22good+first+issue%22).
 
-## 💬 **Community**
+[![Contributors](https://contrib.rocks/image?repo=teletrace/teletrace)](https://github.com/teletrace/teletrace/graphs/contributors)
 
-Join our [Slack](https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ) for questions, support and fun.
-
-Start with our [Documentation](https://docs.lupaproject.io/) for quick tutorials and examples.
-
-If you need direct support you can contact us at support@epsagon.com.
+Thank you to all the people who already contributed to Teletrace ❤️
 
 ## ❗ **Code of conduct**
 

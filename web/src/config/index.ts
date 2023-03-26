@@ -18,12 +18,11 @@
 const LOCAL_API_URL = "http://localhost:8080";
 export const API_URL = process.env.REACT_APP_API_URL ?? LOCAL_API_URL;
 
-export const LUPA_DOCS_URL = "https://docs.lupaproject.io/";
-export const LUPA_REPOSITORY_URL = "https://github.com/epsagon/lupa";
-export const LUPA_SLACK_INVITE_LINK =
-  "https://join.slack.com/t/lupa-space/shared_invite/zt-1kyuehmaq-Dbut6qMpKak~SHx1DmZTEQ";
+export const TELETRACE_DOCS_URL = "https://docs.teletrace.io/";
+export const TELETRACE_REPOSITORY_URL =
+  "https://github.com/teletrace/teletrace";
+export const TELETRACE_SLACK_INVITE_LINK =
+  "https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ";
 
-export const LUPA_BUILD_INFO =
+export const TELETRACE_BUILD_INFO =
   process.env.REACT_APP_BUILD_INFO ?? "v0.0.0-devel";
-
-export const USAGE_ANALYTICS_URL = "https://analytics.lupaproject.io/";
