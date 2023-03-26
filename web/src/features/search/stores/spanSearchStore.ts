@@ -110,7 +110,7 @@ const createTimeframeSlice: StateCreator<
   },
 });
 
-const isFiltersStructureEqual = (
+export const isFiltersStructureEqual = (
   k1: string,
   k2: string,
   o1: Operator,
