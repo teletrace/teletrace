@@ -60,6 +60,16 @@ function getBasicAttributes(span: InternalSpan): Attributes {
   return returnAttributes;
 }
 
+function getErrorMessage(span: InternalSpan): string {
+  let errorMessage = "";
+  if (span.span.status.message) {
+    errorMessage = span.span.status.message;
+  } else if (span.span.attributes["grpc.error_message"]) {
+    errorMessage = span.span.attributes["grpc.error_message"].toString();
+  }
+  return errorMessage;
+}
+
 export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
   const [isCopyTooltipVisible, setIsCopyTooltipVisible] = useState(false);
 
@@ -82,13 +92,6 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
       accordionRef.current.scrollIntoView();
     }
   }, [expanded]);
-
-  let errorMessage = "";
-  if (span.span.status.message) {
-    errorMessage = span.span.status.message;
-  } else if (span.span.attributes["grpc.error_message"]) {
-    errorMessage = span.span.attributes["grpc.error_message"].toString();
-  }
 
   return (
     <Box
@@ -153,7 +156,9 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
           </Tooltip>
         </AccordionSummary>
         <AccordionDetails sx={styles.accordionDetails}>
-          {hasError && <SpanErrorDetails errorMessage={errorMessage} />}
+          {hasError && (
+            <SpanErrorDetails errorMessage={getErrorMessage(span)} />
+          )}
           <SpanAttributesGroup
             title="Basic"
             attributes={basicAttributes}
