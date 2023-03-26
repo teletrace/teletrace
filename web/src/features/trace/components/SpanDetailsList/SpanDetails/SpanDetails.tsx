@@ -83,9 +83,12 @@ export const SpanDetails = ({ span, expanded, onChange }: SpanDetailsProps) => {
     }
   }, [expanded]);
 
-  const errorMessage: string = span.span.attributes["grpc.error_message"]
-    ? span.span.attributes["grpc.error_message"].toString()
-    : span.span.status.message;
+  let errorMessage = "";
+  if (span.span.status.message) {
+    errorMessage = span.span.status.message;
+  } else if (span.span.attributes["grpc.error_message"]) {
+    errorMessage = span.span.attributes["grpc.error_message"].toString();
+  }
 
   return (
     <Box
