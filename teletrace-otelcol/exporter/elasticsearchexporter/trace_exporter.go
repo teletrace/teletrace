@@ -20,20 +20,18 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator"
+	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
 
 	"github.com/elastic/go-elasticsearch/v8"
 )
 
 type elasticsearchTracesExporter struct {
-	logger     *zap.Logger
-	cfg        *Config
-	client     *elasticsearch.Client
-	maxRetries int
+	logger *zap.Logger
+	cfg    *Config
+	client *elasticsearch.Client
 }
 
 func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExporter, error) {
@@ -46,16 +44,10 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*elasticsearchTracesExp
 		return nil, fmt.Errorf("failed to create client: %+v", err)
 	}
 
-	maxRetries := 1
-	if cfg.Retry.Enabled {
-		maxRetries = cfg.Retry.MaxRetries
-	}
-
 	return &elasticsearchTracesExporter{
-		logger:     logger,
-		cfg:        cfg,
-		client:     esClient,
-		maxRetries: maxRetries,
+		logger: logger,
+		cfg:    cfg,
+		client: esClient,
 	}, nil
 }
 
@@ -64,21 +56,10 @@ func (e *elasticsearchTracesExporter) Shutdown(ctx context.Context) error {
 }
 
 func (e *elasticsearchTracesExporter) pushTracesData(ctx context.Context, td ptrace.Traces) error {
-	internalSpans := modeltranslator.TranslateOTLPToInternalSpans(td)
+	internalSpans := modeltranslator.TranslateOTLPToInternalModel(
+		td,
+		modeltranslator.WithMiliSec(),
+	)
 
-	indexer, err := newBulkIndexer(e.logger, e.client, e.cfg)
-	if err != nil {
-		return fmt.Errorf("failed to create a new bulk indexer: %v", err)
-	}
-
-	defer indexer.Close(ctx)
-
-	errs := make([]error, 0, td.SpanCount())
-	for span := range internalSpans {
-		if err := writeSpan(ctx, e.logger, e.cfg.Index, indexer, span, e.maxRetries); err != nil {
-			errs = append(errs, err)
-		}
-	}
-
-	return multierr.Combine(errs...)
+	return writeSpans(ctx, e.logger, e.client, e.cfg.Index, internalSpans...)
 }
