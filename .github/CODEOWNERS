@@ -12,5 +12,5 @@ CODE_OF_CONDUCT.md  @haimrait
 website/ @teletrace/teletrace-admins
 
 # Exporters
-teletrace-otelcol/exporter/elasticsearchexporter/ @ophiryael @roybh1 @teletrace/teletrace-admins
-teletrace-otelcol/exporter/sqliteexporter/ @Tavh @tmishari @teletrace/teletrace-admins
+teletrace-otelcol/exporter/elasticsearchexporter/ @teletrace/teletrace-admins
+teletrace-otelcol/exporter/sqliteexporter/ @teletrace/teletrace-admins
