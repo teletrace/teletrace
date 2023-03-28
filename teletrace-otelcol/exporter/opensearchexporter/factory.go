@@ -62,8 +62,8 @@ func createTracesExporter(
 		exporterhelper.WithShutdown(exporter.Shutdown),
 		exporterhelper.WithRetry(exporterhelper.RetrySettings{
 			Enabled:        true,
-			MaxInterval:    3,  // TODO add to lupa config
-			MaxElapsedTime: 10, // TODO add to lupa config
+			MaxInterval:    3,  // TODO add to Teletrace config
+			MaxElapsedTime: 10, // TODO add to Teletrace config
 		}),
 	)
 }
