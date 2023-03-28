@@ -29,7 +29,7 @@ type Config struct {
 	// Endpoints holds the Elasticsearch URLs the exporter sends InternalSpans to
 	Endpoints []string `mapstructure:"endpoints"`
 
-	// Defaults to lupa_spans
+	// Defaults to teletrace_spans
 	Index string `mapstructure:"index"`
 
 	// Username is used to configure HTTP Basic Authentication.

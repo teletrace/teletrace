@@ -23,7 +23,7 @@ import (
 	"fmt"
 
 	"github.com/elastic/go-elasticsearch/v8"
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )

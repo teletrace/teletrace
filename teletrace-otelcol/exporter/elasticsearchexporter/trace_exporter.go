@@ -20,7 +20,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
+	"github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator"
 
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"

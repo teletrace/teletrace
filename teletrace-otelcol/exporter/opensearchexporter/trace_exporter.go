@@ -23,8 +23,8 @@ import (
 	"go.opentelemetry.io/collector/pdata/ptrace"
 	"go.uber.org/zap"
 
-	"github.com/epsagon/lupa/lupa-otelcol/internal/modeltranslator"
 	"github.com/opensearch-project/opensearch-go"
+	"github.com/teletrace/teletrace/teletrace-otelcol/internal/modeltranslator"
 )
 
 type opensearchTracesExporter struct {

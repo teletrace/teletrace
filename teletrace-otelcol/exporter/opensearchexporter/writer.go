@@ -22,8 +22,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	internalspanv1 "github.com/epsagon/lupa/model/internalspan/v1"
 	"github.com/opensearch-project/opensearch-go"
+	internalspanv1 "github.com/teletrace/teletrace/model/internalspan/v1"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
