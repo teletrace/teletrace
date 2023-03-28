@@ -1,26 +1,16 @@
 # by default
-@epsagon/lupa-developers
+@teletrace/teletrace-maintainers
 
 # specific files
-README.md  @epsagon/lupa-managers
+README.md  @teletrace/teletrace-admins
 LICENSE  @haimrait
-CONTRIBUTING.md  @epsagon/lupa-managers
+CONTRIBUTING.md  @teletrace/teletrace-admins
 CODE_OF_CONDUCT.md  @haimrait
 .github/CODEOWNERS @haimrait
-.github/pull_request_template.md @epsagon/lupa-managers
 
 # Specific directories
-.github/ISSUE_TEMPLATE/ @epsagon/lupa-managers
-website/ @epsagon/lupa-managers
-
-# Sonic responsibilities
-web/features/search @epsagon/team-sonic
-
-# Zola responsibilities
-web/features/trace @epsagon/team-zola
-cmd/ @epsagon/team-zola
-deploy/ @epsagon/team-zola
+website/ @teletrace/teletrace-admins
 
 # Exporters
-teletrace-otelcol/exporter/elasticsearchexporter/ @ophiryael @roybh1 @epsagon/lupa-managers
-teletrace-otelcol/exporter/sqliteexporter/ @Tavh @tmishari @epsagon/lupa-managers
+teletrace-otelcol/exporter/elasticsearchexporter/ @ophiryael @roybh1 @teletrace/teletrace-admins
+teletrace-otelcol/exporter/sqliteexporter/ @Tavh @tmishari @teletrace/teletrace-admins
