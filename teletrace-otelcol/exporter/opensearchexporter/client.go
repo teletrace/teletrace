@@ -17,48 +17,23 @@
 package opensearchexporter
 
 import (
-	"context"
 	"fmt"
+
 	"github.com/opensearch-project/opensearch-go"
-	"github.com/opensearch-project/opensearch-go/opensearchutil"
 
 	"go.uber.org/zap"
 )
 
 func newClient(logger *zap.Logger, cfg *Config) (*opensearch.Client, error) {
 	osConfig, err := opensearch.NewClient(opensearch.Config{
-
 		// basic connection setup
 		Addresses: cfg.Endpoints,
 		Username:  cfg.Username,
 		Password:  cfg.Password,
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("error creating OpenSearch Client: %+v", err)
 	}
 
 	return osConfig, nil
-}
-
-func newBulkIndexer(logger *zap.Logger, client *opensearch.Client, cfg *Config) (opensearchutil.BulkIndexer, error) {
-	var err error
-
-	bi, err := opensearchutil.NewBulkIndexer(opensearchutil.BulkIndexerConfig{
-		Index:         cfg.Index,
-		Client:        client,
-		NumWorkers:    cfg.WorkersCount,
-		FlushInterval: cfg.Flush.Interval,
-		FlushBytes:    cfg.Flush.Bytes,
-
-		OnError: func(_ context.Context, err error) {
-			logger.Error(fmt.Sprintf("bulk indexer error: %v", err))
-		},
-	})
-
-	if err != nil {
-		return nil, fmt.Errorf("error creating the indexer: %v", err)
-	}
-
-	return bi, nil
 }
