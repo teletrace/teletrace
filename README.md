@@ -22,8 +22,6 @@ Teletrace is built from the ground up for modern applications. It is open-source
 - Advanced search to pinpoint slow and failing requests.
 - Visualize requests to understand their context in your application.
 - Track user requests and data across your application.
-- Visualize and compare latency and error trends. (Coming Soon)
-- Advanced latency analysis tools. (Coming Soon)
 
 ## 🖼 **Demo**
 
@@ -50,15 +48,15 @@ Teletrace is built from the ground up for modern applications. It is open-source
 Using docker-compose:
 
 ```sh
-curl https://raw.githubusercontent.com/teletrace/teletrace/main/deploy/docker-compose/teletrace-otel-collector.yaml >> teletrace-otel-collector.yaml && \
-curl https://raw.githubusercontent.com/teletrace/teletrace/main/deploy/docker-compose/docker-compose.yml >> docker-compose.yml && \
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/deploy/docker-compose/teletrace-otel-collector.yaml > teletrace-otel-collector.yaml && \
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/deploy/docker-compose/docker-compose.yml > docker-compose.yml && \
 docker-compose up
 ```
 
 Alternatively, using docker CLI:
 
 ```sh
-curl https://raw.githubusercontent.com/teletrace/teletrace/main/teletrace-otelcol/config/all-in-one-config.yaml >> all-in-one-config.yaml && \
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/teletrace-otelcol/config/all-in-one-config.yaml > all-in-one-config.yaml && \
 docker run \
     -v $(pwd)/all-in-one-config.yaml:/etc/config.yaml \
     -p 8080:8080 \
