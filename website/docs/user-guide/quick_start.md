@@ -15,7 +15,7 @@ Currently Teletrace support All-in-one is an executable designed for quick local
 The simplest way to start the all-in-one is to use the pre-built image published to DockerHub (a single command line).
 
 ```sh title="docker run command"
-curl https://raw.githubusercontent.com/teletrace/teletrace/main/teletrace-otelcol/config/all-in-one-config.yaml >> all-in-one-config.yaml && \
+curl https://raw.githubusercontent.com/teletrace/teletrace/main/teletrace-otelcol/config/all-in-one-config.yaml > all-in-one-config.yaml && \
 docker run \
     -v $(pwd)/all-in-one-config.yaml:/etc/config.yaml \
     -p 8080:8080 \
