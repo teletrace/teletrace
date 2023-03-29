@@ -18,7 +18,6 @@ package opensearchexporter
 
 import (
 	"errors"
-	"time"
 
 	"go.opentelemetry.io/collector/config"
 )
@@ -30,10 +29,7 @@ type Config struct {
 	// Endpoints holds the OpenSearch URLs the exporter sends InternalSpans to
 	Endpoints []string `mapstructure:"endpoints"`
 
-	// WorkersCount sets the Indexer workers count
-	WorkersCount int `mapstructure:"workers_count"`
-
-	// Defaults to teletrace-traces
+	// Defaults to teletrace_spans
 	Index string `mapstructure:"index"`
 
 	// Username is used to configure HTTP Basic Authentication.
@@ -42,26 +38,6 @@ type Config struct {
 
 	// Password is used to configure HTTP Basic Authentication.
 	Password string `mapstructure:"password"`
-
-	// Indexer flush settings, affects span buffer in memory.
-	Flush FlushSettings `mapstructure:"flush"`
-
-	// Indexer retry mechanism
-	Retry RetrySettings `mapstructure:"retry"`
-}
-
-type FlushSettings struct {
-	// Bytes sets the send buffer flushing limit.
-	Bytes int `mapstructure:"bytes"`
-
-	// Interval configures the max age of a document in the send buffer.
-	Interval time.Duration `mapstructure:"interval"`
-}
-
-type RetrySettings struct {
-	Enabled bool `mapstructure:"enabled"`
-
-	MaxRetries int `mapstructure:"max_retries"`
 }
 
 var (
