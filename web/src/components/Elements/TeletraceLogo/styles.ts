@@ -21,10 +21,10 @@ export const styles = {
   logoIconButton: {
     paddingLeft: "0px",
     borderRadius: 1,
-    gap: "5px",
+    gap: "8px",
   },
   logo: {
-    width: "40px",
-    height: "40px",
+    width: "36px",
+    height: "36px",
   },
 };

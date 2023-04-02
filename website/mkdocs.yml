@@ -4,7 +4,7 @@ theme:
   homepage: https://docs.teletrace.io/
   font:
     text: Roboto
-  logo: assets/teletrace_logo.svg
+  logo: assets/teletrace_logo_white.svg
   features:
     - navigation.sections
     - content.code.annotate
