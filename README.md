@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://docs.teletrace.io/" target="_blank">
   <picture>
-    <img src="./website/docs/assets/teletrace.png" width="600" alt="Logo"/>
+    <img src="./website/docs/assets/teletrace.png" alt="Logo"/>
   </picture>
   </a>
 </div>
