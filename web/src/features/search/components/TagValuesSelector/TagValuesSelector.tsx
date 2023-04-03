@@ -113,63 +113,61 @@ export const TagValuesSelector = ({
   };
 
   return (
-    <div>
-      <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
-        <Stack direction="row">
-          <AccordionSummary
-            sx={styles.accordionSummary}
-            expandIcon={<ArrowForwardIosSharp sx={{ fontSize: "0.9rem" }} />}
-          >
-            <Stack direction="row" spacing={2} alignItems="center">
-              <div>{title}</div>
-              {isFetching && <CircularProgress size="1rem" />}
-            </Stack>
-          </AccordionSummary>
-          <AccordionActions>
-            {value.length > 0 && (
-              <Button onClick={() => filtersState.deleteFilter(tag, "in")}>
-                Clear
-              </Button>
-            )}
-          </AccordionActions>
-        </Stack>
-
-        <AccordionDetails sx={styles.accordionDetails}>
-          {isError ? (
-            <Alert severity="error">Failed loading tag values</Alert>
-          ) : (
-            <Fragment>
-              {searchable && !isLoading && (
-                <SearchField
-                  value={search}
-                  onChange={setSearch}
-                  sx={styles.searchField}
-                />
-              )}
-
-              <CheckboxList
-                value={value}
-                loading={isLoading}
-                options={tagOptions || []}
-                onChange={handleCheckboxChange}
-                sx={styles.checkboxList}
-              />
-
-              {!tagOptions?.length && debouncedSearch === search && !isLoading && (
-                <Typography
-                  component="div"
-                  variant="subtitle2"
-                  color="GrayText"
-                  sx={{ m: 1 }}
-                >
-                  No results found
-                </Typography>
-              )}
-            </Fragment>
+    <Accordion square disableGutters defaultExpanded sx={styles.accordion}>
+      <Stack direction="row">
+        <AccordionSummary
+          sx={styles.accordionSummary}
+          expandIcon={<ArrowForwardIosSharp sx={{ fontSize: "0.9rem" }} />}
+        >
+          <Stack direction="row" spacing={2} alignItems="center">
+            <div>{title}</div>
+            {isFetching && <CircularProgress size="1rem" />}
+          </Stack>
+        </AccordionSummary>
+        <AccordionActions>
+          {value.length > 0 && (
+            <Button onClick={() => filtersState.deleteFilter(tag, "in")}>
+              Clear
+            </Button>
           )}
-        </AccordionDetails>
-      </Accordion>
-    </div>
+        </AccordionActions>
+      </Stack>
+
+      <AccordionDetails sx={styles.accordionDetails}>
+        {isError ? (
+          <Alert severity="error">Failed loading tag values</Alert>
+        ) : (
+          <Fragment>
+            {searchable && !isLoading && (
+              <SearchField
+                value={search}
+                onChange={setSearch}
+                sx={styles.searchField}
+              />
+            )}
+
+            <CheckboxList
+              value={value}
+              loading={isLoading}
+              options={tagOptions || []}
+              onChange={handleCheckboxChange}
+              sx={styles.checkboxList}
+            />
+
+            {!tagOptions?.length && debouncedSearch === search && !isLoading && (
+              <Typography
+                component="div"
+                variant="subtitle2"
+                color="GrayText"
+                sx={{ m: 1 }}
+              >
+                No results found
+              </Typography>
+            )}
+          </Fragment>
+        )}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
