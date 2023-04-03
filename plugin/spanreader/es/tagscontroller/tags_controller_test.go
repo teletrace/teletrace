@@ -24,6 +24,7 @@ import (
 
 	"github.com/teletrace/teletrace/pkg/model"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	"go.opentelemetry.io/collector/pdata/pcommon"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -175,15 +176,15 @@ func Test_RemoveDuplicatedTextTags_RemoveTextDuplicates(t *testing.T) {
 	tagsMock := []tagsquery.TagInfo{
 		{
 			Name: "span.attributes.http.method.keyword",
-			Type: "keyword",
+			Type: pcommon.ValueTypeStr.String(),
 		},
 		{
 			Name: "span.attributes.http.method",
-			Type: "text",
+			Type: pcommon.ValueTypeStr.String(),
 		},
 		{
 			Name: "span.attributes.http.method.not_keyword",
-			Type: "keyword",
+			Type: pcommon.ValueTypeStr.String(),
 		},
 	}
 
