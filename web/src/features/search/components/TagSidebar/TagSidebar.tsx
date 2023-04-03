@@ -82,15 +82,16 @@ export const TagSidebar = () => {
   return (
     <Paper sx={{ overflowY: "auto", overflowX: "hidden" }}>
       <Stack spacing="2px" sx={styles.sideTagBar}>
-        {tags.map((t) => {
+        {tags.map((t, index) => {
           return t.selectorType === SelectorType.ValuesSelector ? (
             <TagValuesSelector
+              key={index}
               title={t.title}
               tag={t.tag}
               searchable={t.isSearchable}
             />
           ) : (
-            <NumericTagSlider tag={t.tag} title={t.title} />
+            <NumericTagSlider key={index} tag={t.tag} title={t.title} />
           );
         })}
       </Stack>
