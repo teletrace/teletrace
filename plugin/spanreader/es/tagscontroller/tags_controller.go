@@ -378,12 +378,12 @@ func removeDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
 	}
 
 	for _, tag := range tags {
-		if tag.Type == "keyword" {
-			if strings.Contains(tag.Name, ".keyword") {
+		if tag.Type == pcommon.ValueTypeStr.String() {
+			if strings.HasSuffix(tag.Name, ".keyword") {
 				strippedName := tag.Name[:len(tag.Name)-len(".keyword")]
 				// If there exists a duplication for the same tag, as text and as keyword
 				// This happens then the index is using the default elasticsearch mapping.
-				if !(slices.Contains(tagsNames, strippedName) && (tagsNamesToTypes[strippedName] == "text")) {
+				if !(slices.Contains(tagsNames, strippedName) && (tagsNamesToTypes[strippedName] == pcommon.ValueTypeStr.String())) {
 					validTags = append(validTags, tag)
 				}
 			} else {
