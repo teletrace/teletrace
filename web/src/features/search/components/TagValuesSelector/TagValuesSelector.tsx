@@ -27,7 +27,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import { useDebounce } from "use-debounce";
 
@@ -179,25 +179,38 @@ const CheckboxListLabel = ({
 }: {
   tag: TagValue;
   search: string;
-}) => (
-  <Tooltip arrow title={tag.value} placement="right">
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-      spacing={1}
+}) => {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const shouldHideTooltip = () =>
+    ref?.current && ref?.current?.offsetWidth < ref?.current?.scrollWidth
+      ? false
+      : true;
+
+  return (
+    <Tooltip
+      disableHoverListener={shouldHideTooltip()}
+      arrow
+      title={tag.value}
+      placement="right"
     >
-      <Typography noWrap sx={styles.valueLabel}>
-        <Highlighter
-          highlightClassName="valueLabelHighlight"
-          searchWords={search.toLowerCase().split(" ")}
-          autoEscape={true}
-          textToHighlight={tag.value?.toString()}
-        />
-      </Typography>
-      <Typography variant="button" color="GrayText">
-        {formatNumber(tag.count)}
-      </Typography>
-    </Stack>
-  </Tooltip>
-);
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        spacing={1}
+      >
+        <Typography ref={ref} noWrap sx={styles.valueLabel}>
+          <Highlighter
+            highlightClassName="valueLabelHighlight"
+            searchWords={search.toLowerCase().split(" ")}
+            autoEscape={true}
+            textToHighlight={tag.value?.toString()}
+          />
+        </Typography>
+        <Typography variant="button" color="GrayText">
+          {formatNumber(tag.count)}
+        </Typography>
+      </Stack>
+    </Tooltip>
+  );
+};
