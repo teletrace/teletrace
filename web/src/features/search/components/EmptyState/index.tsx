@@ -132,7 +132,7 @@ export const EmptyState = () => {
           backgroundColor: "rgba(84, 140, 255, 0.12)",
         }}
       >
-        Once you will finish, please refresh the page to see your spans
+        Once you finish, please refresh the page to see your spans
       </Alert>
     </Stack>
   );
