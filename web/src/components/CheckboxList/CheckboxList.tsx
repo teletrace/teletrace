@@ -25,7 +25,7 @@ import {
   SxProps,
   Theme,
 } from "@mui/material";
-import { Fragment, ReactNode } from "react";
+import { ReactNode } from "react";
 
 import { styles } from "./styles";
 
@@ -74,24 +74,22 @@ export const CheckboxList = ({
   return (
     <List sx={sx}>
       {options.map((opt, index) => (
-        <Fragment key={index}>
-          <ListItem sx={styles.listItem} disablePadding>
-            <ListItemButton
-              dense
-              sx={styles.listItemButton}
-              onClick={() => handleToggle(opt.value)}
-            >
-              <Checkbox
-                sx={styles.listItemCheckbox}
-                disableRipple
-                edge="start"
-                checked={value.indexOf(opt.value) !== -1}
-                inputProps={{ "aria-label": opt?.value.toString() }}
-              />
-              <ListItemText primary={opt.label} />
-            </ListItemButton>
-          </ListItem>
-        </Fragment>
+        <ListItem key={index} sx={styles.listItem} disablePadding>
+          <ListItemButton
+            dense
+            sx={styles.listItemButton}
+            onClick={() => handleToggle(opt.value)}
+          >
+            <Checkbox
+              sx={styles.listItemCheckbox}
+              disableRipple
+              edge="start"
+              checked={value.indexOf(opt.value) !== -1}
+              inputProps={{ "aria-label": opt?.value.toString() }}
+            />
+            <ListItemText primary={opt.label} />
+          </ListItemButton>
+        </ListItem>
       ))}
     </List>
   );
