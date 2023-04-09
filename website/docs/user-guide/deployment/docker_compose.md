@@ -1,15 +1,23 @@
 # Docker Compose Deployment
 
-This guide will walk you through the process of setting up Teletrace using the provided Docker Compose configuration.
+## Introduction
+
+This tutorial will guide you through the process of running Teletrace with Elastic using Docker Compose. Teletrace stores its trace data in Elasticsearch, and this tutorial will show you how to set up a complete environment with both Teletrace and Elastic running in Docker containers.
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) must be installed on your machine.
+- Docker installed on your machine. You can download it from [here](https://docs.docker.com/engine/install/).
+- Docker Compose installed on your machine. You can download it from [here](https://docs.docker.com/compose/install/).
 
+<!-- prettier-ignore-start -->
 ## Steps
 
-- Create a file named `docker-compose.yml` and paste the provided docker compose configuration into the file.
+1. Create a new directory on your machine and navigate to it in a terminal or command prompt.
+```sh
+mkdir teletrace && cd teletrace
+```
 
+2. Create a file named `docker-compose.yml` and paste the provided docker compose configuration into the file.
 ```yaml
 version: "3"
 services:
@@ -60,9 +68,12 @@ networks:
   teletrace:
     internal: false
 ```
+This YAML file defines a Docker Compose environment that contains two services, teletrace-api and elasticsearch.
+    1. The teletrace-api service exposes ports 8080, 4317, and 4318, and it has a command that specifies the path to a configuration file for the Teletrace collector. The volumes section maps the local configuration file to the container path so that the configuration can be loaded by the container. The environment section sets the endpoint for Elasticsearch to http://elasticsearch:9200. The image section specifies the Docker image to use for the teletrace-api service, which is teletrace/teletrace:v0.6.
+    2. The healthcheck section specifies a command to run to check if the container is healthy, and it is set to periodically check if the API is responding to a ping request. The networks section specifies that the teletrace network should be used, and the depends_on section specifies that the elasticsearch service should be running and healthy before the teletrace-api service starts.
+    3. The elasticsearch service uses the official Elasticsearch Docker image, elasticsearch:8.4.2, and it sets the environment variables for Elasticsearch. The volumes section maps the local es_data volume to the container path, which is used to store Elasticsearch data. The expose section exposes port 9200 for external access. The healthcheck section specifies a command to run to check if the container is healthy, and it periodically checks if Elasticsearch is responding to requests. The networks section specifies that the teletrace network should be used.
 
-- In the same directory create a file named `teletrace-collector-config.yaml` and paste the provided configuration into the file.
-
+3. In the same directory create a file named `teletrace-collector-config.yaml` and paste the provided configuration into the file.
 ```yaml
 receivers:
   otlp:
@@ -84,9 +95,27 @@ service:
       processors: [batch]
       exporters: [elasticsearch]
 ```
+This is a YAML configuration file for Teletrace Collector that specifies how traces are collected, processed, and exported.
 
-- In the terminal, navigate to the directory containing the Docker Compose configuration and run the command `docker-compose up -d`. This will start the Teletrace service, as well as an Elasticsearch instance.
-- Teletrace will be running on port 8080 and can be accessed via http://localhost:8080/. You can also access Elasticsearch on port 9200 via http://localhost:9200/.
+4. Start the Teletrace and Elasticsearch containers using Docker Compose by running the following command:
+```sh
+docker-compose up -d
+```
+
+5. Verify that the containers are running by running the following command:
+```sh
+docker ps
+```
+This will show a list of running containers on your machine, and you should see the teletrace and elasticsearch containers listed.
+
+6. Open a web browser and navigate to http://localhost:8080. This should open the Teletrace UI, where you can see the traces and spans captured by Teletrace.
+
+7. Stop the containers by running the following command:
+```sh
+docker-compose down
+```
+This will gracefully stop the containers and remove the container resources.
+<!-- prettier-ignore-end -->
 
 ## Configuration
 
