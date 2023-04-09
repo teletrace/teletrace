@@ -27,6 +27,8 @@ Teletrace is built from the ground up for modern applications. It is open-source
 
 <img src="./website/docs/assets/demo.gif" min-width="100%" min-height="100%"/>
 
+To learn more, please visit our demo [GitHub](https://github.com/teletrace/opentelemetry-demo) project and try open telemetry demo on your own machine.
+
 ## 📚 **Table of contents**
 
 - [Features](#-features)
