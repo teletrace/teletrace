@@ -25,25 +25,25 @@ helm repo update
 
 3. Install Teletrace using Helm chart with the following command:
 ```sh
-helm install teletrace teletrace/teletrace
+helm install teletrace teletrace/teletrace --namespace teletrace --create-namespace
 ```
 This command will install Teletrace in your Kubernetes cluster using the default configuration values specified in the Helm chart.
 
 4. Check the status of the Teletrace installation with the following command:
 ```sh
-kubectl get pods
+kubectl get pods -n teletrace
 ```
 This command will show the list of pods running in your Kubernetes cluster. You should see Teletrace pod running in your cluster.
 
 5. (Optional) Verify that Teletrace is running correctly by accessing the Teletrace UI. To access the UI, run the following command:
 ```sh
-kubectl port-forward TODO ADD PORT TO FORWARD
+kubectl port-forward svc/teletrace 8080:8080 -n teletrace
 ```
-This command will create a port-forward to the Teletrace UI. You can now access the UI by opening your web browser and navigating to http://localhost:TODO.
+This command will create a port-forward to the Teletrace UI. You can now access the UI by opening your web browser and navigating to http://localhost:8080.
 
 6. (Optional) Customize the Teletrace installation by modifying the values in the Helm chart. You can modify the values in the Helm chart by creating a YAML file with your custom values and using the --values option when installing Teletrace. For example:
 ```sh
-helm install teletrace teletrace/teletrace --values my-values.yaml
+helm install teletrace teletrace/teletrace -f my-values.yml --namespace teletrace --create-namespace
 ```
 <!-- prettier-ignore-end -->
 
