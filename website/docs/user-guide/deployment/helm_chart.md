@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This tutorial will guide you through the process of installing Teletrace, an open-source tracing system, using Helm chart. [Helm](https://helm.sh/) is a package manager for Kubernetes that makes it easy to install, upgrade, and manage applications in Kubernetes. The Teletrace Helm chart is available on the [official repository](https://github.com/teletrace/teletrace-helm-charts) and makes it easy to install and configure Teletrace in a Kubernetes cluster.
+This tutorial will guide you through the process of installing Teletrace, an open-source tracing system, using Helm chart. [Helm](https://helm.sh/) is a package manager for Kubernetes that makes it easy to install, upgrade, and manage applications in Kubernetes. The Teletrace Helm chart is available on the [official repository](https://github.com/teletrace/helm-charts) and makes it easy to install and configure Teletrace in a Kubernetes cluster.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ This tutorial will guide you through the process of installing Teletrace, an ope
 
 1. Add the Teletrace Helm repository to your local Helm installation:
 ```sh
-helm repo add teletrace https://teletrace.github.io/teletrace-helm-charts/
+helm repo add teletrace https://teletrace.github.io/helm-charts/
 ```
 
 2. Update the Helm repository to ensure that you have the latest version of the Teletrace Helm chart:
