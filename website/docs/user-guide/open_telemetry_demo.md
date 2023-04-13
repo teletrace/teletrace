@@ -23,6 +23,8 @@ Before using the Teletrace OpenTelemetry Demo, ensure that you have the followin
 
 Follow the steps below to get started with the Teletrace OpenTelemetry Demo:
 
+<!-- prettier-ignore-start -->
+
 1. Clone the Teletrace OpenTelemetry Demo repository:
 
 ```sh
@@ -47,5 +49,5 @@ docker compose up --no-build
    - Grafana: http://localhost:8080/grafana/
 
 5. Explore OpenTelemetry features: The OpenTelemetry Demo provides examples of different OpenTelemetry features, such as distributed tracing, context propagation, custom instrumentation. Explore the demo code and the OpenTelemetry documentation to learn more about these features and how to use them in your application.
-
-Happy tracing and monitoring!
+   <!-- prettier-ignore-end -->
+   Happy tracing and monitoring!
