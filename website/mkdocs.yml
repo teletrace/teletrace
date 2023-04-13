@@ -63,6 +63,7 @@ nav:
               - Java: user-guide/sending-data/open-telemetry-sdk/java.md
               - Python: user-guide/sending-data/open-telemetry-sdk/python.md
               - Javascript: user-guide/sending-data/open-telemetry-sdk/javascript.md
+      - Demo: user-guide/open_telemetry_demo.md
   - Community:
       - Contribution: contribution.md
       - FAQs: faq.md
