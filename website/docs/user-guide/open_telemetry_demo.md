@@ -19,7 +19,7 @@ Before using the Teletrace OpenTelemetry Demo, ensure that you have the followin
 3. Docker Compose
 4. 4 GB of RAM for the application
 
-## Getting Started
+## Steps
 
 Follow the steps below to get started with the Teletrace OpenTelemetry Demo:
 
