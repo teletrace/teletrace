@@ -8,6 +8,8 @@ It helps to pinpoint issues in your application, and identify performance bottle
 
 ![Teletrace UI](assets/demo.gif)
 
+To learn more, please visit our [demo GitHub project](https://github.com/teletrace/opentelemetry-demo) and try open telemetry demo on your own machine.
+
 ## Why Teletrace?
 
 Teletrace provides a comprehensive view of distributed systems and can help identify root cause of exceptions in real-time,
