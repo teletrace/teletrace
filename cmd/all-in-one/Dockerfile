@@ -4,8 +4,16 @@ RUN apk add build-base
 
 WORKDIR /app
 
-# COPY All things inside the project and build
-COPY . .
+# COPY relevant files and build
+COPY go.mod .
+COPY go.sum .
+COPY cmd/all-in-one/ ./cmd/all-in-one/
+COPY teletrace-otelcol/ ./teletrace-otelcol
+COPY model/ ./model
+COPY web ./web
+COPY pkg ./pkg
+COPY plugin ./plugin
+
 RUN go build -o /app/build/bin ./cmd/all-in-one
 
 
