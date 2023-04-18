@@ -10,7 +10,6 @@ COPY go.sum .
 COPY cmd/all-in-one/ ./cmd/all-in-one/
 COPY teletrace-otelcol/ ./teletrace-otelcol
 COPY model/ ./model
-COPY web ./web
 COPY pkg ./pkg
 COPY plugin ./plugin
 
