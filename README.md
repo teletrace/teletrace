@@ -28,7 +28,7 @@
 ## ⭐️ **Why Teletrace?**
 
 Teletrace is an open-source distributed tracing system that helps developers monitor and troubleshoot complex distributed systems by providing end-to-end transaction monitoring and tracing across various microservices.
-Teletrace is built from the ground up for modern applications. It is relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
+Teletrace is built from the ground up for modern applications. It relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
 
 ## ✨ **Features**
 
