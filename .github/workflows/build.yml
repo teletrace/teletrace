@@ -1,4 +1,4 @@
-name: Merge Queue
+name: build
 
 on:
   pull_request:
