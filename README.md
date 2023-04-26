@@ -1,9 +1,21 @@
 <div align="center">
-  <a href="https://docs.teletrace.io/" target="_blank">
-  <picture>
-    <img src="./website/docs/assets/teletrace.png" alt="Logo"/>
-  </picture>
-  </a>
+
+[![Logo](./website/docs/assets/teletrace.png)](https://docs.teletrace.io/)
+
+</div>
+
+<div align="center">
+
+[![Slack](https://img.shields.io/badge/slack-teletrace-brightgreen.svg?logo=slack)](https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ)
+[![Version](https://img.shields.io/github/v/release/teletrace/teletrace?color=blueviolet)](https://github.com/teletrace/teletrace/releases)
+[![Commits](https://img.shields.io/github/commits-since/teletrace/teletrace/latest?color=ff69b4&include_prereleases)](https://github.com/teletrace/teletrace/graphs/commit-activity)
+[![Build Status](https://github.com/teletrace/teletrace/actions/workflows/run-end-to-end-tests.yml/badge.svg)](https://github.com/teletrace/teletrace/actions/workflows/run-end-to-end-tests.yml)
+[![Merge Queue](https://github.com/teletrace/teletrace/actions/workflows/merge-queue.yml/badge.svg)](https://github.com/teletrace/teletrace/actions/workflows/merge-queue.yml)
+[![Docs](https://github.com/teletrace/teletrace/actions/workflows/docs.yml/badge.svg)](https://docs.teletrace.io/)
+[![Go Report](https://img.shields.io/badge/go%20report-A+-brightgreen.svg?color=blue)](https://goreportcard.com/report/github.com/teletrace/teletrace)
+[![Contributors](https://img.shields.io/github/contributors/teletrace/teletrace.svg?color=orange)](https://github.com/teletrace/teletrace/graphs/contributors)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/teletrace/teletrace/blob/main/LICENSE)
+
 </div>
 
 <h3 align="center">
@@ -15,7 +27,8 @@
 
 ## ⭐️ **Why Teletrace?**
 
-Teletrace is built from the ground up for modern applications. It is open-source and relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
+Teletrace is an open-source distributed tracing system that helps developers monitor and troubleshoot complex distributed systems by providing end-to-end transaction monitoring and tracing across various microservices.
+Teletrace is built from the ground up for modern applications. It relies on open standards like OpenTelemetry. It is an easy-to-deploy scalable solution, that supports multiple storage options.
 
 ## ✨ **Features**
 
@@ -67,6 +80,12 @@ docker run \
     teletrace:latest \
     --config /etc/config.yaml
 ```
+
+### Using Helm Chart
+
+To install the Helm chart, follow the steps outlined in this [guide](https://docs.teletrace.io/user-guide/deployment/helm_chart/) to ensure a smooth installation process.
+
+Alternatively, visit our helm chart [repo](https://github.com/teletrace/helm-charts).
 
 ## 💬 **Community**
 
