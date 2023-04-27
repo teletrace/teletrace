@@ -51,16 +51,15 @@ const BasicEdgeImpl = ({
         d={edgePath}
         markerEnd={markerEnd}
       />
-      <foreignObject
-        width={FOREIGN_OBJECT_WIDTH}
-        height={FOREIGN_OBJECT_HEIGHT}
-        x={labelX - FOREIGN_OBJECT_WIDTH / 2}
-        y={labelY - FOREIGN_OBJECT_HEIGHT / 2}
-        requiredExtensions="http://www.w3.org/1999/xhtml"
-      >
-        <Box sx={styles.edgeLabelContainer}>
-          <Box sx={styles.timeContainer}>{data.time}</Box>
-          {data?.count && (
+      {data?.count && (
+        <foreignObject
+          width={FOREIGN_OBJECT_WIDTH}
+          height={FOREIGN_OBJECT_HEIGHT}
+          x={labelX - FOREIGN_OBJECT_WIDTH / 2}
+          y={labelY - FOREIGN_OBJECT_HEIGHT / 2}
+          requiredExtensions="http://www.w3.org/1999/xhtml"
+        >
+          <Box sx={styles.edgeLabelContainer}>
             <Box
               sx={{
                 ...styles.counterContainer,
@@ -69,9 +68,9 @@ const BasicEdgeImpl = ({
             >
               {data.count}
             </Box>
-          )}
-        </Box>
-      </foreignObject>
+          </Box>
+        </foreignObject>
+      )}
     </>
   );
 };
