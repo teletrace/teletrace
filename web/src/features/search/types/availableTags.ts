@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+
 export type AvailableTag = {
   name: string;
   type: string;
+  group?: "all keys" | "recently used";
 };
 
 export type AvailableTagsRequest = {

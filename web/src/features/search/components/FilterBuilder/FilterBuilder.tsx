@@ -88,9 +88,18 @@ export const FilterBuilderDialog = ({
   anchorEl,
   initialFilter,
 }: FilterDialogProps) => {
+  const [ recentlyUsedKeys, setRecentlyUsedKeys ] = useState<AvailableTag[]>([]);
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const { data: availableTags } = useAvailableTags();
 
+  useEffect(() => {
+    const recentlyUsedKeysJSON = localStorage.getItem('recently_used_keys');
+    const recentlyUsedKeys: AvailableTag[] = recentlyUsedKeysJSON ? JSON.parse(recentlyUsedKeysJSON) : [];
+    if (recentlyUsedKeys) {    
+      setRecentlyUsedKeys(recentlyUsedKeys);
+    }
+  }, []);
+  
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
   );
@@ -241,6 +250,13 @@ export const FilterBuilderDialog = ({
       { keyValueFilter: newFilter },
       initialFilter && { keyValueFilter: initialFilter }
     );
+
+    if (dialogState?.tag) {
+      recentlyUsedKeys.push({ ...dialogState.tag, group: "recently used" });
+      setRecentlyUsedKeys(recentlyUsedKeys);
+      localStorage.setItem("recently_used_keys", JSON.stringify(recentlyUsedKeys))
+    }
+
     handleClose();
   };
 
@@ -266,6 +282,7 @@ export const FilterBuilderDialog = ({
                 onChange={onTagChange}
                 error={dialogState.formError.tag}
                 disabled={!!initialFilter}
+                recentlyUsedKeys={recentlyUsedKeys}
               />
               <OperatorSelector
                 value={dialogState.operator}
