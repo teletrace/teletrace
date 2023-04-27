@@ -29,10 +29,6 @@ export const styles = {
       cursor: "default",
     },
   },
-  timeContainer: {
-    color: "#ffffff",
-    background: "#0B0B0D",
-  },
   counterContainer: {
     background: "#3b3c42",
     border: 1,
