@@ -31,7 +31,7 @@ services:
       - ./teletrace-collector-config.yaml:/etc/teletrace-collector-config.yaml
     environment:
       - ES_ENDPOINT=http://elasticsearch:9200
-    image: teletrace/teletrace:v0.6
+    image: teletrace/teletrace:latest
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "localhost:8080/v1/ping"]
       interval: 60s
@@ -69,7 +69,7 @@ networks:
     internal: false
 ```
 This YAML file defines a Docker Compose environment that contains two services, teletrace-api and elasticsearch.
-    1. The teletrace-api service exposes ports 8080, 4317, and 4318, and it has a command that specifies the path to a configuration file for the Teletrace collector. The volumes section maps the local configuration file to the container path so that the configuration can be loaded by the container. The environment section sets the endpoint for Elasticsearch to http://elasticsearch:9200. The image section specifies the Docker image to use for the teletrace-api service, which is teletrace/teletrace:v0.6.
+    1. The teletrace-api service exposes ports 8080, 4317, and 4318, and it has a command that specifies the path to a configuration file for the Teletrace collector. The volumes section maps the local configuration file to the container path so that the configuration can be loaded by the container. The environment section sets the endpoint for Elasticsearch to http://elasticsearch:9200. The image section specifies the Docker image to use for the teletrace-api service, which is teletrace/teletrace:latest (in production deployment, it is recommended to use a versioned tag instead of :latest).
     2. The healthcheck section specifies a command to run to check if the container is healthy, and it is set to periodically check if the API is responding to a ping request. The networks section specifies that the teletrace network should be used, and the depends_on section specifies that the elasticsearch service should be running and healthy before the teletrace-api service starts.
     3. The elasticsearch service uses the official Elasticsearch Docker image, elasticsearch:8.4.2, and it sets the environment variables for Elasticsearch. The volumes section maps the local es_data volume to the container path, which is used to store Elasticsearch data. The expose section exposes port 9200 for external access. The healthcheck section specifies a command to run to check if the container is healthy, and it periodically checks if Elasticsearch is responding to requests. The networks section specifies that the teletrace network should be used.
 
