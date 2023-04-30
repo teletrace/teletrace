@@ -26,7 +26,7 @@ import React, { useEffect, useState } from "react";
 
 import { useAvailableTags } from "../../api/availableTags";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { AvailableTag } from "../../types/availableTags";
+import { AvailableTag, TagGroup } from "../../types/availableTags";
 import {
   FilterValueTypes,
   KeyValueFilter,
@@ -88,17 +88,8 @@ export const FilterBuilderDialog = ({
   anchorEl,
   initialFilter,
 }: FilterDialogProps) => {
-  const [ recentlyUsedKeys, setRecentlyUsedKeys ] = useState<AvailableTag[]>([]);
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const { data: availableTags } = useAvailableTags();
-
-  useEffect(() => {
-    const recentlyUsedKeysJSON = localStorage.getItem('recently_used_keys');
-    const recentlyUsedKeys: AvailableTag[] = recentlyUsedKeysJSON ? JSON.parse(recentlyUsedKeysJSON) : [];
-    if (recentlyUsedKeys) {    
-      setRecentlyUsedKeys(recentlyUsedKeys);
-    }
-  }, []);
   
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
@@ -250,10 +241,11 @@ export const FilterBuilderDialog = ({
       { keyValueFilter: newFilter },
       initialFilter && { keyValueFilter: initialFilter }
     );
-
+    
     if (dialogState?.tag) {
-      recentlyUsedKeys.push({ ...dialogState.tag, group: "recently used" });
-      setRecentlyUsedKeys(recentlyUsedKeys);
+      const recentlyUsedKeysJSON = localStorage.getItem('recently_used_keys');
+      const recentlyUsedKeys: AvailableTag[] = recentlyUsedKeysJSON ? JSON.parse(recentlyUsedKeysJSON) : [];
+      recentlyUsedKeys.push({ ...dialogState.tag, group: TagGroup.RECENTLY_USED });
       localStorage.setItem("recently_used_keys", JSON.stringify(recentlyUsedKeys))
     }
 
@@ -282,7 +274,6 @@ export const FilterBuilderDialog = ({
                 onChange={onTagChange}
                 error={dialogState.formError.tag}
                 disabled={!!initialFilter}
-                recentlyUsedKeys={recentlyUsedKeys}
               />
               <OperatorSelector
                 value={dialogState.operator}

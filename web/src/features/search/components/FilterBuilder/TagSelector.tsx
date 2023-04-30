@@ -19,15 +19,15 @@ import FormControl from "@mui/material/FormControl";
 import Highlighter from "react-highlight-words";
 
 import { useAvailableTags } from "../../api/availableTags";
-import { AvailableTag } from "../../types/availableTags";
+import { AvailableTag, TagGroup } from "../../types/availableTags";
 import { styles } from "./styles";
+
 
 export type TagSelectorProps = {
   value: AvailableTag | null;
   onChange: (f: AvailableTag | null) => void;
   error: boolean;
   disabled?: boolean;
-  recentlyUsedKeys: AvailableTag[];
 };
 
 export const TagSelector = ({
@@ -35,20 +35,20 @@ export const TagSelector = ({
   onChange,
   error,
   disabled = false,
-  recentlyUsedKeys
 }: TagSelectorProps) => {
   const { data: availableTags, isLoading } = useAvailableTags();
 
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
   );
+
+  const recentlyUsedKeysJSON = localStorage.getItem('recently_used_keys');
+  const recentlyUsedKeys: AvailableTag[] = recentlyUsedKeysJSON ? JSON.parse(recentlyUsedKeysJSON) : [];
   
   let allTagsOptions: AvailableTag[] | undefined = undefined;
   if (availableTagsOptions) {
     allTagsOptions = [ ...recentlyUsedKeys, ...availableTagsOptions];
-  }
-
-  console.log(allTagsOptions)
+  } 
 
   const handleChange = (
     event: React.SyntheticEvent<Element, Event>,
@@ -69,7 +69,7 @@ export const TagSelector = ({
         id="filter"
         size="small"
         options={allTagsOptions || []}
-        groupBy={(option) => option?.group ?? "all keys"}
+        groupBy={(option) => option?.group ?? TagGroup.ALL}
         getOptionLabel={(option) => option.name}
         componentsProps={{ paper: { sx: styles.tagsDropdown } }}
         renderInput={(params) => (

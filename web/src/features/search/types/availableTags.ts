@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
+export enum TagGroup {
+  RECENTLY_USED = "recently used",
+  ALL = "all keys"
+}
 
 export type AvailableTag = {
   name: string;
   type: string;
-  group?: "all keys" | "recently used";
+  group?: TagGroup;
 };
 
 export type AvailableTagsRequest = {
