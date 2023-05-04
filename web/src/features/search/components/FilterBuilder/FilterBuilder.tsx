@@ -245,9 +245,11 @@ export const FilterBuilderDialog = ({
     if (dialogState?.tag) {
       const recentlyUsedKeysJSON = localStorage.getItem('recently_used_keys');
       const recentlyUsedKeys: AvailableTag[] = recentlyUsedKeysJSON ? JSON.parse(recentlyUsedKeysJSON): [];
-      recentlyUsedKeys.push({ ...dialogState.tag, group: TagGroup.RECENTLY_USED });
-
-      localStorage.setItem("recently_used_keys", JSON.stringify(recentlyUsedKeys.slice(-3).reverse()))
+      const tagExists = recentlyUsedKeys.some (tag => tag.name === dialogState?.tag?.name) 
+      if (!tagExists) {
+        recentlyUsedKeys.push({ ...dialogState.tag, group: TagGroup.RECENTLY_USED });
+        localStorage.setItem("recently_used_keys", JSON.stringify(recentlyUsedKeys.slice(-3).reverse()))
+      }
     }
 
     handleClose();
