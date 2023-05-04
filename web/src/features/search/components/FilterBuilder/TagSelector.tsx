@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-import { Autocomplete, FormLabel, TextField } from "@mui/material";
+import { Autocomplete, FormLabel, TextField, styled } from "@mui/material";
+import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import FormControl from "@mui/material/FormControl";
 import Highlighter from "react-highlight-words";
 
 import { useAvailableTags } from "../../api/availableTags";
-import { AvailableTag } from "../../types/availableTags";
+import { AvailableTag, TagGroup } from "../../types/availableTags";
 import { styles } from "./styles";
+
+const GroupHeader = styled('div')({});
+const GroupItems = styled('ul')({});
 
 export type TagSelectorProps = {
   value: AvailableTag | null;
@@ -41,6 +46,14 @@ export const TagSelector = ({
     (page) => page.Tags
   );
 
+  const recentlyUsedKeysJSON = localStorage.getItem('recently_used_keys');
+  const recentlyUsedKeys: AvailableTag[] = recentlyUsedKeysJSON ? JSON.parse(recentlyUsedKeysJSON) : [];
+
+  let allTagsOptions: AvailableTag[] | undefined = undefined;
+  if (availableTagsOptions) {
+    allTagsOptions = [ ...recentlyUsedKeys, ...availableTagsOptions];
+  }
+
   const handleChange = (
     event: React.SyntheticEvent<Element, Event>,
     value: AvailableTag | null
@@ -59,7 +72,8 @@ export const TagSelector = ({
         value={value}
         id="filter"
         size="small"
-        options={availableTagsOptions || []}
+        options={allTagsOptions || []}
+        groupBy={(option) => option?.group ?? TagGroup.ALL}
         getOptionLabel={(option) => option.name}
         componentsProps={{ paper: { sx: styles.tagsDropdown } }}
         renderInput={(params) => (
@@ -79,6 +93,16 @@ export const TagSelector = ({
             />
           </li>
         )}
+
+        renderGroup={(options) => { 
+          const icon = options.group === TagGroup.RECENTLY_USED ? <AccessTimeOutlinedIcon sx={styles.tagsDropdownIcon}/> : <SellOutlinedIcon sx={styles.tagsDropdownIcon}/>
+            return <li key={options.key}>
+    
+            <GroupHeader sx={styles.tagsDropdownGroupHeader}> {icon} {options.group}</GroupHeader>
+            <GroupItems sx={styles.tagsDropdownGroupItems}>{options.children}</GroupItems>
+          </li>
+
+        }}
         onChange={handleChange}
         isOptionEqualToValue={(option, value) => option.name === value.name}
       ></Autocomplete>
