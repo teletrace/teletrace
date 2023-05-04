@@ -40,7 +40,6 @@ export const styles = {
   tagsDropdownGroupHeader: {
     display: 'flex',
     alignItems: 'center',
-    position: 'sticky',
     top: '-8px',
     padding: '4px 10px',
     fontSize: '12px',

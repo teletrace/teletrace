@@ -24,9 +24,6 @@ import { useAvailableTags } from "../../api/availableTags";
 import { AvailableTag, TagGroup } from "../../types/availableTags";
 import { styles } from "./styles";
 
-const GroupHeader = styled('div')({});
-const GroupItems = styled('ul')({});
-
 export type TagSelectorProps = {
   value: AvailableTag | null;
   onChange: (f: AvailableTag | null) => void;
@@ -60,6 +57,9 @@ export const TagSelector = ({
   ) => {
     onChange(value);
   };
+
+  const GroupHeader = styled('div')({});
+  const GroupItems = styled('ul')({});
 
   return (
     <FormControl required sx={styles.tagsSelector}>
