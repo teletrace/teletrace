@@ -1,0 +1,89 @@
+/**
+ * Copyright 2022 Cisco Systems, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package dsl
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/opensearch-project/opensearch-go/opensearchapi"
+	"github.com/teletrace/teletrace/pkg/model"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
+
+	"golang.org/x/exp/slices"
+)
+
+var convertedTimestampKeys = []model.FilterKey{"span.startTimeUnixNano", "span.endTimeUnixNano", "externalFields.durationNano"}
+
+func CreateTimeframeFilters(tf *model.Timeframe) []model.SearchFilter {
+	if tf == nil {
+		return []model.SearchFilter{}
+	}
+	return []model.SearchFilter{
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.startTimeUnixNano",
+				Operator: spansquery.OPERATOR_GTE,
+				Value:    tf.StartTime,
+			},
+		},
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.endTimeUnixNano",
+				Operator: spansquery.OPERATOR_LTE,
+				Value:    tf.EndTime,
+			},
+		},
+	}
+}
+
+func DecodeResponse(res *opensearchapi.Response) (map[string]any, error) {
+	// check errors
+	var err error
+	var body map[string]any
+	decoder := json.NewDecoder(res.Body)
+	decoder.UseNumber()
+	if err = decoder.Decode(&body); err != nil {
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
+	}
+
+	if res.StatusCode >= 400 {
+		esError, err := errors.ESErrorFromHttpResponse(res.Status(), body)
+		if err != nil {
+			return nil, err
+		}
+		return nil, esError
+	}
+	return body, nil
+}
+
+func IsConvertedTimestamp(key model.FilterKey) bool {
+	return slices.Contains(convertedTimestampKeys, key)
+}
+
+func MilliToNanoFloat64(millis float64) float64 {
+	return millis * 1e6
+}
+
+func NanoToMilliUint64(nanos uint64) uint64 {
+	return nanos / 1e6
+}
+
+func NanoToMilliFloat64(nanos float64) float64 {
+	return nanos / 1e6
+}
