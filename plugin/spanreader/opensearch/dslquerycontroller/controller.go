@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package dsl
+package dslquerycontroller
 
-import "github.com/teletrace/teletrace/pkg/model"
+import (
+	"github.com/opensearch-project/opensearch-go"
+	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/querycontroller"
+	"go.uber.org/zap"
+)
 
-func BuildFilters(fs ...model.SearchFilter) *QueryContainer {
-	return &QueryContainer{}
+type dslQueryController struct {
+	client *opensearch.Client
+	idx    string
+}
+
+func NewDslQueryController(logger *zap.Logger, client *opensearch.Client, idx string) querycontroller.QueryController {
+	return &dslQueryController{client: client, idx: idx}
 }

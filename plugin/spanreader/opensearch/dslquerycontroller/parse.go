@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dsl
+package dslquerycontroller
 
 import (
 	"encoding/json"

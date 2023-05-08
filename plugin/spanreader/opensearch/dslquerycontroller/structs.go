@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package dsl
+package dslquerycontroller
+
+type Body struct {
+	Query *QueryContainer `json:"query,omitempty"`
+}
 
 type QueryContainer struct {
-	Bool     *Bool               `json:"bool,omitempty"`
-	Wildcard map[string]WildCard `json:"wildcard,omitempty"`
-	Range    map[string]Range    `json:"range,omitempty"`
-	Exists   *Exists             `json:"exists,omitempty"`
+	Bool        *Bool           `json:"bool,omitempty"`
+	Wildcard    WildCardType    `json:"wildcard,omitempty"`
+	Range       RangeType       `json:"range,omitempty"`
+	Exists      *Exists         `json:"exists,omitempty"`
+	MatchPhrase MatchPhraseType `json:"match_phrase,omitempty"`
 }
 
 type Bool struct {
 	Must    []QueryContainer `json:"must,omitempty"`
-	MustNot []QueryContainer `json:"must_not,omitempty`
+	MustNot []QueryContainer `json:"must_not,omitempty"`
 	Should  []QueryContainer `json:"should,omitempty"`
 	Filter  []QueryContainer `json:"filter,omitempty"`
 }
@@ -45,4 +50,8 @@ type Exists struct {
 	Field string `json:"field"`
 }
 
-type MatchPhrase map[any]string
+type (
+	MatchPhraseType map[string]any
+	WildCardType    map[string]WildCard
+	RangeType       map[string]Range
+)

@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package dsl
+package dslquerycontroller
 
 import (
-	"github.com/opensearch-project/opensearch-go"
-	"go.uber.org/zap"
+	"context"
+
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 )
 
-type DslController struct {
-	client *opensearch.Client
-	idx    string
+func (dc *dslQueryController) GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error) {
+	return nil, nil
 }
 
-func NewDslController(logger *zap.Logger, client *opensearch.Client, idx string) *DslController {
-	return &DslController{client: client, idx: idx}
+func (dc *dslQueryController) GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error) {
+	return nil, nil
+}
+
+func (dc *dslQueryController) GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error) {
+	return nil, nil
 }
