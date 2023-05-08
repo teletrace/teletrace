@@ -19,6 +19,7 @@ import SellOutlinedIcon from '@mui/icons-material/SellOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import FormControl from "@mui/material/FormControl";
 import Highlighter from "react-highlight-words";
+import { useState } from "react";
 
 import { useAvailableTags } from "../../api/availableTags";
 import { AvailableTag, TagGroup } from "../../types/availableTags";
@@ -38,7 +39,7 @@ export const TagSelector = ({
   disabled = false,
 }: TagSelectorProps) => {
   const { data: availableTags, isLoading } = useAvailableTags();
-
+  const [isTyping, setIsTyping] = useState(false);
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
   );
@@ -61,6 +62,13 @@ export const TagSelector = ({
   const GroupHeader = styled('div')({});
   const GroupItems = styled('ul')({});
 
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const {value} = event.target;
+    setIsTyping(value !== '');
+  };
+
   return (
     <FormControl required sx={styles.tagsSelector}>
       <FormLabel required={false}>Key</FormLabel>
@@ -73,7 +81,7 @@ export const TagSelector = ({
         id="filter"
         size="small"
         options={allTagsOptions || []}
-        groupBy={(option) => option?.group ?? TagGroup.ALL}
+        groupBy= {(option) => option?.group ?? TagGroup.ALL}
         getOptionLabel={(option) => option.name}
         componentsProps={{ paper: { sx: styles.tagsDropdown } }}
         renderInput={(params) => (
@@ -81,6 +89,7 @@ export const TagSelector = ({
             {...params}
             error={error}
             helperText={error ? "Filter is required" : ""}
+            onChange={handleInputChange}
           />
         )}
         renderOption={(props, option, state) => (
@@ -95,13 +104,19 @@ export const TagSelector = ({
         )}
 
         renderGroup={(options) => { 
-          const icon = options.group === TagGroup.RECENTLY_USED ? <AccessTimeOutlinedIcon sx={styles.tagsDropdownIcon}/> : <SellOutlinedIcon sx={styles.tagsDropdownIcon}/>
-            return <li key={options.key}>
-    
+          if (isTyping) {
+            return options.children;
+          }
+          const icon = options.group === TagGroup.RECENTLY_USED ? (
+          <AccessTimeOutlinedIcon sx={styles.tagsDropdownIcon}/>) : (
+          <SellOutlinedIcon sx={styles.tagsDropdownIcon}/>
+          );
+            return (
+            <li key={options.key}>
             <GroupHeader sx={styles.tagsDropdownGroupHeader}> {icon} {options.group}</GroupHeader>
             <GroupItems sx={styles.tagsDropdownGroupItems}>{options.children}</GroupItems>
           </li>
-
+            );
         }}
         onChange={handleChange}
         isOptionEqualToValue={(option, value) => option.name === value.name}
