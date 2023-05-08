@@ -25,7 +25,7 @@ Before using the Teletrace OpenTelemetry Demo, ensure that you have the followin
 Follow the steps below to get started with the Teletrace OpenTelemetry Demo:
 1. Clone the Teletrace OpenTelemetry Demo repository:
 ```sh
-git clone https://github.com/opentelemetry/opentelemetry-demo.git
+git clone https://github.com/teletrace/opentelemetry-demo.git
 ```
 
 2. Navigate to opentelemetry demo folder
