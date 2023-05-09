@@ -16,13 +16,19 @@ Overall, using OpenTelemetry with Teletrace can provide a powerful observability
 
 ## What are deployment types available for Teletrace?
 
-Teletrace can be deployed using [Helm](https://helm.sh/) which is a popular package manager for Kubernetes. The Teletrace [Helm chart](https://github.com/teletrace/helm-charts) provides a set of preconfigured templates for deploying Teletrace. Using Helm can simplify the deployment process and make it easier to manage and scale Teletrace.
-In addition, Teletrace can be deployed using [Docker Compose](https://docs.docker.com/compose/), which is a tool for defining and running multi-container Docker applications. The Teletrace Docker Compose file provides a set of preconfigured services for deploying Teletrace, including the Teletrace API, and storage backend. Using Docker Compose can simplify the deployment process and make it easier to test and develop Teletrace locally.
+The recommended way to deploy Teletrace is to deploy our [Helm chart](https://github.com/teletrace/helm-charts) to a Kubernetes cluster.
+
+Additinally Teletrace is packaged as a standard [OCI image](https://hub.docker.com/r/teletrace/teletrace) that can run locally or be deployed to any cloud service that can handle container images (e.g. AWS ECS) or as a [standalone binary](https://github.com/teletrace/teletrace/releases) that can be executed on any compute service.
+
+Check out our detailed [deployment guides](../operator-guide/deployment/standalone.md).
 
 ## How and where does Teletrace store data?
 
-Teletrace stores its tracing data in a backend storage, which can be one of the following: Elasticsearch or SQLite. The choice of storage system depends on the specific use case and requirements.
+Teletrace is using plugins to store data in different storage backends, this allows the platform to be extended to the users' use-case with ease.
 
-## How does Teletrace handle high traffic?
+currently supported plugins:
 
-Currently, Teletrace's backend does not designed to handle high traffic.
+- ElasticSearch (version 8+)
+- SQLite
+
+The choice of storage system depends on the specific use case and requirements.

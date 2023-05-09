@@ -69,6 +69,7 @@ markdown_extensions:
 plugins:
   - search
   - awesome-pages
+  - open-in-new-tab
 
 nav:
   - index.md
@@ -110,11 +111,11 @@ nav:
   - Developer Guide:
       - developer-guide/extending-via-plugins.md
 
-  - Community:
-      - community/contribution.md
-      - community/faq.md
-      - community/support.md
-      - Releases ⧉: https://github.com/teletrace/teletrace/releases
+  # - Community:
+  - community/contribution.md
+  - community/faq.md
+  - community/support.md
+  - Releases ⧉: https://github.com/teletrace/teletrace/releases
 
   # - understand_the_basics.md
   # - Getting Started:
