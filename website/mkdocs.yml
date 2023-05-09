@@ -1,16 +1,28 @@
 site_name: Teletrace
+repo_name: teletrace/teletrace
+repo_url: https://github.com/teletrace/teletrace
 
 theme:
+  name: material
   homepage: https://docs.teletrace.io/
+  logo: assets/teletrace_logo_white.svg
+
   font:
     text: Roboto
-  logo: assets/teletrace_logo_white.svg
+
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+
   features:
-    - navigation.sections
+    # - navigation.sections
+    - navigation.instant
+    - navigation.top
+    - navigation.footer
     - content.code.annotate
     - content.code.copy
+    - content.action.edit
 
-  name: material
   palette:
     - scheme: default
       primary: indigo
@@ -30,42 +42,96 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/teletrace/teletrace
       name: Teletrace on GithHub
+
+    - icon: fontawesome/brands/slack
+      link: https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ
+      name: Teletrace's Slack Workspace
+
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/teletrace/teletrace
+      name: Teletrace Docker Image
+
 markdown_extensions:
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+  - tables
+  - attr_list
+  - md_in_html
   - admonition
   - pymdownx.details
-  - tables
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed: { alternate_style: true }
+  - pymdownx.highlight: { anchor_linenums: true }
+  - toc:
+      title: On this page
+      permalink: true
 
 plugins:
   - search
   - awesome-pages
 
-repo_name: teletrace/teletrace
-repo_url: https://github.com/teletrace/teletrace
 nav:
-  - Overview: index.md
-  - understand_the_basics.md
-  - Getting Started:
-      - Quick Start: user-guide/quick_start.md
+  - index.md
+  - features.md
+
+  - Concepts:
+      - concepts/distributed-tracing.md
+      - concepts/instrumentation.md
+      - concepts/glossary.md
+
+  - Operator Guide:
+      - operator-guide/architecture-overview.md
       - Deployment:
-          - Docker Compose: user-guide/deployment/docker_compose.md
-          - Helm Chart: user-guide/deployment/helm_chart.md
-      - Sending Data:
-          - Introduction: user-guide/sending-data/introduction.md
-          - Open Telemetry Collector: user-guide/sending-data/open_telemetry_collector.md
-          - Open Telemetry SDK:
-              - Java: user-guide/sending-data/open-telemetry-sdk/java.md
-              - Python: user-guide/sending-data/open-telemetry-sdk/python.md
-              - Javascript: user-guide/sending-data/open-telemetry-sdk/javascript.md
-      - Open Telemetry Demo: user-guide/open_telemetry_demo.md
+          - operator-guide/deployment/standalone.md
+          - operator-guide/deployment/docker.md
+          - operator-guide/deployment/kubernetes.md
+      - operator-guide/auto-instrumentation.md
+
+  - User Guide:
+      - user-guide/application-overview.md
+      - Instrumenting Applications:
+          - Node.js:
+              - user-guide/instrumenting/node/general.md
+              - user-guide/instrumenting/node/express.md
+          - Python:
+              - user-guide/instrumenting/python/general.md
+              - user-guide/instrumenting/python/flask.md
+              - user-guide/instrumenting/python/fastapi.md
+              - user-guide/instrumenting/python/django.md
+          - Java:
+              - user-guide/instrumenting/java/general.md
+              - user-guide/instrumenting/java/spring-boot.md
+          - Go:
+              - user-guide/instrumenting/go/general.md
+              - user-guide/instrumenting/go/gin.md
+              - user-guide/instrumenting/go/echo.md
+              - user-guide/instrumenting/go/gorilla-mux.md
+
+  - Developer Guide:
+      - developer-guide/extending-via-plugins.md
+
   - Community:
-      - Contribution: contribution.md
-      - FAQs: faq.md
-      - Support: support.md
+      - community/contribution.md
+      - community/faq.md
+      - community/support.md
       - Releases ⧉: https://github.com/teletrace/teletrace/releases
+
+  # - understand_the_basics.md
+  # - Getting Started:
+  #     - Quick Start: user-guide/quick_start.md
+  #     - Deployment:
+  #         - Docker Compose: user-guide/deployment/docker_compose.md
+  #         - Helm Chart: user-guide/deployment/helm_chart.md
+  #     - Sending Data:
+  #         - Introduction: user-guide/sending-data/introduction.md
+  #         - Open Telemetry Collector: user-guide/sending-data/open_telemetry_collector.md
+  #         - Open Telemetry SDK:
+  #             - Java: user-guide/sending-data/open-telemetry-sdk/java.md
+  #             - Python: user-guide/sending-data/open-telemetry-sdk/python.md
+  #             - Javascript: user-guide/sending-data/open-telemetry-sdk/javascript.md
+  #     - Open Telemetry Demo: user-guide/open_telemetry_demo.md
+  # - Community:
+  #     - Contribution: contribution.md
+  #     - FAQs: faq.md
+  #     - Support: support.md
+  #     - Releases ⧉: https://github.com/teletrace/teletrace/releases
