@@ -61,7 +61,7 @@ extra:
 
   analytics:
     provider: google
-    property: G-XXXXXXXXXX
+    property: G-C9YG1K3ZP1
     feedback:
       title: Was this page helpful?
       ratings:
@@ -75,7 +75,7 @@ extra:
           data: 0
           note: >-
             Thanks for your feedback! Help us improve this page by
-            using our <a href="..." target="_blank" rel="noopener">feedback form</a>.
+            using our <a href="https://github.com/teletrace/teletrace/issues/new/?title=[Docs Feedback]+{title}+-+{url}" target="_blank" rel="noopener">feedback form</a>.
 
 markdown_extensions:
   - tables
