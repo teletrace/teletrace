@@ -6,6 +6,7 @@ theme:
   name: material
   homepage: https://docs.teletrace.io/
   logo: assets/teletrace_logo_white.svg
+  favicon: assets/teletrace_logo.svg
 
   font:
     text: Roboto
