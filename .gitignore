@@ -45,3 +45,5 @@ out/
 bin/
 
 *.db*
+venv/
+.venv/
