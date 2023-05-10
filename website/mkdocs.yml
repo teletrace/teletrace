@@ -114,6 +114,7 @@ nav:
           - operator-guide/deployment/standalone.md
           - operator-guide/deployment/docker.md
           - operator-guide/deployment/kubernetes.md
+      - operator-guide/otel-collector.md
       - operator-guide/auto-instrumentation.md
 
   - User Guide:
@@ -144,23 +145,3 @@ nav:
     - community/faq.md
     - community/support.md
     - Releases ⧉: https://github.com/teletrace/teletrace/releases
-
-  # - understand_the_basics.md
-  # - Getting Started:
-  #     - Quick Start: user-guide/quick_start.md
-  #     - Deployment:
-  #         - Docker Compose: user-guide/deployment/docker_compose.md
-  #         - Helm Chart: user-guide/deployment/helm_chart.md
-  #     - Sending Data:
-  #         - Introduction: user-guide/sending-data/introduction.md
-  #         - Open Telemetry Collector: user-guide/sending-data/open_telemetry_collector.md
-  #         - Open Telemetry SDK:
-  #             - Java: user-guide/sending-data/open-telemetry-sdk/java.md
-  #             - Python: user-guide/sending-data/open-telemetry-sdk/python.md
-  #             - Javascript: user-guide/sending-data/open-telemetry-sdk/javascript.md
-  #     - Open Telemetry Demo: user-guide/open_telemetry_demo.md
-  # - Community:
-  #     - Contribution: contribution.md
-  #     - FAQs: faq.md
-  #     - Support: support.md
-  #     - Releases ⧉: https://github.com/teletrace/teletrace/releases

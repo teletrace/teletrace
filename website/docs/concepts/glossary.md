@@ -49,7 +49,7 @@ All three of these attributes can be included in the Resource and applied to any
 ### Span
 
 A span represents a single operation within a trace,
-it contains a start and end time, a unique identifier, the name of the operation, and any relevant in its Attributes.
+it contains a start and end time, a unique identifier, the name of the operation, and any relevant metadata in its Attributes.
 
 Spans can also have parent-child relationships to represent the hierarchical structure of a distributed system.
 
