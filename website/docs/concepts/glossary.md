@@ -33,6 +33,8 @@ telemetry data from instrumented applications, or other OpenTelemtry collectors.
 The collector supports a wide variety of input formats, possible processors,
 and a wide variety of exporters, and can be further extended using plugins.
 
+A custom build of the OpenTelemetry Collector which can change the bundled plugins (add new ones / remove unused ones) is called a _Distro_.
+
 ### Resource
 
 Captures information about the entity for which telemetry is recorded.

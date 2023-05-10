@@ -16,7 +16,7 @@ theme:
     edit: material/pencil
 
   features:
-    # - navigation.sections
+    - navigation.sections
     - navigation.instant
     - navigation.top
     - navigation.footer
@@ -139,10 +139,11 @@ nav:
   - Developer Guide:
       - developer-guide/extending-via-plugins.md
 
-  - community/contribution.md
-  - community/faq.md
-  - community/support.md
-  - Releases ⧉: https://github.com/teletrace/teletrace/releases
+  - Community:
+    - community/contribution.md
+    - community/faq.md
+    - community/support.md
+    - Releases ⧉: https://github.com/teletrace/teletrace/releases
 
   # - understand_the_basics.md
   # - Getting Started:
