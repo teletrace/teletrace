@@ -103,6 +103,7 @@ nav:
   - features.md
 
   - Concepts:
+      - concepts/intro.md
       - concepts/distributed-tracing.md
       - concepts/instrumentation.md
       - concepts/glossary.md
@@ -138,7 +139,6 @@ nav:
   - Developer Guide:
       - developer-guide/extending-via-plugins.md
 
-  # - Community:
   - community/contribution.md
   - community/faq.md
   - community/support.md
