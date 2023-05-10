@@ -6,6 +6,9 @@ Terminology you may or may not be familiar with used by the Teletrace project.
 
 The process of gathering information about the runtime and execution to enable troubleshooting and investigation.
 
+Usually this process involves added specialized code (in our context the OpenTelemetry SDK)
+to the application in order to generate the needed information.
+
 ### Instrumentation Library
 
 A language specific SDK to collect information about a specific part of an application,
@@ -65,5 +68,5 @@ and any relevant metadata, such as the request headers and response status code.
 
 ### Tracing
 
-The process of tracing the progression of a single request, called a Trace, as it is handled by services that make up an application. 
+The process of tracing the progression of a single request, called a Trace, as it is handled by services that make up an application.
 A Distributed Trace transverses process, network and security boundaries.
