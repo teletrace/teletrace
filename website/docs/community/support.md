@@ -1,6 +1,6 @@
 # Support
 
-We are happy to provide support in all of our channels of communication, 
+We are happy to provide support in all of our channels of communication,
 to get in touch with the core team and the community we recommend joining our slack workspace or via email at [**teletrace@cisco.com**](mailto:teletrace@cisco.com).
 
 [Join our Slack](https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ){.md-button .md-button--primary}

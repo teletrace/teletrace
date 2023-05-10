@@ -25,14 +25,14 @@ Overall, using OpenTelemetry with Teletrace can provide a powerful observability
 
 The recommended way to deploy Teletrace is to deploy our [Helm chart](https://github.com/teletrace/helm-charts) to a Kubernetes cluster.
 
-Additinally Teletrace is packaged as a standard [OCI image](https://hub.docker.com/r/teletrace/teletrace) that can run locally or be deployed to any cloud service that can handle container images (e.g. AWS ECS)
+Additionally Teletrace is packaged as a standard [OCI image](https://hub.docker.com/r/teletrace/teletrace) that can run locally or be deployed to any cloud service that can handle container images (e.g. AWS ECS)
 or as a [standalone binary](https://github.com/teletrace/teletrace/releases) that can be executed on any compute service (e.g. AWS EC2) or locally.
 
 Check out our detailed [deployment guides](../operator-guide/deployment/standalone.md).
 
 ## How and where does Teletrace store data?
 
-Teletrace is using plugins to store data in different storage backends, 
+Teletrace is using plugins to store data in different storage backends,
 this allows the platform to be extended to the users' use-case with ease.
 
 currently supported plugins:
