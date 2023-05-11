@@ -2,6 +2,9 @@ site_name: Teletrace
 repo_name: teletrace/teletrace
 repo_url: https://github.com/teletrace/teletrace
 
+extra_css:
+  - stylesheets/extra.css
+
 theme:
   name: material
   homepage: https://docs.teletrace.io/
@@ -85,8 +88,12 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.snippets
-  - pymdownx.superfences
   - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed: { alternate_style: true }
   - pymdownx.highlight: { anchor_linenums: true }
   - toc:

@@ -60,7 +60,7 @@ For a more detailed view see [Features](./features.md) page.
 Teletrace utilizes [OpenTelemetry](https://opentelemetry.io/) to generate and collect high-quality traces from your application,
 traces flow to a centralized collector which stores them in a storage backend.
 
-the Teletrace UI can be used to query, fetch and visualize the stored trace in an easy-to-use modern UI.
+The Teletrace UI can be used to query, fetch and visualize the stored trace in an easy-to-use modern UI.
 
 <figure markdown>
   ![Teletrace Architecture](assets/teletrace.drawio.svg){width="600"}
