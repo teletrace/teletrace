@@ -143,7 +143,7 @@ nav:
   - Developer Guide:
       - developer-guide/extending-via-plugins.md
   - Community:
-    - community/contribution.md
-    - community/faq.md
-    - community/support.md
-    - Releases ⧉: https://github.com/teletrace/teletrace/releases
+      - community/contribution.md
+      - community/faq.md
+      - community/support.md
+      - Releases ⧉: https://github.com/teletrace/teletrace/releases
