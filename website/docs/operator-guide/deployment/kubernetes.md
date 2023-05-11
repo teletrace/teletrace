@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This tutorial will guide you through the process of installing Teletrace, using Helm. 
+This tutorial will guide you through the process of installing Teletrace, using Helm.
 
 The Teletrace Helm chart is available on the [official repository](https://github.com/teletrace/helm-charts) and makes it easy to install and configure Teletrace in a Kubernetes cluster.
 
