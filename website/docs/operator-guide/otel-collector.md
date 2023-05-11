@@ -1,3 +1,0 @@
-# OpenTelemetry Collector
-
-🚧 👷 IN PROGRESS 👷 🚧
