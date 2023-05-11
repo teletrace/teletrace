@@ -18,19 +18,15 @@ package dslquerycontroller
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"strings"
 
 	"github.com/opensearch-project/opensearch-go/opensearchapi"
-	"github.com/teletrace/teletrace/pkg/model"
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/errors"
 )
 
-func (dc *dslQueryController) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-	res, err := dc.executeSearch(ctx, r)
+func (dc *dslQueryController) Search(ctx context.Context, req spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
+	res, err := dc.performSearch(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("Could not search spans: %+v", err)
 	}
@@ -55,15 +51,20 @@ func (dc *dslQueryController) Search(ctx context.Context, r spansquery.SearchReq
 	return searchResp, nil
 }
 
-func (dc *dslQueryController) executeSearch(ctx context.Context, r spansquery.SearchRequest) (*opensearchapi.Response, error) {
+func (dc *dslQueryController) performSearch(ctx context.Context, req spansquery.SearchRequest) (*opensearchapi.Response, error) {
 	errMsg := "Could not build search request: %+v"
 
-	searchBody, err := dc.buildBody(r)
+	qc, err := BuildFiltersWithTimeFrame(req.SearchFilters, &req.Timeframe, WithMilliSecTimestampAsNanoSecFilter())
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	searchSort, err := dc.buildSort(r)
+	body, err := buildSearchBody(qc, nil)
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
+
+	sort, err := buildSort(req.Sort)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
@@ -72,47 +73,12 @@ func (dc *dslQueryController) executeSearch(ctx context.Context, r spansquery.Se
 		dc.client.Search.WithIndex(dc.idx),
 		dc.client.Search.WithContext(ctx),
 		dc.client.Search.WithSize(50),
-		dc.client.Search.WithSort(searchSort...),
-		dc.client.Search.WithBody(searchBody),
+		dc.client.Search.WithSort(sort...),
+		dc.client.Search.WithBody(body),
 	)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
 	return res, nil
-}
-
-func (dc *dslQueryController) buildBody(r spansquery.SearchRequest) (io.Reader, error) {
-	errMsg := "Could not build search body: %+v"
-
-	timeframeFilters := CreateTimeframeFilters(&r.Timeframe)
-
-	filters := append(r.SearchFilters, timeframeFilters...)
-
-	var kvFilters []model.KeyValueFilter
-
-	for _, f := range filters {
-		if f.KeyValueFilter != nil {
-			kvFilters = append(kvFilters, *f.KeyValueFilter)
-		}
-	}
-	qc, err := BuildFilters(kvFilters, WithMilliSecTimestampAsNanoSec())
-	if err != nil {
-		return nil, fmt.Errorf(errMsg, err)
-	}
-
-	if qc == nil {
-		return strings.NewReader(""), nil
-	}
-	jsQuery, err := json.Marshal(Body{Query: qc})
-	if err != nil {
-		return nil, fmt.Errorf("Failed to marshal query to json: %+v", err)
-	}
-	stringQuery := string(jsQuery)
-	return strings.NewReader(stringQuery), nil
-}
-
-func (dc *dslQueryController) buildSort(r spansquery.SearchRequest) ([]string, error) {
-	var sortSlice []string
-	return sortSlice, nil
 }

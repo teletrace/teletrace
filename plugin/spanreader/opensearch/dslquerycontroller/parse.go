@@ -19,8 +19,12 @@ package dslquerycontroller
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
+	"go.opentelemetry.io/collector/pdata/pcommon"
+	"golang.org/x/exp/slices"
 
 	"github.com/mitchellh/mapstructure"
 	internalspan "github.com/teletrace/teletrace/model/internalspan/v1"
@@ -92,4 +96,124 @@ func withMiliSecTimestampAsNanoSec() SpanParseOption {
 
 		s.ExternalFields.DurationNano = s.ExternalFields.DurationNano * 1000 * 1000
 	}
+}
+
+func parseGetTagsValuesResponseBody(
+	body map[string]any,
+) (map[string]*tagsquery.TagValuesResponse, error) {
+	// To get an idea of how the response looks like, check the unit test at tags_controller_test.go
+
+	result := map[string]*tagsquery.TagValuesResponse{}
+
+	tagValueInfos := make(map[string]map[any]tagsquery.TagValueInfo)
+
+	if aggregations, ok := body["aggregations"].(map[string]any); ok {
+		// the aggregation key is the tag's name because that's how we defined the query.
+		// traverse the returned aggregations, bucket by bucket and update the value counts
+		for tag, v := range aggregations {
+			aggregation := v.(map[string]any)
+
+			if _, found := tagValueInfos[tag]; !found {
+				tagValueInfos[tag] = make(map[any]tagsquery.TagValueInfo)
+			}
+
+			for _, v := range aggregation["buckets"].([]any) {
+				bucket := v.(map[string]any)
+				value := bucket["key"]
+				count := int(bucket["doc_count"].(float64))
+
+				if info, found := tagValueInfos[tag][value]; !found {
+					tagValueInfos[tag][value] = tagsquery.TagValueInfo{
+						Value: value,
+						Count: count,
+					}
+				} else {
+					info.Count += count
+					tagValueInfos[tag][value] = info
+				}
+			}
+		}
+	}
+
+	// populate the result
+	for tag, valueInfoMap := range tagValueInfos {
+		var currentTagValues []tagsquery.TagValueInfo
+		for value, info := range valueInfoMap {
+			currentTagValues = append(currentTagValues, tagsquery.TagValueInfo{
+				Value: value,
+				Count: info.Count,
+			})
+		}
+		if currentTagValues != nil {
+			result[tag] = &tagsquery.TagValuesResponse{
+				Values: currentTagValues,
+			}
+		}
+	}
+
+	return result, nil
+}
+
+func parseTagStatisticsResponseBody(
+	body map[string]any, request tagsquery.TagStatisticsRequest, tag string, opts []TagStatisticParseOption,
+) (*tagsquery.TagStatisticsResponse, error) {
+	result := &tagsquery.TagStatisticsResponse{
+		Statistics: make(map[tagsquery.TagStatistic]float64),
+	}
+
+	if aggregations, ok := body["aggregations"].(map[string]any); ok {
+		for _, ds := range request.DesiredStatistics {
+			h := TagStatisticToHandler[ds]
+			if v, exists := h.GetValue(aggregations); exists {
+				result.Statistics[ds] = v
+			}
+		}
+	}
+
+	for k := range result.Statistics {
+		for _, opt := range opts {
+			opt(tag, result.Statistics, k)
+		}
+	}
+
+	return result, nil
+}
+
+// Remove keyword tags that are a duplication of an elasticsearch text field
+func removeDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
+	tagsNamesToTypes := make(map[string]string, len(tags))
+	var tagsNames []string
+
+	var validTags []tagsquery.TagInfo
+
+	for _, tag := range tags {
+		tagsNamesToTypes[tag.Name] = tag.Type
+	}
+
+	for tagName := range tagsNamesToTypes {
+		tagsNames = append(tagsNames, tagName)
+	}
+
+	for _, tag := range tags {
+		if tag.Type == pcommon.ValueTypeStr.String() {
+			if strings.HasSuffix(tag.Name, ".keyword") {
+				strippedName := tag.Name[:len(tag.Name)-len(".keyword")]
+				// If there exists a duplication for the same tag, as text and as keyword
+				// This happens then the index is using the default elasticsearch mapping.
+				if !(slices.Contains(tagsNames, strippedName) && (tagsNamesToTypes[strippedName] == pcommon.ValueTypeStr.String())) {
+					validTags = append(validTags, tag)
+				}
+			} else {
+				validTags = append(validTags, tag)
+			}
+		} else {
+			validTags = append(validTags, tag)
+		}
+	}
+
+	return validTags
+}
+
+func parseSystemIdResponse(body map[string]any) string {
+	return body["_source"].(map[string]any)["value"].(string)
 }

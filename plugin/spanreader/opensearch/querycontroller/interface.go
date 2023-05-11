@@ -26,18 +26,20 @@ import (
 
 type QueryController interface {
 	// Search spans in database
-	Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error)
+	Search(ctx context.Context, req spansquery.SearchRequest) (*spansquery.SearchResponse, error)
 
 	// Get all available tags
-	GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error)
+	GetAvailableTags(ctx context.Context, req tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error)
 
 	// Get the values and appearance count of all tags as specified by request.Tags
-	GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
+	GetTagsValues(ctx context.Context, req tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
 
 	// Get statistics for numeric tag values
-	GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error)
+	GetTagsStatistics(ctx context.Context, req tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error)
 
+	// Get system id (meta)
 	GetSystemId(ctx context.Context) (*metadata.GetSystemIdResponse, error)
 
-	SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error)
+	// Set system id (meta)
+	SetSystemId(ctx context.Context, req metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error)
 }

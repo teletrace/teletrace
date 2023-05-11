@@ -18,14 +18,50 @@ package dslquerycontroller
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 )
 
+const SystemIdentifierEntryId = "system-id"
+
 func (dc *dslQueryController) GetSystemId(ctx context.Context) (*metadata.GetSystemIdResponse, error) {
-	return nil, nil
+	res, err := dc.client.API.Get(dc.idx, SystemIdentifierEntryId)
+	if err != nil {
+		return nil, fmt.Errorf("Could not get system id %+v", err)
+	}
+	defer res.Body.Close()
+	if res.StatusCode == 404 {
+		return nil, nil
+	}
+	body, err := DecodeResponse(res)
+	if err != nil {
+		return nil, err
+	}
+	value := parseSystemIdResponse(body)
+	return &metadata.GetSystemIdResponse{Value: value}, nil
 }
 
-func (dc *dslQueryController) SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
-	return nil, nil
+func (dc *dslQueryController) SetSystemId(ctx context.Context, req metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
+	reqBody, err := buildSetSystemIdBody(req.Value)
+	if err != nil {
+		return nil, fmt.Errorf("Could not set system id %+v", err)
+	}
+
+	res, err := dc.client.API.Index(
+		dc.idx,
+		reqBody,
+		dc.client.API.Index.WithContext(ctx),
+		dc.client.API.Index.WithOpType("create"),
+		dc.client.API.Index.WithDocumentID(SystemIdentifierEntryId),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Could not set system id %+v", err)
+	}
+	defer res.Body.Close()
+	_, err = DecodeResponse(res)
+	if err != nil {
+		return nil, err
+	}
+	return &metadata.SetSystemIdResponse{}, nil
 }

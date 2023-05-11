@@ -19,15 +19,86 @@ package dslquerycontroller
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strconv"
+	"strings"
 
 	"github.com/teletrace/teletrace/pkg/model"
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 )
 
 type FilterParseOption func(*model.KeyValueFilter)
 
-func BuildFilters(fs []model.KeyValueFilter, opts ...FilterParseOption) (*QueryContainer, error) {
+func buildSort(s []spansquery.Sort) ([]string, error) {
+	var sortSlice []string
+	return sortSlice, nil
+}
+
+func buildSetSystemIdBody(v string) (io.Reader, error) {
+	body := map[string]string{
+		"value": v,
+	}
+	jsQuery, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to marshal query to json: %+v", err)
+	}
+	stringQuery := string(jsQuery)
+	return strings.NewReader(stringQuery), nil
+}
+
+func buildSearchBody(qc *QueryContainer, aggs map[string]AggregationsContainer) (io.Reader, error) {
+	body := Body{}
+
+	if qc != nil {
+		body.Query = qc
+	}
+	if len(aggs) != 0 {
+		body.Aggregations = aggs
+	}
+	jsQuery, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to marshal query to json: %+v", err)
+	}
+	stringQuery := string(jsQuery)
+	return strings.NewReader(stringQuery), nil
+}
+
+func buildTagsStatisticsAggs(stats []tagsquery.TagStatistic, tag string) (map[string]AggregationsContainer, error) {
+	aggs := make(map[string]AggregationsContainer)
+
+	for _, d := range stats {
+		h := TagStatisticToHandler[d]
+		h.AddAggregationContainerBuilder(tag, aggs)
+	}
+
+	return aggs, nil
+}
+
+func buildTagsValuesAggs(tagsMappings []tagsquery.TagInfo) (map[string]AggregationsContainer, error) {
+	aggs := make(map[string]AggregationsContainer, len(tagsMappings))
+	for _, mapping := range tagsMappings {
+		aggregationKey := mapping.Name
+		aggregationField := aggregationKey
+		if mapping.Type == "Str" {
+			aggregationField = fmt.Sprintf("%s.keyword", aggregationKey)
+		}
+		aggs[aggregationKey] = AggregationsContainer{
+			Terms: &TermsAggregation{
+				Field: &aggregationField,
+			},
+		}
+	}
+	return aggs, nil
+}
+
+func BuildFiltersWithTimeFrame(fs []model.SearchFilter, tf *model.Timeframe, opts ...FilterParseOption) (*QueryContainer, error) {
+	timeframeFilters := CreateTimeframeFilters(tf)
+	filters := append(fs, timeframeFilters...)
+	return BuildFilters(filters)
+}
+
+func BuildFilters(fs []model.SearchFilter, opts ...FilterParseOption) (*QueryContainer, error) {
 	type filterCreator func(model.KeyValueFilter) (*QueryContainer, error)
 
 	type Filter struct {
@@ -90,22 +161,25 @@ func BuildFilters(fs []model.KeyValueFilter, opts ...FilterParseOption) (*QueryC
 	}
 
 	for _, f := range fs {
-		var err error
+		if f.KeyValueFilter != nil {
+			kvf := f.KeyValueFilter
+			var err error
 
-		for _, opt := range opts {
-			opt(&f)
-		}
+			for _, opt := range opts {
+				opt(kvf)
+			}
 
-		filter := m[string(f.Operator)]
-		qc, err := filter.Builder(f)
-		if err != nil {
-			return nil, fmt.Errorf("Could not create filter from: %+v: %+v", f, err)
-		}
+			filter := m[string(kvf.Operator)]
+			qc, err := filter.Builder(*kvf)
+			if err != nil {
+				return nil, fmt.Errorf("Could not create filter from: %+v: %+v", f, err)
+			}
 
-		if filter.Must {
-			must = append(must, *qc)
-		} else {
-			mustNot = append(mustNot, *qc)
+			if filter.Must {
+				must = append(must, *qc)
+			} else {
+				mustNot = append(mustNot, *qc)
+			}
 		}
 	}
 
@@ -114,7 +188,7 @@ func BuildFilters(fs []model.KeyValueFilter, opts ...FilterParseOption) (*QueryC
 		return nil, nil
 	}
 
-	qc.Bool = &Bool{
+	qc.Bool = &BoolQuery{
 		Must:    must,
 		MustNot: mustNot,
 	}
@@ -123,7 +197,7 @@ func BuildFilters(fs []model.KeyValueFilter, opts ...FilterParseOption) (*QueryC
 }
 
 func createEqualsFilter(f model.KeyValueFilter) (*QueryContainer, error) {
-	m := MatchPhraseType{}
+	m := MatchPhrase{}
 
 	m[string(f.Key)] = fmt.Sprintf("%+v", f.Value)
 
@@ -133,7 +207,7 @@ func createEqualsFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 }
 
 func createInFilter(f model.KeyValueFilter) (*QueryContainer, error) {
-	var shouldQueriesArray []MatchPhraseType
+	var shouldQueriesArray []MatchPhrase
 
 	jsVal, err := json.Marshal(f.Value)
 	if err != nil {
@@ -148,7 +222,7 @@ func createInFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 	}
 
 	for _, v := range sliceVal {
-		m := MatchPhraseType{}
+		m := MatchPhrase{}
 
 		m[string(f.Key)] = fmt.Sprintf("%+v", v)
 
@@ -164,7 +238,7 @@ func createInFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 	}
 
 	qc := QueryContainer{}
-	qc.Bool = &Bool{
+	qc.Bool = &BoolQuery{
 		Should: qcSlice,
 	}
 
@@ -174,9 +248,9 @@ func createInFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 func createContainsFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 	qc := QueryContainer{}
 
-	m := WildCardType{}
+	m := WildCard{}
 
-	m[string(f.Key)] = WildCard{
+	m[string(f.Key)] = WildCardQuery{
 		Value: (fmt.Sprintf("*%+v*", f.Value)),
 	}
 
@@ -187,7 +261,7 @@ func createContainsFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 
 func createExistsFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 	qc := QueryContainer{}
-	qc.Exists = &Exists{
+	qc.Exists = &ExistsQuery{
 		Field: string(f.Key),
 	}
 	return &qc, nil
@@ -196,7 +270,7 @@ func createExistsFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 func createRangeFilter(f model.KeyValueFilter) (*QueryContainer, error) { // also handle GTE / GT / LTE / LT
 	qc := QueryContainer{}
 
-	m := RangeType{}
+	m := Range{}
 
 	var fVal float64
 
@@ -227,7 +301,7 @@ func createRangeFilter(f model.KeyValueFilter) (*QueryContainer, error) { // als
 		return nil, fmt.Errorf("Could not parse RANGE filter value as float64: %+v", f.Value)
 	}
 
-	r := Range{}
+	r := RangeQuery{}
 
 	switch op := f.Operator; string(op) {
 	case spansquery.OPERATOR_GT:
@@ -246,7 +320,7 @@ func createRangeFilter(f model.KeyValueFilter) (*QueryContainer, error) { // als
 	return &qc, nil
 }
 
-func WithMilliSecTimestampAsNanoSec() FilterParseOption {
+func WithMilliSecTimestampAsNanoSecFilter() FilterParseOption {
 	return func(f *model.KeyValueFilter) {
 		if IsConvertedTimestamp(f.Key) {
 			switch castValue := f.Value.(type) {

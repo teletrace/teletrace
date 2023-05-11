@@ -16,42 +16,73 @@
 
 package dslquerycontroller
 
+type (
+	MatchPhrase map[string]any
+	WildCard    map[string]WildCardQuery
+	Range       map[string]RangeQuery
+)
+
 type Body struct {
-	Query *QueryContainer `json:"query,omitempty"`
+	Query        *QueryContainer                  `json:"query,omitempty"`
+	Aggregations map[string]AggregationsContainer `json:"aggregations,omitempty"`
 }
 
 type QueryContainer struct {
-	Bool        *Bool           `json:"bool,omitempty"`
-	Wildcard    WildCardType    `json:"wildcard,omitempty"`
-	Range       RangeType       `json:"range,omitempty"`
-	Exists      *Exists         `json:"exists,omitempty"`
-	MatchPhrase MatchPhraseType `json:"match_phrase,omitempty"`
+	Bool        *BoolQuery   `json:"bool,omitempty"`
+	Wildcard    WildCard     `json:"wildcard,omitempty"`
+	Range       Range        `json:"range,omitempty"`
+	Exists      *ExistsQuery `json:"exists,omitempty"`
+	MatchPhrase MatchPhrase  `json:"match_phrase,omitempty"`
 }
 
-type Bool struct {
+type BoolQuery struct {
 	Must    []QueryContainer `json:"must,omitempty"`
 	MustNot []QueryContainer `json:"must_not,omitempty"`
 	Should  []QueryContainer `json:"should,omitempty"`
 	Filter  []QueryContainer `json:"filter,omitempty"`
 }
 
-type WildCard struct {
+type WildCardQuery struct {
 	Value string `json:"value"`
 }
 
-type Range struct {
+type RangeQuery struct {
 	Gt  *float64 `json:"gt,omitempty"`
 	Gte *float64 `json:"gte,omitempty"`
 	Lt  *float64 `json:"lt,omitempty"`
 	Lte *float64 `json:"lte,omitempty"`
 }
 
-type Exists struct {
+type ExistsQuery struct {
 	Field string `json:"field"`
 }
 
-type (
-	MatchPhraseType map[string]any
-	WildCardType    map[string]WildCard
-	RangeType       map[string]Range
-)
+type AggregationsContainer struct {
+	Aggregations map[string]AggregationsContainer `json:"aggregations,omitempty"`
+	Min          *MinAggregation                  `json:"min,omitempty"`
+	Max          *MaxAggregation                  `json:"max,omitempty"`
+	Avg          *AverageAggregation              `json:"avg,omitempty"`
+	Percentiles  *PercentilesAggregation          `json:"percentiles,omitempty"`
+	Terms        *TermsAggregation                `json:"terms,omitempty"`
+}
+
+type PercentilesAggregation struct {
+	Field *string `json:"field,omitempty"`
+}
+
+type MinAggregation struct {
+	Field *string `json:"field,omitempty"`
+}
+
+type MaxAggregation struct {
+	Field *string `json:"field,omitempty"`
+}
+
+type AverageAggregation struct {
+	Field *string `json:"field,omitempty"`
+}
+
+type TermsAggregation struct {
+	Field *string `json:"field,omitempty"`
+	Size  *int    `json:"size",omitempty`
+}
