@@ -28,11 +28,34 @@ import (
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 )
 
+const TieBreakerField = "span.spanId.keyword"
+
 type FilterParseOption func(*model.KeyValueFilter)
 
-func buildSort(s []spansquery.Sort) ([]string, error) {
-	var sortSlice []string
-	return sortSlice, nil
+func buildSort(s []spansquery.Sort) []Sort {
+	DIRECTION := map[bool]string{true: "asc", false: "desc"}
+
+	var sorts []Sort
+	tieBreakerFound := false
+	for _, _s := range s {
+		if _s.Field == TieBreakerField {
+			tieBreakerFound = true
+		}
+		sorts = append(sorts, Sort{
+			string(_s.Field): {
+				Order: DIRECTION[_s.Ascending],
+			},
+		})
+	}
+	if !tieBreakerFound {
+		sorts = append(sorts, Sort{
+			TieBreakerField: {
+				Order: DIRECTION[true],
+			},
+		})
+	}
+
+	return sorts
 }
 
 func buildSetSystemIdBody(v string) (io.Reader, error) {
@@ -47,7 +70,7 @@ func buildSetSystemIdBody(v string) (io.Reader, error) {
 	return strings.NewReader(stringQuery), nil
 }
 
-func buildSearchBody(qc *QueryContainer, aggs map[string]AggregationsContainer) (io.Reader, error) {
+func buildSearchBody(qc *QueryContainer, aggs map[string]AggregationsContainer, sorts []Sort) (io.Reader, error) {
 	body := Body{}
 
 	if qc != nil {
@@ -55,6 +78,9 @@ func buildSearchBody(qc *QueryContainer, aggs map[string]AggregationsContainer) 
 	}
 	if len(aggs) != 0 {
 		body.Aggregations = aggs
+	}
+	if len(sorts) != 0 {
+		body.Sorts = sorts
 	}
 	jsQuery, err := json.Marshal(body)
 	if err != nil {
@@ -95,7 +121,7 @@ func buildTagsValuesAggs(tagsMappings []tagsquery.TagInfo) (map[string]Aggregati
 func BuildFiltersWithTimeFrame(fs []model.SearchFilter, tf *model.Timeframe, opts ...FilterParseOption) (*QueryContainer, error) {
 	timeframeFilters := CreateTimeframeFilters(tf)
 	filters := append(fs, timeframeFilters...)
-	return BuildFilters(filters)
+	return BuildFilters(filters, opts...)
 }
 
 func BuildFilters(fs []model.SearchFilter, opts ...FilterParseOption) (*QueryContainer, error) {

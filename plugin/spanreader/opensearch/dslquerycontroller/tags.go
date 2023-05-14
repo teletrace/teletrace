@@ -104,7 +104,7 @@ func (dc *dslQueryController) performGetTagsStatisticsRequest(
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	body, err := buildSearchBody(qc, aggs)
+	body, err := buildSearchBody(qc, aggs, nil)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
@@ -211,7 +211,7 @@ func (dc *dslQueryController) performGetTagsValuesRequest(
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	body, err := buildSearchBody(qc, aggs)
+	body, err := buildSearchBody(qc, aggs, nil)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}

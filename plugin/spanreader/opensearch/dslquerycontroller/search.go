@@ -59,23 +59,19 @@ func (dc *dslQueryController) performSearch(ctx context.Context, req spansquery.
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	body, err := buildSearchBody(qc, nil)
+	body, err := buildSearchBody(qc, nil, buildSort(req.Sort))
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
-	sort, err := buildSort(req.Sort)
-	if err != nil {
-		return nil, fmt.Errorf(errMsg, err)
-	}
-
-	res, err := dc.client.Search(
+	opts := []func(*opensearchapi.SearchRequest){
 		dc.client.Search.WithIndex(dc.idx),
 		dc.client.Search.WithContext(ctx),
 		dc.client.Search.WithSize(50),
-		dc.client.Search.WithSort(sort...),
 		dc.client.Search.WithBody(body),
-	)
+	}
+
+	res, err := dc.client.Search(opts...)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
 	}

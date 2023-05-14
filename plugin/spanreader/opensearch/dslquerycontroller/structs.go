@@ -20,11 +20,13 @@ type (
 	MatchPhrase map[string]any
 	WildCard    map[string]WildCardQuery
 	Range       map[string]RangeQuery
+	Sort        map[string]SortField
 )
 
 type Body struct {
 	Query        *QueryContainer                  `json:"query,omitempty"`
 	Aggregations map[string]AggregationsContainer `json:"aggregations,omitempty"`
+	Sorts        []Sort                           `json:"sort,omitempty"`
 }
 
 type QueryContainer struct {
@@ -84,5 +86,9 @@ type AverageAggregation struct {
 
 type TermsAggregation struct {
 	Field *string `json:"field,omitempty"`
-	Size  *int    `json:"size",omitempty`
+	Size  *int    `json:"size,omitempty"`
+}
+
+type SortField struct {
+	Order string `json:"order"`
 }
