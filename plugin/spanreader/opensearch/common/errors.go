@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package errors
+package common
 
 import (
 	"encoding/json"

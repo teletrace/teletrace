@@ -22,7 +22,7 @@ import (
 
 	"github.com/opensearch-project/opensearch-go/opensearchapi"
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
-	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/errors"
+	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/common"
 )
 
 func (dc *dslQueryController) Search(ctx context.Context, req spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
@@ -34,8 +34,8 @@ func (dc *dslQueryController) Search(ctx context.Context, req spansquery.SearchR
 	body, err := DecodeResponse(res)
 	if err != nil {
 		switch err := err.(type) {
-		case *errors.OpenSearchError:
-			if err.ErrorType == errors.IndexNotFoundError {
+		case *common.OpenSearchError:
+			if err.ErrorType == common.IndexNotFoundError {
 				return &spansquery.SearchResponse{}, nil
 			}
 		default:
@@ -43,7 +43,7 @@ func (dc *dslQueryController) Search(ctx context.Context, req spansquery.SearchR
 		}
 	}
 
-	searchResp, err := parseSpansResponse(body, withMiliSecTimestampAsNanoSec())
+	searchResp, err := common.ParseSpansResponse(body, common.WithMiliSecTimestampAsNanoSec())
 	if err != nil {
 		return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
 	}

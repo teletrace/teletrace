@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package dslquerycontroller
+package common
 
 import (
 	"encoding/json"
@@ -32,7 +32,7 @@ import (
 
 type SpanParseOption func(*internalspan.InternalSpan)
 
-func parseSpansResponse(body map[string]any, opts ...SpanParseOption) (*spansquery.SearchResponse, error) {
+func ParseSpansResponse(body map[string]any, opts ...SpanParseOption) (*spansquery.SearchResponse, error) {
 	var err error
 
 	hits := body["hits"].(map[string]any)["hits"].([]any)
@@ -54,7 +54,7 @@ func parseSpansResponse(body map[string]any, opts ...SpanParseOption) (*spansque
 	var metadata *spansquery.Metadata
 	if len(hits) > 0 {
 		metadata = &spansquery.Metadata{}
-		if err := extractNextToken(hits, metadata); err != nil {
+		if err := ExtractNextToken(hits, metadata); err != nil {
 			return nil, err
 		}
 	}
@@ -65,7 +65,7 @@ func parseSpansResponse(body map[string]any, opts ...SpanParseOption) (*spansque
 	}, nil
 }
 
-func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
+func ExtractNextToken(hits []any, metadata *spansquery.Metadata) error {
 	if lastHitSortData := hits[len(hits)-1].(map[string]any)["sort"]; lastHitSortData != nil {
 		lastHitSortData := lastHitSortData.([]any)
 		if len(lastHitSortData) == 0 {
@@ -85,7 +85,7 @@ func extractNextToken(hits []any, metadata *spansquery.Metadata) error {
 	return nil
 }
 
-func withMiliSecTimestampAsNanoSec() SpanParseOption {
+func WithMiliSecTimestampAsNanoSec() SpanParseOption {
 	return func(s *internalspan.InternalSpan) {
 		s.Span.StartTimeUnixNano = s.Span.StartTimeUnixNano * 1000 * 1000
 		s.Span.EndTimeUnixNano = s.Span.EndTimeUnixNano * 1000 * 1000
@@ -98,7 +98,7 @@ func withMiliSecTimestampAsNanoSec() SpanParseOption {
 	}
 }
 
-func parseGetTagsValuesResponseBody(
+func ParseGetTagsValuesResponseBody(
 	body map[string]any,
 ) (map[string]*tagsquery.TagValuesResponse, error) {
 	// To get an idea of how the response looks like, check the unit test at tags_controller_test.go
@@ -154,33 +154,8 @@ func parseGetTagsValuesResponseBody(
 	return result, nil
 }
 
-func parseTagStatisticsResponseBody(
-	body map[string]any, request tagsquery.TagStatisticsRequest, tag string, opts []TagStatisticParseOption,
-) (*tagsquery.TagStatisticsResponse, error) {
-	result := &tagsquery.TagStatisticsResponse{
-		Statistics: make(map[tagsquery.TagStatistic]float64),
-	}
-
-	if aggregations, ok := body["aggregations"].(map[string]any); ok {
-		for _, ds := range request.DesiredStatistics {
-			h := TagStatisticToHandler[ds]
-			if v, exists := h.GetValue(aggregations); exists {
-				result.Statistics[ds] = v
-			}
-		}
-	}
-
-	for k := range result.Statistics {
-		for _, opt := range opts {
-			opt(tag, result.Statistics, k)
-		}
-	}
-
-	return result, nil
-}
-
 // Remove keyword tags that are a duplication of an elasticsearch text field
-func removeDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
+func RemoveDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
 	tagsNamesToTypes := make(map[string]string, len(tags))
 	var tagsNames []string
 
@@ -214,6 +189,6 @@ func removeDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
 	return validTags
 }
 
-func parseSystemIdResponse(body map[string]any) string {
+func ParseSystemIdResponse(body map[string]any) string {
 	return body["_source"].(map[string]any)["value"].(string)
 }

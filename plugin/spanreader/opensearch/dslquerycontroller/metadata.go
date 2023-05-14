@@ -19,6 +19,7 @@ package dslquerycontroller
 import (
 	"context"
 	"fmt"
+	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/common"
 
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 )
@@ -38,7 +39,7 @@ func (dc *dslQueryController) GetSystemId(ctx context.Context) (*metadata.GetSys
 	if err != nil {
 		return nil, err
 	}
-	value := parseSystemIdResponse(body)
+	value := common.ParseSystemIdResponse(body)
 	return &metadata.GetSystemIdResponse{Value: value}, nil
 }
 
