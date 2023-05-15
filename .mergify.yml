@@ -27,7 +27,6 @@ pull_request_rules:
     actions:
       queue:
         name: default
-        priority: medium
 
   - name: automatic merge PRs with multiple reviewers approvals
     conditions:
@@ -37,7 +36,6 @@ pull_request_rules:
     actions:
       queue:
         name: default
-        priority: medium
 
   - name: warn on conflicts
     conditions:
