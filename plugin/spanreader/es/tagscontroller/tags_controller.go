@@ -328,6 +328,12 @@ func (r *tagsController) parseGetTagsValuesResponseBody(
 			for _, v := range aggregation["buckets"].([]any) {
 				bucket := v.(map[string]any)
 				value := bucket["key"]
+
+				// handle boolean fields
+				if kas, ok := bucket["key_as_string"]; ok {
+					value = kas
+				}
+
 				count := int(bucket["doc_count"].(float64))
 
 				if info, found := tagValueInfos[tag][value]; !found {
