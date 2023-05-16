@@ -110,7 +110,6 @@ func Test_ParseHistogramsResponse_ValidResponse(t *testing.T) {
 	body := make(map[string]any)
 	_ = json.NewDecoder(buffer).Decode(&body)
 
-	// Act
 	ac := aggsController{}
 	result, err := ac.parseHistogramsResponse(body, req, nil)
 	if err != nil {
