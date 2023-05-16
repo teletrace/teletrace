@@ -141,11 +141,11 @@ func (h *percentilesHandler) AddSubAggregation(
 
 	// Search for aggregation parameters
 	for _, p := range h.GetSupportedParameters() {
-		if param, ok := aggregation.AggregationParameters[p]; ok {
-			parameters[p] = param
-		} else {
+		param, ok := aggregation.AggregationParameters[p]
+		if !ok {
 			return fmt.Errorf("missing aggregation parameter: %s", p)
 		}
+		parameters[p] = param
 	}
 
 	// Convert the 'percentiles' parameter to a float64 array
