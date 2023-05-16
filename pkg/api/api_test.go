@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -271,6 +272,60 @@ func TestTagsStatistics(t *testing.T) {
 	assert.Equal(t, expectedMax, resBody.Statistics[tagsquery.MAX])
 	assert.Equal(t, expectedAverage, resBody.Statistics[tagsquery.AVG])
 	assert.Equal(t, expectedP99, resBody.Statistics[tagsquery.P99])
+}
+
+func TestHistograms(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	body := aggsquery.HistogramsRequest{
+		Timeframe: &model.Timeframe{
+			StartTime: 0,
+			EndTime:   0,
+		},
+		SearchFilters: []model.SearchFilter{
+			{
+				KeyValueFilter: &model.KeyValueFilter{
+					Key:      "span.status.code",
+					Operator: spansquery.OPERATOR_EQUALS,
+					Value:    "Error",
+				},
+			},
+		},
+		Interval:    600000,
+		IntervalKey: "span.startTimeUnixNano",
+		Aggregations: map[string]aggsquery.Aggregation{
+			"errors_distinct_count": {
+				Func: aggsquery.DISTINCT_COUNT,
+				Key:  "span.attributes.http.status_code",
+			},
+		},
+	}
+	jsonBody, _ := json.Marshal(&body)
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/histograms"), bytes.NewReader(jsonBody))
+	resRecorder := httptest.NewRecorder()
+	srMock, _ := spanreader.NewSpanReaderMock()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusOK, resRecorder.Code)
+
+	expectedBuckets := 3
+	expectedFirstSubBucketsLength := 2
+	var expectedFirstSubBucketCount = float64(76)
+	var expectedFirstSubBucketKey = float64(500)
+	expectedThirdSubBucketsLength := 0
+	var resBody *aggsquery.HistogramsResponse
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.NotNil(t, resBody)
+	assert.NotEmpty(t, resBody.Histograms)
+	assert.Equal(t, len(resBody.Histograms[0].Buckets), expectedBuckets)
+	assert.Equal(t, len(resBody.Histograms[0].Buckets[0].Data.([]any)), expectedFirstSubBucketsLength)
+	assert.Equal(t, resBody.Histograms[0].Buckets[0].Data.([]any)[0].(map[string]any)["count"], expectedFirstSubBucketCount)
+	assert.Equal(t, resBody.Histograms[0].Buckets[0].Data.([]any)[0].(map[string]any)["key"], expectedFirstSubBucketKey)
+	assert.Equal(t, len(resBody.Histograms[0].Buckets[2].Data.([]any)), expectedThirdSubBucketsLength)
 }
 
 func TestRootStaticRoute(t *testing.T) {

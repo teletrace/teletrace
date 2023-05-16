@@ -18,6 +18,7 @@ package mock
 
 import (
 	"context"
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
@@ -31,6 +32,48 @@ import (
 )
 
 type spanReader struct{}
+
+func (sr spanReader) GetHistograms(ctx context.Context, req aggsquery.HistogramsRequest) (*aggsquery.HistogramsResponse, error) {
+	return &aggsquery.HistogramsResponse{
+		Histograms: []aggsquery.Histogram{
+			{
+				HistogramLabel: "errors_distinct_count",
+				Buckets: []aggsquery.Bucket{
+					{
+						BucketKey: 1684222200000000000,
+						Data: []map[string]any{
+							{
+								"count": 76,
+								"key":   500,
+							},
+							{
+								"count": 35,
+								"key":   404,
+							},
+						},
+					},
+					{
+						BucketKey: 1684222800000000000,
+						Data: []map[string]any{
+							{
+								"count": 1,
+								"key":   403,
+							},
+							{
+								"count": 19,
+								"key":   308,
+							},
+						},
+					},
+					{
+						BucketKey: 1684223400000000000,
+						Data:      []map[string]any{},
+					},
+				},
+			},
+		},
+	}, nil
+}
 
 func (sr spanReader) Search(ctx context.Context, r spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
 	spans := []*internalspan.InternalSpan{spanformatutiltests.GenInternalSpan(nil, nil, nil)}
