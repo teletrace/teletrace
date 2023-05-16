@@ -52,6 +52,7 @@ func newTracesExporter(logger *zap.Logger, cfg *Config) (*sqliteTracesExporter, 
 		logger: logger,
 		db:     db,
 	}, nil
+
 }
 
 func (exporter *sqliteTracesExporter) Shutdown(ctx context.Context) error {

@@ -42,11 +42,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	rng       = rand.New(rand.NewSource(time.Now().UnixNano()))
-	counter   int
-	errorProb int = 5
-)
+var rng = rand.New(rand.NewSource(time.Now().UnixNano()))
+var counter int
+var errorProb int = 5
 
 // Initializes an OTLP exporter, and configures the corresponding trace and
 // metric providers.
@@ -152,6 +150,7 @@ func main() {
 			http.Error(w, "write operation failed.", http.StatusInternalServerError)
 			return
 		}
+
 	})
 
 	mux := http.NewServeMux()
