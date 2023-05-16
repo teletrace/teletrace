@@ -19,6 +19,8 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/opensearch-project/opensearch-go/opensearchapi"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
 	"strings"
 
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
@@ -83,19 +85,6 @@ func ExtractNextToken(hits []any, metadata *spansquery.Metadata) error {
 
 	}
 	return nil
-}
-
-func WithMiliSecTimestampAsNanoSec() SpanParseOption {
-	return func(s *internalspan.InternalSpan) {
-		s.Span.StartTimeUnixNano = s.Span.StartTimeUnixNano * 1000 * 1000
-		s.Span.EndTimeUnixNano = s.Span.EndTimeUnixNano * 1000 * 1000
-
-		for _, e := range s.Span.Events {
-			e.TimeUnixNano = e.TimeUnixNano * 1000 * 1000
-		}
-
-		s.ExternalFields.DurationNano = s.ExternalFields.DurationNano * 1000 * 1000
-	}
 }
 
 func ParseGetTagsValuesResponseBody(
@@ -191,4 +180,39 @@ func RemoveDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
 
 func ParseSystemIdResponse(body map[string]any) string {
 	return body["_source"].(map[string]any)["value"].(string)
+}
+
+func DecodeResponse(res *opensearchapi.Response) (map[string]any, error) {
+	// check errors
+	var err error
+	var body map[string]any
+	decoder := json.NewDecoder(res.Body)
+	decoder.UseNumber()
+	if err = decoder.Decode(&body); err != nil {
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
+	}
+
+	if res.StatusCode >= 400 {
+		esError, err := errors.ESErrorFromHttpResponse(res.Status(), body)
+		if err != nil {
+			return nil, err
+		}
+		return nil, esError
+	}
+	return body, nil
+}
+
+// opts
+
+func WithMiliSecTimestampAsNanoSec() SpanParseOption {
+	return func(s *internalspan.InternalSpan) {
+		s.Span.StartTimeUnixNano = s.Span.StartTimeUnixNano * 1000 * 1000
+		s.Span.EndTimeUnixNano = s.Span.EndTimeUnixNano * 1000 * 1000
+
+		for _, e := range s.Span.Events {
+			e.TimeUnixNano = e.TimeUnixNano * 1000 * 1000
+		}
+
+		s.ExternalFields.DurationNano = s.ExternalFields.DurationNano * 1000 * 1000
+	}
 }

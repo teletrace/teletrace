@@ -35,7 +35,7 @@ func (dc *dslQueryController) GetSystemId(ctx context.Context) (*metadata.GetSys
 	if res.StatusCode == 404 {
 		return nil, nil
 	}
-	body, err := DecodeResponse(res)
+	body, err := common.DecodeResponse(res)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (dc *dslQueryController) GetSystemId(ctx context.Context) (*metadata.GetSys
 }
 
 func (dc *dslQueryController) SetSystemId(ctx context.Context, req metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
-	reqBody, err := buildSetSystemIdBody(req.Value)
+	reqBody, err := BuildSetSystemIdBody(req.Value)
 	if err != nil {
 		return nil, fmt.Errorf("Could not set system id %+v", err)
 	}
@@ -60,7 +60,7 @@ func (dc *dslQueryController) SetSystemId(ctx context.Context, req metadata.SetS
 		return nil, fmt.Errorf("Could not set system id %+v", err)
 	}
 	defer res.Body.Close()
-	_, err = DecodeResponse(res)
+	_, err = common.DecodeResponse(res)
 	if err != nil {
 		return nil, err
 	}

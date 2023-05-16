@@ -23,6 +23,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/common"
+
 	"github.com/teletrace/teletrace/pkg/model"
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
@@ -30,9 +32,12 @@ import (
 
 const TieBreakerField = "span.spanId.keyword"
 
-type FilterParseOption func(*model.KeyValueFilter)
+type (
+	FilterBuildOption     func(*model.KeyValueFilter)
+	SearchBodyBuildOption func(Body) Body
+)
 
-func buildSort(s []spansquery.Sort) []Sort {
+func BuildSort(s []spansquery.Sort) []Sort {
 	DIRECTION := map[bool]string{true: "asc", false: "desc"}
 
 	var sorts []Sort
@@ -58,7 +63,18 @@ func buildSort(s []spansquery.Sort) []Sort {
 	return sorts
 }
 
-func buildSetSystemIdBody(v string) (io.Reader, error) {
+func BuildSearchAfter(st spansquery.ContinuationToken) (SearchAfter, error) {
+	var sortKeys SearchAfter
+	if st == "" {
+		return sortKeys, nil
+	}
+	if err := json.Unmarshal([]byte(st), &sortKeys); err != nil {
+		return nil, err
+	}
+	return sortKeys, nil
+}
+
+func BuildSetSystemIdBody(v string) (io.Reader, error) {
 	body := map[string]string{
 		"value": v,
 	}
@@ -70,30 +86,10 @@ func buildSetSystemIdBody(v string) (io.Reader, error) {
 	return strings.NewReader(stringQuery), nil
 }
 
-func buildSearchBody(qc *QueryContainer, aggs map[string]AggregationsContainer, sorts []Sort) (io.Reader, error) {
-	body := Body{}
-
-	if qc != nil {
-		body.Query = qc
-	}
-	if len(aggs) != 0 {
-		body.Aggregations = aggs
-	}
-	if len(sorts) != 0 {
-		body.Sorts = sorts
-	}
-	jsQuery, err := json.Marshal(body)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to marshal query to json: %+v", err)
-	}
-	stringQuery := string(jsQuery)
-	return strings.NewReader(stringQuery), nil
-}
-
-func buildTagsStatisticsAggs(stats []tagsquery.TagStatistic, tag string) (map[string]AggregationsContainer, error) {
+func BuildTagsStatisticsAggs(s []tagsquery.TagStatistic, tag string) (map[string]AggregationsContainer, error) {
 	aggs := make(map[string]AggregationsContainer)
 
-	for _, d := range stats {
+	for _, d := range s {
 		h := TagStatisticToHandler[d]
 		h.AddAggregationContainerBuilder(tag, aggs)
 	}
@@ -101,9 +97,9 @@ func buildTagsStatisticsAggs(stats []tagsquery.TagStatistic, tag string) (map[st
 	return aggs, nil
 }
 
-func buildTagsValuesAggs(tagsMappings []tagsquery.TagInfo) (map[string]AggregationsContainer, error) {
-	aggs := make(map[string]AggregationsContainer, len(tagsMappings))
-	for _, mapping := range tagsMappings {
+func BuildTagsValuesAggs(t []tagsquery.TagInfo) (map[string]AggregationsContainer, error) {
+	aggs := make(map[string]AggregationsContainer, len(t))
+	for _, mapping := range t {
 		aggregationKey := mapping.Name
 		aggregationField := aggregationKey
 		if mapping.Type == "Str" {
@@ -111,20 +107,43 @@ func buildTagsValuesAggs(tagsMappings []tagsquery.TagInfo) (map[string]Aggregati
 		}
 		aggs[aggregationKey] = AggregationsContainer{
 			Terms: &TermsAggregation{
-				Field: &aggregationField,
+				Field: aggregationField,
+				Size:  100,
 			},
 		}
 	}
 	return aggs, nil
 }
 
-func BuildFiltersWithTimeFrame(fs []model.SearchFilter, tf *model.Timeframe, opts ...FilterParseOption) (*QueryContainer, error) {
-	timeframeFilters := CreateTimeframeFilters(tf)
+func BuildTimeframeFilters(tf *model.Timeframe) []model.SearchFilter {
+	if tf == nil {
+		return []model.SearchFilter{}
+	}
+	return []model.SearchFilter{
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.startTimeUnixNano",
+				Operator: spansquery.OPERATOR_GTE,
+				Value:    tf.StartTime,
+			},
+		},
+		{
+			KeyValueFilter: &model.KeyValueFilter{
+				Key:      "span.endTimeUnixNano",
+				Operator: spansquery.OPERATOR_LTE,
+				Value:    tf.EndTime,
+			},
+		},
+	}
+}
+
+func BuildFiltersWithTimeFrame(fs []model.SearchFilter, tf *model.Timeframe, opts ...FilterBuildOption) (*QueryContainer, error) {
+	timeframeFilters := BuildTimeframeFilters(tf)
 	filters := append(fs, timeframeFilters...)
 	return BuildFilters(filters, opts...)
 }
 
-func BuildFilters(fs []model.SearchFilter, opts ...FilterParseOption) (*QueryContainer, error) {
+func BuildFilters(fs []model.SearchFilter, opts ...FilterBuildOption) (*QueryContainer, error) {
 	type filterCreator func(model.KeyValueFilter) (*QueryContainer, error)
 
 	type Filter struct {
@@ -346,15 +365,84 @@ func createRangeFilter(f model.KeyValueFilter) (*QueryContainer, error) { // als
 	return &qc, nil
 }
 
-func WithMilliSecTimestampAsNanoSecFilter() FilterParseOption {
+// opts
+func WithMilliSecTimestampAsNanoSecFilter() FilterBuildOption {
 	return func(f *model.KeyValueFilter) {
-		if IsConvertedTimestamp(f.Key) {
+		if common.IsConvertedTimestamp(f.Key) {
 			switch castValue := f.Value.(type) {
 			case float64:
-				f.Value = NanoToMilliFloat64(castValue)
+				f.Value = common.NanoToMilliFloat64(castValue)
 			case uint64:
-				f.Value = NanoToMilliUint64(castValue)
+				f.Value = common.NanoToMilliUint64(castValue)
 			}
 		}
 	}
+}
+
+func WithQuery(qc *QueryContainer) SearchBodyBuildOption {
+	return func(b Body) Body {
+		if qc == nil {
+			return b
+		}
+		b.Query = qc
+		return b
+	}
+}
+
+func WithAggregations(aggs map[string]AggregationsContainer) SearchBodyBuildOption {
+	return func(b Body) Body {
+		if len(aggs) == 0 {
+			return b
+		}
+		b.Aggregations = aggs
+		return b
+	}
+}
+
+func WithSort(s []Sort) SearchBodyBuildOption {
+	return func(b Body) Body {
+		if len(s) == 0 {
+			return b
+		}
+		b.Sorts = s
+		return b
+	}
+}
+
+func WithSize(s int) SearchBodyBuildOption {
+	return func(b Body) Body {
+		b.Size = s
+		return b
+	}
+}
+
+func WithSearchAfter(s SearchAfter) SearchBodyBuildOption {
+	return func(b Body) Body {
+		if len(s) == 0 {
+			return b
+		}
+		b.SearchAfter = s
+		return b
+	}
+}
+
+// build query
+func BuildQueryBody(opts ...SearchBodyBuildOption) Body {
+	body := Body{}
+
+	for _, opt := range opts {
+		body = opt(body)
+	}
+
+	return body
+}
+
+func MarshalBody(b Body) (io.Reader, error) {
+	jsQuery, err := json.Marshal(b)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to marshal query to json: %+v", err)
+	}
+	stringQuery := string(jsQuery)
+
+	return strings.NewReader(stringQuery), nil
 }
