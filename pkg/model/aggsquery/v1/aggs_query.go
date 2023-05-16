@@ -38,11 +38,14 @@ const (
 	PERCENTILES    AggregationFunction = "PERCENTILES"
 )
 
+type AggregationParameters map[string]any
+
 type Aggregation struct {
-	Func      AggregationFunction `json:"func"`
-	GroupBy   string              `json:"groupBy,omitempty"`
-	MaxGroups int                 `json:"maxGroups,omitempty"`
-	Key       string              `json:"key,omitempty"`
+	Func                  AggregationFunction   `json:"func"`
+	GroupBy               string                `json:"groupBy,omitempty"`
+	MaxGroups             int                   `json:"maxGroups,omitempty"`
+	Key                   string                `json:"key,omitempty"`
+	AggregationParameters AggregationParameters `json:"aggregationParameters,omitempty"`
 }
 
 type HistogramsResponse struct {

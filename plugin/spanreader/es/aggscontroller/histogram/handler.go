@@ -17,13 +17,13 @@
 package histogram
 
 import (
+	"fmt"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 )
 
 const SpanIdKey = "span.spanId.keyword"
-
-var DesiredPercentiles = []float64{50, 75, 90, 95, 99}
+const PercentilesParameter = "percentiles"
 
 var AggregationFunctionToHandler = map[aggsquery.AggregationFunction]Handler{
 	aggsquery.COUNT:          &countHandler{},
@@ -32,15 +32,16 @@ var AggregationFunctionToHandler = map[aggsquery.AggregationFunction]Handler{
 }
 
 type Handler interface {
-	AddSubAggregation(label string, aggregation aggsquery.Aggregation, aggs *types.AggregationContainerBuilder)
+	AddSubAggregation(label string, aggregation aggsquery.Aggregation, aggs *types.AggregationContainerBuilder) error
 	GetHistogram(aggs map[string]any, label string) aggsquery.Histogram
+	GetSupportedParameters() []string
 }
 
 type countHandler struct{}
 
 func (h *countHandler) AddSubAggregation(
 	label string, _ aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
-) {
+) error {
 	valueCountAgg := types.NewAggregationContainerBuilder().ValueCount(
 		types.NewValueCountAggregationBuilder().Field(SpanIdKey),
 	)
@@ -48,6 +49,8 @@ func (h *countHandler) AddSubAggregation(
 	histogramAgg.Aggregations(
 		map[string]*types.AggregationContainerBuilder{label: valueCountAgg},
 	)
+
+	return nil
 }
 
 func (h *countHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
@@ -71,11 +74,15 @@ func (h *countHandler) GetHistogram(aggs map[string]any, label string) aggsquery
 	}
 }
 
+func (h *countHandler) GetSupportedParameters() []string {
+	return []string{}
+}
+
 type distinctCountHandler struct{}
 
 func (h *distinctCountHandler) AddSubAggregation(
 	label string, aggregation aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
-) {
+) error {
 	termsAgg := types.NewAggregationContainerBuilder().Terms(
 		types.NewTermsAggregationBuilder().Field(types.Field(aggregation.GroupBy)),
 	)
@@ -83,6 +90,8 @@ func (h *distinctCountHandler) AddSubAggregation(
 	histogramAgg.Aggregations(
 		map[string]*types.AggregationContainerBuilder{label: termsAgg},
 	)
+
+	return nil
 }
 
 func (h *distinctCountHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
@@ -119,20 +128,46 @@ func (h *distinctCountHandler) GetHistogram(aggs map[string]any, label string) a
 	}
 }
 
+func (h *distinctCountHandler) GetSupportedParameters() []string {
+	return []string{}
+}
+
 type percentilesHandler struct{}
 
 func (h *percentilesHandler) AddSubAggregation(
 	label string, aggregation aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
-) {
+) error {
+	parameters := map[string]any{}
+
+	// Search for aggregation parameters
+	for _, p := range h.GetSupportedParameters() {
+		if param, ok := aggregation.AggregationParameters[p]; ok {
+			parameters[p] = param
+		}
+	}
+
+	// Convert the 'percentiles' parameter to a float64 array
+	percentiles := parameters[PercentilesParameter].([]any)
+	percentilesFloat64 := make([]float64, len(percentiles))
+	for i, val := range percentiles {
+		floatVal, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("cannot convert '%v' to float64", val)
+		}
+		percentilesFloat64[i] = floatVal
+	}
+
 	percentilesAgg := types.NewAggregationContainerBuilder().Percentiles(
 		types.NewPercentilesAggregationBuilder().Field(types.Field(aggregation.Key)).Percents(
-			DesiredPercentiles...,
+			percentilesFloat64...,
 		),
 	)
 
 	histogramAgg.Aggregations(
 		map[string]*types.AggregationContainerBuilder{label: percentilesAgg},
 	)
+
+	return nil
 }
 
 func (h *percentilesHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
@@ -157,6 +192,10 @@ func (h *percentilesHandler) GetHistogram(aggs map[string]any, label string) agg
 		HistogramLabel: label,
 		Buckets:        buckets,
 	}
+}
+
+func (h *percentilesHandler) GetSupportedParameters() []string {
+	return []string{PercentilesParameter}
 }
 
 func getResultBuckets(aggs map[string]any, label string) []any {
