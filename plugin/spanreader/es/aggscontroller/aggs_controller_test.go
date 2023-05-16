@@ -103,7 +103,7 @@ func Test_ParseHistogramsResponse_ValidResponse(t *testing.T) {
 			"latency_percentiles": {
 				Func: aggsquery.PERCENTILES,
 				Key:  "externalFields.durationNano",
-				AggregationParameters: map[string]any{
+				AggregationParameters: map[aggsquery.AggregationParameter]any{
 					"percentiles": []any{50, 75, 90, 95, 99},
 				},
 			},

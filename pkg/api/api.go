@@ -135,5 +135,6 @@ func (api *API) validateRequestBody(req model.Request, c *gin.Context) bool {
 		respondWithError(http.StatusBadRequest, validationError, c)
 		return true
 	}
+
 	return false
 }

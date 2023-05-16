@@ -38,14 +38,24 @@ const (
 	PERCENTILES    AggregationFunction = "PERCENTILES"
 )
 
-type AggregationParameters map[string]any
+type AggregationParameter string
+
+const (
+	PERCENTILES_PARAM AggregationParameter = "percentiles"
+)
 
 type Aggregation struct {
-	Func                  AggregationFunction   `json:"func"`
-	GroupBy               string                `json:"groupBy,omitempty"`
-	MaxGroups             int                   `json:"maxGroups,omitempty"`
-	Key                   string                `json:"key,omitempty"`
-	AggregationParameters AggregationParameters `json:"aggregationParameters,omitempty"`
+	Func                  AggregationFunction          `json:"func"`
+	GroupBy               string                       `json:"groupBy,omitempty"`
+	MaxGroups             int                          `json:"maxGroups,omitempty"`
+	Key                   string                       `json:"key,omitempty"`
+	AggregationParameters map[AggregationParameter]any `json:"aggregationParameters,omitempty"`
+}
+
+var AggregationFuncToSupportedParameters = map[AggregationFunction][]AggregationParameter{
+	COUNT:          {},
+	DISTINCT_COUNT: {},
+	PERCENTILES:    {PERCENTILES_PARAM},
 }
 
 type HistogramsResponse struct {
@@ -65,6 +75,16 @@ type Histogram struct {
 func (sr *HistogramsRequest) Validate() error {
 	if (sr.Timeframe.EndTime < sr.Timeframe.StartTime) && (sr.Timeframe.EndTime != 0) {
 		return fmt.Errorf("endTime cannot be smaller than startTime")
+	}
+
+	// Search for aggregation parameters
+	for _, agg := range sr.Aggregations {
+		for _, p := range AggregationFuncToSupportedParameters[agg.Func] {
+			_, ok := agg.AggregationParameters[p]
+			if !ok {
+				return fmt.Errorf("missing aggregation parameter: %s", p)
+			}
+		}
 	}
 
 	return nil

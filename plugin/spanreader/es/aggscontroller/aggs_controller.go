@@ -95,7 +95,9 @@ func buildHistogramsRequest(req aggsquery.HistogramsRequest) (*search.Request, e
 		aggregations[label] = histogramAgg
 
 		// Add a sub aggregation
-		handler.AddSubAggregation(label, agg, histogramAgg)
+		if err := handler.AddSubAggregation(label, agg, histogramAgg); err != nil {
+			return nil, fmt.Errorf("an error occurred while building aggregations: %+v", err)
+		}
 	}
 
 	request := builder.Aggregations(aggregations).Build()

@@ -18,12 +18,12 @@ package histogram
 
 import (
 	"fmt"
+
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 )
 
 const SpanIdKey = "span.spanId.keyword"
-const PercentilesParameter = "percentiles"
 
 var AggregationFunctionToHandler = map[aggsquery.AggregationFunction]Handler{
 	aggsquery.COUNT:          &countHandler{},
@@ -34,7 +34,6 @@ var AggregationFunctionToHandler = map[aggsquery.AggregationFunction]Handler{
 type Handler interface {
 	AddSubAggregation(label string, aggregation aggsquery.Aggregation, aggs *types.AggregationContainerBuilder) error
 	GetHistogram(aggs map[string]any, label string) aggsquery.Histogram
-	GetSupportedParameters() []string
 }
 
 type countHandler struct{}
@@ -72,10 +71,6 @@ func (h *countHandler) GetHistogram(aggs map[string]any, label string) aggsquery
 		HistogramLabel: label,
 		Buckets:        buckets,
 	}
-}
-
-func (h *countHandler) GetSupportedParameters() []string {
-	return []string{}
 }
 
 type distinctCountHandler struct{}
@@ -128,28 +123,14 @@ func (h *distinctCountHandler) GetHistogram(aggs map[string]any, label string) a
 	}
 }
 
-func (h *distinctCountHandler) GetSupportedParameters() []string {
-	return []string{}
-}
-
 type percentilesHandler struct{}
 
 func (h *percentilesHandler) AddSubAggregation(
 	label string, aggregation aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
 ) error {
-	parameters := map[string]any{}
-
-	// Search for aggregation parameters
-	for _, p := range h.GetSupportedParameters() {
-		param, ok := aggregation.AggregationParameters[p]
-		if !ok {
-			return fmt.Errorf("missing aggregation parameter: %s", p)
-		}
-		parameters[p] = param
-	}
+	percentiles := aggregation.AggregationParameters[aggsquery.PERCENTILES_PARAM].([]any)
 
 	// Convert the 'percentiles' parameter to a float64 array
-	percentiles := parameters[PercentilesParameter].([]any)
 	percentilesFloat64 := make([]float64, len(percentiles))
 	for i, val := range percentiles {
 		floatVal, ok := val.(float64)
@@ -194,10 +175,6 @@ func (h *percentilesHandler) GetHistogram(aggs map[string]any, label string) agg
 		HistogramLabel: label,
 		Buckets:        buckets,
 	}
-}
-
-func (h *percentilesHandler) GetSupportedParameters() []string {
-	return []string{PercentilesParameter}
 }
 
 func getResultBuckets(aggs map[string]any, label string) []any {
