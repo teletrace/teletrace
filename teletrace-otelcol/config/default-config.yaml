@@ -8,10 +8,8 @@ processors:
   batch:
 
 exporters:
-  #elasticsearch:
-  #  endpoints: ["http://localhost:9200"]
-  opensearch:
-    endpoints: ["http://localhost:9201"]
+  elasticsearch:
+    endpoints: ["http://localhost:9200"]
 
 service:
   pipelines:

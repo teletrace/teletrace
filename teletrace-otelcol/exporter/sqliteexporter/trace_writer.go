@@ -62,7 +62,8 @@ func (exporter *sqliteTracesExporter) writeTraces(traces ptrace.Traces) error {
 }
 
 func (exporter *sqliteTracesExporter) writeResourceSpans(
-	resourceSpans ptrace.ResourceSpans, tx *sql.Tx, resourceAttributesIds map[string]string, err error) error {
+	resourceSpans ptrace.ResourceSpans, tx *sql.Tx, resourceAttributesIds map[string]string, err error,
+) error {
 	droppedResourceAttributesCount := resourceSpans.Resource().DroppedAttributesCount()
 	if err := exporter.writeAttributes(tx, resourceSpans.Resource().Attributes(), Resource, resourceAttributesIds); err != nil {
 		return err
@@ -79,7 +80,8 @@ func (exporter *sqliteTracesExporter) writeResourceSpans(
 }
 
 func (exporter *sqliteTracesExporter) writeScope(
-	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string) error {
+	scopeSpans ptrace.ScopeSpans, tx *sql.Tx, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string,
+) error {
 	scope := scopeSpans.Scope()
 	scopeId, err := insertScope(tx, scope)
 	if err != nil || scopeId == 0 {
@@ -103,7 +105,8 @@ func (exporter *sqliteTracesExporter) writeScope(
 }
 
 func (exporter *sqliteTracesExporter) writeSpanEvents(
-	tx *sql.Tx, span ptrace.Span, spanId string) error {
+	tx *sql.Tx, span ptrace.Span, spanId string,
+) error {
 	spanEventSlice := span.Events()
 	if spanEventSlice.Len() > 0 {
 		for i := 0; i < spanEventSlice.Len(); i++ {
@@ -132,7 +135,8 @@ func (exporter *sqliteTracesExporter) writeSpanEvents(
 }
 
 func (exporter *sqliteTracesExporter) writeSpanLinks(
-	tx *sql.Tx, span ptrace.Span, spanId string) error {
+	tx *sql.Tx, span ptrace.Span, spanId string,
+) error {
 	spanLinkSlice := span.Links()
 	if spanLinkSlice.Len() > 0 {
 		for i := 0; i < spanLinkSlice.Len(); i++ {
@@ -161,7 +165,8 @@ func (exporter *sqliteTracesExporter) writeSpanLinks(
 }
 
 func (exporter *sqliteTracesExporter) writeSpan(
-	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string, scopeId int64) error {
+	tx *sql.Tx, span ptrace.Span, droppedResourceAttributesCount uint32, resourceAttributesIds map[string]string, scopeId int64,
+) error {
 	spanId := span.SpanID().HexString()
 	if err := insertSpan(tx, span, spanId, droppedResourceAttributesCount, resourceAttributesIds, scopeId); err != nil {
 		exporter.logger.Error("could not insert span", zap.NamedError("reason", err))
@@ -184,8 +189,8 @@ func (exporter *sqliteTracesExporter) writeSpan(
 }
 
 func (exporter *sqliteTracesExporter) writeAttributes(
-	tx *sql.Tx, attributes pcommon.Map, attributeKind AttributeKind, id any) error {
-
+	tx *sql.Tx, attributes pcommon.Map, attributeKind AttributeKind, id any,
+) error {
 	var resourceAttributesIds map[string]string
 	if attributeKind == Resource {
 		resourceAttributesIds, _ = id.(map[string]string)
@@ -219,7 +224,6 @@ func (exporter *sqliteTracesExporter) writeAttributes(
 }
 
 func hashResourceAttribute(key string, value pcommon.Value, valueType string) string {
-
 	hash := md5.New()
 	hash.Write([]byte(value.AsString() + key + valueType))
 	src := hash.Sum(nil)
@@ -230,7 +234,6 @@ func hashResourceAttribute(key string, value pcommon.Value, valueType string) st
 
 // Return map of keys and associated hash values
 func hashAttributes(attributes pcommon.Map) (map[string]string, error) {
-
 	resourceHashedIds := make(map[string]string)
 	for key := range attributes.AsRaw() {
 

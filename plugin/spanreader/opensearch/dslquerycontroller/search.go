@@ -17,75 +17,75 @@
 package dslquerycontroller
 
 import (
-    "context"
-    "fmt"
+	"context"
+	"fmt"
 
-    "github.com/opensearch-project/opensearch-go/opensearchapi"
-    spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
-    "github.com/teletrace/teletrace/plugin/spanreader/opensearch/common"
+	"github.com/opensearch-project/opensearch-go/opensearchapi"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/common"
 )
 
 func (dc *dslQueryController) Search(ctx context.Context, req spansquery.SearchRequest) (*spansquery.SearchResponse, error) {
-    res, err := dc.performSearch(ctx, req)
-    if err != nil {
-        return nil, fmt.Errorf("Could not search spans: %+v", err)
-    }
+	res, err := dc.performSearch(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("could not search spans: %+v", err)
+	}
 
-    body, err := common.DecodeResponse(res)
-    if err != nil {
-        switch err := err.(type) {
-        case *common.OpenSearchError:
-            if err.ErrorType == common.IndexNotFoundError {
-                return &spansquery.SearchResponse{}, nil
-            }
-        default:
-            return nil, fmt.Errorf("could not search spans: %+v", err)
-        }
-    }
+	body, err := common.DecodeResponse(res)
+	if err != nil {
+		switch err := err.(type) {
+		case *common.OpenSearchError:
+			if err.ErrorType == common.IndexNotFoundError {
+				return &spansquery.SearchResponse{}, nil
+			}
+		default:
+			return nil, fmt.Errorf("could not search spans: %+v", err)
+		}
+	}
 
-    searchResp, err := common.ParseSpansResponse(body, common.WithMiliSecTimestampAsNanoSec())
-    if err != nil {
-        return nil, fmt.Errorf("Could not parse response body to spans: %+v", err)
-    }
+	searchResp, err := common.ParseSpansResponse(body, common.WithMiliSecTimestampAsNanoSec())
+	if err != nil {
+		return nil, fmt.Errorf("could not parse response body to spans: %+v", err)
+	}
 
-    return searchResp, nil
+	return searchResp, nil
 }
 
 func (dc *dslQueryController) performSearch(ctx context.Context, req spansquery.SearchRequest) (*opensearchapi.Response, error) {
-    errMsg := "Could not build search request: %+v"
+	errMsg := "could not build search request: %+v"
 
-    qc, err := BuildFiltersWithTimeFrame(req.SearchFilters, &req.Timeframe, WithMilliSecTimestampAsNanoSecFilter())
-    if err != nil {
-        return nil, fmt.Errorf(errMsg, err)
-    }
+	qc, err := BuildFiltersWithTimeFrame(req.SearchFilters, &req.Timeframe, WithMilliSecTimestampAsNanoSecFilter())
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
 
-    sa, err := BuildSearchAfter(req.Metadata.NextToken)
-    if err != nil {
-        return nil, fmt.Errorf(errMsg, err)
-    }
+	sa, err := BuildSearchAfter(req.Metadata.NextToken)
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
 
-    body, err := MarshalBody(
-        BuildQueryBody(
-            WithQuery(qc),
-            WithSort(BuildSort(req.Sort)),
-            WithSearchAfter(sa),
-            WithSize(50),
-        ),
-    )
-    if err != nil {
-        return nil, fmt.Errorf(errMsg, err)
-    }
+	body, err := MarshalBody(
+		BuildQueryBody(
+			WithQuery(qc),
+			WithSort(BuildSort(req.Sort)),
+			WithSearchAfter(sa),
+			WithSize(50),
+		),
+	)
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
 
-    opts := []func(*opensearchapi.SearchRequest){
-        dc.client.Search.WithIndex(dc.idx),
-        dc.client.Search.WithContext(ctx),
-        dc.client.Search.WithBody(body),
-    }
+	opts := []func(*opensearchapi.SearchRequest){
+		dc.client.Search.WithIndex(dc.idx),
+		dc.client.Search.WithContext(ctx),
+		dc.client.Search.WithBody(body),
+	}
 
-    res, err := dc.client.Search(opts...)
-    if err != nil {
-        return nil, fmt.Errorf(errMsg, err)
-    }
+	res, err := dc.client.Search(opts...)
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
 
-    return res, nil
+	return res, nil
 }

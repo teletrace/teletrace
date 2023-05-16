@@ -19,9 +19,10 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/opensearch-project/opensearch-go/opensearchapi"
 	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
-	"strings"
 
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
@@ -48,7 +49,7 @@ func ParseSpansResponse(body map[string]any, opts ...SpanParseOption) (*spansque
 			opt(&s)
 		}
 		if err != nil {
-			return nil, fmt.Errorf("Could not decode response hit from elasticsearch: %+v", err)
+			return nil, fmt.Errorf("could not decode response hit from opensearch: %+v", err)
 		}
 		spans = append(spans, &s)
 	}
@@ -143,7 +144,7 @@ func ParseGetTagsValuesResponseBody(
 	return result, nil
 }
 
-// Remove keyword tags that are a duplication of an elasticsearch text field
+// Remove keyword tags that are a duplication of an opensearch text field
 func RemoveDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
 	tagsNamesToTypes := make(map[string]string, len(tags))
 	var tagsNames []string
@@ -163,7 +164,7 @@ func RemoveDuplicatedTextTags(tags []tagsquery.TagInfo) []tagsquery.TagInfo {
 			if strings.HasSuffix(tag.Name, ".keyword") {
 				strippedName := tag.Name[:len(tag.Name)-len(".keyword")]
 				// If there exists a duplication for the same tag, as text and as keyword
-				// This happens then the index is using the default elasticsearch mapping.
+				// This happens then the index is using the default opensearch mapping.
 				if !(slices.Contains(tagsNames, strippedName) && (tagsNamesToTypes[strippedName] == pcommon.ValueTypeStr.String())) {
 					validTags = append(validTags, tag)
 				}
@@ -193,7 +194,7 @@ func DecodeResponse(res *opensearchapi.Response) (map[string]any, error) {
 	}
 
 	if res.StatusCode >= 400 {
-		esError, err := errors.ESErrorFromHttpResponse(res.Status(), body)
+		esError, err := errors.OSErrorFromHttpResponse(res.Status(), body)
 		if err != nil {
 			return nil, err
 		}

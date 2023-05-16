@@ -34,7 +34,7 @@ const (
 	apiPortDefault = 8080
 
 	spansStoragePluginEnvName = "SPANS_STORAGE_PLUGIN"
-	spansStoragePluginDefault = "opensearch"
+	spansStoragePluginDefault = "elasticsearch"
 
 	esEndpointEnvName = "ES_ENDPOINT"
 	esEndpointDefault = "http://0.0.0.0:9200"

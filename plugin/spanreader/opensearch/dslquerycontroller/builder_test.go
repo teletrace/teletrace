@@ -19,10 +19,11 @@ package dslquerycontroller
 import (
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/teletrace/teletrace/pkg/model"
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -244,7 +245,8 @@ func TestBuildSort(t *testing.T) {
 			"resource.attributes.service.name": {Order: "desc"},
 		},
 		map[string]SortField{
-			TieBreakerField: {Order: "asc"}},
+			TieBreakerField: {Order: "asc"},
+		},
 	})
 }
 
@@ -527,7 +529,6 @@ func TestBuildQueryBody_TagsValuesRequest(t *testing.T) {
 	actualReq := getTagsValuesOpenSearchReq()
 
 	assert.JSONEq(t, string(jsReq), actualReq)
-
 }
 
 func TestBuildQueryBody_TagsStatisticsRequest(t *testing.T) {
@@ -552,5 +553,4 @@ func TestBuildQueryBody_TagsStatisticsRequest(t *testing.T) {
 	actualReq := getTagsStatisticsOpenSearchReq()
 
 	assert.JSONEq(t, string(jsReq), actualReq)
-
 }

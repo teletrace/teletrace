@@ -80,7 +80,7 @@ func BuildSetSystemIdBody(v string) (io.Reader, error) {
 	}
 	jsQuery, err := json.Marshal(body)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to marshal query to json: %+v", err)
+		return nil, fmt.Errorf("failed to marshal query to json: %+v", err)
 	}
 	stringQuery := string(jsQuery)
 	return strings.NewReader(stringQuery), nil
@@ -217,7 +217,7 @@ func BuildFilters(fs []model.SearchFilter, opts ...FilterBuildOption) (*QueryCon
 			filter := m[string(kvf.Operator)]
 			qc, err := filter.Builder(*kvf)
 			if err != nil {
-				return nil, fmt.Errorf("Could not create filter from: %+v: %+v", f, err)
+				return nil, fmt.Errorf("could not create filter from: %+v: %+v", f, err)
 			}
 
 			if filter.Must {
@@ -256,14 +256,14 @@ func createInFilter(f model.KeyValueFilter) (*QueryContainer, error) {
 
 	jsVal, err := json.Marshal(f.Value)
 	if err != nil {
-		return nil, fmt.Errorf("Could not parse IN filter value: %+v", err)
+		return nil, fmt.Errorf("could not parse IN filter value: %+v", err)
 	}
 
 	sliceVal := []any{}
 	err = json.Unmarshal(jsVal, &sliceVal)
 
 	if err != nil {
-		return nil, fmt.Errorf("Could not parse IN filter value as array: %+v", err)
+		return nil, fmt.Errorf("could not parse IN filter value as array: %+v", err)
 	}
 
 	for _, v := range sliceVal {
@@ -340,10 +340,10 @@ func createRangeFilter(f model.KeyValueFilter) (*QueryContainer, error) { // als
 		var err error
 		fVal, err = strconv.ParseFloat(castValue, 64)
 		if err != nil {
-			return nil, fmt.Errorf("Could not parse RANGE filter value as float64: %+v", f.Value)
+			return nil, fmt.Errorf("could not parse RANGE filter value as float64: %+v", f.Value)
 		}
 	default:
-		return nil, fmt.Errorf("Could not parse RANGE filter value as float64: %+v", f.Value)
+		return nil, fmt.Errorf("could not parse RANGE filter value as float64: %+v", f.Value)
 	}
 
 	r := RangeQuery{}
@@ -440,7 +440,7 @@ func BuildQueryBody(opts ...SearchBodyBuildOption) Body {
 func MarshalBody(b Body) (io.Reader, error) {
 	jsQuery, err := json.Marshal(b)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to marshal query to json: %+v", err)
+		return nil, fmt.Errorf("failed to marshal query to json: %+v", err)
 	}
 	stringQuery := string(jsQuery)
 

@@ -38,7 +38,7 @@ func (e OpenSearchError) Error() string {
 	return e.Message
 }
 
-func ESErrorFromHttpResponse(status string, body map[string]any) (*OpenSearchError, error) {
+func OSErrorFromHttpResponse(status string, body map[string]any) (*OpenSearchError, error) {
 	errorMap, errorMapExists := body["error"]
 	if !errorMapExists {
 		return nil, fmt.Errorf("missing 'error' object in response: %+v", body)
@@ -72,7 +72,7 @@ func SummarizeResponseError(res *opensearchapi.Response) error {
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		return fmt.Errorf("error parsing the response body: %s", err)
 	} else {
-		esError, err := ESErrorFromHttpResponse(res.Status(), body)
+		esError, err := OSErrorFromHttpResponse(res.Status(), body)
 		if err != nil {
 			return err
 		}

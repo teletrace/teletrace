@@ -30,7 +30,7 @@ func newClient(logger *zap.Logger, cfg OpenSearchConfig) (*opensearch.Client, er
 
 	es, err := opensearch.NewClient(osConfig)
 	if err != nil {
-		logger.Error("Could not create a new raw elasticsearch client %+v", zap.Error(err))
+		logger.Error("could not create an opensearch client %+v", zap.Error(err))
 		return nil, err
 	}
 

@@ -19,6 +19,7 @@ package dslquerycontroller
 import (
 	"context"
 	"fmt"
+
 	"github.com/teletrace/teletrace/plugin/spanreader/opensearch/common"
 
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
@@ -29,7 +30,7 @@ const SystemIdentifierEntryId = "system-id"
 func (dc *dslQueryController) GetSystemId(ctx context.Context) (*metadata.GetSystemIdResponse, error) {
 	res, err := dc.client.API.Get(dc.idx, SystemIdentifierEntryId)
 	if err != nil {
-		return nil, fmt.Errorf("Could not get system id %+v", err)
+		return nil, fmt.Errorf("could not get system id %+v", err)
 	}
 	defer res.Body.Close()
 	if res.StatusCode == 404 {
@@ -46,7 +47,7 @@ func (dc *dslQueryController) GetSystemId(ctx context.Context) (*metadata.GetSys
 func (dc *dslQueryController) SetSystemId(ctx context.Context, req metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error) {
 	reqBody, err := BuildSetSystemIdBody(req.Value)
 	if err != nil {
-		return nil, fmt.Errorf("Could not set system id %+v", err)
+		return nil, fmt.Errorf("could not set system id %+v", err)
 	}
 
 	res, err := dc.client.API.Index(
@@ -57,7 +58,7 @@ func (dc *dslQueryController) SetSystemId(ctx context.Context, req metadata.SetS
 		dc.client.API.Index.WithDocumentID(SystemIdentifierEntryId),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("Could not set system id %+v", err)
+		return nil, fmt.Errorf("could not set system id %+v", err)
 	}
 	defer res.Body.Close()
 	_, err = common.DecodeResponse(res)

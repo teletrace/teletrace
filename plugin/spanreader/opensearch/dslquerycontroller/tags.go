@@ -132,7 +132,7 @@ func (dc *dslQueryController) performGetTagsStatisticsRequest(
 	return ParseTagStatisticsResponseBody(resBody, req, tag, opts)
 }
 
-// Get elasticsearch mappings for specific tags
+// Get opensearch mappings for specific tags
 func (dc *dslQueryController) getTagsMappings(ctx context.Context, tags []string) ([]tagsquery.TagInfo, error) {
 	var result []tagsquery.TagInfo
 	tagsMap := make(map[string]tagsquery.TagInfo)
@@ -156,7 +156,7 @@ func (dc *dslQueryController) getTagsMappings(ctx context.Context, tags []string
 	}
 
 	if res.StatusCode < 200 && res.StatusCode >= 300 {
-		return nil, fmt.Errorf("Could not get tags, got status: %+v", res.StatusCode)
+		return nil, fmt.Errorf("could not get tags, got status: %+v", res.StatusCode)
 	}
 
 	// in case multiple indices are managed by a single alias (in rollover for example)
