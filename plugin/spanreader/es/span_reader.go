@@ -101,12 +101,12 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStat
 	return res, nil
 }
 
-func (sr *spanReader) GetHistogram(
-	ctx context.Context, req aggsquery.HistogramRequest,
-) (*aggsquery.HistogramResponse, error) {
-	res, err := sr.aggsController.GetHistogram(ctx, req)
+func (sr *spanReader) GetHistograms(
+	ctx context.Context, req aggsquery.HistogramsRequest,
+) (*aggsquery.HistogramsResponse, error) {
+	res, err := sr.aggsController.GetHistograms(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("GetHistogram failed with error: %+v", err)
+		return nil, fmt.Errorf("GetHistograms failed with error: %+v", err)
 	}
 
 	return res, nil

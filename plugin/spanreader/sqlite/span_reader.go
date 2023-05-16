@@ -208,9 +208,9 @@ func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesReq
 		Values: currentTagValues,
 	}, nil
 }
-func (sr *spanReader) GetHistogram(
-	ctx context.Context, req aggsquery.HistogramRequest,
-) (*aggsquery.HistogramResponse, error) {
+func (sr *spanReader) GetHistograms(
+	ctx context.Context, req aggsquery.HistogramsRequest,
+) (*aggsquery.HistogramsResponse, error) {
 	return nil, fmt.Errorf("Not implemented method")
 }
 func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {

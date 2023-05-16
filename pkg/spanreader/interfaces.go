@@ -31,7 +31,7 @@ type SpanReader interface {
 	GetAvailableTags(ctx context.Context, r tagsquery.GetAvailableTagsRequest) (*tagsquery.GetAvailableTagsResponse, error)
 	GetTagsValues(ctx context.Context, r tagsquery.TagValuesRequest, tags []string) (map[string]*tagsquery.TagValuesResponse, error)
 	GetTagsStatistics(ctx context.Context, r tagsquery.TagStatisticsRequest, tag string) (*tagsquery.TagStatisticsResponse, error)
-	GetHistogram(ctx context.Context, req aggsquery.HistogramRequest) (*aggsquery.HistogramResponse, error)
+	GetHistograms(ctx context.Context, req aggsquery.HistogramsRequest) (*aggsquery.HistogramsResponse, error)
 	GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error)
 	SetSystemId(ctx context.Context, r metadata.SetSystemIdRequest) (*metadata.SetSystemIdResponse, error)
 }

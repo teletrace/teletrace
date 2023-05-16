@@ -41,18 +41,18 @@ func NewAggsController(logger *zap.Logger, client *elasticsearch.TypedClient, id
 	}, nil
 }
 
-func (a *aggsController) GetHistogram(
-	ctx context.Context, req aggsquery.HistogramRequest,
-) (*aggsquery.HistogramResponse, error) {
-	return a.performGetHistogramRequest(ctx, req, histogram.WithMilliSecTimestampAsNanoSec())
+func (a *aggsController) GetHistograms(
+	ctx context.Context, req aggsquery.HistogramsRequest,
+) (*aggsquery.HistogramsResponse, error) {
+	return a.performGetHistogramsRequest(ctx, req, histogram.WithMilliSecTimestampAsNanoSec())
 }
 
-func (a *aggsController) performGetHistogramRequest(
+func (a *aggsController) performGetHistogramsRequest(
 	ctx context.Context,
-	request aggsquery.HistogramRequest,
+	request aggsquery.HistogramsRequest,
 	opts ...histogram.HistogramsParseOption,
-) (*aggsquery.HistogramResponse, error) {
-	req, err := buildHistogramRequest(request)
+) (*aggsquery.HistogramsResponse, error) {
+	req, err := buildHistogramsRequest(request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build query: %s", err)
 	}
@@ -67,10 +67,10 @@ func (a *aggsController) performGetHistogramRequest(
 		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
-	return a.parseHistogramResponse(body, request, opts)
+	return a.parseHistogramsResponse(body, request, opts)
 }
 
-func buildHistogramRequest(req aggsquery.HistogramRequest) (*search.Request, error) {
+func buildHistogramsRequest(req aggsquery.HistogramsRequest) (*search.Request, error) {
 	builder := search.NewRequestBuilder()
 	timeframeFilters := spanreaderes.CreateTimeframeFilters(req.Timeframe)
 	filters := append(req.SearchFilters, timeframeFilters...)
@@ -90,21 +90,21 @@ func buildHistogramRequest(req aggsquery.HistogramRequest) (*search.Request, err
 			types.NewHistogramAggregationBuilder().Field(types.Field(req.IntervalKey)).Interval(req.Interval),
 		)
 
-		// Add a sub aggregation
-		handler.AddSubAggregation(label, agg, histogramAgg)
-
 		// Add the histogram as a sub aggregation of the existing aggregation
 		aggregations[label] = histogramAgg
+
+		// Add a sub aggregation
+		handler.AddSubAggregation(label, agg, histogramAgg)
 	}
 
 	request := builder.Aggregations(aggregations).Build()
 	return request, nil
 }
 
-func (a *aggsController) parseHistogramResponse(
-	body map[string]any, request aggsquery.HistogramRequest, opts []histogram.HistogramsParseOption,
-) (*aggsquery.HistogramResponse, error) {
-	result := aggsquery.HistogramResponse{
+func (a *aggsController) parseHistogramsResponse(
+	body map[string]any, request aggsquery.HistogramsRequest, opts []histogram.HistogramsParseOption,
+) (*aggsquery.HistogramsResponse, error) {
+	result := aggsquery.HistogramsResponse{
 		Histograms: []aggsquery.Histogram{},
 	}
 

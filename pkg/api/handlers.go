@@ -129,15 +129,15 @@ func (api *API) tagsStatistics(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (api *API) histogram(c *gin.Context) {
-	var req aggsquery.HistogramRequest
+func (api *API) histograms(c *gin.Context) {
+	var req aggsquery.HistogramsRequest
 	isValidationError := api.validateRequestBody(&req, c)
 	if isValidationError {
 		return
 	}
 	handleTimeframe(req.Timeframe)
 
-	res, err := (*api.spanReader).GetHistogram(c, req)
+	res, err := (*api.spanReader).GetHistograms(c, req)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return

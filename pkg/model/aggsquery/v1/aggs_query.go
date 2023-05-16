@@ -21,7 +21,7 @@ import (
 	"github.com/teletrace/teletrace/pkg/model"
 )
 
-type HistogramRequest struct {
+type HistogramsRequest struct {
 	Timeframe     *model.Timeframe       `json:"timeframe"`
 	SearchFilters []model.SearchFilter   `json:"filters"`
 	Interval      float64                `json:"interval"`
@@ -44,7 +44,7 @@ type Aggregation struct {
 	Key       string              `json:"key,omitempty"`
 }
 
-type HistogramResponse struct {
+type HistogramsResponse struct {
 	Histograms []Histogram `json:"histograms"`
 }
 
@@ -58,7 +58,7 @@ type Histogram struct {
 	Buckets        []Bucket `json:"buckets"`
 }
 
-func (sr *HistogramRequest) Validate() error {
+func (sr *HistogramsRequest) Validate() error {
 	if (sr.Timeframe.EndTime < sr.Timeframe.StartTime) && (sr.Timeframe.EndTime != 0) {
 		return fmt.Errorf("endTime cannot be smaller than startTime")
 	}
