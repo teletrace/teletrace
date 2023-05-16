@@ -19,8 +19,11 @@ package histogram
 import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
-	"log"
 )
+
+const SpanIdKey = "span.spanId.keyword"
+
+var DesiredPercentiles = []float64{50, 75, 90, 95, 99}
 
 var AggregationFunctionToHandler = map[aggsquery.AggregationFunction]Handler{
 	aggsquery.COUNT:          &countHandler{},
@@ -33,29 +36,26 @@ type Handler interface {
 	GetHistogram(aggs map[string]any, label string) aggsquery.Histogram
 }
 
-type baseHandler struct{}
+type countHandler struct{}
 
-func (h *baseHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
-	// Extract the relevant data from the aggs map
-	aggsLabel, ok := aggs[label].(map[string]any)
-	if !ok {
-		// Log the actual type
-		log.Panicf("Expected map[string]any but got %T for aggs[%s]", aggs[label], label)
-	}
+func (h *countHandler) AddSubAggregation(
+	label string, _ aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
+) {
+	valueCountAgg := types.NewAggregationContainerBuilder().ValueCount(
+		types.NewValueCountAggregationBuilder().Field(SpanIdKey),
+	)
 
-	bucketsInterface, ok := aggsLabel["buckets"]
-	if !ok {
-		// Log the error
-		log.Panicf("No 'buckets' key found in aggs[%s]", label)
-	}
+	histogramAgg.Aggregations(
+		map[string]*types.AggregationContainerBuilder{label: valueCountAgg},
+	)
+}
 
-	resultBuckets, ok := bucketsInterface.([]any)
-	if !ok {
-		// Log the actual type
-		log.Panicf("Expected []map[string]any but got %T for 'buckets'", bucketsInterface)
-	}
+func (h *countHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
+	resultBuckets := getResultBuckets(aggs, label)
+
 	var buckets []aggsquery.Bucket
-	// For each bucket in the aggregation:
+
+	// Iterate each bucket in the ES result to build the response struct
 	for _, resultBucket := range resultBuckets {
 		bucket := aggsquery.Bucket{
 			BucketKey: resultBucket.(map[string]any)["key"],
@@ -71,25 +71,7 @@ func (h *baseHandler) GetHistogram(aggs map[string]any, label string) aggsquery.
 	}
 }
 
-type countHandler struct {
-	baseHandler
-}
-
-func (h *countHandler) AddSubAggregation(
-	label string, _ aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
-) {
-	valueCountAgg := types.NewAggregationContainerBuilder().ValueCount(
-		types.NewValueCountAggregationBuilder().Field("span.spanId.keyword"),
-	)
-
-	histogramAgg.Aggregations(
-		map[string]*types.AggregationContainerBuilder{label: valueCountAgg},
-	)
-}
-
-type distinctCountHandler struct {
-	baseHandler
-}
+type distinctCountHandler struct{}
 
 func (h *distinctCountHandler) AddSubAggregation(
 	label string, aggregation aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
@@ -103,20 +85,80 @@ func (h *distinctCountHandler) AddSubAggregation(
 	)
 }
 
-type percentilesHandler struct {
-	baseHandler
+func (h *distinctCountHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
+	resultBuckets := getResultBuckets(aggs, label)
+
+	var buckets []aggsquery.Bucket
+
+	// Iterate each bucket in the ES result to build the response struct
+	for _, resultBucket := range resultBuckets {
+		var subBuckets []map[string]any
+		resultSubBuckets := resultBucket.(map[string]any)[label].(map[string]any)["buckets"].([]any)
+
+		// Iterate each bucket in the sub-aggregation to build a 'subBucket' map
+		for _, rsb := range resultSubBuckets {
+			subBucket := map[string]any{
+				"key":   rsb.(map[string]any)["key"],
+				"count": rsb.(map[string]any)["doc_count"],
+			}
+
+			subBuckets = append(subBuckets, subBucket)
+		}
+
+		bucket := aggsquery.Bucket{
+			BucketKey: resultBucket.(map[string]any)["key"],
+			Data:      subBuckets,
+		}
+
+		buckets = append(buckets, bucket)
+	}
+
+	return aggsquery.Histogram{
+		HistogramLabel: label,
+		Buckets:        buckets,
+	}
 }
+
+type percentilesHandler struct{}
 
 func (h *percentilesHandler) AddSubAggregation(
 	label string, aggregation aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
 ) {
 	percentilesAgg := types.NewAggregationContainerBuilder().Percentiles(
 		types.NewPercentilesAggregationBuilder().Field(types.Field(aggregation.Key)).Percents(
-			[]float64{50, 75, 90, 95, 99}...,
+			DesiredPercentiles...,
 		),
 	)
 
 	histogramAgg.Aggregations(
 		map[string]*types.AggregationContainerBuilder{label: percentilesAgg},
 	)
+}
+
+func (h *percentilesHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
+	resultBuckets := getResultBuckets(aggs, label)
+
+	var buckets []aggsquery.Bucket
+
+	// Iterate each bucket in the ES result to build the response struct
+	for _, resultBucket := range resultBuckets {
+		// Cast the bucket from the ES result to access the expected percentiles data
+		percentilesData := resultBucket.(map[string]any)[label].(map[string]any)["values"].(map[string]any)
+
+		bucket := aggsquery.Bucket{
+			BucketKey: resultBucket.(map[string]any)["key"],
+			Data:      percentilesData,
+		}
+
+		buckets = append(buckets, bucket)
+	}
+
+	return aggsquery.Histogram{
+		HistogramLabel: label,
+		Buckets:        buckets,
+	}
+}
+
+func getResultBuckets(aggs map[string]any, label string) []any {
+	return aggs[label].(map[string]any)["buckets"].([]any)
 }

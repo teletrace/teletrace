@@ -106,7 +106,7 @@ func (sr *spanReader) GetHistogram(
 ) (*aggsquery.HistogramResponse, error) {
 	res, err := sr.aggsController.GetHistogram(ctx, req)
 	if err != nil {
-		return nil, fmt.Errorf("GetTagsStatistics failed with error: %+v", err)
+		return nil, fmt.Errorf("GetHistogram failed with error: %+v", err)
 	}
 
 	return res, nil
