@@ -41,9 +41,109 @@ docker run \
   --config /etc/config.yaml
 ```
 
+This will use Teletrace's `all-in-one` image to setup:
+
+| Port   | Protocol | Component    | Purpose                                                     |
+| ------ | -------- | ------------ | ----------------------------------------------------------- |
+| `8080` | `HTTP`   | UI and Query | Serve frontend and query service.                           |
+| `4317` | `gRPC`   | Collector    | accept OpenTelemetry Protocol (OTLP) over gRPC, if enabled. |
+| `4318` | `HTTP`   | Collector    | accept OpenTelemetry Protocol (OTLP) over HTTP, if enabled. |
+
 Open [http://localhost:8080/](http://localhost:8080/) in your browser to start using Teletrace.
 
 For a more in-depth guide on how to setup and manage a Teletrace instance, please head over to our [Operator Guide](./operator-guide/architecture-overview.md).
+
+### Instrument your app to send data
+
+Its necessary to instrument your application using OpenTelemetry to start seeing trace data and using Teletrace.
+
+=== "TypeScript"
+
+    First, install the necessary components:
+
+    ```bash
+    npm install \
+      @opentelemetry/api \
+      @opentelemetry/sdk-node \
+      @opentelemetry/auto-instrumentations-node \
+      @opentelemetry/exporter-trace-otlp-proto
+    ```
+
+    Next, create a new file called `instrumentation.ts` with the following:
+
+    ```typescript title="instrumentation.ts"
+    import { NodeSDK } from '@opentelemetry/sdk-node';
+    import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+    import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+
+    const exporter = new OTLPTraceExporter({
+      // optional - default url is http://localhost:4318/v1/traces
+      url: "<your-otlp-endpoint>/v1/traces",
+
+      // optional - collection of custom headers to be sent with each request, empty by default
+      headers: {},
+    });
+
+    const sdk = new NodeSDK({
+      traceExporter: exporter,
+      instrumentations: [getNodeAutoInstrumentations()]
+    });
+
+    sdk.start()
+    ```
+
+    Finally make sure to call the `instrumentation.ts` code **before** your code executes,
+    either by importing it before the rest of your code, or by using the `--require` flag:
+
+    ```bash
+    ts-node --require "instrumentation.ts" app.ts
+    ```
+
+=== "JavaScript"
+
+    First, install the necessary components:
+
+    ```bash
+    npm install \
+      @opentelemetry/api \
+      @opentelemetry/sdk-node \
+      @opentelemetry/auto-instrumentations-node \
+      @opentelemetry/exporter-trace-otlp-proto
+    ```
+
+    Next, create a new file called `instrumentation.js` with the following:
+
+    ```javascript title="instrumentation.js"
+    import { NodeSDK } from '@opentelemetry/sdk-node';
+    import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+    import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+
+    const exporter = new OTLPTraceExporter({
+      // optional - default url is http://localhost:4318/v1/traces
+      url: "<your-otlp-endpoint>/v1/traces",
+
+      // optional - collection of custom headers to be sent with each request, empty by default
+      headers: {},
+    });
+
+    const sdk = new NodeSDK({
+      traceExporter: exporter,
+      instrumentations: [getNodeAutoInstrumentations()]
+    });
+
+    sdk.start()
+    ```
+
+    Finally make sure to call the `instrumentation.js` code **before** your code executes,
+    either by importing it before the rest of your code, or by using the `--require` flag:
+
+    ```bash
+    node --require "instrumentation.js" app.js
+    ```
+
+=== "Python"
+
+=== "Java"
 
 ## Features Overview
 
