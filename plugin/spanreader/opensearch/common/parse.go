@@ -22,8 +22,6 @@ import (
 	"strings"
 
 	"github.com/opensearch-project/opensearch-go/opensearchapi"
-	"github.com/teletrace/teletrace/plugin/spanreader/es/errors"
-
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
 	"go.opentelemetry.io/collector/pdata/pcommon"
@@ -194,7 +192,7 @@ func DecodeResponse(res *opensearchapi.Response) (map[string]any, error) {
 	}
 
 	if res.StatusCode >= 400 {
-		esError, err := errors.OSErrorFromHttpResponse(res.Status(), body)
+		esError, err := OSErrorFromHttpResponse(res.Status(), body)
 		if err != nil {
 			return nil, err
 		}
