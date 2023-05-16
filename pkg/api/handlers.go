@@ -22,8 +22,6 @@ import (
 
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 
-	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
-
 	"github.com/teletrace/teletrace/pkg/model"
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
