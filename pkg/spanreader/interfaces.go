@@ -18,6 +18,7 @@ package spanreader
 
 import (
 	"context"
+
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"

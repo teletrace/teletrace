@@ -19,6 +19,7 @@ package spanreaderes
 import (
 	"context"
 	"fmt"
+
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 	"github.com/teletrace/teletrace/plugin/spanreader/es/aggscontroller"
 

@@ -19,6 +19,7 @@ package sqlitespanreader
 import (
 	"context"
 	"fmt"
+
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
@@ -208,11 +209,13 @@ func (sr *spanReader) GetTagValues(ctx context.Context, r tagsquery.TagValuesReq
 		Values: currentTagValues,
 	}, nil
 }
+
 func (sr *spanReader) GetHistograms(
 	ctx context.Context, req aggsquery.HistogramsRequest,
 ) (*aggsquery.HistogramsResponse, error) {
 	return nil, fmt.Errorf("Not implemented method")
 }
+
 func (sr *spanReader) GetSystemId(ctx context.Context, r metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
 	return nil, fmt.Errorf("Not implemented method")
 }

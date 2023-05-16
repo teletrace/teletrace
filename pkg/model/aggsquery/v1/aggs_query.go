@@ -18,6 +18,7 @@ package aggsquery
 
 import (
 	"fmt"
+
 	"github.com/teletrace/teletrace/pkg/model"
 )
 

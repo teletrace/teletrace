@@ -17,9 +17,12 @@
 package api
 
 import (
-	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 	"net/http"
 	"time"
+
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
+
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 
 	"github.com/teletrace/teletrace/pkg/model"
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"

@@ -19,10 +19,11 @@ package aggscontroller
 import (
 	"bytes"
 	"encoding/json"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/teletrace/teletrace/pkg/model"
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
-	"testing"
 )
 
 func Test_ParseHistogramsResponse_ValidResponse(t *testing.T) {

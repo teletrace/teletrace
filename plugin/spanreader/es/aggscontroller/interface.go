@@ -18,6 +18,7 @@ package aggscontroller
 
 import (
 	"context"
+
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 )
 

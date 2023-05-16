@@ -20,7 +20,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -28,6 +27,8 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 
 	"github.com/teletrace/teletrace/pkg/config"
 	"github.com/teletrace/teletrace/pkg/model"
@@ -313,8 +314,8 @@ func TestHistograms(t *testing.T) {
 
 	expectedBuckets := 3
 	expectedFirstSubBucketsLength := 2
-	var expectedFirstSubBucketCount = float64(76)
-	var expectedFirstSubBucketKey = float64(500)
+	expectedFirstSubBucketCount := float64(76)
+	expectedFirstSubBucketKey := float64(500)
 	expectedThirdSubBucketsLength := 0
 	var resBody *aggsquery.HistogramsResponse
 	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
