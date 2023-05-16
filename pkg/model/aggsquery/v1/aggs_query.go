@@ -16,7 +16,10 @@
 
 package aggsquery
 
-import "github.com/teletrace/teletrace/pkg/model"
+import (
+	"fmt"
+	"github.com/teletrace/teletrace/pkg/model"
+)
 
 type HistogramRequest struct {
 	Timeframe     *model.Timeframe       `json:"timeframe"`
@@ -53,4 +56,12 @@ type Bucket struct {
 type Histogram struct {
 	HistogramLabel string   `json:"histogramLabel"`
 	Buckets        []Bucket `json:"buckets"`
+}
+
+func (sr *HistogramRequest) Validate() error {
+	if (sr.Timeframe.EndTime < sr.Timeframe.StartTime) && (sr.Timeframe.EndTime != 0) {
+		return fmt.Errorf("endTime cannot be smaller than startTime")
+	}
+
+	return nil
 }

@@ -114,6 +114,7 @@ func (api *API) registerRoutes() {
 	v1.GET("/tags", api.getAvailableTags)
 	v1.POST("/tags/:tag", api.tagsValues)
 	v1.POST("/tags/:tag/statistics", api.tagsStatistics)
+	v1.POST("/histogram", api.histogram)
 }
 
 // Start runs the configured API instance.

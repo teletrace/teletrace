@@ -19,6 +19,7 @@ package histogram
 import (
 	"github.com/elastic/go-elasticsearch/v8/typedapi/types"
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
+	"log"
 )
 
 var AggregationFunctionToHandler = map[aggsquery.AggregationFunction]Handler{
@@ -36,14 +37,29 @@ type baseHandler struct{}
 
 func (h *baseHandler) GetHistogram(aggs map[string]any, label string) aggsquery.Histogram {
 	// Extract the relevant data from the aggs map
-	resultBuckets := aggs[label].(map[string]any)["buckets"].([]map[string]any)
+	aggsLabel, ok := aggs[label].(map[string]any)
+	if !ok {
+		// Log the actual type
+		log.Panicf("Expected map[string]any but got %T for aggs[%s]", aggs[label], label)
+	}
 
+	bucketsInterface, ok := aggsLabel["buckets"]
+	if !ok {
+		// Log the error
+		log.Panicf("No 'buckets' key found in aggs[%s]", label)
+	}
+
+	resultBuckets, ok := bucketsInterface.([]any)
+	if !ok {
+		// Log the actual type
+		log.Panicf("Expected []map[string]any but got %T for 'buckets'", bucketsInterface)
+	}
 	var buckets []aggsquery.Bucket
 	// For each bucket in the aggregation:
 	for _, resultBucket := range resultBuckets {
 		bucket := aggsquery.Bucket{
-			BucketKey: resultBucket["key"],
-			Data:      resultBucket["doc_count"],
+			BucketKey: resultBucket.(map[string]any)["key"],
+			Data:      resultBucket.(map[string]any)["doc_count"],
 		}
 
 		buckets = append(buckets, bucket)

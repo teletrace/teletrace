@@ -43,7 +43,7 @@ func NewAggsController(logger *zap.Logger, client *elasticsearch.TypedClient, id
 
 func (a *aggsController) GetHistogram(
 	ctx context.Context, req aggsquery.HistogramRequest,
-) (aggsquery.HistogramResponse, error) {
+) (*aggsquery.HistogramResponse, error) {
 	return a.performGetHistogramRequest(ctx, req, histogram.WithMilliSecTimestampAsNanoSec())
 }
 
@@ -51,20 +51,20 @@ func (a *aggsController) performGetHistogramRequest(
 	ctx context.Context,
 	request aggsquery.HistogramRequest,
 	opts ...histogram.HistogramsParseOption,
-) (aggsquery.HistogramResponse, error) {
+) (*aggsquery.HistogramResponse, error) {
 	req, err := buildHistogramRequest(request)
 	if err != nil {
-		return aggsquery.HistogramResponse{}, fmt.Errorf("failed to build query: %s", err)
+		return nil, fmt.Errorf("failed to build query: %s", err)
 	}
 
 	res, err := a.client.API.Search().Request(req).Index(a.idx).Do(ctx)
 	if err != nil {
-		return aggsquery.HistogramResponse{}, fmt.Errorf("failed to perform search: %s", err)
+		return nil, fmt.Errorf("failed to perform search: %s", err)
 	}
 
 	var body map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
-		return aggsquery.HistogramResponse{}, fmt.Errorf("failed parsing the response body: %s", err)
+		return nil, fmt.Errorf("failed parsing the response body: %s", err)
 	}
 
 	return a.parseHistogramResponse(body, request, opts)
@@ -103,7 +103,7 @@ func buildHistogramRequest(req aggsquery.HistogramRequest) (*search.Request, err
 
 func (a *aggsController) parseHistogramResponse(
 	body map[string]any, request aggsquery.HistogramRequest, opts []histogram.HistogramsParseOption,
-) (aggsquery.HistogramResponse, error) {
+) (*aggsquery.HistogramResponse, error) {
 	result := aggsquery.HistogramResponse{
 		Histograms: []aggsquery.Histogram{},
 	}
@@ -120,5 +120,5 @@ func (a *aggsController) parseHistogramResponse(
 		opt(request.IntervalKey, result.Histograms)
 	}
 
-	return result, nil
+	return &result, nil
 }

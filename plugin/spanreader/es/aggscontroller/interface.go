@@ -22,5 +22,5 @@ import (
 )
 
 type AggsController interface {
-	GetHistogram(ctx context.Context, req aggsquery.HistogramRequest) (aggsquery.HistogramResponse, error)
+	GetHistogram(ctx context.Context, req aggsquery.HistogramRequest) (*aggsquery.HistogramResponse, error)
 }
