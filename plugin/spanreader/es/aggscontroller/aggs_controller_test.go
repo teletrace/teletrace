@@ -86,7 +86,7 @@ func Test_ParseHistogramsResponse_ValidResponse(t *testing.T) {
 				  "99.0": 48.89999999999998
 				}
 			  }
-			}	
+			}
 	   	  ]
 	   }
      }
