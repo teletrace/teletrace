@@ -19,6 +19,7 @@ import { useState } from "react";
 
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, SearchFilter } from "../../types/common";
+import { EmptyValueString } from "../consts";
 import { FilterBuilderDialog } from "../FilterBuilder";
 import { styles } from "./styles";
 
@@ -59,7 +60,10 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
 
   const getTooltipForArray = (arrValue: (number | string)[]) => {
     return arrValue.map((value: number | string) => (
-      <Typography key={value}> • {value}</Typography>
+      <Typography key={value}>
+        {" "}
+        • {value === "" ? EmptyValueString : value}
+      </Typography>
     ));
   };
 
@@ -83,7 +87,7 @@ export const FilterChip = ({ filter }: FilterChipProps) => {
     if (filterLength > MAX_FILTER_LENGTH) {
       value = `${value.substring(0, MAX_FILTER_LENGTH)}...`;
     }
-    return `"${value}"`;
+    return value ? `"${value}"` : EmptyValueString;
   };
 
   const formatArrayValue = (value: (string | number)[], filterLen: number) => {
