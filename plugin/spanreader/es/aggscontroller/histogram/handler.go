@@ -23,8 +23,6 @@ import (
 	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
 )
 
-const SpanIdKey = "span.spanId.keyword"
-
 var AggregationFunctionToHandler = map[aggsquery.AggregationFunction]Handler{
 	aggsquery.COUNT:          &countHandler{},
 	aggsquery.DISTINCT_COUNT: &distinctCountHandler{},
@@ -42,7 +40,7 @@ func (h *countHandler) AddSubAggregation(
 	label string, _ aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
 ) error {
 	valueCountAgg := types.NewAggregationContainerBuilder().ValueCount(
-		types.NewValueCountAggregationBuilder().Field(SpanIdKey),
+		types.NewValueCountAggregationBuilder().Field(aggsquery.SpanIdKey),
 	)
 
 	histogramAgg.Aggregations(
@@ -79,7 +77,7 @@ func (h *distinctCountHandler) AddSubAggregation(
 	label string, aggregation aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
 ) error {
 	termsAgg := types.NewAggregationContainerBuilder().Terms(
-		types.NewTermsAggregationBuilder().Field(types.Field(aggregation.GroupBy)),
+		types.NewTermsAggregationBuilder().Field(types.Field(aggregation.GroupBy)).Size(aggregation.MaxGroups),
 	)
 
 	histogramAgg.Aggregations(
@@ -109,9 +107,14 @@ func (h *distinctCountHandler) GetHistogram(aggs map[string]any, label string) a
 			subBuckets = append(subBuckets, subBucket)
 		}
 
+		data := map[string]any{
+			aggsquery.TotalCountField: resultBucket.(map[string]any)["doc_count"],
+			aggsquery.SubBucketsField: subBuckets,
+		}
+
 		bucket := aggsquery.Bucket{
 			BucketKey: resultBucket.(map[string]any)["key"],
-			Data:      subBuckets,
+			Data:      data,
 		}
 
 		buckets = append(buckets, bucket)

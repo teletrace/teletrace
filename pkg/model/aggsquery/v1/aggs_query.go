@@ -22,6 +22,12 @@ import (
 	"github.com/teletrace/teletrace/pkg/model"
 )
 
+const (
+	SpanIdKey       = "span.spanId.keyword"
+	SubBucketsField = "subBuckets"
+	TotalCountField = "totalCount"
+)
+
 type HistogramsRequest struct {
 	Timeframe     *model.Timeframe       `json:"timeframe"`
 	SearchFilters []model.SearchFilter   `json:"filters"`
@@ -66,6 +72,8 @@ type Bucket struct {
 	BucketKey any `json:"bucketKey"`
 	Data      any `json:"data"`
 }
+
+type SubBucketsData map[string]any
 
 type Histogram struct {
 	HistogramLabel string   `json:"histogramLabel"`
