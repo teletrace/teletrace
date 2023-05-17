@@ -296,8 +296,9 @@ func TestHistograms(t *testing.T) {
 		IntervalKey: "span.startTimeUnixNano",
 		Aggregations: map[string]aggsquery.Aggregation{
 			"errors_distinct_count": {
-				Func: aggsquery.DISTINCT_COUNT,
-				Key:  "span.attributes.http.status_code",
+				Func:      aggsquery.DISTINCT_COUNT,
+				GroupBy:   "span.attributes.http.status_code",
+				MaxGroups: 5,
 			},
 		},
 	}
@@ -314,6 +315,7 @@ func TestHistograms(t *testing.T) {
 
 	expectedBuckets := 3
 	expectedFirstSubBucketsLength := 2
+	expectedFirstBucketTotalcount := float64(153)
 	expectedFirstSubBucketCount := float64(76)
 	expectedFirstSubBucketKey := float64(500)
 	expectedThirdSubBucketsLength := 0
@@ -323,10 +325,11 @@ func TestHistograms(t *testing.T) {
 	assert.NotNil(t, resBody)
 	assert.NotEmpty(t, resBody.Histograms)
 	assert.Equal(t, len(resBody.Histograms[0].Buckets), expectedBuckets)
-	assert.Equal(t, len(resBody.Histograms[0].Buckets[0].Data.([]any)), expectedFirstSubBucketsLength)
-	assert.Equal(t, resBody.Histograms[0].Buckets[0].Data.([]any)[0].(map[string]any)["count"], expectedFirstSubBucketCount)
-	assert.Equal(t, resBody.Histograms[0].Buckets[0].Data.([]any)[0].(map[string]any)["key"], expectedFirstSubBucketKey)
-	assert.Equal(t, len(resBody.Histograms[0].Buckets[2].Data.([]any)), expectedThirdSubBucketsLength)
+	assert.Equal(t, len(resBody.Histograms[0].Buckets[0].Data.(map[string]any)[aggsquery.SubBucketsField].([]any)), expectedFirstSubBucketsLength)
+	assert.Equal(t, resBody.Histograms[0].Buckets[0].Data.(map[string]any)[aggsquery.TotalCountField], expectedFirstBucketTotalcount)
+	assert.Equal(t, resBody.Histograms[0].Buckets[0].Data.(map[string]any)[aggsquery.SubBucketsField].([]any)[0].(map[string]any)["count"], expectedFirstSubBucketCount)
+	assert.Equal(t, resBody.Histograms[0].Buckets[0].Data.(map[string]any)[aggsquery.SubBucketsField].([]any)[0].(map[string]any)["key"], expectedFirstSubBucketKey)
+	assert.Equal(t, len(resBody.Histograms[0].Buckets[2].Data.(map[string]any)[aggsquery.SubBucketsField].([]any)), expectedThirdSubBucketsLength)
 }
 
 func TestHistogramsAggregationLatencyPercentilesNoParameters(t *testing.T) {
