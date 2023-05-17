@@ -20,6 +20,7 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import FormControl from "@mui/material/FormControl";
 import Highlighter from "react-highlight-words";
 import { useState } from "react";
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
 
 import { useAvailableTags } from "../../api/availableTags";
 import { AvailableTag, TagGroup } from "../../types/availableTags";
@@ -44,8 +45,7 @@ export const TagSelector = ({
     (page) => page.Tags
   );
 
-  const recentlyUsedKeysJSON = localStorage.getItem('recently_used_keys');
-  const recentlyUsedKeys: AvailableTag[] = recentlyUsedKeysJSON ? JSON.parse(recentlyUsedKeysJSON) : [];
+  const recentlyUsedKeys = useSpanSearchStore((state) => state.recentlyUsedKeysState.recentlyUsedKeys);
 
   let allTagsOptions: AvailableTag[] | undefined = undefined;
   if (availableTagsOptions) {

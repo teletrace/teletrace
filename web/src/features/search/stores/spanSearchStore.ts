@@ -16,9 +16,43 @@
 
 import create, { StateCreator } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { persist} from "zustand/middleware";
 
 import { Operator, SearchFilter, Sort } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
+import { AvailableTag, TagGroup } from "../types/availableTags";
+
+
+interface RecentlyUsedKeysSlice {
+  recentlyUsedKeysState: {
+    recentlyUsedKeys: AvailableTag[];
+    addRecentlyUsedKey: (tag: AvailableTag) => void;
+  };
+}
+
+const createRecentlyUsedKeysSlice: StateCreator<
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
+  [],
+  [["zustand/persist", never]],
+  RecentlyUsedKeysSlice
+> = persist((set) => ({
+      recentlyUsedKeysState: {
+        recentlyUsedKeys: [],
+        addRecentlyUsedKey: (tag: AvailableTag) => {
+          set((state: RecentlyUsedKeysSlice) => ({
+            recentlyUsedKeysState: {
+              ...state.recentlyUsedKeysState,
+              recentlyUsedKeys: [...state.recentlyUsedKeysState.recentlyUsedKeys, tag],
+            },
+          }));
+        },
+      }
+    }),
+    {
+      name: 'recently-used-keys',
+      getStorage: () => localStorage
+    }
+  );
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -28,7 +62,7 @@ interface LiveSpansSlice {
   };
 }
 const createLiveSpansSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice,
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
   [],
   [],
   LiveSpansSlice
@@ -63,7 +97,7 @@ interface TimeframeSlice {
   };
 }
 const createTimeframeSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
   [],
   [],
   TimeframeSlice
@@ -129,8 +163,8 @@ interface FiltersSlice {
   };
 }
 const createFiltersSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice,
-  [],
+LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
+[],
   [["zustand/immer", never]],
   FiltersSlice
 > = immer((set) => ({
@@ -206,7 +240,7 @@ const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
 
 const createSortSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
   [],
   [],
   SortSlice
@@ -224,10 +258,11 @@ const createSortSlice: StateCreator<
 });
 
 export const useSpanSearchStore = create<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice
 >()((...set) => ({
   ...createTimeframeSlice(...set),
   ...createLiveSpansSlice(...set),
   ...createFiltersSlice(...set),
   ...createSortSlice(...set),
+  ...createRecentlyUsedKeysSlice(...set)
 }));
