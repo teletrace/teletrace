@@ -329,6 +329,40 @@ func TestHistograms(t *testing.T) {
 	assert.Equal(t, len(resBody.Histograms[0].Buckets[2].Data.([]any)), expectedThirdSubBucketsLength)
 }
 
+func TestHistogramsAggregationLatencyPercentilesNoParameters(t *testing.T) {
+	fakeLogger, _ := getLoggerObserver()
+	cfg := config.Config{Debug: false}
+	body := aggsquery.HistogramsRequest{
+		Timeframe: &model.Timeframe{
+			StartTime: 0,
+			EndTime:   0,
+		},
+		Interval:    600000,
+		IntervalKey: "span.startTimeUnixNano",
+		Aggregations: map[string]aggsquery.Aggregation{
+			"latency_percentiles": {
+				Func: aggsquery.PERCENTILES,
+				Key:  "externalFields.durationNano",
+			},
+		},
+	}
+	jsonBody, _ := json.Marshal(&body)
+	req, _ := http.NewRequest(http.MethodPost, path.Join(apiPrefix, "/histograms"), bytes.NewReader(jsonBody))
+	resRecorder := httptest.NewRecorder()
+	srMock, _ := spanreader.NewSpanReaderMock()
+
+	api := NewAPI(fakeLogger, cfg, &srMock)
+
+	api.router.ServeHTTP(resRecorder, req)
+
+	assert.Equal(t, http.StatusBadRequest, resRecorder.Code)
+
+	var resBody *errorResponse
+	err := json.NewDecoder(resRecorder.Body).Decode(&resBody)
+	assert.Nil(t, err)
+	assert.Equal(t, resBody.ErrorMessage, "missing aggregation parameter: percentiles")
+}
+
 func TestRootStaticRoute(t *testing.T) {
 	runStaticFilesRouteTest(t, "/")
 }
