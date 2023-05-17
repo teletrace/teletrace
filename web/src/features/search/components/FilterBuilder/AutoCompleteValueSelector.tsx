@@ -31,6 +31,7 @@ import { useTagValuesWithAll } from "../../api/tagValues";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { FilterValueTypes, Operator } from "../../types/common";
 import { TagValue } from "../../types/tagValues";
+import { EmptyValueString } from "../consts";
 import { styles } from "./styles";
 
 const useGetTagOptions = (
@@ -129,7 +130,7 @@ export const AutoCompleteValueSelector = ({
       onInputChange={(event, newInputValue) => {
         setSearch(newInputValue);
       }}
-      getOptionLabel={(option) => option.value.toString()}
+      getOptionLabel={(option) => option.value.toString() || EmptyValueString}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -149,7 +150,7 @@ export const AutoCompleteValueSelector = ({
               highlightClassName="valueLabelHighlight"
               searchWords={state.inputValue.toLowerCase().split(" ")}
               autoEscape={true}
-              textToHighlight={option.value.toString()}
+              textToHighlight={option.value.toString() || EmptyValueString}
             />
             <Typography>{formatNumber(option.count)}</Typography>
           </Stack>
