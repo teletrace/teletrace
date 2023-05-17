@@ -19,8 +19,9 @@ package aggscontroller
 import (
 	"bytes"
 	"encoding/json"
-	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 	"testing"
+
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/teletrace/teletrace/pkg/model"
