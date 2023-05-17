@@ -19,6 +19,7 @@ package aggscontroller
 import (
 	"bytes"
 	"encoding/json"
+	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -128,4 +129,100 @@ func Test_ParseHistogramsResponse_ValidResponse(t *testing.T) {
 	assert.Len(t, result.Histograms[0].Buckets, 3)
 	assert.Len(t, result.Histograms[0].Buckets[0].Data, 5)
 	assert.Equal(t, result.Histograms[0].Buckets[0].Data.(map[string]any)["50.0"], expectedFirstBucket50thPercentileValue)
+}
+
+func Test_ParseHistogramsResponse_EmptySubBucketsResponse(t *testing.T) {
+	responseContent := `
+	{
+	  "took": 1435,
+	  "timed_out": false,
+	  "_shards": {
+		"total": 87,
+		"successful": 87,
+		"skipped": 0,
+		"failed": 0
+	  },
+	  "hits": {
+		"total": {
+		  "value": 10000,
+		  "relation": "gte"
+		},
+		"max_score": null,
+		"hits": []
+	  },
+	  "aggregations": {
+		"errors_distinct_count": {
+		  "buckets": [
+			{
+			  "key": 1683732000000,
+			  "doc_count": 16,
+			  "errors_distinct_count": {
+				"doc_count_error_upper_bound": 0,
+				"sum_other_doc_count": 0,
+				"buckets": []
+			  }
+			},
+			{
+			  "key": 1683732600000,
+			  "doc_count": 375,
+			  "errors_distinct_count": {
+				"doc_count_error_upper_bound": 0,
+				"sum_other_doc_count": 0,
+				"buckets": [
+				  {
+					"key": 500,
+					"doc_count": 133
+				  }
+				]
+			  }
+			}
+	   	  ]
+	   }
+     }
+	}`
+
+	req := aggsquery.HistogramsRequest{
+		Timeframe: &model.Timeframe{
+			StartTime: 0,
+			EndTime:   0,
+		},
+		SearchFilters: []model.SearchFilter{
+			{
+				KeyValueFilter: &model.KeyValueFilter{
+					Key:      "span.status.code",
+					Operator: spansquery.OPERATOR_EQUALS,
+					Value:    "Error",
+				},
+			},
+		},
+		Interval:    600000,
+		IntervalKey: "span.startTimeUnixNano",
+		Aggregations: map[string]aggsquery.Aggregation{
+			"errors_distinct_count": {
+				Func:      aggsquery.DISTINCT_COUNT,
+				GroupBy:   "span.attributes.http.status_code",
+				MaxGroups: 5,
+			},
+		},
+	}
+
+	buffer := bytes.NewBufferString(responseContent)
+	body := make(map[string]any)
+	_ = json.NewDecoder(buffer).Decode(&body)
+
+	ac := aggsController{}
+	result, err := ac.parseHistogramsResponse(body, req, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expectedFirstSubBucketKey := float64(500)
+
+	// Assert
+	assert.NotNil(t, result)
+	assert.Len(t, result.Histograms, 1)
+	assert.Equal(t, "errors_distinct_count", result.Histograms[0].HistogramLabel)
+	assert.Len(t, result.Histograms[0].Buckets, 2)
+	assert.Len(t, result.Histograms[0].Buckets[0].Data.(map[string]any)[aggsquery.SubBucketsField].([]map[string]any), 0)
+	assert.Equal(t, result.Histograms[0].Buckets[1].Data.(map[string]any)[aggsquery.SubBucketsField].([]map[string]any)[0]["key"], expectedFirstSubBucketKey)
 }
