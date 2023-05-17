@@ -76,7 +76,8 @@ func (sr spanReader) GetHistograms(ctx context.Context, req aggsquery.Histograms
 						BucketKey: 1684223400000000000,
 						Data: map[string]any{
 							aggsquery.TotalCountField: 0,
-							aggsquery.SubBucketsField: []map[string]any{}},
+							aggsquery.SubBucketsField: []map[string]any{},
+						},
 					},
 				},
 			},
