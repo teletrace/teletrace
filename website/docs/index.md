@@ -61,7 +61,7 @@ Its necessary to instrument your application using OpenTelemetry to start seeing
 !!! warning
     The following instructions are probably too simplistic for production environments, and are meant to give you a quick look into instrumenting your code.
 
-    Please refer to the official OpenTelemetry [instrumentation guide](https://opentelemetry.io/docs/instrumentation/) 
+    Please refer to the official OpenTelemetry [instrumentation guide](https://opentelemetry.io/docs/instrumentation/)
     for your specific language for full tutorials on the different configuration options available.
 <!-- prettier-ignore-end -->
 

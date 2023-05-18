@@ -7,7 +7,7 @@ The Teletrace application is comprised of 4 main components:
 3. Custom OpenTelemetry Collector distro (Teletrace Collector)
 4. Storage Engine
 
-Each of these components can be deployed and scaled independently but we distribute an `all-in-one` container 
+Each of these components can be deployed and scaled independently but we distribute an `all-in-one` container
 image that will deploy the `teletrace-ui`, `teletrace-api-server` and `teletrace-collector` in a single image to ease deployment.
 
 In this overview we will go over each of the main components, explain their use and why they are needed.
