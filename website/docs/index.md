@@ -57,6 +57,14 @@ For a more in-depth guide on how to setup and manage a Teletrace instance, pleas
 
 Its necessary to instrument your application using OpenTelemetry to start seeing trace data and using Teletrace.
 
+<!-- prettier-ignore-start -->
+!!! warning
+    The following instructions are probably too simplistic for production environments, and are meant to give you a quick look into instrumenting your code.
+
+    Please refer to the official OpenTelemetry [instrumentation guide](https://opentelemetry.io/docs/instrumentation/) 
+    for your specific language for full tutorials on the different configuration options available.
+<!-- prettier-ignore-end -->
+
 === "TypeScript"
 
     First, install the necessary components:
@@ -64,39 +72,23 @@ Its necessary to instrument your application using OpenTelemetry to start seeing
     ```bash
     npm install \
       @opentelemetry/api \
-      @opentelemetry/sdk-node \
-      @opentelemetry/auto-instrumentations-node \
-      @opentelemetry/exporter-trace-otlp-proto
+      @opentelemetry/auto-instrumentations-node
     ```
 
-    Next, create a new file called `instrumentation.ts` with the following:
-
-    ```typescript title="instrumentation.ts"
-    import { NodeSDK } from '@opentelemetry/sdk-node';
-    import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
-    import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-
-    const exporter = new OTLPTraceExporter({
-      // optional - default url is http://localhost:4318/v1/traces
-      url: "<your-otlp-endpoint>/v1/traces",
-
-      // optional - collection of custom headers to be sent with each request, empty by default
-      headers: {},
-    });
-
-    const sdk = new NodeSDK({
-      traceExporter: exporter,
-      instrumentations: [getNodeAutoInstrumentations()]
-    });
-
-    sdk.start()
-    ```
-
-    Finally make sure to call the `instrumentation.ts` code **before** your code executes,
-    either by importing it before the rest of your code, or by using the `--require` flag:
+    Then simply execute your application with the following environment variables:
 
     ```bash
-    ts-node --require "instrumentation.ts" app.ts
+    export OTEL_TRACES_EXPORTER="otlp"
+    export OTEL_EXPORTER_OTLP_ENDPOINT="your-endpoint"
+    export OTEL_NODE_RESOURCE_DETECTORS="env,host,os"
+    export OTEL_SERVICE_NAME="your-service-name"
+    export NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
+    ```
+
+    Once they are set, run your application as usual:
+
+    ```bash
+    ts-node app.ts
     ```
 
 === "JavaScript"
@@ -106,44 +98,81 @@ Its necessary to instrument your application using OpenTelemetry to start seeing
     ```bash
     npm install \
       @opentelemetry/api \
-      @opentelemetry/sdk-node \
-      @opentelemetry/auto-instrumentations-node \
-      @opentelemetry/exporter-trace-otlp-proto
+      @opentelemetry/auto-instrumentations-node
     ```
 
-    Next, create a new file called `instrumentation.js` with the following:
-
-    ```javascript title="instrumentation.js"
-    import { NodeSDK } from '@opentelemetry/sdk-node';
-    import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
-    import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-
-    const exporter = new OTLPTraceExporter({
-      // optional - default url is http://localhost:4318/v1/traces
-      url: "<your-otlp-endpoint>/v1/traces",
-
-      // optional - collection of custom headers to be sent with each request, empty by default
-      headers: {},
-    });
-
-    const sdk = new NodeSDK({
-      traceExporter: exporter,
-      instrumentations: [getNodeAutoInstrumentations()]
-    });
-
-    sdk.start()
-    ```
-
-    Finally make sure to call the `instrumentation.js` code **before** your code executes,
-    either by importing it before the rest of your code, or by using the `--require` flag:
+    Then simply execute your application with the following environment variables:
 
     ```bash
-    node --require "instrumentation.js" app.js
+    export OTEL_TRACES_EXPORTER="otlp"
+    export OTEL_EXPORTER_OTLP_ENDPOINT="your-endpoint"
+    export OTEL_NODE_RESOURCE_DETECTORS="env,host,os"
+    export OTEL_SERVICE_NAME="your-service-name"
+    export NODE_OPTIONS="--require @opentelemetry/auto-instrumentations-node/register"
+    ```
+
+    Once they are set, run your application as usual:
+
+    ```bash
+    node app.js
     ```
 
 === "Python"
 
+    First, install the necessary components:
+
+    ```bash
+    pip install opentelemetry-distro opentelemetry-exporter-otlp
+
+    # install all instrumentation libraries
+    opentelemetry-bootstrap -a install
+    ```
+
+    Then, simply execute your application using the `opentelemetry-instrument` tool:
+
+    ```bash
+    opentelemetry-instrument \
+      --traces_exporter console,otlp \
+      --service_name your-service-name \
+      --exporter_otlp_endpoint <your-otlp-endpoint> \
+      # --exporter_otlp_insecure true \ # in case tls is not enabled
+      python myapp.py
+    ```
+
 === "Java"
+
+    Download `opentelemetry-javaagent` [latest version](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar).
+
+    This package includes the instrumentation agent as well as
+    instrumentations for all supported libraries and all available data exporters.
+    The package provides a completely automatic, out-of-the-box experience.
+
+    Run the following code in your Terminal to initiate the SDK
+
+    ```bash
+    export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+    export OTEL_METRICS_EXPORTER=none
+    export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://your-endpoint
+    ```
+
+    Optional Configuration for batch processor
+
+    ```bash
+    export OTEL_BSP_MAX_QUEUE_SIZE=2048
+    export OTEL_BSP_MAX_EXPORT_BATCH_SIZE=512
+    export OTEL_BSP_EXPORT_TIMEOUT=30000
+    ```
+
+    Enable the instrumentation agent using the `-javaagent` flag to the JVM.
+
+    ```bash
+    java -javaagent:./opentelemetry_javaagent.jar \
+    -jar <myapp>.jar
+    ```
+
+    Redeploy and run your code
+
+    Make sure your updated code is running. Invoke the instrumented code.
 
 ## Features Overview
 
