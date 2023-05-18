@@ -21,7 +21,7 @@ docker run \
     -p 8080:8080 \
     -p 4317:4317 \
     -p 4318:4318 \
-    teletrace:latest \
+    teletrace/teletrace:latest \
     --config /etc/config.yaml
 ```
 
