@@ -1,11 +1,11 @@
 # Instrumentation
 
-Instrumentation is the practice of adding additional code to an application to generate runtime information, 
+Instrumentation is the practice of adding additional code to an application to generate runtime information,
 like execution time and other metrics, to be used for troubleshooting, performance optimizations and to track execution flow.
 
-We can instrument our code in a various or ways, and the output format can change from implementation to implementation, 
-fortunately though, by utilizing OpenTelemetry, which is a community driven specification for instrumentation data, 
-we gain access to a vast collection of instrumentation libraries, written for a variety of languages 
+We can instrument our code in a various or ways, and the output format can change from implementation to implementation,
+fortunately though, by utilizing OpenTelemetry, which is a community driven specification for instrumentation data,
+we gain access to a vast collection of instrumentation libraries, written for a variety of languages
 and in a format that is accepted by most vendors in the industry.
 
 ## Manual Instrumentation
@@ -17,7 +17,7 @@ Manual instrumentation is usually done using an SDK of some sort, and OpenTeleme
 
 ## Automatic Instrumentation
 
-The major benefit of using a tool like OpenTelemetry is that we can leverage _automatic instrumentation_ 
+The major benefit of using a tool like OpenTelemetry is that we can leverage _automatic instrumentation_
 that will give us lots information out of the box, without the need for any code changes.
 
 Automatic Instrumentation is usually done by injecting instrumentation libraries at runtime and modifying the executed code on the fly.
