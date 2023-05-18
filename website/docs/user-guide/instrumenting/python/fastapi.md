@@ -1,3 +1,0 @@
-# Fastapi
-
-🚧 👷 IN PROGRESS 👷 🚧

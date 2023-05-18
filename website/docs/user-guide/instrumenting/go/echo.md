@@ -1,3 +1,0 @@
-# Echo
-
-🚧 👷 IN PROGRESS 👷 🚧

@@ -1,3 +1,0 @@
-# Application Overview
-
-🚧 👷 IN PROGRESS 👷 🚧
