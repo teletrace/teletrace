@@ -15,7 +15,7 @@
  */
 
 export enum TagGroup {
-  RECENTLY_USED = "Recently used",
+  RECENTLY_USED = "Recently used keys",
   ALL = "All keys"
 }
 export type AvailableTag = {

@@ -23,36 +23,54 @@ import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 import { AvailableTag, TagGroup } from "../types/availableTags";
 
 
-interface RecentlyUsedKeysSlice {
-  recentlyUsedKeysState: {
-    recentlyUsedKeys: AvailableTag[];
-    addRecentlyUsedKey: (tag: AvailableTag) => void;
-  };
-}
+// interface RecentlyUsedKeysSlice {
+//   recentlyUsedKeysState: {
+//     recentlyUsedKeys: AvailableTag[];
+//     addRecentlyUsedKey: (tag: AvailableTag) => void;
+//   };
+// }
 
-const createRecentlyUsedKeysSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
-  [],
-  [["zustand/persist", never]],
-  RecentlyUsedKeysSlice
-> = persist((set) => ({
-      recentlyUsedKeysState: {
-        recentlyUsedKeys: [],
-        addRecentlyUsedKey: (tag: AvailableTag) => {
-          set((state: RecentlyUsedKeysSlice) => ({
-            recentlyUsedKeysState: {
-              ...state.recentlyUsedKeysState,
-              recentlyUsedKeys: [...state.recentlyUsedKeysState.recentlyUsedKeys, tag],
-            },
-          }));
-        },
-      }
-    }),
-    {
-      name: 'recently-used-keys',
-      getStorage: () => localStorage
-    }
-  );
+// const createRecentlyUsedKeysSlice: StateCreator<
+//   RecentlyUsedKeysSlice,
+//   [],
+//   [["zustand/persist", never]]
+// > = persist((set) => ({
+//       recentlyUsedKeysState: {
+//         recentlyUsedKeys: [],
+//         addRecentlyUsedKey: (tag: AvailableTag) => {
+//           set((state: RecentlyUsedKeysSlice) => ({
+//             recentlyUsedKeysState: {
+//               ...state.recentlyUsedKeysState,
+//               recentlyUsedKeys: [...state.recentlyUsedKeysState.recentlyUsedKeys, tag],
+//             },
+//           }));
+//         },
+//       }
+//     }),
+//     {
+//       name: 'recently-used-keys',
+//       getStorage: () => localStorage
+//     }
+//   );
+
+// const createRecentlyUsedKeysSlice: StateCreator<
+//   RecentlyUsedKeysSlice
+// > = (set) => ({
+//       recentlyUsedKeysState: {
+//         recentlyUsedKeys: [],
+//         addRecentlyUsedKey: (tag: AvailableTag) => {
+//           console.log("Adding recently used key:", tag);
+//           set((state: RecentlyUsedKeysSlice) => ({
+//             recentlyUsedKeysState: {
+//               ...state.recentlyUsedKeysState,
+//               recentlyUsedKeys: [...state.recentlyUsedKeysState.recentlyUsedKeys, tag],
+//             },
+//           }));
+//         },
+//       }
+//     });
+
+
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -62,7 +80,7 @@ interface LiveSpansSlice {
   };
 }
 const createLiveSpansSlice: StateCreator<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice,
   [],
   [],
   LiveSpansSlice
@@ -97,7 +115,7 @@ interface TimeframeSlice {
   };
 }
 const createTimeframeSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
   [],
   [],
   TimeframeSlice
@@ -163,7 +181,7 @@ interface FiltersSlice {
   };
 }
 const createFiltersSlice: StateCreator<
-LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
+LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
 [],
   [["zustand/immer", never]],
   FiltersSlice
@@ -240,7 +258,7 @@ const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
 
 const createSortSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
   [],
   [],
   SortSlice
@@ -258,11 +276,11 @@ const createSortSlice: StateCreator<
 });
 
 export const useSpanSearchStore = create<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
 >()((...set) => ({
   ...createTimeframeSlice(...set),
   ...createLiveSpansSlice(...set),
   ...createFiltersSlice(...set),
   ...createSortSlice(...set),
-  ...createRecentlyUsedKeysSlice(...set)
+  // ...createRecentlyUsedKeysSlice(...set),
 }));
