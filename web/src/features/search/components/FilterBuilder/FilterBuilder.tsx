@@ -91,8 +91,7 @@ export const FilterBuilderDialog = ({
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const { data: availableTags } = useAvailableTags();
-  const { recentlyUsedKeys, addRecentlyUsedKey } = recentlyUsedKeysStore((state) => {
-    return state.recentlyUsedKeysState});
+  const { recentlyUsedKeys, addRecentlyUsedKey } = recentlyUsedKeysStore((state) => state);
 
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
