@@ -25,7 +25,6 @@ import { useAvailableTags } from "../../api/availableTags";
 import { AvailableTag, TagGroup } from "../../types/availableTags";
 import { styles } from "./styles";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { recentlyUsedKeysStore} from "../../stores/recentlyUsedKeysStore"
 
 export type TagSelectorProps = {
   value: AvailableTag | null;
@@ -46,7 +45,9 @@ export const TagSelector = ({
     (page) => page.Tags
   );
 
-  const recentlyUsedKeys = recentlyUsedKeysStore((state) => state.recentlyUsedKeys);
+  // const recentlyUsedKeys = recentlyUsedKeysStore((state) => state.recentlyUsedKeys);
+  const recentlyUsedKeysState = useSpanSearchStore().recentlyUsedKeysState
+  const recentlyUsedKeys = recentlyUsedKeysState.recentlyUsedKeys;
 
   let allTagsOptions: AvailableTag[] | undefined = undefined;
   if (availableTagsOptions) {

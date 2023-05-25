@@ -16,44 +16,11 @@
 
 import create, { StateCreator } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { persist} from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
 import { Operator, SearchFilter, Sort } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
 import { AvailableTag, TagGroup } from "../types/availableTags";
-
-
-// interface RecentlyUsedKeysSlice {
-//   recentlyUsedKeysState: {
-//     recentlyUsedKeys: AvailableTag[];
-//   };
-//   addRecentlyUsedKey: (tag: AvailableTag) => void;
-// }
-
-// const MAX_RECENTLY_USED_KEYS = 3;
-// const createRecentlyUsedKeysSlice: StateCreator<
-//   RecentlyUsedKeysSlice,
-//   [],
-//   [["zustand/persist", never]]
-// > = persist((set) => ({
-//   recentlyUsedKeysState: {
-//     recentlyUsedKeys: []
-//   },
-//   addRecentlyUsedKey: (tag: AvailableTag) => {
-//     set((state: RecentlyUsedKeysSlice) => {
-//       const updatedKeys = [tag, ...state.recentlyUsedKeysState.recentlyUsedKeys.filter(key => key !== tag)].slice(0,MAX_RECENTLY_USED_KEYS);
-//       return {
-//         recentlyUsedKeysState: {
-//           recentlyUsedKeys: updatedKeys,
-//         },
-//       };
-//     });
-//   },
-// }),
-//   {
-//     name: 'recently-used-keys',
-//   }
-// );
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -164,8 +131,8 @@ interface FiltersSlice {
   };
 }
 const createFiltersSlice: StateCreator<
-LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
-[],
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
+  [],
   [["zustand/immer", never]],
   FiltersSlice
 > = immer((set) => ({
@@ -258,12 +225,69 @@ const createSortSlice: StateCreator<
   },
 });
 
+
+interface RecentlyUsedKeysSlice {
+  recentlyUsedKeysState: {
+    recentlyUsedKeys: AvailableTag[];
+    addRecentlyUsedKey: (tag: AvailableTag) => void;
+  };
+}
+
+const MAX_RECENTLY_USED_KEYS = 3;
+const createRecentlyUsedKeysSlice: StateCreator<
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice,
+  [],
+  [],
+  RecentlyUsedKeysSlice
+> = (set) => ({
+  recentlyUsedKeysState: {
+    recentlyUsedKeys: [],
+    addRecentlyUsedKey: (tag) => {
+      set(state => {
+        const filtered = state.recentlyUsedKeysState.recentlyUsedKeys.filter(key => key !== tag)
+        const updatedKeys = [tag, ...filtered].slice(0, MAX_RECENTLY_USED_KEYS);
+
+        return {
+          recentlyUsedKeysState: {
+            ...state.recentlyUsedKeysState,
+            recentlyUsedKeys: updatedKeys,
+          }
+        }
+      })
+    },
+  }
+});
+
 export const useSpanSearchStore = create<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
->()((...set) => ({
-  ...createTimeframeSlice(...set),
-  ...createLiveSpansSlice(...set),
-  ...createFiltersSlice(...set),
-  ...createSortSlice(...set),
-  // ...createRecentlyUsedKeysSlice(...set),
-}));
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice & RecentlyUsedKeysSlice
+>()(
+  persist(
+    (...set) => ({
+      ...createTimeframeSlice(...set),
+      ...createLiveSpansSlice(...set),
+      ...createFiltersSlice(...set),
+      ...createSortSlice(...set),
+      ...createRecentlyUsedKeysSlice(...set),
+    }),
+    {
+      name: "teletrace-storage",
+      // If you want to persist additional state, add it here!
+      partialize: state => ({
+        recentlyUsedKeysState: state.recentlyUsedKeysState,
+      }),
+      // By default, zustand's merge function is shallow and it causes hydration issues
+      // when loading nested objects from state.
+      // For now, the only persisted state is `recentlyUsedKeysState` and we solved this issue
+      // by "teaching" zustand how to go a level deeper when merging this state. 
+      // If we add another nested object to be persisted, we should look for 
+      // a more general solution for deep merging.
+      merge: (persisted, current) => ({
+        ...current,
+        recentlyUsedKeysState: {
+          ...current.recentlyUsedKeysState,
+          recentlyUsedKeys: (persisted as any).recentlyUsedKeysState.recentlyUsedKeys,
+        },
+      })
+    }
+  )
+);

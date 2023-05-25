@@ -20,22 +20,22 @@ import { AvailableTag } from "../types/availableTags";
 
 
 interface RecentlyUsedKeysSlice {
-    recentlyUsedKeys: AvailableTag[];
-    addRecentlyUsedKey: (tag: AvailableTag) => void;
-  }
-  
-  const MAX_RECENTLY_USED_KEYS = 4;
-  const createRecentlyUsedKeysSlice: StateCreator<
+  recentlyUsedKeys: AvailableTag[];
+  addRecentlyUsedKey: (tag: AvailableTag) => void;
+}
+
+const MAX_RECENTLY_USED_KEYS = 4;
+const createRecentlyUsedKeysSlice: StateCreator<
   RecentlyUsedKeysSlice,
   [],
   [["zustand/persist", never]]
 > = persist((set) => ({
-    recentlyUsedKeys: [],
+  recentlyUsedKeys: [],
   addRecentlyUsedKey: (tag: AvailableTag) => {
     set((state: RecentlyUsedKeysSlice) => {
-      const updatedKeys = [tag, ...state.recentlyUsedKeys.filter(key => key !== tag)].slice(0,MAX_RECENTLY_USED_KEYS);
+      const updatedKeys = [tag, ...state.recentlyUsedKeys.filter(key => key !== tag)].slice(0, MAX_RECENTLY_USED_KEYS);
       return {
-          recentlyUsedKeys: updatedKeys,
+        recentlyUsedKeys: updatedKeys,
       };
     });
   },
@@ -44,8 +44,8 @@ interface RecentlyUsedKeysSlice {
   getStorage: () => localStorage,
 });
 
-  export const recentlyUsedKeysStore = create<
-   RecentlyUsedKeysSlice
->()((...set) => ({
-  ...createRecentlyUsedKeysSlice(...set)
-}));
+//   export const recentlyUsedKeysStore = create<
+//    RecentlyUsedKeysSlice
+// >()((...set) => ({
+//   ...createRecentlyUsedKeysSlice(...set)
+// }));
