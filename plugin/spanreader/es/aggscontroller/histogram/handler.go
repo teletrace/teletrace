@@ -131,7 +131,7 @@ type percentilesHandler struct{}
 func (h *percentilesHandler) AddSubAggregation(
 	label string, aggregation aggsquery.Aggregation, histogramAgg *types.AggregationContainerBuilder,
 ) error {
-	percentiles := aggregation.AggregationParameters[aggsquery.PERCENTILES_PARAM].([]any)
+	percentiles := aggregation.AggFunctionParams[aggsquery.PERCENTILES_PARAM].([]any)
 
 	// Convert the 'percentiles' parameter to a float64 array
 	percentilesFloat64 := make([]float64, len(percentiles))

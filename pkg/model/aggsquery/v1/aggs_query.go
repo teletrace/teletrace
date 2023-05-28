@@ -51,11 +51,11 @@ const (
 )
 
 type Aggregation struct {
-	Func                  AggregationFunction          `json:"func"`
-	GroupBy               string                       `json:"groupBy,omitempty"`
-	MaxGroups             int                          `json:"maxGroups,omitempty"`
-	Key                   string                       `json:"key,omitempty"`
-	AggregationParameters map[AggregationParameter]any `json:"aggregationParameters,omitempty"`
+	Func              AggregationFunction          `json:"func"`
+	GroupBy           string                       `json:"groupBy,omitempty"`
+	MaxGroups         int                          `json:"maxGroups,omitempty"`
+	Key               string                       `json:"key,omitempty"`
+	AggFunctionParams map[AggregationParameter]any `json:"aggregationParameters,omitempty"`
 }
 
 var AggregationFuncToSupportedParameters = map[AggregationFunction][]AggregationParameter{
@@ -73,8 +73,6 @@ type Bucket struct {
 	Data      any `json:"data"`
 }
 
-type SubBucketsData map[string]any
-
 type Histogram struct {
 	HistogramLabel string   `json:"histogramLabel"`
 	Buckets        []Bucket `json:"buckets"`
@@ -88,7 +86,7 @@ func (sr *HistogramsRequest) Validate() error {
 	// Search for aggregation parameters
 	for _, agg := range sr.Aggregations {
 		for _, p := range AggregationFuncToSupportedParameters[agg.Func] {
-			_, ok := agg.AggregationParameters[p]
+			_, ok := agg.AggFunctionParams[p]
 			if !ok {
 				return fmt.Errorf("missing aggregation parameter: %s", p)
 			}
