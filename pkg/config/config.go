@@ -65,6 +65,18 @@ const (
 
 	sqlitePathEnvName        = "SQLITE_PATH"
 	sqlitePathEnvNameDefault = "embedded_spans.db"
+
+	osEndpointEnvName = "OPENSEARCH_ENDPOINT"
+	osEndpointDefault = "http://0.0.0.0:9201"
+
+	osUsernameEnvName = "OPENSEARCH_USERNAME"
+	osUsernameDefault = "admin"
+
+	osPasswordEnvName = "OPENSEARCH_PASSWORD"
+	osPasswordDefault = "admin"
+
+	osIndexEnvName = "OPENSEARCH_INDEX"
+	osIndexDefault = "teletrace-traces"
 )
 
 // Config defines global configurations used throughout the application.
@@ -84,6 +96,10 @@ type Config struct {
 	ESIndexerWorkersCount          int    `mapstructure:"es_indexer_workers_count"`
 	ESIndexerFlushThresholdSeconds int    `mapstructure:"es_indexer_flush_threshold_seconds"`
 	SQLitePath                     string `mapstructure:"sqlite_path"`
+	OSEndpoints                    string `mapstructure:"opensearch_endpoint"`
+	OSUsername                     string `mapstructure:"opensearch_username"`
+	OSPassword                     string `mapstructure:"opensearch_password"`
+	OSIndex                        string `mapstructure:"opensearch_index"`
 }
 
 // NewConfig creates and returns a Config based on prioritized sources.
@@ -131,5 +147,13 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault(esIndexEnvName, esIndexDefault)
 	v.SetDefault(esIndexerFlushThresholdSecondsEnvName, esIndexerFlushThresholdSecondsDefault)
 	v.SetDefault(esIndexerWorkersCountEnvName, esIndexerWorkersCountDefault)
+
+	// SQLite default
 	v.SetDefault(sqlitePathEnvName, sqlitePathEnvNameDefault)
+
+	// OpenSearch defaults
+	v.SetDefault(osEndpointEnvName, osEndpointDefault)
+	v.SetDefault(osUsernameEnvName, osUsernameDefault)
+	v.SetDefault(osPasswordEnvName, osPasswordDefault)
+	v.SetDefault(osIndexEnvName, osIndexDefault)
 }
