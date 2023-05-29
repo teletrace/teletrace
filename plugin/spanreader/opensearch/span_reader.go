@@ -20,6 +20,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
+
 	"github.com/teletrace/teletrace/pkg/model"
 
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
@@ -87,6 +89,12 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, req tagsquery.TagSt
 	}
 
 	return res, nil
+}
+
+func (sr *spanReader) GetHistograms(
+	ctx context.Context, req aggsquery.HistogramsRequest,
+) (*aggsquery.HistogramsResponse, error) {
+	return nil, fmt.Errorf("Not implemented method")
 }
 
 func (sr *spanReader) GetSystemId(ctx context.Context, req metadata.GetSystemIdRequest) (*metadata.GetSystemIdResponse, error) {
