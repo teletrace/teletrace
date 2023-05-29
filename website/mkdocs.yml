@@ -108,6 +108,7 @@ plugins:
 nav:
   - index.md
   - features.md
+  - demo.md
   - Concepts:
       - concepts/intro.md
       - concepts/distributed-tracing.md
