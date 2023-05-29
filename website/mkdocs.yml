@@ -1,16 +1,32 @@
 site_name: Teletrace
+repo_name: teletrace/teletrace
+repo_url: https://github.com/teletrace/teletrace
+
+extra_css:
+  - stylesheets/extra.css
 
 theme:
+  name: material
   homepage: https://docs.teletrace.io/
+  logo: assets/teletrace_logo_white.svg
+  favicon: assets/teletrace_logo.svg
+
   font:
     text: Roboto
-  logo: assets/teletrace_logo_white.svg
+
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+
   features:
     - navigation.sections
+    - navigation.instant
+    - navigation.top
+    - navigation.footer
     - content.code.annotate
     - content.code.copy
+    - content.action.edit
 
-  name: material
   palette:
     - scheme: default
       primary: indigo
@@ -30,42 +46,81 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/teletrace/teletrace
       name: Teletrace on GithHub
+
+    - icon: fontawesome/brands/slack
+      link: https://join.slack.com/t/teletrace/shared_invite/zt-1qv0kogcn-KlbBB2yS~gUCGszZoSpJfQ
+      name: Teletrace's Slack Workspace
+
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/r/teletrace/teletrace
+      name: Teletrace Docker Image
+
+  consent:
+    title: Cookie consent
+    description: >-
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for. With your consent, you're helping us to
+      make our documentation better.
+
+  analytics:
+    provider: google
+    property: G-C9YG1K3ZP1
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve this page by
+            opening an <a href="https://github.com/teletrace/teletrace/issues/new/?title=[Docs Feedback]+{title}+-+{url}" target="_blank" rel="noopener">issue</a>.
+
 markdown_extensions:
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.tabbed:
-      alternate_style: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+  - tables
+  - attr_list
+  - md_in_html
   - admonition
   - pymdownx.details
-  - tables
+  - pymdownx.snippets
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed: { alternate_style: true }
+  - pymdownx.highlight: { anchor_linenums: true }
+  - toc:
+      title: On this page
+      permalink: true
 
 plugins:
   - search
   - awesome-pages
+  - open-in-new-tab
 
-repo_name: teletrace/teletrace
-repo_url: https://github.com/teletrace/teletrace
 nav:
-  - Overview: index.md
-  - understand_the_basics.md
-  - Getting Started:
-      - Quick Start: user-guide/quick_start.md
+  - index.md
+  - features.md
+  - demo.md
+  - Concepts:
+      - concepts/intro.md
+      - concepts/distributed-tracing.md
+      - concepts/instrumentation.md
+      - concepts/glossary.md
+  - Operator Guide:
+      - operator-guide/architecture-overview.md
       - Deployment:
-          - Docker Compose: user-guide/deployment/docker_compose.md
-          - Helm Chart: user-guide/deployment/helm_chart.md
-      - Sending Data:
-          - Introduction: user-guide/sending-data/introduction.md
-          - Open Telemetry Collector: user-guide/sending-data/open_telemetry_collector.md
-          - Open Telemetry SDK:
-              - Java: user-guide/sending-data/open-telemetry-sdk/java.md
-              - Python: user-guide/sending-data/open-telemetry-sdk/python.md
-              - Javascript: user-guide/sending-data/open-telemetry-sdk/javascript.md
-      - Open Telemetry Demo: user-guide/open_telemetry_demo.md
+          - operator-guide/deployment/docker.md
+          - operator-guide/deployment/kubernetes.md
   - Community:
-      - Contribution: contribution.md
-      - FAQs: faq.md
-      - Support: support.md
+      - community/contribution.md
+      - community/faq.md
+      - community/support.md
       - Releases ⧉: https://github.com/teletrace/teletrace/releases
