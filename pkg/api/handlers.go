@@ -20,6 +20,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
+
 	"github.com/teletrace/teletrace/pkg/model"
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 	spansquery "github.com/teletrace/teletrace/pkg/model/spansquery/v1"
@@ -120,6 +122,23 @@ func (api *API) tagsStatistics(c *gin.Context) {
 	tag := c.Param("tag")
 
 	res, err := (*api.spanReader).GetTagsStatistics(c, req, tag)
+	if err != nil {
+		respondWithError(http.StatusInternalServerError, err, c)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (api *API) histograms(c *gin.Context) {
+	var req aggsquery.HistogramsRequest
+	isValidationError := api.validateRequestBody(&req, c)
+	if isValidationError {
+		return
+	}
+	handleTimeframe(req.Timeframe)
+
+	res, err := (*api.spanReader).GetHistograms(c, req)
 	if err != nil {
 		respondWithError(http.StatusInternalServerError, err, c)
 		return
