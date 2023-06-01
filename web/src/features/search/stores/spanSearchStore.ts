@@ -145,22 +145,8 @@ const createFiltersSlice: StateCreator<
       previousFilter?: SearchFilter
     ) =>
       set((state) => {
-        const handlePreExisitingFilterOverride = () => {
-          const filterIndex = state.filtersState.filters.findIndex((f) =>
-            isFiltersStructureEqual(
-              f.keyValueFilter.key,
-              filter.keyValueFilter.key,
-              f.keyValueFilter.operator,
-              filter.keyValueFilter.operator
-            )
-          );
-          if (filterIndex !== -1) {
-            state.filtersState.filters.splice(filterIndex, 1);
-          }
-        };
-
         const targetFilter = previousFilter ?? filter;
-        const filterToUpdate = state.filtersState.filters.find((f) =>
+        const existFilterIndex = state.filtersState.filters.findIndex((f) =>
           isFiltersStructureEqual(
             f.keyValueFilter.key,
             targetFilter.keyValueFilter.key,
@@ -168,12 +154,8 @@ const createFiltersSlice: StateCreator<
             targetFilter.keyValueFilter.operator
           )
         );
-
-        if (filterToUpdate !== undefined) {
-          if (previousFilter) {
-            handlePreExisitingFilterOverride();
-          }
-          filterToUpdate.keyValueFilter = filter.keyValueFilter;
+        if (existFilterIndex !== -1) {
+          state.filtersState.filters[existFilterIndex] = filter;
         } else {
           state.filtersState.filters.push(filter);
         }

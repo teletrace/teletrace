@@ -20,6 +20,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/teletrace/teletrace/pkg/model/aggsquery/v1"
+	"github.com/teletrace/teletrace/plugin/spanreader/es/aggscontroller"
+
 	"github.com/teletrace/teletrace/pkg/model"
 	"github.com/teletrace/teletrace/pkg/model/metadata/v1"
 	"github.com/teletrace/teletrace/pkg/model/tagsquery/v1"
@@ -41,6 +44,7 @@ type spanReader struct {
 	ctx                context.Context
 	searchController   searchcontroller.SearchController
 	tagsController     tagscontroller.TagsController
+	aggsController     aggscontroller.AggsController
 	metadataController metadatacontroller.MetadataController
 }
 
@@ -93,6 +97,17 @@ func (sr *spanReader) GetTagsStatistics(ctx context.Context, r tagsquery.TagStat
 	res, err := sr.tagsController.GetTagsStatistics(ctx, r, tag)
 	if err != nil {
 		return nil, fmt.Errorf("GetTagsStatistics failed with error: %+v", err)
+	}
+
+	return res, nil
+}
+
+func (sr *spanReader) GetHistograms(
+	ctx context.Context, req aggsquery.HistogramsRequest,
+) (*aggsquery.HistogramsResponse, error) {
+	res, err := sr.aggsController.GetHistograms(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("GetHistograms failed with error: %+v", err)
 	}
 
 	return res, nil
@@ -152,6 +167,11 @@ func NewSpanReader(ctx context.Context, logger *zap.Logger, elasticSpansCfg Elas
 		return nil, fmt.Errorf(errMsg, err)
 	}
 
+	ac, err := aggscontroller.NewAggsController(logger, typedClient, elasticSpansCfg.Index)
+	if err != nil {
+		return nil, fmt.Errorf(errMsg, err)
+	}
+
 	metaTypedClient, err := newTypedClient(logger, elasticMetaCfg)
 	if err != nil {
 		return nil, fmt.Errorf(errMsg, err)
@@ -167,6 +187,7 @@ func NewSpanReader(ctx context.Context, logger *zap.Logger, elasticSpansCfg Elas
 		ctx:                ctx,
 		searchController:   sc,
 		tagsController:     tc,
+		aggsController:     ac,
 		metadataController: mc,
 	}, nil
 }

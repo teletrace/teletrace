@@ -30,6 +30,7 @@ import (
 	"github.com/teletrace/teletrace/pkg/spanreader"
 
 	spanreaderes "github.com/teletrace/teletrace/plugin/spanreader/es"
+	spanreaderos "github.com/teletrace/teletrace/plugin/spanreader/opensearch"
 	sqlite "github.com/teletrace/teletrace/plugin/spanreader/sqlite"
 
 	"github.com/teletrace/teletrace/teletrace-otelcol/pkg/collector"
@@ -81,6 +82,8 @@ func initializeSpanReader(cfg config.Config, logger *zap.Logger) (spanreader.Spa
 		return sqlite.NewSqliteSpanReader(context.Background(), logger, sqlite.NewSqliteConfig(cfg))
 	case "elasticsearch":
 		return spanreaderes.NewSpanReader(context.Background(), logger, spanreaderes.NewElasticConfig(cfg), spanreaderes.NewElasticMetaConfig(cfg))
+	case "opensearch":
+		return spanreaderos.NewSpanReader(context.Background(), logger, spanreaderos.NewOpenSearchConfig(cfg), spanreaderos.NewOpenSearchMetaConfig(cfg))
 	default:
 		return nil, fmt.Errorf("Invalid spans storage plugin %s", cfg.SpansStoragePlugin)
 	}
