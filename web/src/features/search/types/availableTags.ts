@@ -16,12 +16,12 @@
 
 export enum TagGroup {
   RECENTLY_USED = "Recently used keys",
-  ALL = "All keys"
+  ALL = "All keys",
 }
 export type AvailableTag = {
   name: string;
   type: string;
-  group?: TagGroup
+  group?: TagGroup;
 };
 
 export type AvailableTagsRequest = {

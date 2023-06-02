@@ -33,20 +33,20 @@ export const styles = {
     },
   },
   tagsDropdownIcon: {
-    fontSize: '15px',
-    marginRight: '8px',
-    marginLeft: '4px'
+    fontSize: "15px",
+    marginRight: "8px",
+    marginLeft: "4px",
   },
   tagsDropdownGroupHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    top: '-8px',
-    padding: '4px 10px',
-    fontSize: '12px',
-    borderBottom: '1px solid #96979e'
+    display: "flex",
+    alignItems: "center",
+    top: "-8px",
+    padding: "4px 10px",
+    fontSize: "12px",
+    borderBottom: "1px solid #96979e",
   },
   tagsDropdownGroupItems: {
-    padding: 0
+    padding: 0,
   },
   operatorSelector: {
     width: "166px",

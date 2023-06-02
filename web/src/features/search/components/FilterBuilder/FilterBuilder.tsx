@@ -91,7 +91,8 @@ export const FilterBuilderDialog = ({
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const { data: availableTags } = useAvailableTags();
   // const { recentlyUsedKeys, addRecentlyUsedKey } = recentlyUsedKeysStore((state) => state);
-  const { recentlyUsedKeys, addRecentlyUsedKey } = useSpanSearchStore().recentlyUsedKeysState;
+  const { recentlyUsedKeys, addRecentlyUsedKey } =
+    useSpanSearchStore().recentlyUsedKeysState;
 
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
@@ -245,9 +246,14 @@ export const FilterBuilderDialog = ({
     );
 
     if (dialogState?.tag) {
-      const tagExists = recentlyUsedKeys.some (tag => tag.name === dialogState?.tag?.name) 
+      const tagExists = recentlyUsedKeys.some(
+        (tag) => tag.name === dialogState?.tag?.name
+      );
       if (!tagExists) {
-        addRecentlyUsedKey({ ...dialogState.tag, group: TagGroup.RECENTLY_USED });
+        addRecentlyUsedKey({
+          ...dialogState.tag,
+          group: TagGroup.RECENTLY_USED,
+        });
       }
     }
 
