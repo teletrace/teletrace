@@ -246,8 +246,8 @@ export const FilterBuilderDialog = ({
     if (dialogState?.tag) {
       addRecentlyUsedKey({
         ...dialogState.tag,
-        group: TagGroup.RECENTLY_USED
-      })
+        group: TagGroup.RECENTLY_USED,
+      });
     }
 
     handleClose();
