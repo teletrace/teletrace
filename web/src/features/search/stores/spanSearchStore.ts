@@ -228,12 +228,12 @@ const createRecentlyUsedKeysSlice: StateCreator<
 > = (set) => ({
   recentlyUsedKeysState: {
     recentlyUsedKeys: [],
-    addRecentlyUsedKey: (tag) => {
+    addRecentlyUsedKey: (newTag) => {
       set((state) => {
-        const filtered = state.recentlyUsedKeysState.recentlyUsedKeys.filter(
-          (key) => key !== tag
+        const recentlyUsedKeysNoDuplicates = state.recentlyUsedKeysState.recentlyUsedKeys.filter(
+          (tag) => tag !== newTag
         );
-        const updatedKeys = [tag, ...filtered].slice(0, MAX_RECENTLY_USED_KEYS);
+        const updatedKeys = [newTag, ...recentlyUsedKeysNoDuplicates].slice(0, MAX_RECENTLY_USED_KEYS);
 
         return {
           recentlyUsedKeysState: {

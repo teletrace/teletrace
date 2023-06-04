@@ -45,9 +45,7 @@ export const TagSelector = ({
     (page) => page.Tags
   );
 
-  // const recentlyUsedKeys = recentlyUsedKeysStore((state) => state.recentlyUsedKeys);
-  const recentlyUsedKeysState = useSpanSearchStore().recentlyUsedKeysState;
-  const recentlyUsedKeys = recentlyUsedKeysState.recentlyUsedKeys;
+  const { recentlyUsedKeys} = useSpanSearchStore().recentlyUsedKeysState;
 
   let allTagsOptions: AvailableTag[] | undefined = undefined;
   if (availableTagsOptions) {
