@@ -26,7 +26,7 @@ import React, { useEffect, useState } from "react";
 
 import { useAvailableTags } from "../../api/availableTags";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
-import { AvailableTag } from "../../types/availableTags";
+import { AvailableTag, TagGroup } from "../../types/availableTags";
 import {
   FilterValueTypes,
   KeyValueFilter,
@@ -90,6 +90,7 @@ export const FilterBuilderDialog = ({
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const { data: availableTags } = useAvailableTags();
+  const { addRecentlyUsedKey } = useSpanSearchStore().recentlyUsedKeysState;
 
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
@@ -241,6 +242,14 @@ export const FilterBuilderDialog = ({
       { keyValueFilter: newFilter },
       initialFilter && { keyValueFilter: initialFilter }
     );
+
+    if (dialogState?.tag) {
+      addRecentlyUsedKey({
+        ...dialogState.tag,
+        group: TagGroup.RECENTLY_USED,
+      });
+    }
+
     handleClose();
   };
 

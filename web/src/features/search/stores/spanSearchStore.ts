@@ -15,10 +15,13 @@
  */
 
 import create, { StateCreator } from "zustand";
+import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 import { Operator, SearchFilter, Sort } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
+
+import { AvailableTag } from "../types/availableTags";
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -28,7 +31,7 @@ interface LiveSpansSlice {
   };
 }
 const createLiveSpansSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice,
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice,
   [],
   [],
   LiveSpansSlice
@@ -63,7 +66,7 @@ interface TimeframeSlice {
   };
 }
 const createTimeframeSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
   [],
   [],
   TimeframeSlice
@@ -129,7 +132,7 @@ interface FiltersSlice {
   };
 }
 const createFiltersSlice: StateCreator<
-  LiveSpansSlice & TimeframeSlice & FiltersSlice,
+  LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
   [],
   [["zustand/immer", never]],
   FiltersSlice
@@ -205,11 +208,83 @@ const createSortSlice: StateCreator<
   },
 });
 
+interface RecentlyUsedKeysSlice {
+  recentlyUsedKeysState: {
+    recentlyUsedKeys: AvailableTag[];
+    addRecentlyUsedKey: (tag: AvailableTag) => void;
+  };
+}
+
+const MAX_RECENTLY_USED_KEYS = 3;
+const createRecentlyUsedKeysSlice: StateCreator<
+  TimeframeSlice &
+    LiveSpansSlice &
+    FiltersSlice &
+    SortSlice &
+    RecentlyUsedKeysSlice,
+  [],
+  [],
+  RecentlyUsedKeysSlice
+> = (set) => ({
+  recentlyUsedKeysState: {
+    recentlyUsedKeys: [],
+    addRecentlyUsedKey: (newTag) => {
+      set((state) => {
+        const recentlyUsedKeysNoDuplicates =
+          state.recentlyUsedKeysState.recentlyUsedKeys.filter(
+            (tag) => tag !== newTag
+          );
+        const updatedKeys = [newTag, ...recentlyUsedKeysNoDuplicates].slice(
+          0,
+          MAX_RECENTLY_USED_KEYS
+        );
+
+        return {
+          recentlyUsedKeysState: {
+            ...state.recentlyUsedKeysState,
+            recentlyUsedKeys: updatedKeys,
+          },
+        };
+      });
+    },
+  },
+});
+
 export const useSpanSearchStore = create<
-  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
->()((...set) => ({
-  ...createTimeframeSlice(...set),
-  ...createLiveSpansSlice(...set),
-  ...createFiltersSlice(...set),
-  ...createSortSlice(...set),
-}));
+  TimeframeSlice &
+    LiveSpansSlice &
+    FiltersSlice &
+    SortSlice &
+    RecentlyUsedKeysSlice
+>()(
+  persist(
+    (...set) => ({
+      ...createTimeframeSlice(...set),
+      ...createLiveSpansSlice(...set),
+      ...createFiltersSlice(...set),
+      ...createSortSlice(...set),
+      ...createRecentlyUsedKeysSlice(...set),
+    }),
+    {
+      name: "teletrace-storage",
+      // If you want to persist additional state, add it here!
+      partialize: (state) => ({
+        recentlyUsedKeysState: state.recentlyUsedKeysState,
+      }),
+      // By default, zustand's merge function is shallow and it causes hydration issues
+      // when loading nested objects from state.
+      // For now, the only persisted state is `recentlyUsedKeysState` and we solved this issue
+      // by "teaching" zustand how to go a level deeper when merging this state.
+      // If we add another nested object to be persisted, we should look for
+      // a more general solution for deep merging.
+      merge: (persisted, current) => ({
+        ...current,
+        recentlyUsedKeysState: {
+          ...current.recentlyUsedKeysState,
+          recentlyUsedKeys: (persisted as RecentlyUsedKeysSlice)
+            .recentlyUsedKeysState.recentlyUsedKeys,
+        },
+      }),
+    }
+  )
+);
