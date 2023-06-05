@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { Autocomplete, FormLabel, TextField } from "@mui/material";
+import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
+import { Autocomplete, FormLabel, TextField, styled } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
+import { useState } from "react";
 import Highlighter from "react-highlight-words";
 
 import { useAvailableTags } from "../../api/availableTags";
-import { AvailableTag } from "../../types/availableTags";
+import { useSpanSearchStore } from "../../stores/spanSearchStore";
+import { AvailableTag, TagGroup } from "../../types/availableTags";
 import { styles } from "./styles";
 
 export type TagSelectorProps = {
@@ -36,16 +40,31 @@ export const TagSelector = ({
   disabled = false,
 }: TagSelectorProps) => {
   const { data: availableTags, isLoading } = useAvailableTags();
-
+  const [isTyping, setIsTyping] = useState(false);
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags
   );
+
+  const { recentlyUsedKeys } = useSpanSearchStore().recentlyUsedKeysState;
+
+  let allTagsOptions: AvailableTag[] | undefined = undefined;
+  if (availableTagsOptions) {
+    allTagsOptions = [...recentlyUsedKeys, ...availableTagsOptions];
+  }
 
   const handleChange = (
     event: React.SyntheticEvent<Element, Event>,
     value: AvailableTag | null
   ) => {
     onChange(value);
+  };
+
+  const GroupHeader = styled("div")({});
+  const GroupItems = styled("ul")({});
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setIsTyping(value !== "");
   };
 
   return (
@@ -59,7 +78,8 @@ export const TagSelector = ({
         value={value}
         id="filter"
         size="small"
-        options={availableTagsOptions || []}
+        options={allTagsOptions || []}
+        groupBy={(option) => option?.group ?? TagGroup.ALL}
         getOptionLabel={(option) => option.name}
         componentsProps={{ paper: { sx: styles.tagsDropdown } }}
         renderInput={(params) => (
@@ -67,6 +87,7 @@ export const TagSelector = ({
             {...params}
             error={error}
             helperText={error ? "Filter is required" : ""}
+            onChange={handleInputChange}
           />
         )}
         renderOption={(props, option, state) => (
@@ -79,6 +100,28 @@ export const TagSelector = ({
             />
           </li>
         )}
+        renderGroup={(options) => {
+          if (isTyping) {
+            return options.children;
+          }
+          const icon =
+            options.group === TagGroup.RECENTLY_USED ? (
+              <AccessTimeOutlinedIcon sx={styles.tagsDropdownIcon} />
+            ) : (
+              <SellOutlinedIcon sx={styles.tagsDropdownIcon} />
+            );
+          return (
+            <li key={options.key}>
+              <GroupHeader sx={styles.tagsDropdownGroupHeader}>
+                {" "}
+                {icon} {options.group}
+              </GroupHeader>
+              <GroupItems sx={styles.tagsDropdownGroupItems}>
+                {options.children}
+              </GroupItems>
+            </li>
+          );
+        }}
         onChange={handleChange}
         isOptionEqualToValue={(option, value) => option.name === value.name}
       ></Autocomplete>
