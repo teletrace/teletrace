@@ -35,7 +35,10 @@ export const useRecentlyUsedKeysStore = create<RecentlyUsedKeysState>()(
           const recentlyUsedKeysNoDuplicates = state.recentlyUsedKeys.filter(
             (tag) => tag.name !== newTag.name
           );
-          const updatedKeys = [newTag, ...recentlyUsedKeysNoDuplicates].slice(0, MAX_RECENTLY_USED_KEYS);
+          const updatedKeys = [newTag, ...recentlyUsedKeysNoDuplicates].slice(
+            0,
+            MAX_RECENTLY_USED_KEYS
+          );
 
           return {
             recentlyUsedKeys: updatedKeys,
@@ -44,8 +47,7 @@ export const useRecentlyUsedKeysStore = create<RecentlyUsedKeysState>()(
       },
     }),
     {
-      name: 'teletrace-storage',
+      name: "teletrace-storage",
     }
   )
 );
-

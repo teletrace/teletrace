@@ -206,15 +206,10 @@ const createSortSlice: StateCreator<
 });
 
 export const useSpanSearchStore = create<
-  TimeframeSlice &
-    LiveSpansSlice &
-    FiltersSlice &
-    SortSlice 
->()(
-    (...set) => ({
-      ...createTimeframeSlice(...set),
-      ...createLiveSpansSlice(...set),
-      ...createFiltersSlice(...set),
-      ...createSortSlice(...set)
-    }),
-);
+  TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
+>()((...set) => ({
+  ...createTimeframeSlice(...set),
+  ...createLiveSpansSlice(...set),
+  ...createFiltersSlice(...set),
+  ...createSortSlice(...set),
+}));
