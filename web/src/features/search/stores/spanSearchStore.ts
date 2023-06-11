@@ -232,7 +232,7 @@ const createRecentlyUsedKeysSlice: StateCreator<
       set((state) => {
         const recentlyUsedKeysNoDuplicates =
           state.recentlyUsedKeysState.recentlyUsedKeys.filter(
-            (tag) => tag !== newTag
+            (tag) => tag.name !== newTag.name
           );
         const updatedKeys = [newTag, ...recentlyUsedKeysNoDuplicates].slice(
           0,
