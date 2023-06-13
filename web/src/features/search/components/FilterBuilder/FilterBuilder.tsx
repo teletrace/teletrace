@@ -25,6 +25,7 @@ import { Stack } from "@mui/system";
 import React, { useEffect, useState } from "react";
 
 import { useAvailableTags } from "../../api/availableTags";
+import { useRecentlyUsedKeysStore } from "../../stores/recentlyUsedKeysStore";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { AvailableTag, TagGroup } from "../../types/availableTags";
 import {
@@ -90,7 +91,7 @@ export const FilterBuilderDialog = ({
 }: FilterDialogProps) => {
   const initialFormErrors: FormErrors = { tag: false, value: false };
   const { data: availableTags } = useAvailableTags();
-  const { addRecentlyUsedKey } = useSpanSearchStore().recentlyUsedKeysState;
+  const { addRecentlyUsedKey } = useRecentlyUsedKeysStore();
 
   const availableTagsOptions = availableTags?.pages.flatMap(
     (page) => page.Tags

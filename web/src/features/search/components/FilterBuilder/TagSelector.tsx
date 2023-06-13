@@ -22,7 +22,7 @@ import { useState } from "react";
 import Highlighter from "react-highlight-words";
 
 import { useAvailableTags } from "../../api/availableTags";
-import { useSpanSearchStore } from "../../stores/spanSearchStore";
+import { useRecentlyUsedKeysStore } from "../../stores/recentlyUsedKeysStore";
 import { AvailableTag, TagGroup } from "../../types/availableTags";
 import { styles } from "./styles";
 
@@ -45,7 +45,7 @@ export const TagSelector = ({
     (page) => page.Tags
   );
 
-  const { recentlyUsedKeys } = useSpanSearchStore().recentlyUsedKeysState;
+  const { recentlyUsedKeys } = useRecentlyUsedKeysStore();
 
   let allTagsOptions: AvailableTag[] | undefined = undefined;
   if (availableTagsOptions) {
