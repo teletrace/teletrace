@@ -15,10 +15,12 @@
  */
 
 import create, { StateCreator } from "zustand";
+import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 import { Operator, SearchFilter, Sort } from "@/features/search";
 import { ONE_HOUR_IN_NS, getCurrentTimestamp } from "@/utils/format";
+
 
 interface LiveSpansSlice {
   liveSpansState: {
@@ -187,6 +189,24 @@ interface SortSlice {
 const DEFAULT_SORT_FIELD = "span.startTimeUnixNano";
 const DEFAULT_SORT_ASC = false;
 
+const hashStorage: StateStorage = {
+  getItem: (key) => {
+    const searchParams = new URLSearchParams(window.location.hash.slice(1));
+    const storedValue = searchParams.get(key) ?? "";
+    return storedValue !== "" ? JSON.parse(storedValue) : null;
+  },
+  setItem: (key, newValue) => {
+    const searchParams = new URLSearchParams(window.location.hash.slice(1));
+    searchParams.set(key, JSON.stringify(newValue));
+    window.location.hash = searchParams.toString();
+  },
+  removeItem: (key) => {
+    const searchParams = new URLSearchParams(window.location.hash.slice(1));
+    searchParams.delete(key);
+    window.location.hash = searchParams.toString();
+  },
+};
+
 const createSortSlice: StateCreator<
   LiveSpansSlice & TimeframeSlice & FiltersSlice & SortSlice,
   [],
@@ -207,9 +227,40 @@ const createSortSlice: StateCreator<
 
 export const useSpanSearchStore = create<
   TimeframeSlice & LiveSpansSlice & FiltersSlice & SortSlice
->()((...set) => ({
+>()(
+persist(
+  (...set) => ({
   ...createTimeframeSlice(...set),
   ...createLiveSpansSlice(...set),
   ...createFiltersSlice(...set),
   ...createSortSlice(...set),
-}));
+}),
+{
+  name: "spansearch-hash-storage",
+  storage: createJSONStorage(()=> hashStorage),
+  merge: (persisted, current) => ({
+    ...current,
+    timeframeState: {
+      ...current.timeframeState,
+      currentTimeframe: {
+        startTimeUnixNanoSec: (persisted as TimeframeSlice).timeframeState.currentTimeframe.startTimeUnixNanoSec,
+        endTimeUnixNanoSec: (persisted as TimeframeSlice).timeframeState.currentTimeframe.endTimeUnixNanoSec,
+        isRelative: (persisted as TimeframeSlice).timeframeState.currentTimeframe.isRelative,
+      }
+    },
+    filtersState: {
+      ...current.filtersState,
+      filters: (persisted as FiltersSlice).filtersState.filters
+    },
+    liveSpansState: {
+      ...current.liveSpansState,
+      isOn: (persisted as LiveSpansSlice).liveSpansState.isOn,
+      intervalInMillis: (persisted as LiveSpansSlice).liveSpansState.intervalInMillis
+    },
+    sortState: {
+      ...current.sortState, 
+      sort: (persisted as SortSlice).sortState.sort
+    }
+  })
+},
+));
