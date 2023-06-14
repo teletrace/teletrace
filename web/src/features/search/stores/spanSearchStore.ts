@@ -238,6 +238,12 @@ persist(
 {
   name: "spansearch-hash-storage",
   storage: createJSONStorage(()=> hashStorage),
+  // By default, zustand's merge function is shallow and it causes hydration issues
+  // when loading nested objects from state.
+  // For now, the only persisted state is `recentlyUsedKeysState` and we solved this issue
+  // by "teaching" zustand how to go a level deeper when merging this state.
+  // If we add another nested object to be persisted, we should look for
+  // a more general solution for deep merging.
   merge: (persisted, current) => ({
     ...current,
     timeframeState: {
