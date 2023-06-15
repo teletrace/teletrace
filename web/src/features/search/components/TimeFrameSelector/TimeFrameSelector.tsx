@@ -30,6 +30,34 @@ const options: RelativeTimeFrame[] = [
   { label: "1W", offsetRange: "1w", relativeTo: "now" },
 ];
 
+const getOffsetInMillis = (offset: string): number => {
+  switch (offset) {
+    case "1h":
+      return 60 * 60 * 1000;
+    case "1d":
+      return 24 * 60 * 60 * 1000;
+    case "3d":
+      return 3 * 24 * 60 * 60 * 1000;
+    case "1w":
+      return 7 * 24 * 60 * 60 * 1000;
+    default:
+      return 0;
+  }
+};
+
+const startTimeToOption = (startTimeUnixNanoSec: number): RelativeTimeFrame => {
+  const startTimeMillis = startTimeUnixNanoSec / 1e6;
+  const nowMillis = Date.now();
+
+  const matchedOption = options.reverse().find((option) => {
+    const optionOffsetMillis = getOffsetInMillis(option.offsetRange);
+    return (nowMillis - startTimeMillis) >= optionOffsetMillis;
+  });
+
+  return matchedOption || options[0]; // Return the matched option or the default 1H option
+};
+
+
 export const TimeFrameSelector = () => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
 
@@ -43,7 +71,10 @@ export const TimeFrameSelector = () => {
   const [previousSelected, setPreviousSelected] = useState<TimeFrameTypes>(
     options[0]
   );
-  const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
+
+  const selectionToDisplay = timeframeState.currentTimeframe.isRelative ? startTimeToOption(timeframeState.currentTimeframe.startTimeUnixNanoSec) : customOption;
+  
+  const [isSelected, setIsSelected] = useState<TimeFrameTypes>(selectionToDisplay);
 
   const getRelativeStartTime = (timestamp: number, offset: string) => {
     const datetime =
