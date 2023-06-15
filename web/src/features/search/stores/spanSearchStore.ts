@@ -240,7 +240,7 @@ export const useSpanSearchStore = create<
       // By default, zustand's merge function is shallow and it causes hydration issues
       // when loading nested objects from state.
       // We solved this issue by "teaching" zustand how to go a level deeper when merging this state.
-  
+
       merge: (persisted, current) => ({
         ...current,
         timeframeState: {
