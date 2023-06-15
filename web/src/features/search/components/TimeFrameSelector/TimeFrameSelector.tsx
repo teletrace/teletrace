@@ -51,12 +51,11 @@ const startTimeToOption = (startTimeUnixNanoSec: number): RelativeTimeFrame => {
 
   const matchedOption = options.reverse().find((option) => {
     const optionOffsetMillis = getOffsetInMillis(option.offsetRange);
-    return (nowMillis - startTimeMillis) >= optionOffsetMillis;
+    return nowMillis - startTimeMillis >= optionOffsetMillis;
   });
 
   return matchedOption || options[0]; // Return the matched option or the default 1H option
 };
-
 
 export const TimeFrameSelector = () => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
@@ -72,9 +71,12 @@ export const TimeFrameSelector = () => {
     options[0]
   );
 
-  const selectionToDisplay = timeframeState.currentTimeframe.isRelative ? startTimeToOption(timeframeState.currentTimeframe.startTimeUnixNanoSec) : customOption;
-  
-  const [isSelected, setIsSelected] = useState<TimeFrameTypes>(selectionToDisplay);
+  const selectionToDisplay = timeframeState.currentTimeframe.isRelative
+    ? startTimeToOption(timeframeState.currentTimeframe.startTimeUnixNanoSec)
+    : customOption;
+
+  const [isSelected, setIsSelected] =
+    useState<TimeFrameTypes>(selectionToDisplay);
 
   const getRelativeStartTime = (timestamp: number, offset: string) => {
     const datetime =
