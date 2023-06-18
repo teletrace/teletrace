@@ -23,22 +23,29 @@ import { formatNanoToTimeString, msToNano, nanoToMs } from "@/utils/format";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
+enum Offset {
+  OneHour = "1h",
+  OneDay = "1d",
+  ThreeDays = "3d",
+  OneWeek = "1w",
+}
+
 const options: RelativeTimeFrame[] = [
-  { label: "1H", offsetRange: "1h", relativeTo: "now" },
-  { label: "1D", offsetRange: "1d", relativeTo: "now" },
-  { label: "3D", offsetRange: "3d", relativeTo: "now" },
-  { label: "1W", offsetRange: "1w", relativeTo: "now" },
+  { label: "1H", offsetRange: Offset.OneHour, relativeTo: "now" },
+  { label: "1D", offsetRange: Offset.OneDay, relativeTo: "now" },
+  { label: "3D", offsetRange: Offset.ThreeDays, relativeTo: "now" },
+  { label: "1W", offsetRange: Offset.OneWeek, relativeTo: "now" },
 ];
 
-const getOffsetInMillis = (offset: string): number => {
+const getOffsetInMillis = (offset: Offset): number => {
   switch (offset) {
-    case "1h":
+    case Offset.OneHour:
       return 60 * 60 * 1000;
-    case "1d":
+    case Offset.OneDay:
       return 24 * 60 * 60 * 1000;
-    case "3d":
+    case Offset.ThreeDays:
       return 3 * 24 * 60 * 60 * 1000;
-    case "1w":
+    case Offset.OneWeek:
       return 7 * 24 * 60 * 60 * 1000;
     default:
       return 0;
@@ -176,7 +183,7 @@ export const TimeFrameSelector = () => {
 type RelativeTimeFrame = {
   label: string;
   relativeTo: string;
-  offsetRange: string;
+  offsetRange: Offset;
 };
 
 function isRelativeTimeFrame(
