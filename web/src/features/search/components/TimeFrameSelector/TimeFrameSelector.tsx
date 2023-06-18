@@ -23,12 +23,46 @@ import { formatNanoToTimeString, msToNano, nanoToMs } from "@/utils/format";
 import { useSpanSearchStore } from "../../stores/spanSearchStore";
 import { DateTimeSelector } from "../DateTimeSelector/DateTimeSelector";
 
+enum Offset {
+  OneHour = "1h",
+  OneDay = "1d",
+  ThreeDays = "3d",
+  OneWeek = "1w",
+}
+
 const options: RelativeTimeFrame[] = [
-  { label: "1H", offsetRange: "1h", relativeTo: "now" },
-  { label: "1D", offsetRange: "1d", relativeTo: "now" },
-  { label: "3D", offsetRange: "3d", relativeTo: "now" },
-  { label: "1W", offsetRange: "1w", relativeTo: "now" },
+  { label: "1H", offsetRange: Offset.OneHour, relativeTo: "now" },
+  { label: "1D", offsetRange: Offset.OneDay, relativeTo: "now" },
+  { label: "3D", offsetRange: Offset.ThreeDays, relativeTo: "now" },
+  { label: "1W", offsetRange: Offset.OneWeek, relativeTo: "now" },
 ];
+
+const getOffsetInMillis = (offset: Offset): number => {
+  switch (offset) {
+    case Offset.OneHour:
+      return 60 * 60 * 1000;
+    case Offset.OneDay:
+      return 24 * 60 * 60 * 1000;
+    case Offset.ThreeDays:
+      return 3 * 24 * 60 * 60 * 1000;
+    case Offset.OneWeek:
+      return 7 * 24 * 60 * 60 * 1000;
+    default:
+      return 0;
+  }
+};
+
+const startTimeToOption = (startTimeUnixNanoSec: number): RelativeTimeFrame => {
+  const startTimeMillis = startTimeUnixNanoSec / 1e6;
+  const nowMillis = Date.now();
+
+  const matchedOption = options.reverse().find((option) => {
+    const optionOffsetMillis = getOffsetInMillis(option.offsetRange);
+    return nowMillis - startTimeMillis >= optionOffsetMillis;
+  });
+
+  return matchedOption || options[0]; // Return the matched option or the default 1H option
+};
 
 export const TimeFrameSelector = () => {
   const timeframeState = useSpanSearchStore((state) => state.timeframeState);
@@ -43,7 +77,13 @@ export const TimeFrameSelector = () => {
   const [previousSelected, setPreviousSelected] = useState<TimeFrameTypes>(
     options[0]
   );
-  const [isSelected, setIsSelected] = useState<TimeFrameTypes>(options[0]);
+
+  const selectionToDisplay = timeframeState.currentTimeframe.isRelative
+    ? startTimeToOption(timeframeState.currentTimeframe.startTimeUnixNanoSec)
+    : customOption;
+
+  const [isSelected, setIsSelected] =
+    useState<TimeFrameTypes>(selectionToDisplay);
 
   const getRelativeStartTime = (timestamp: number, offset: string) => {
     const datetime =
@@ -143,7 +183,7 @@ export const TimeFrameSelector = () => {
 type RelativeTimeFrame = {
   label: string;
   relativeTo: string;
-  offsetRange: string;
+  offsetRange: Offset;
 };
 
 function isRelativeTimeFrame(
