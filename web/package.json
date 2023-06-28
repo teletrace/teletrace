@@ -34,6 +34,7 @@
     "react-icons": "2.2.7",
     "react-router-dom": "6",
     "reactflow": "^11.5.2",
+    "recharts": "^2.7.2",
     "recompose": "^0.30.0",
     "tween-functions": "^1.2.0",
     "u-basscss": "^2.0.1",

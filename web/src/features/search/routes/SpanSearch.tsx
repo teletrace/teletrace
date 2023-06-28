@@ -26,6 +26,7 @@ import { RefreshButton } from "../components/RefreshButton";
 import { SearchBar } from "../components/SearchBar";
 import { SpanTable } from "../components/SpanTable";
 import { TagSidebar } from "../components/TagSidebar";
+import { Charts } from "../components/Charts";
 import { TimeFrameSelector } from "../components/TimeFrameSelector";
 import { useSpanSearchStore } from "../stores//spanSearchStore";
 
@@ -100,7 +101,8 @@ export const SpanSearch = () => {
             spacing={1}
             sx={{ height: "100%", width: "100%", minWidth: 0 }}
           >
-            <SearchBar />
+            <SearchBar />   
+            <Charts />                               
             <SpanTable />
           </Stack>
         ) : (
